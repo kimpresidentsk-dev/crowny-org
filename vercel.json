@@ -1,14 +1,7 @@
 {
   "functions": {
     "api/market/live.py": {
-      "runtime": "python3.12",
       "maxDuration": 10
     }
-  },
-  "rewrites": [
-    {
-      "source": "/api/market/:path*",
-      "destination": "/api/market/:path*"
-    }
-  ]
+  }
 }
