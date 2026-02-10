@@ -1852,7 +1852,7 @@ function updateTradingUI() {
 // ========================================
 const PRICE_SERVER = 'https://web-production-26db6.up.railway.app';
 const CANDLE_INTERVAL = 10; // 10초 캔들
-const POLL_INTERVAL = 1000; // 1초 폴링
+const POLL_INTERVAL = 500; // 0.5초 폴링
 
 // 틱 저장소
 window.liveTicks = [];
