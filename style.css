@@ -18,6 +18,7 @@ body {
     color: var(--text);
     display: flex;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
 /* Auth Modal */
@@ -434,6 +435,8 @@ body {
     flex: 1;
     padding: 1.5rem;
     max-width: 100%;
+    overflow-x: hidden;
+    min-width: 0;
 }
 
 .page {
@@ -1179,6 +1182,7 @@ h2 {
         padding: 0 !important;
         width: 100% !important;
         overflow-x: hidden !important;
+        max-width: 100vw !important;
     }
     
     .content {
@@ -1186,7 +1190,8 @@ h2 {
         padding: 0.5rem !important;
         padding-top: 3.5rem !important;
         width: 100% !important;
-        max-width: 100% !important;
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
     }
     
     .hero {
@@ -1198,6 +1203,18 @@ h2 {
         max-width: 100% !important;
         margin: 0 !important;
         padding: 0 !important;
+    }
+
+    /* 차트 영역 모바일 오버플로 방지 */
+    #live-candle-chart {
+        max-width: 100% !important;
+        overflow: hidden !important;
+    }
+    
+    /* 모든 직접 자식 요소 넘침 방지 */
+    .content > .page > div {
+        max-width: 100% !important;
+        overflow-x: hidden !important;
     }
 }
 @media (max-width: 768px) {
