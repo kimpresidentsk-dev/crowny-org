@@ -1962,59 +1962,24 @@ async function initTradingViewChart() {
     }
 }
 
-// 실제 NQ 데이터 가져오기
+// Databento API를 통해 NQ 과거 데이터 가져오기 (차트용)
 async function fetchRealNQData() {
     try {
-        // Yahoo Finance API - NQ 선물
-        const symbol = 'NQ=F'; // NQ E-mini 선물
-        const interval = '5m'; // 5분봉
-        const range = '1d'; // 1일
-        
-        const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=${interval}&range=${range}`;
-        
-        const response = await fetch(url);
+        const response = await fetch('/api/market/history?timeframe=5m&hours=24');
         const data = await response.json();
         
-        if (!data.chart || !data.chart.result || !data.chart.result[0]) {
-            throw new Error('데이터 로드 실패');
-        }
-        
-        const result = data.chart.result[0];
-        const quotes = result.indicators.quote[0];
-        const timestamps = result.timestamp;
-        
-        const candles = [];
-        const volume = [];
-        
-        for (let i = 0; i < timestamps.length; i++) {
-            if (quotes.open[i] && quotes.close[i]) {
-                candles.push({
-                    time: timestamps[i],
-                    open: parseFloat(quotes.open[i].toFixed(2)),
-                    high: parseFloat(quotes.high[i].toFixed(2)),
-                    low: parseFloat(quotes.low[i].toFixed(2)),
-                    close: parseFloat(quotes.close[i].toFixed(2)),
-                });
-                
-                volume.push({
-                    time: timestamps[i],
-                    value: quotes.volume[i] || 0,
-                    color: quotes.close[i] > quotes.open[i] ? '#26a69a' : '#ef5350',
-                });
-            }
-        }
-        
-        // 현재가 업데이트
-        if (candles.length > 0) {
-            const lastCandle = candles[candles.length - 1];
+        if (data && data.candles && data.candles.length > 0) {
+            // 현재가 업데이트
+            const lastCandle = data.candles[data.candles.length - 1];
             currentPrice = lastCandle.close;
+            
+            console.log('✅ Databento NQ 데이터 로드:', data.candles.length, '개 캔들');
+            return data;
         }
         
-        console.log('✅ 실제 NQ 데이터 로드:', candles.length, '개 캔들');
-        
-        return { candles, volume };
+        throw new Error('Databento 데이터 없음');
     } catch (error) {
-        console.error('❌ NQ 데이터 로드 실패:', error);
+        console.error('❌ Databento NQ 데이터 로드 실패:', error);
         // Fallback: 샘플 데이터
         return generateSampleData();
     }
@@ -2054,64 +2019,45 @@ function generateSampleData() {
     return { candles, volume };
 }
 
-// 실시간 가격 업데이트 (Yahoo Finance)
+// 실시간 가격 업데이트 (Databento 프록시 API)
 function startRealPriceUpdates() {
     if (window.priceUpdateInterval) {
         clearInterval(window.priceUpdateInterval);
     }
     
-    // 1분마다 최신 가격 가져오기
+    // 10초마다 최신 가격 가져오기
     window.priceUpdateInterval = setInterval(async () => {
         if (!window.candleSeries) return;
         
         try {
-            // 최신 1개 캔들만 가져오기
-            const symbol = 'NQ=F';
-            const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1m&range=5m`;
-            
-            const response = await fetch(url);
+            const response = await fetch('/api/market/price');
             const data = await response.json();
             
-            if (data.chart && data.chart.result && data.chart.result[0]) {
-                const result = data.chart.result[0];
-                const quotes = result.indicators.quote[0];
-                const timestamps = result.timestamp;
-                const lastIndex = timestamps.length - 1;
+            if (data && data.price) {
+                const now = Math.floor(Date.now() / 1000);
                 
-                if (quotes.close[lastIndex]) {
-                    const time = timestamps[lastIndex];
-                    const open = quotes.open[lastIndex];
-                    const high = quotes.high[lastIndex];
-                    const low = quotes.low[lastIndex];
-                    const close = quotes.close[lastIndex];
-                    
-                    // 차트 업데이트
-                    window.candleSeries.update({
-                        time: time,
-                        open: parseFloat(open.toFixed(2)),
-                        high: parseFloat(high.toFixed(2)),
-                        low: parseFloat(low.toFixed(2)),
-                        close: parseFloat(close.toFixed(2)),
-                    });
-                    
-                    // 현재가 업데이트
-                    currentPrice = close;
-                    updateNQPriceDisplay();
-                    updateOpenPositions();
-                    
-                    console.log('🔄 가격 업데이트:', close.toFixed(2));
-                }
+                // 차트 업데이트
+                window.candleSeries.update({
+                    time: now,
+                    open: data.open || data.price,
+                    high: data.high || data.price,
+                    low: data.low || data.price,
+                    close: data.price,
+                });
+                
+                // 현재가 업데이트
+                currentPrice = data.price;
+                updateNQPriceDisplay();
+                updateOpenPositions();
+                
+                console.log('🔄 Databento 가격:', data.price.toFixed(2));
             }
         } catch (error) {
             console.error('⚠️ 가격 업데이트 실패:', error);
-            // Fallback: 작은 변동만 적용
-            const change = (Math.random() - 0.5) * 5;
-            currentPrice += change;
-            updateNQPriceDisplay();
         }
-    }, 60000); // 1분마다
+    }, 10000); // 10초마다
     
-    console.log('✅ 실시간 가격 업데이트 시작 (1분 간격)');
+    console.log('✅ Databento 실시간 가격 업데이트 시작 (10초 간격)');
 }
 
 // 차트에 포지션 라인 그리기 (간소화 버전)
@@ -2209,33 +2155,27 @@ function connectPriceWebSocket() {
 
 async function updateNQPrice() {
     try {
-        // TradingView 무료 플랜: 15분 지연
-        // 실시간을 위해서는 TradingView Premium 필요
-        
-        // Yahoo Finance API로 NQ 가격 가져오기 (무료, 15분 지연)
-        const response = await fetch('https://query1.finance.yahoo.com/v8/finance/chart/NQ=F?interval=1m&range=1d');
+        // Databento 프록시 API를 통해 NQ 실시간 가격 조회
+        const response = await fetch('/api/market/price');
         const data = await response.json();
         
-        if (data.chart.result && data.chart.result[0]) {
-            const quote = data.chart.result[0].meta;
-            currentPrice = quote.regularMarketPrice || quote.previousClose;
+        if (data && data.price) {
+            currentPrice = data.price;
+            console.log(`📊 NQ 가격: ${currentPrice.toFixed(2)} (Databento)`);
         } else {
-            // Fallback: 모의 데이터
+            // 장 마감 등으로 데이터 없으면 기존 가격 유지
             if (!currentPrice) {
-                currentPrice = 20500;
-            } else {
-                const change = (Math.random() - 0.5) * 100;
-                currentPrice += change;
-                currentPrice = Math.max(19000, Math.min(21000, currentPrice));
+                currentPrice = 21500; // 기본값
             }
+            console.log('⚠️ NQ 데이터 없음 (장 마감 가능성)');
         }
         
         updateNQPriceDisplay();
         
     } catch (error) {
         console.error('Price fetch error:', error);
-        // Fallback to simulated price
-        if (!currentPrice) currentPrice = 20500;
+        // Fallback: 기존 가격 유지
+        if (!currentPrice) currentPrice = 21500;
         updateNQPriceDisplay();
     }
 }
