@@ -360,7 +360,31 @@
                             • Massive API Key 입력 → 즉시 실시간 전환!
                         </p>
                     </div>
-                    <div id="tradingview-chart" style="height:400px;"></div>
+                   <!-- TradingView Advanced Chart Widget -->
+<div class="tradingview-widget-container" style="height:500px;">
+    <div id="tradingview_chart" style="height:100%;"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script type="text/javascript">
+    new TradingView.widget({
+        "autosize": true,
+        "symbol": "CME_MINI:NQ1!",
+        "interval": "1",
+        "timezone": "Asia/Seoul",
+        "theme": "light",
+        "style": "1",
+        "locale": "kr",
+        "toolbar_bg": "#f1f3f6",
+        "enable_publishing": false,
+        "allow_symbol_change": true,
+        "details": true,
+        "hotlist": true,
+        "calendar": false,
+        "studies": ["RSI@tv-basicstudies","MACD@tv-basicstudies"],
+        "container_id": "tradingview_chart",
+        "hide_side_toolbar": false
+    });
+    </script>
+</div>
                     
                     <!-- Chart Quick Trade Buttons -->
                     <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.5rem; margin-top:1rem;">
