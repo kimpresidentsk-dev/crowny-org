@@ -1,7 +1,1 @@
-{
-  "functions": {
-    "api/market/live.py": {
-      "maxDuration": 10
-    }
-  }
-}
+{}
