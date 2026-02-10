@@ -2030,8 +2030,14 @@ function startRealPriceUpdates() {
         if (!window.candleSeries) return;
         
         try {
-            const response = await fetch('/api/market/price');
-            const data = await response.json();
+            // Live API로 실시간 가격
+            let response = await fetch('/api/market/live');
+            let data = await response.json();
+            
+            if (!data || !data.price || data.error) {
+                response = await fetch('/api/market/price');
+                data = await response.json();
+            }
             
             if (data && data.price) {
                 const now = Math.floor(Date.now() / 1000);
@@ -2155,17 +2161,23 @@ function connectPriceWebSocket() {
 
 async function updateNQPrice() {
     try {
-        // Databento 프록시 API를 통해 NQ 실시간 가격 조회
-        const response = await fetch('/api/market/price');
-        const data = await response.json();
+        // 1차: Databento Live API (Python, 진짜 실시간)
+        let response = await fetch('/api/market/live');
+        let data = await response.json();
+        
+        // Live 실패 시 Historical 폴백
+        if (!data || !data.price || data.error) {
+            console.log('⚠️ Live 실패, Historical 폴백:', data?.error || data?.message);
+            response = await fetch('/api/market/price');
+            data = await response.json();
+        }
         
         if (data && data.price) {
             currentPrice = data.price;
-            console.log(`📊 NQ 가격: ${currentPrice.toFixed(2)} (Databento)`);
+            console.log(`📊 NQ 가격: ${currentPrice.toFixed(2)} (${data.source})`);
         } else {
-            // 장 마감 등으로 데이터 없으면 기존 가격 유지
             if (!currentPrice) {
-                currentPrice = 21500; // 기본값
+                currentPrice = 21500;
             }
             console.log('⚠️ NQ 데이터 없음 (장 마감 가능성)');
         }
@@ -2174,7 +2186,6 @@ async function updateNQPrice() {
         
     } catch (error) {
         console.error('Price fetch error:', error);
-        // Fallback: 기존 가격 유지
         if (!currentPrice) currentPrice = 21500;
         updateNQPriceDisplay();
     }
