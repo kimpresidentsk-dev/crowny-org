@@ -432,21 +432,26 @@
             <div class="feed" id="social-feed"></div>
         </section>
 
-        <!-- ========== ART - 디지털 아트 거래소 ========== -->
+<!-- ========== ART - 디지털 아트 & NFT ========== -->
         <section id="art" class="page">
-            <h2>🎨 ART - 디지털 아트 거래소</h2>
+            <h2>🎨 ART - 디지털 아트 & NFT</h2>
             
-            <div style="background:linear-gradient(135deg, #1a1a2e, #e94560); padding:1.5rem; border-radius:12px; margin-bottom:1rem; color:white;">
+            <!-- 히어로 -->
+            <div style="background:linear-gradient(135deg, #1a1a2e, #8B2BE2, #e94560); padding:1.5rem; border-radius:12px; margin-bottom:1rem; color:white;">
                 <h3>내가 가는 길이 곧 예술이고 길이다</h3>
-                <p style="margin-top:0.5rem; opacity:0.9; font-size:0.85rem;">작가의 네임밸류가 높아질수록 구입 당시 모든 작품이 같은 비율로 상승합니다.<br>모든 거래 시 10 CRFN 이상 기부가 자동 연동됩니다.</p>
+                <p style="margin-top:0.5rem; opacity:0.9; font-size:0.85rem;">
+                    작가의 네임밸류가 높아질수록 구입 당시 모든 작품이 같은 비율로 상승합니다.<br>
+                    🔗 NFT 민팅 (Polygon ERC-721 / ERC-1155) · 모든 거래 시 10 CRFN 이상 기부 자동 연동
+                </p>
             </div>
-            
+
             <!-- 작품 업로드 -->
             <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                 <h3 style="margin-bottom:1rem;">🖼️ 작품 등록</h3>
                 <div style="display:grid; gap:0.8rem;">
                     <input type="text" id="art-title" placeholder="작품 제목" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                     <textarea id="art-description" placeholder="작품 설명 (재료, 크기, 의미 등)" rows="3" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px; resize:vertical;"></textarea>
+                    
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
                         <select id="art-category" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                             <option value="painting">🖌️ 회화</option>
@@ -457,6 +462,10 @@
                             <option value="calligraphy">🖋️ 서예/캘리</option>
                             <option value="mixed">🎭 혼합 매체</option>
                             <option value="ai">🤖 AI 아트</option>
+                            <option value="music">🎵 뮤직/사운드</option>
+                            <option value="video">🎬 비디오 아트</option>
+                            <option value="generative">🌀 제너러티브</option>
+                            <option value="kpop">💜 K-팝 굿즈</option>
                             <option value="other">🎨 기타</option>
                         </select>
                         <select id="art-sale-type" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;" onchange="toggleArtSaleOptions()">
@@ -465,54 +474,115 @@
                             <option value="display">전시만</option>
                         </select>
                     </div>
+                    
+                    <!-- 고정가 -->
                     <div id="art-price-section">
                         <div style="display:grid; grid-template-columns:1fr auto; gap:0.5rem;">
                             <input type="number" id="art-price" placeholder="가격" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                             <select id="art-price-token" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                                <optgroup label="⛓ 온체인"><option value="CRNY">CRNY</option><option value="FNC">FNC</option><option value="CRFN">CRFN</option></optgroup>
-                                <optgroup label="🔥 오프체인"><option value="CRAC">CRAC</option><option value="CRGC">CRGC</option><option value="CRTD">CRTD</option><option value="CREB">CREB</option></optgroup>
+                                <optgroup label="⛓ 온체인">
+                                    <option value="CRNY">CRNY</option>
+                                    <option value="FNC">FNC</option>
+                                    <option value="CRFN">CRFN</option>
+                                </optgroup>
+                                <optgroup label="🔥 오프체인">
+                                    <option value="CRAC">CRAC</option>
+                                    <option value="CRGC">CRGC</option>
+                                    <option value="CRTD">CRTD</option>
+                                    <option value="CREB">CREB</option>
+                                </optgroup>
                             </select>
                         </div>
                     </div>
+                    
+                    <!-- 경매 -->
                     <div id="art-auction-section" style="display:none;">
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
-                            <input type="number" id="art-start-price" placeholder="시작가" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                            <input type="number" id="art-auction-hours" value="24" placeholder="경매 시간" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                            <input type="number" id="art-start-price" placeholder="시작가 (CRNY)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                            <input type="number" id="art-auction-hours" value="24" placeholder="경매 시간(h)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                         </div>
                     </div>
+                    
+                    <!-- 이미지 -->
                     <input type="file" id="art-image" accept="image/*" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
+                    
+                    <!-- NFT 민팅 옵션 -->
+                    <div style="background:linear-gradient(135deg, rgba(138,43,226,0.08), rgba(102,126,234,0.08)); padding:1rem; border-radius:8px; border:1px solid rgba(138,43,226,0.2);">
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; font-weight:600;">
+                            <input type="checkbox" id="art-mint-nft" onchange="toggleNFTOptions()" style="width:18px; height:18px; accent-color:#8B2BE2;">
+                            🔗 NFT로 민팅 (Polygon)
+                        </label>
+                        <div id="art-nft-options" style="display:none; margin-top:0.8rem;">
+                            <div style="display:grid; gap:0.6rem;">
+                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+                                    <div>
+                                        <label style="font-size:0.75rem; color:var(--accent); display:block; margin-bottom:0.2rem;">NFT 타입</label>
+                                        <select id="art-nft-type" style="padding:0.6rem; border:1px solid var(--border); border-radius:6px; width:100%;" onchange="document.getElementById('art-edition-row').style.display=this.value==='erc1155'?'block':'none'">
+                                            <option value="erc721">ERC-721 (유니크 1/1)</option>
+                                            <option value="erc1155">ERC-1155 (에디션)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style="font-size:0.75rem; color:var(--accent); display:block; margin-bottom:0.2rem;">로열티 %</label>
+                                        <input type="number" id="art-royalty" value="10" min="0" max="50" style="padding:0.6rem; border:1px solid var(--border); border-radius:6px; width:100%;">
+                                    </div>
+                                </div>
+                                <div id="art-edition-row" style="display:none;">
+                                    <label style="font-size:0.75rem; color:var(--accent); display:block; margin-bottom:0.2rem;">에디션 수량</label>
+                                    <input type="number" id="art-edition-count" value="10" min="1" max="10000" style="padding:0.6rem; border:1px solid var(--border); border-radius:6px; width:100%;">
+                                </div>
+                                <div style="font-size:0.72rem; color:#666; line-height:1.5;">
+                                    ⛓ Polygon · MetaMask 필요<br>
+                                    📌 이미지 IPFS 영구 저장<br>
+                                    💰 로열티: 2차 판매 시 작가 자동 지급
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <p style="font-size:0.75rem; color:var(--accent);">⚠️ 거래 시 10 CRFN 이상이 자동 기부됩니다</p>
+                    <div id="art-upload-status" style="font-size:0.8rem; color:#8B2BE2; min-height:1.2em;"></div>
                     <button onclick="uploadArtwork()" class="btn-primary">🎨 작품 등록</button>
                 </div>
             </div>
             
             <!-- 필터 -->
             <div style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
-                <select id="art-filter-category" onchange="loadArtGallery()" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px; flex:1; min-width:100px;">
+                <select id="art-filter-category" onchange="loadArtGallery()" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px; flex:1; min-width:80px;">
                     <option value="all">전체</option>
                     <option value="painting">🖌️ 회화</option>
                     <option value="digital">💻 디지털</option>
                     <option value="photo">📷 사진</option>
                     <option value="illustration">✏️ 일러스트</option>
                     <option value="ai">🤖 AI</option>
+                    <option value="generative">🌀 제너러티브</option>
+                    <option value="kpop">💜 K-팝</option>
                 </select>
                 <select id="art-filter-sort" onchange="loadArtGallery()" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
                     <option value="newest">최신순</option>
                     <option value="popular">인기순</option>
                     <option value="price-low">낮은가격</option>
                     <option value="price-high">높은가격</option>
+                    <option value="auction">경매만</option>
+                </select>
+                <select id="art-filter-nft" onchange="loadArtGallery()" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
+                    <option value="all">전체</option>
+                    <option value="nft">🔗 NFT만</option>
+                    <option value="non-nft">일반만</option>
                 </select>
                 <button onclick="loadArtGallery()" style="background:var(--primary); color:white; border:none; padding:0.5rem 1rem; border-radius:6px; cursor:pointer;">🔄</button>
             </div>
             
+            <!-- 갤러리 -->
             <div id="art-gallery" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:0.8rem;"></div>
             
             <!-- 내 컬렉션 -->
             <div style="background:white; padding:1.5rem; border-radius:12px; margin-top:1.5rem;">
                 <h3 style="margin-bottom:1rem;">📁 내 컬렉션</h3>
-                <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
-                    <button onclick="loadMyArtworks()" class="btn-primary" style="flex:1;">🎨 내 작품</button>
-                    <button onclick="loadMyPurchases()" class="btn-secondary" style="flex:1;">🛒 구매 작품</button>
+                <div style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
+                    <button onclick="loadMyArtworks()" class="btn-primary" style="flex:1; min-width:80px;">🎨 내 작품</button>
+                    <button onclick="loadMyPurchases()" class="btn-secondary" style="flex:1; min-width:80px;">🛒 구매 작품</button>
+                    <button onclick="loadMyNFTs()" style="flex:1; min-width:80px; background:linear-gradient(135deg,#667eea,#764ba2); color:white; border:none; padding:0.6rem; border-radius:6px; cursor:pointer; font-weight:600;">🔗 My NFTs</button>
                 </div>
                 <div id="my-art-collection"></div>
             </div>
