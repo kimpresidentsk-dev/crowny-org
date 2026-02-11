@@ -1,0 +1,2247 @@
+// ===== trading.js - 차트, 실시간데이터, 거래, 포지션, NinjaTrader =====
+// ========== REAL-TIME CRYPTO TRADING ==========
+let currentPrice = 0;
+let priceWs = null;
+let myParticipation = null;
+
+async function loadTradingDashboard() {
+    console.log('🔍 loadTradingDashboard 시작, user:', currentUser?.uid);
+    // Check if user has active participation
+    try {
+        const challenges = await db.collection('prop_challenges')
+            .where('status', '==', 'active')
+            .get();
+        
+        console.log('🔍 활성 챌린지:', challenges.size, '개');
+        
+        for (const challengeDoc of challenges.docs) {
+            // 복합 인덱스 없이도 작동하도록 단일 필드 쿼리
+            const participants = await challengeDoc.ref.collection('participants')
+                .where('userId', '==', currentUser.uid)
+                .get();
+            
+            console.log('🔍 챌린지', challengeDoc.id, '참가자:', participants.size, '명');
+            
+            // 클라이언트에서 status 필터
+            const activeParticipant = participants.docs.find(d => d.data().status === 'active');
+            
+            if (activeParticipant) {
+                myParticipation = { 
+                    challengeId: challengeDoc.id,
+                    participantId: activeParticipant.id,
+                    ...activeParticipant.data() 
+                };
+                console.log('✅ myParticipation 설정됨:', myParticipation.participantId);
+                break;
+            }
+        }
+    } catch (error) {
+        console.error('❌ loadTradingDashboard error:', error);
+    }
+    
+    if (myParticipation) {
+        document.getElementById('trading-dashboard').style.display = 'block';
+        
+        // 규칙 동적 표시
+        const p = myParticipation;
+        const productText = p.allowedProduct === 'MNQ' ? 'MNQ (마이크로)' :
+                            p.allowedProduct === 'NQ' ? 'NQ (미니)' : 'MNQ + NQ';
+        const rulesEl = document.getElementById('prop-rules-display');
+        if (rulesEl) {
+            rulesEl.innerHTML = `
+                <p><strong>💰 계좌:</strong> $${(p.initialBalance || 100000).toLocaleString()} USD (가상)</p>
+                <p><strong>📊 거래 가능:</strong> ${productText} 최대 ${p.maxContracts || 1}계약</p>
+                <p><strong>📈 최대 포지션:</strong> ${p.maxPositions || 5}개 동시 운영</p>
+                <p><strong>🔴 일일 한도:</strong> -$${p.dailyLossLimit || 100} 손실 시 당일 거래 중단</p>
+                <p><strong>💀 청산:</strong> -$${(p.maxDrawdown || 2000).toLocaleString()} 손실 시 자동 청산</p>
+                <p><strong>⏰ 정산:</strong> ${p.settlement || 'EOD'}</p>
+                <p><strong>💎 상금:</strong> ${p.rewardToken || 'CRFN'} 토큰</p>
+            `;
+        }
+        
+        checkDailyReset();
+        updateSlotStatusUI();
+        updateRiskGaugeUI();
+        updateTradingUI();
+        
+        // display:block 후 DOM이 레이아웃을 잡도록 딜레이
+        setTimeout(() => {
+            initTradingViewChart();
+            connectPriceWebSocket();
+        }, 100);
+    } else {
+        document.getElementById('trading-dashboard').style.display = 'none';
+        // 규칙 기본 표시
+        const rulesEl = document.getElementById('prop-rules-display');
+        if (rulesEl) {
+            rulesEl.innerHTML = '<p>아래 챌린지에 참가하면 규칙이 표시됩니다.</p>';
+        }
+    }
+}
+
+function updateTradingUI() {
+    if (!myParticipation) return;
+    
+    const balance = myParticipation.currentBalance || 100000;
+    const initial = myParticipation.initialBalance || 100000;
+    const profit = ((balance - initial) / initial * 100).toFixed(2);
+    const positions = myParticipation.trades?.filter(t => t.status === 'open').length || 0;
+    
+    document.getElementById('trading-balance').textContent = `$${balance.toLocaleString()}`;
+    document.getElementById('trading-profit').textContent = `${profit >= 0 ? '+' : ''}${profit}%`;
+    document.getElementById('trading-profit').style.color = profit >= 0 ? '#0066cc' : '#cc0000';
+    document.getElementById('trading-positions').textContent = positions;
+}
+
+// ========================================
+// 실시간 캔들차트 + 탭 시스템
+// ========================================
+const PRICE_SERVER = 'https://web-production-26db6.up.railway.app';
+const POLL_INTERVAL = 1000;
+
+const TIMEZONES = {
+    'US': { label: '🇺🇸 뉴욕 (ET)', zone: 'America/New_York' },
+    'KR': { label: '🇰🇷 서울 (KST)', zone: 'Asia/Seoul' },
+    'JP': { label: '🇯🇵 도쿄 (JST)', zone: 'Asia/Tokyo' },
+    'UK': { label: '🇬🇧 런던 (GMT)', zone: 'Europe/London' },
+    'UTC': { label: '🌐 UTC', zone: 'UTC' }
+};
+let selectedTimezone = 'KR';
+
+window.liveTicks = [];
+window.liveChart = null;
+window.liveCandleSeries = null;
+window.liveEntryLine = null;
+
+// ===== 차트 탭 시스템 =====
+let chartTabs = [];
+let activeTabId = 1;
+
+function getDefaultTabs() {
+    return [
+        { id: 1, symbol: 'MNQ', chartType: 'time', interval: 60, tickCount: 100 },
+        { id: 2, symbol: 'NQ', chartType: 'time', interval: 60, tickCount: 100 },
+        { id: 3, symbol: 'MNQ', chartType: 'tick', interval: 60, tickCount: 100 },
+    ];
+}
+function loadChartTabs() {
+    try {
+        const saved = localStorage.getItem('crowny_chart_tabs');
+        chartTabs = saved ? JSON.parse(saved) : getDefaultTabs();
+        if (!chartTabs.length) chartTabs = getDefaultTabs();
+        activeTabId = parseInt(localStorage.getItem('crowny_active_tab')) || chartTabs[0]?.id || 1;
+        if (!chartTabs.find(t => t.id === activeTabId)) activeTabId = chartTabs[0]?.id || 1;
+    } catch (e) { chartTabs = getDefaultTabs(); activeTabId = 1; }
+}
+function saveChartTabs() {
+    try {
+        localStorage.setItem('crowny_chart_tabs', JSON.stringify(chartTabs));
+        localStorage.setItem('crowny_active_tab', String(activeTabId));
+    } catch (e) {}
+}
+function getActiveTab() { return chartTabs.find(t => t.id === activeTabId) || chartTabs[0]; }
+function getActiveTabSymbol() { return (getActiveTab() || {}).symbol || 'MNQ'; }
+function getCurrentInterval() { const t = getActiveTab(); return t?.chartType === 'time' ? (t.interval || 60) : 60; }
+
+function renderChartTabs() {
+    const bar = document.getElementById('chart-tab-bar');
+    if (!bar) return;
+    bar.innerHTML = '';
+    chartTabs.forEach(tab => {
+        const active = tab.id === activeTabId;
+        const btn = document.createElement('button');
+        btn.style.cssText = `background:${active?'#0066cc':'#16213e'}; color:${active?'#fff':'#888'}; border:1px solid ${active?'#0066cc':'#333'}; border-radius:4px; padding:5px 10px; font-size:0.72rem; cursor:pointer; white-space:nowrap; font-weight:${active?'700':'400'};`;
+        const icon = tab.chartType === 'tick' ? '📊' : '⏱';
+        const label = tab.chartType === 'tick' ? `${tab.tickCount}T` : `${(tab.interval||60)/60}분`;
+        btn.textContent = `${tab.symbol} ${icon}${label}`;
+        btn.onclick = () => switchChartTab(tab.id);
+        btn.ondblclick = (e) => { e.stopPropagation(); if (chartTabs.length>1 && confirm(`"${btn.textContent}" 삭제?`)) removeChartTab(tab.id); };
+        bar.appendChild(btn);
+    });
+    const addBtn = document.createElement('button');
+    addBtn.style.cssText = 'background:#16213e; color:#00ff88; border:1px solid #333; border-radius:4px; padding:5px 8px; font-size:0.8rem; cursor:pointer;';
+    addBtn.textContent = '+';
+    addBtn.onclick = addChartTab;
+    bar.appendChild(addBtn);
+}
+
+function switchChartTab(tabId) {
+    activeTabId = tabId;
+    const tab = getActiveTab();
+    if (!tab) return;
+    const symEl = document.getElementById('tab-symbol');
+    const typeEl = document.getElementById('tab-chart-type');
+    const intEl = document.getElementById('tab-interval');
+    const tickEl = document.getElementById('tab-tick-count');
+    if (symEl) symEl.value = tab.symbol;
+    if (typeEl) typeEl.value = tab.chartType;
+    if (intEl) { intEl.value = tab.interval || 60; intEl.style.display = tab.chartType==='time' ? '' : 'none'; }
+    if (tickEl) { tickEl.value = tab.tickCount || 100; tickEl.style.display = tab.chartType==='tick' ? '' : 'none'; }
+    // 하단 거래폼 동기화
+    const fc = document.getElementById('futures-contract');
+    if (fc) { fc.value = tab.symbol; if (typeof updateContractSpecs === 'function') updateContractSpecs(); }
+    updateChartLabel();
+    renderChartTabs();
+    saveChartTabs();
+    reloadChartData();
+    drawPositionLinesLW();
+}
+
+function addChartTab() {
+    if (chartTabs.length >= 8) { alert('최대 8개'); return; }
+    const maxId = chartTabs.reduce((m, t) => Math.max(m, t.id), 0);
+    const newTab = { id: maxId+1, symbol: 'MNQ', chartType: 'time', interval: 60, tickCount: 100 };
+    chartTabs.push(newTab);
+    switchChartTab(newTab.id);
+}
+
+function removeChartTab(tabId) {
+    chartTabs = chartTabs.filter(t => t.id !== tabId);
+    if (activeTabId === tabId) activeTabId = chartTabs[0]?.id || 1;
+    renderChartTabs();
+    switchChartTab(activeTabId);
+}
+
+function updateTabSetting(field) {
+    const tab = getActiveTab();
+    if (!tab) return;
+    switch(field) {
+        case 'symbol':
+            tab.symbol = document.getElementById('tab-symbol').value;
+            // 하단 거래폼도 동기화
+            const fc = document.getElementById('futures-contract');
+            if (fc) { fc.value = tab.symbol; if (typeof updateContractSpecs === 'function') updateContractSpecs(); }
+            break;
+        case 'chartType':
+            tab.chartType = document.getElementById('tab-chart-type').value;
+            document.getElementById('tab-interval').style.display = tab.chartType==='time' ? '' : 'none';
+            document.getElementById('tab-tick-count').style.display = tab.chartType==='tick' ? '' : 'none';
+            break;
+        case 'interval': tab.interval = parseInt(document.getElementById('tab-interval').value)||60; break;
+        case 'tickCount': tab.tickCount = parseInt(document.getElementById('tab-tick-count').value)||100; break;
+    }
+    updateChartLabel(); renderChartTabs(); saveChartTabs();
+    if (field === 'symbol' || field === 'chartType') {
+        reloadChartData();
+    } else {
+        updateLiveCandleChart();
+    }
+}
+
+function updateChartLabel() {
+    const tab = getActiveTab();
+    if (!tab) return;
+    const label = document.getElementById('chart-symbol-label');
+    const mul = tab.symbol==='NQ' ? '$20' : '$2';
+    if (label) {
+        if (tab.chartType === 'time') {
+            label.textContent = `${tab.symbol} ${(tab.interval||60)/60}분봉 (×${mul})`;
+        } else {
+            label.textContent = `${tab.symbol} ${tab.tickCount||100}틱차트 (×${mul})`;
+        }
+    }
+}
+
+// 틱 기반 캔들 (N틱마다 1봉, 거래량 포함)
+function aggregateTicksToTickCandles(ticks, ticksPerCandle) {
+    if (!ticks.length || ticksPerCandle < 1) return [];
+    const candles = [];
+    let cur = null, cnt = 0;
+    for (const tick of ticks) {
+        if (!cur || cnt >= ticksPerCandle) {
+            if (cur) candles.push(cur);
+            cur = { time: tick.time, open: tick.price, high: tick.price, low: tick.price, close: tick.price, _tickCount: 1, _volume: tick.volume || 1 };
+            cnt = 1;
+        } else {
+            cur.high = Math.max(cur.high, tick.price);
+            cur.low = Math.min(cur.low, tick.price);
+            cur.close = tick.price;
+            cur._tickCount++; cur._volume = (cur._volume||0) + (tick.volume||1); cur.time = tick.time; cnt++;
+        }
+    }
+    if (cur) candles.push(cur);
+    for (let i = 1; i < candles.length; i++) {
+        if (candles[i].time <= candles[i-1].time) candles[i].time = candles[i-1].time + 1;
+    }
+    return candles;
+}
+
+async function initTradingViewChart() {
+    console.log('📊 initTradingViewChart 호출됨');
+    const container = document.getElementById('live-candle-chart');
+    if (!container) { console.error('❌ 차트 컨테이너 없음'); return; }
+    
+    // 탭 시스템 초기화
+    loadChartTabs();
+    renderChartTabs();
+    // UI 동기화
+    const tab = getActiveTab();
+    if (tab) {
+        const symEl = document.getElementById('tab-symbol');
+        const typeEl = document.getElementById('tab-chart-type');
+        const intEl = document.getElementById('tab-interval');
+        const tickEl = document.getElementById('tab-tick-count');
+        if (symEl) symEl.value = tab.symbol;
+        if (typeEl) typeEl.value = tab.chartType;
+        if (intEl) { intEl.value = tab.interval||60; intEl.style.display = tab.chartType==='time'?'':'none'; }
+        if (tickEl) { tickEl.value = tab.tickCount||100; tickEl.style.display = tab.chartType==='tick'?'':'none'; }
+        // ★ 하단 거래폼도 탭과 동기화
+        const fc = document.getElementById('futures-contract');
+        if (fc) fc.value = tab.symbol;
+        updateChartLabel();
+    }
+    
+    container.innerHTML = '';
+    
+    try {
+        const chartHeight = window.innerWidth < 768 ? 400 : 500;
+        const tzOffset = getTimezoneOffsetSeconds(selectedTimezone);
+        
+        const chart = LightweightCharts.createChart(container, {
+            width: container.clientWidth,
+            height: chartHeight,
+            layout: { background: { color: '#0a0a0a' }, textColor: '#999', fontFamily: "'Consolas','Monaco',monospace", fontSize: 11 },
+            grid: { vertLines: { color: '#1a1a2a', style: 1 }, horzLines: { color: '#1a1a2a', style: 1 } },
+            crosshair: {
+                mode: LightweightCharts.CrosshairMode.Normal,
+                vertLine: { color: '#ffffff44', width: 1, style: 2, labelBackgroundColor: '#333' },
+                horzLine: { color: '#ffffff44', width: 1, style: 2, labelBackgroundColor: '#0066cc' },
+            },
+            rightPriceScale: { borderColor: '#333', scaleMargins: { top: 0.05, bottom: 0.15 }, autoScale: true },
+            timeScale: {
+                borderColor: '#333', timeVisible: true, secondsVisible: false,
+                barSpacing: 6, minBarSpacing: 3, rightOffset: 5,
+                tickMarkFormatter: (time) => {
+                    const d = new Date((time + tzOffset) * 1000);
+                    return `${String(d.getUTCHours()).padStart(2,'0')}:${String(d.getUTCMinutes()).padStart(2,'0')}`;
+                },
+            },
+            localization: {
+                timeFormatter: (time) => {
+                    const d = new Date((time + tzOffset) * 1000);
+                    return `${String(d.getUTCHours()).padStart(2,'0')}:${String(d.getUTCMinutes()).padStart(2,'0')}`;
+                },
+            },
+        });
+        
+        const volumeSeries = chart.addHistogramSeries({
+            color: '#26a69a', priceFormat: { type: 'volume' },
+            priceScaleId: 'volume', scaleMargins: { top: 0.85, bottom: 0 },
+        });
+        chart.priceScale('volume').applyOptions({ scaleMargins: { top: 0.85, bottom: 0 }, drawTicks: false, borderVisible: false });
+        window.volumeSeries = volumeSeries;
+        
+        const candleSeries = chart.addCandlestickSeries({
+            upColor: '#0066cc', downColor: '#cc0000',
+            borderUpColor: '#0066cc', borderDownColor: '#cc0000',
+            wickUpColor: '#0066cc', wickDownColor: '#cc0000',
+        });
+        
+        window.liveChart = chart;
+        window.liveCandleSeries = candleSeries;
+        window.candleSeries = candleSeries;
+        window.lwChart = chart;
+        
+        // MA 라인
+        window.ma1Series = chart.addLineSeries({ color: '#ffeb3b', lineWidth: 2, lineStyle: 0, priceLineVisible: false, lastValueVisible: true, title: 'MA5' });
+        window.ma2Series = chart.addLineSeries({ color: '#00bcd4', lineWidth: 2, lineStyle: 0, priceLineVisible: false, lastValueVisible: true, title: 'MA20' });
+        window.ma3Series = chart.addLineSeries({ color: '#e040fb', lineWidth: 2, lineStyle: 0, priceLineVisible: false, lastValueVisible: true, title: 'MA60' });
+        
+        window.addEventListener('resize', () => { chart.applyOptions({ width: container.clientWidth }); });
+        
+        console.log('📊 통합 차트 준비 완료');
+        loadMASettings();
+        setTimeout(() => applyMASettings(), 500);
+        startClockTimer();
+        startLiveDataFeed();
+        
+        return chart;
+    } catch (error) {
+        console.error('❌ 차트 로드 실패:', error);
+        container.innerHTML = '<p style="text-align:center; padding:2rem; color:#ff4444;">차트 로드 실패</p>';
+    }
+}
+
+// 타임존 오프셋 (초 단위)
+function getTimezoneOffsetSeconds(tzKey) {
+    const tz = TIMEZONES[tzKey]?.zone || 'Asia/Seoul';
+    const now = new Date();
+    const utcStr = now.toLocaleString('en-US', { timeZone: 'UTC' });
+    const tzStr = now.toLocaleString('en-US', { timeZone: tz });
+    const diff = (new Date(tzStr) - new Date(utcStr)) / 1000;
+    return diff;
+}
+
+// 타임존 변경
+function changeTimezone(tzKey) {
+    selectedTimezone = tzKey;
+    // 차트 재생성
+    if (window.liveChart) {
+        initTradingViewChart();
+    }
+    updateLiveClockDisplay();
+}
+
+// 현재 시간 표시 업데이트
+function updateLiveClockDisplay() {
+    const clockEl = document.getElementById('live-clock');
+    if (!clockEl) return;
+    
+    const tz = TIMEZONES[selectedTimezone];
+    const now = new Date();
+    const timeStr = now.toLocaleString('ko-KR', { 
+        timeZone: tz.zone,
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        hour12: false
+    });
+    const dateStr = now.toLocaleString('ko-KR', {
+        timeZone: tz.zone,
+        month: '2-digit', day: '2-digit',
+        weekday: 'short'
+    });
+    
+    clockEl.innerHTML = `<span style="color:#00ff88; font-weight:700;">${timeStr}</span> <span style="color:#888; font-size:0.65rem;">${dateStr} ${tz.label}</span>`;
+}
+
+// 차트 자동 정렬 (최신 캔들로 스크롤)
+function scrollToLatest() {
+    if (window.liveChart) window.liveChart.timeScale().scrollToRealTime();
+}
+
+// 시간 타이머 시작
+function startClockTimer() {
+    if (window.clockInterval) clearInterval(window.clockInterval);
+    updateLiveClockDisplay();
+    window.clockInterval = setInterval(updateLiveClockDisplay, 1000);
+}
+
+// 실시간 데이터 수신
+function startLiveDataFeed() {
+    if (window.liveDataInterval) clearInterval(window.liveDataInterval);
+    reloadChartData().then(() => {
+        fetchLiveTick();
+        window.liveDataInterval = setInterval(fetchLiveTick, POLL_INTERVAL);
+        console.log('✅ 실시간 데이터 수신 시작');
+    });
+}
+
+// ★ 심볼 전환 시 데이터 재로드
+async function reloadChartData() {
+    const tab = getActiveTab();
+    if (!tab) return;
+    if (tab.chartType === 'tick') {
+        await loadTickData(tab.symbol);
+    } else {
+        await loadCandleHistory(tab.symbol);
+    }
+}
+
+// 서버에서 1분 캔들 히스토리 로드 (심볼별)
+async function loadCandleHistory(symbol) {
+    try {
+        symbol = symbol || getActiveTabSymbol();
+        console.log(`📊 ${symbol} 캔들 히스토리 로딩...`);
+        const res = await fetch(`${PRICE_SERVER}/api/market/candles?symbol=${symbol}&limit=1440`);
+        const data = await res.json();
+        
+        if (data && data.candles && data.candles.length > 0) {
+            window.liveTicks = [];
+            for (const candle of data.candles) {
+                const t = candle.time;
+                const vol = candle.volume || candle.tick_count || 1;
+                window.liveTicks.push({ time: t, price: candle.open, volume: Math.ceil(vol * 0.25) });
+                if (candle.high !== candle.open) {
+                    window.liveTicks.push({ time: t + 15, price: candle.high, volume: Math.ceil(vol * 0.25) });
+                }
+                if (candle.low !== candle.high) {
+                    window.liveTicks.push({ time: t + 30, price: candle.low, volume: Math.ceil(vol * 0.25) });
+                }
+                window.liveTicks.push({ time: t + 59, price: candle.close, volume: Math.ceil(vol * 0.25) });
+            }
+            updateLiveCandleChart();
+            scrollToLatest();
+            console.log(`✅ ${symbol} ${data.count}개 캔들 로드`);
+        }
+    } catch (err) {
+        console.warn('⚠️ 캔들 히스토리 로드 실패:', err.message);
+    }
+}
+
+// ★ 서버에서 틱 데이터 로드 (틱차트용, 가격+거래량)
+async function loadTickData(symbol) {
+    try {
+        symbol = symbol || getActiveTabSymbol();
+        console.log(`📊 ${symbol} 틱 데이터 로딩...`);
+        const res = await fetch(`${PRICE_SERVER}/api/market/ticks?symbol=${symbol}&limit=5000`);
+        const data = await res.json();
+        if (data && data.ticks && data.ticks.length > 0) {
+            window.liveTicks = data.ticks.map(t => ({ time: t.time, price: t.price, volume: t.volume || 1 }));
+            updateLiveCandleChart();
+            scrollToLatest();
+            console.log(`✅ ${symbol} ${data.count}개 틱 로드`);
+        }
+    } catch (err) {
+        console.warn('⚠️ 틱 데이터 로드 실패:', err.message);
+    }
+}
+
+async function fetchLiveTick() {
+    try {
+        const res = await fetch(`${PRICE_SERVER}/api/market/live`);
+        const data = await res.json();
+        
+        if (!data || !data.price || data.price < 1000) return;
+        
+        const now = Math.floor(Date.now() / 1000);
+        
+        // 클라이언트 스파이크 필터
+        if (window.liveTicks.length > 0) {
+            const lastPrice = window.liveTicks[window.liveTicks.length - 1].price;
+            const diff = Math.abs(data.price - lastPrice);
+            if (diff > 30) {
+                console.warn(`⚠️ 스파이크 필터: ${lastPrice} → ${data.price}`);
+                return;
+            }
+        }
+        
+        // NQ/MNQ 개별 가격 저장
+        if (data.nq_price) window._nqPrice = data.nq_price;
+        if (data.mnq_price) window._mnqPrice = data.mnq_price;
+        
+        // 틱 저장 (볼륨 포함)
+        window.liveTicks.push({
+            time: now,
+            price: data.price,
+            bid: data.bid,
+            ask: data.ask,
+            volume: data.volume || 1,
+        });
+        
+        if (window.liveTicks.length > 86400) window.liveTicks.shift();
+        
+        currentPrice = data.price;
+        
+        updateLivePriceDisplay(data);
+        updateLiveCandleChart();
+        updateNQPriceDisplay();
+        updateOpenPositions();
+        updateLivePnL();
+        updateLiveStatus(true);
+        
+    } catch (err) {
+        console.error('⚠️ 데이터 수신 실패:', err);
+        updateLiveStatus(false);
+    }
+}
+
+// 가격 표시 업데이트
+function updateLivePriceDisplay(data) {
+    const priceEl = document.getElementById('live-price');
+    const bidEl = document.getElementById('live-bid');
+    const askEl = document.getElementById('live-ask');
+    const spreadEl = document.getElementById('live-spread');
+    
+    if (!priceEl) return;
+    
+    priceEl.textContent = data.price.toFixed(2);
+    
+    // 가격 색상 (이전 대비)
+    if (window.liveTicks.length >= 2) {
+        const prev = window.liveTicks[window.liveTicks.length - 2].price;
+        priceEl.style.color = data.price > prev ? '#00ff88' : data.price < prev ? '#ff4444' : '#00ff88';
+    }
+    
+    if (bidEl) bidEl.textContent = data.bid ? data.bid.toFixed(2) : '--';
+    if (askEl) askEl.textContent = data.ask ? data.ask.toFixed(2) : '--';
+    
+    if (spreadEl && data.bid && data.ask) {
+        spreadEl.textContent = (data.ask - data.bid).toFixed(2);
+    }
+}
+
+// 탭 설정에 따라 캔들 생성 + 차트 업데이트
+function updateLiveCandleChart() {
+    if (!window.liveCandleSeries || window.liveTicks.length < 2) return;
+    
+    const tab = getActiveTab();
+    let candles;
+    
+    if (tab && tab.chartType === 'tick') {
+        // 틱차트: N틱마다 1봉
+        candles = aggregateTicksToTickCandles(window.liveTicks, tab.tickCount || 100);
+    } else {
+        // 타임차트: N초마다 1봉
+        const interval = (tab && tab.interval) ? tab.interval : 60;
+        candles = aggregateTicksToCandles(window.liveTicks, interval);
+    }
+    
+    if (candles.length > 0) {
+        window.liveCandleSeries.setData(candles);
+        
+        const volData = candles.map(c => ({
+            time: c.time,
+            value: c._volume || c._tickCount || 1,
+            color: c.close >= c.open ? '#0066cc33' : '#cc000033',
+        }));
+        if (window.volumeSeries) window.volumeSeries.setData(volData);
+        
+        updateMALines(candles);
+    }
+}
+
+// MA 계산
+function calculateMA(candles, period) {
+    if (candles.length < period) return [];
+    const result = [];
+    for (let i = period - 1; i < candles.length; i++) {
+        let sum = 0;
+        for (let j = 0; j < period; j++) {
+            sum += candles[i - j].close;
+        }
+        result.push({ time: candles[i].time, value: sum / period });
+    }
+    return result;
+}
+
+// MA 라인 업데이트 (통합 차트)
+function updateMALines(candles) {
+    const ma1P = parseInt(document.getElementById('nq-ma1-period')?.value) || 5;
+    const ma2P = parseInt(document.getElementById('nq-ma2-period')?.value) || 20;
+    const ma3P = parseInt(document.getElementById('nq-ma3-period')?.value) || 60;
+    const ma1Show = document.getElementById('nq-ma1-show')?.checked !== false;
+    const ma2Show = document.getElementById('nq-ma2-show')?.checked !== false;
+    const ma3Show = document.getElementById('nq-ma3-show')?.checked !== false;
+    
+    if (window.ma1Series) window.ma1Series.setData(ma1Show ? calculateMA(candles, ma1P) : []);
+    if (window.ma2Series) window.ma2Series.setData(ma2Show ? calculateMA(candles, ma2P) : []);
+    if (window.ma3Series) window.ma3Series.setData(ma3Show ? calculateMA(candles, ma3P) : []);
+}
+
+// MA 정보 표시
+function updateMAInfoDisplay() {
+    // (no longer needed as separate display)
+}
+
+// MA 세팅 토글
+function toggleMASettings() {
+    const panel = document.getElementById('ma-settings');
+    if (panel) panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+// MA 세팅 적용 + localStorage 저장
+function applyMASettings() {
+    const ma1Color = document.getElementById('nq-ma1-color')?.value || '#ffeb3b';
+    const ma2Color = document.getElementById('nq-ma2-color')?.value || '#00bcd4';
+    const ma3Color = document.getElementById('nq-ma3-color')?.value || '#e040fb';
+    const ma1Name = document.getElementById('nq-ma1-name')?.value || 'MA1';
+    const ma2Name = document.getElementById('nq-ma2-name')?.value || 'MA2';
+    const ma3Name = document.getElementById('nq-ma3-name')?.value || 'MA3';
+    const ma1Period = document.getElementById('nq-ma1-period')?.value || '5';
+    const ma2Period = document.getElementById('nq-ma2-period')?.value || '20';
+    const ma3Period = document.getElementById('nq-ma3-period')?.value || '60';
+    const ma1Show = document.getElementById('nq-ma1-show')?.checked !== false;
+    const ma2Show = document.getElementById('nq-ma2-show')?.checked !== false;
+    const ma3Show = document.getElementById('nq-ma3-show')?.checked !== false;
+    const labelShow = document.getElementById('nq-ma-label-show')?.checked !== false;
+    
+    if (window.ma1Series) window.ma1Series.applyOptions({ color: ma1Color, title: labelShow ? ma1Name : '', lastValueVisible: labelShow });
+    if (window.ma2Series) window.ma2Series.applyOptions({ color: ma2Color, title: labelShow ? ma2Name : '', lastValueVisible: labelShow });
+    if (window.ma3Series) window.ma3Series.applyOptions({ color: ma3Color, title: labelShow ? ma3Name : '', lastValueVisible: labelShow });
+    
+    const settings = {
+        nq: {
+            ma1: { color: ma1Color, name: ma1Name, period: ma1Period, show: ma1Show },
+            ma2: { color: ma2Color, name: ma2Name, period: ma2Period, show: ma2Show },
+            ma3: { color: ma3Color, name: ma3Name, period: ma3Period, show: ma3Show },
+            labelShow: labelShow
+        }
+    };
+    try { localStorage.setItem('crowny_ma_settings', JSON.stringify(settings)); } catch(e) {}
+    
+    // 현재 탭 설정으로 MA 재계산
+    updateLiveCandleChart();
+    console.log('📈 MA 설정 적용 완료');
+}
+
+// localStorage에서 MA 설정 로드
+function loadMASettings() {
+    try {
+        const raw = localStorage.getItem('crowny_ma_settings');
+        if (!raw) return;
+        const s = JSON.parse(raw);
+        
+        if (s.nq) {
+            if (s.nq.ma1) {
+                const el = document.getElementById('nq-ma1-color'); if (el) el.value = s.nq.ma1.color;
+                const n = document.getElementById('nq-ma1-name'); if (n) n.value = s.nq.ma1.name;
+                const p = document.getElementById('nq-ma1-period'); if (p) p.value = s.nq.ma1.period;
+                const sh = document.getElementById('nq-ma1-show'); if (sh) sh.checked = s.nq.ma1.show;
+            }
+            if (s.nq.ma2) {
+                const el = document.getElementById('nq-ma2-color'); if (el) el.value = s.nq.ma2.color;
+                const n = document.getElementById('nq-ma2-name'); if (n) n.value = s.nq.ma2.name;
+                const p = document.getElementById('nq-ma2-period'); if (p) p.value = s.nq.ma2.period;
+                const sh = document.getElementById('nq-ma2-show'); if (sh) sh.checked = s.nq.ma2.show;
+            }
+            if (s.nq.ma3) {
+                const el = document.getElementById('nq-ma3-color'); if (el) el.value = s.nq.ma3.color;
+                const n = document.getElementById('nq-ma3-name'); if (n) n.value = s.nq.ma3.name;
+                const p = document.getElementById('nq-ma3-period'); if (p) p.value = s.nq.ma3.period;
+                const sh = document.getElementById('nq-ma3-show'); if (sh) sh.checked = s.nq.ma3.show;
+            }
+            const lb = document.getElementById('nq-ma-label-show'); if (lb) lb.checked = s.nq.labelShow;
+        }
+        console.log('📈 MA 설정 로드 완료');
+    } catch(e) {}
+}
+
+// 틱 데이터를 캔들로 집계 (거래량 포함)
+function aggregateTicksToCandles(ticks, intervalSec) {
+    if (ticks.length === 0) return [];
+    
+    const candles = [];
+    let currentCandle = null;
+    
+    for (const tick of ticks) {
+        const candleTime = Math.floor(tick.time / intervalSec) * intervalSec;
+        
+        if (!currentCandle || currentCandle.time !== candleTime) {
+            if (currentCandle) candles.push(currentCandle);
+            currentCandle = {
+                time: candleTime,
+                open: tick.price, high: tick.price, low: tick.price, close: tick.price,
+                _tickCount: 1,
+                _volume: tick.volume || 1,
+            };
+        } else {
+            currentCandle.high = Math.max(currentCandle.high, tick.price);
+            currentCandle.low = Math.min(currentCandle.low, tick.price);
+            currentCandle.close = tick.price;
+            currentCandle._tickCount = (currentCandle._tickCount || 0) + 1;
+            currentCandle._volume = (currentCandle._volume || 0) + (tick.volume || 1);
+        }
+    }
+    if (currentCandle) candles.push(currentCandle);
+    
+    return candles;
+}
+
+// 연결 상태 표시
+function updateLiveStatus(connected) {
+    const dot = document.getElementById('live-status-dot');
+    const text = document.getElementById('live-status-text');
+    if (dot) dot.style.background = connected ? '#00ff88' : '#ff4444';
+    if (text) text.textContent = connected ? `Databento Live · ${window.liveTicks.length}틱` : '연결 끊김';
+}
+
+// 실시간 손익 표시
+function updateLivePnL() {
+    const pnlBar = document.getElementById('live-pnl-bar');
+    const pnlEl = document.getElementById('live-pnl');
+    
+    if (!pnlBar || !pnlEl) return;
+    
+    // 오픈 포지션 확인
+    if (!myParticipation || !myParticipation.trades) {
+        pnlBar.style.display = 'none';
+        return;
+    }
+    
+    const openTrades = myParticipation.trades.filter(t => t.status === 'open');
+    if (openTrades.length === 0) {
+        pnlBar.style.display = 'none';
+        return;
+    }
+    
+    pnlBar.style.display = 'block';
+    
+    let totalPnL = 0;
+    for (const trade of openTrades) {
+        const multiplier = trade.contract === 'MNQ' ? 2 : 20;
+        const contracts = trade.contracts || 1;
+        if (trade.side === 'BUY') {
+            totalPnL += (currentPrice - trade.entryPrice) * multiplier * contracts;
+        } else {
+            totalPnL += (trade.entryPrice - currentPrice) * multiplier * contracts;
+        }
+    }
+    
+    pnlEl.textContent = `${totalPnL >= 0 ? '+' : ''}$${totalPnL.toFixed(2)}`;
+    pnlEl.style.color = totalPnL > 0 ? '#00ff88' : totalPnL < 0 ? '#ff4444' : '#888';
+}
+
+// 하위 호환성 유지
+function startRealPriceUpdates() {
+    // startLiveDataFeed에서 처리하므로 여기서는 아무것도 안 함
+    console.log('ℹ️ 실시간 업데이트는 startLiveDataFeed에서 처리');
+}
+
+function fetchRealNQData() {
+    return { candles: [], volume: [] };
+}
+
+function generateSampleData() {
+    return { candles: [], volume: [] };
+}
+
+// 차트에 포지션 라인 그리기 (간소화 버전)
+// 손절가 업데이트 (차트에서 드래그)
+async function updateTradeStopLoss(tradeIndex, newPrice) {
+    try {
+        myParticipation.trades[tradeIndex].stopLoss = newPrice;
+        
+        await db.collection('prop_challenges').doc(myParticipation.challengeId)
+            .collection('participants').doc(myParticipation.participantId)
+            .update({ trades: myParticipation.trades });
+        
+        console.log(`✅ SL 업데이트: ${newPrice.toFixed(2)}`);
+        updateOpenPositions();
+    } catch (error) {
+        console.error('SL 업데이트 실패:', error);
+    }
+}
+
+// 익절가 업데이트 (차트에서 드래그)
+async function updateTradeTakeProfit(tradeIndex, newPrice) {
+    try {
+        myParticipation.trades[tradeIndex].takeProfit = newPrice;
+        
+        await db.collection('prop_challenges').doc(myParticipation.challengeId)
+            .collection('participants').doc(myParticipation.participantId)
+            .update({ trades: myParticipation.trades });
+        
+        console.log(`✅ TP 업데이트: ${newPrice.toFixed(2)}`);
+        updateOpenPositions();
+    } catch (error) {
+        console.error('TP 업데이트 실패:', error);
+    }
+}
+
+function updatePriceFromChart(chart) {
+    // TradingView 차트에서 현재 가격 가져오기
+    chart.getSeries().then(series => {
+        // 마지막 바 데이터 가져오기
+        const lastBar = series.lastBar();
+        if (lastBar) {
+            currentPrice = lastBar.close;
+            updateNQPriceDisplay();
+        }
+    }).catch(err => {
+        console.log('차트 데이터 로드 중...');
+        // Fallback: 모의 데이터
+        updateNQPrice();
+    });
+}
+
+function connectPriceWebSocket() {
+    // NQ 선물 가격 - Yahoo Finance API 사용 (무료, 15분 지연)
+    // 실시간은 유료이므로 모의 데이터 생성
+    updateNQPrice();
+    
+    // 5초마다 가격 업데이트 (모의)
+    if (window.nqPriceInterval) clearInterval(window.nqPriceInterval);
+    
+    window.nqPriceInterval = setInterval(updateNQPrice, 5000);
+}
+
+async function updateNQPrice() {
+    try {
+        // Railway 서버에서 Databento 실시간 NQ 가격 조회
+        const PRICE_SERVER = 'https://web-production-26db6.up.railway.app';
+        const response = await fetch(`${PRICE_SERVER}/api/market/live`);
+        const data = await response.json();
+        
+        if (data && data.price) {
+            currentPrice = data.price;
+            console.log(`📊 NQ 가격: ${currentPrice.toFixed(2)} (${data.source}) bid:${data.bid} ask:${data.ask}`);
+        } else {
+            if (!currentPrice) {
+                currentPrice = 25400;
+            }
+            console.log('⚠️ NQ 데이터 없음 (장 마감 가능성)');
+        }
+        
+        updateNQPriceDisplay();
+        
+    } catch (error) {
+        console.error('Price fetch error:', error);
+        if (!currentPrice) currentPrice = 25400;
+        updateNQPriceDisplay();
+    }
+}
+
+function updateNQPriceDisplay() {
+    const contract = document.getElementById('futures-contract')?.value || 'NQ';
+    const multiplier = contract === 'NQ' ? 20 : 2;
+    const tickSize = 0.25;
+    const tickValue = multiplier * tickSize;
+    
+    const priceEl = document.getElementById('current-nq-price');
+    const tickSizeEl = document.getElementById('tick-size');
+    const pointValueEl = document.getElementById('point-value');
+    const tickValueEl = document.getElementById('tick-value');
+    
+    if (priceEl) priceEl.textContent = currentPrice.toFixed(2);
+    if (tickSizeEl) tickSizeEl.textContent = tickSize.toFixed(2);
+    if (pointValueEl) pointValueEl.textContent = `$${multiplier}`;
+    if (tickValueEl) tickValueEl.textContent = `$${tickValue.toFixed(2)}`;
+    
+    updateOpenPositions();
+}
+
+function updateContractSpecs() {
+    // 하단 폼 상품 변경 → 탭 심볼 동기화
+    const formContract = document.getElementById('futures-contract')?.value;
+    if (formContract) {
+        const tab = getActiveTab();
+        if (tab && tab.symbol !== formContract) {
+            tab.symbol = formContract;
+            const tabSym = document.getElementById('tab-symbol');
+            if (tabSym) tabSym.value = formContract;
+            updateChartLabel();
+            renderChartTabs();
+            saveChartTabs();
+            drawPositionLinesLW();
+        }
+    }
+    updateNQPriceDisplay();
+}
+
+// (첫 번째 executeFuturesTrade 제거됨 - 아래 고급 버전이 최종)
+
+// SL/TP 자동 청산 (confirm 없이)
+async function autoClosePosition(tradeIndex, reason) {
+    if (!myParticipation) return;
+    
+    const trade = myParticipation.trades[tradeIndex];
+    if (trade.status !== 'open') return;
+    
+    const exitPrice = reason === 'SL' ? trade.stopLoss : 
+                      reason === 'TRAIL-SL' ? trade.stopLoss :
+                      reason === 'TP' ? trade.takeProfit : currentPrice;
+    
+    const priceDiff = trade.side === 'BUY' 
+        ? (exitPrice - trade.entryPrice) 
+        : (trade.entryPrice - exitPrice);
+    
+    const pnl = priceDiff * trade.multiplier * trade.contracts;
+    const fee = trade.fee || (RISK_CONFIG.tradeFeeRoundTrip * trade.contracts);
+    const netPnl = pnl - fee;
+    
+    try {
+        trade.status = 'closed';
+        trade.exitPrice = exitPrice;
+        trade.pnl = netPnl;
+        trade.fee = fee;
+        trade.closedAt = new Date();
+        trade.closeReason = reason; // 'SL', 'TP', 'ADMIN'
+        
+        const newBalance = myParticipation.currentBalance + trade.margin + netPnl;
+        myParticipation.currentBalance = newBalance;
+        
+        // 일일 PnL 누적
+        myParticipation.dailyPnL = (myParticipation.dailyPnL || 0) + netPnl;
+        
+        await db.collection('prop_challenges').doc(myParticipation.challengeId)
+            .collection('participants').doc(myParticipation.participantId)
+            .update({ 
+                trades: myParticipation.trades,
+                currentBalance: newBalance,
+                dailyPnL: myParticipation.dailyPnL
+            });
+        
+        const emoji = reason === 'TP' ? '🟢' : reason === 'TRAIL-SL' ? '🔄' : '🔴';
+        console.log(`${emoji} 자동 청산 (${reason}): ${trade.contract} ${trade.side} @ ${exitPrice.toFixed(2)} → $${netPnl.toFixed(2)}`);
+        
+        // 알림
+        const reasonText = reason === 'TRAIL-SL' ? '트레일링 스탑' : reason;
+        alert(`${emoji} ${reasonText} 자동 청산!\n\n${trade.contract} ${trade.side} × ${trade.contracts}\n진입: ${trade.entryPrice.toFixed(2)}\n청산: ${exitPrice.toFixed(2)}\n순손익: $${netPnl.toFixed(2)}`);
+        
+        updateTradingUI();
+        updateOpenPositions();
+        loadTradeHistory();
+        
+        // 차트 라인 정리
+        setTimeout(() => { drawPositionLinesLW(); }, 300);
+        
+        await checkDailyLossLimit();
+        await checkCumulativeLiquidation();
+        updateRiskGaugeUI();
+        
+    } catch (error) {
+        console.error('자동 청산 실패:', error);
+    }
+}
+
+async function closePosition(tradeIndex) {
+    if (!myParticipation) return;
+    
+    const trade = myParticipation.trades[tradeIndex];
+    if (!trade || trade.status !== 'open') return;
+    
+    const priceDiff = trade.side === 'BUY' 
+        ? (currentPrice - trade.entryPrice) 
+        : (trade.entryPrice - currentPrice);
+    
+    const pnl = priceDiff * trade.multiplier * trade.contracts;
+    const fee = trade.fee || (RISK_CONFIG.tradeFeeRoundTrip * trade.contracts);
+    const netPnl = pnl - fee;
+    
+    try {
+        trade.status = 'closed';
+        trade.exitPrice = currentPrice;
+        trade.pnl = netPnl;
+        trade.fee = fee;
+        trade.closedAt = new Date();
+        
+        // 증거금 반환 + 순손익 반영
+        const newBalance = myParticipation.currentBalance + trade.margin + netPnl;
+        myParticipation.currentBalance = newBalance;
+        
+        // 일일 PnL 누적
+        myParticipation.dailyPnL = (myParticipation.dailyPnL || 0) + netPnl;
+        
+        await db.collection('prop_challenges').doc(myParticipation.challengeId)
+            .collection('participants').doc(myParticipation.participantId)
+            .update({ 
+                trades: myParticipation.trades,
+                currentBalance: newBalance,
+                dailyPnL: myParticipation.dailyPnL
+            });
+        
+        console.log(`✅ 청산: ${trade.side} ${trade.contract} x${trade.contracts} | PnL: $${netPnl.toFixed(2)}`);
+        
+        updateTradingUI();
+        updateOpenPositions();
+        loadTradeHistory();
+        
+        // ===== RISK CHECK: 일일 손실 한도 =====
+        await checkDailyLossLimit();
+        
+        // ===== RISK CHECK: 누적 청산 =====
+        await checkCumulativeLiquidation();
+        
+        updateRiskGaugeUI();
+        
+        // 차트 라인 업데이트 + 자동 정렬
+        setTimeout(() => { drawPositionLinesLW(); scrollToLatest(); }, 500);
+    } catch (error) {
+        alert('청산 실패: ' + error.message);
+    }
+}
+
+function updateOpenPositions() {
+    if (!myParticipation || !myParticipation.trades) return;
+    
+    const container = document.getElementById('open-positions');
+    const openTrades = myParticipation.trades.filter(t => t.status === 'open');
+    
+    // ===== 트레일링 스탑 처리 =====
+    let trailingUpdated = false;
+    for (let i = 0; i < myParticipation.trades.length; i++) {
+        const trade = myParticipation.trades[i];
+        if (trade.status !== 'open' || !currentPrice || !trade.trailingStop || !trade.trailingStop.enabled) continue;
+        
+        const ts = trade.trailingStop;
+        
+        if (trade.side === 'BUY') {
+            // BUY: 가격이 올라가면 SL도 따라 올림
+            const profit = currentPrice - trade.entryPrice;
+            
+            // 활성화 체크
+            if (!ts.activated && profit >= ts.activation) {
+                ts.activated = true;
+                console.log(`🔄 트레일링 활성화 (BUY #${i}): 수익 ${profit.toFixed(2)}pt ≥ ${ts.activation}pt`);
+            }
+            
+            if (ts.activated) {
+                // 최고가 갱신
+                if (currentPrice > (ts.highWaterMark || trade.entryPrice)) {
+                    ts.highWaterMark = currentPrice;
+                    const newSL = currentPrice - ts.distance;
+                    // SL은 위로만 움직임 (더 유리한 방향)
+                    if (!trade.stopLoss || newSL > trade.stopLoss) {
+                        trade.stopLoss = Math.round(newSL * 4) / 4; // 0.25 단위로 반올림
+                        trailingUpdated = true;
+                        console.log(`📈 트레일링 SL 상향: ${trade.stopLoss.toFixed(2)} (최고: ${ts.highWaterMark.toFixed(2)})`);
+                    }
+                }
+            }
+        } else {
+            // SELL: 가격이 내려가면 SL도 따라 내림
+            const profit = trade.entryPrice - currentPrice;
+            
+            // 활성화 체크
+            if (!ts.activated && profit >= ts.activation) {
+                ts.activated = true;
+                console.log(`🔄 트레일링 활성화 (SELL #${i}): 수익 ${profit.toFixed(2)}pt ≥ ${ts.activation}pt`);
+            }
+            
+            if (ts.activated) {
+                // 최저가 갱신
+                if (currentPrice < (ts.highWaterMark || trade.entryPrice)) {
+                    ts.highWaterMark = currentPrice;
+                    const newSL = currentPrice + ts.distance;
+                    // SL은 아래로만 움직임 (더 유리한 방향)
+                    if (!trade.stopLoss || newSL < trade.stopLoss) {
+                        trade.stopLoss = Math.round(newSL * 4) / 4;
+                        trailingUpdated = true;
+                        console.log(`📉 트레일링 SL 하향: ${trade.stopLoss.toFixed(2)} (최저: ${ts.highWaterMark.toFixed(2)})`);
+                    }
+                }
+            }
+        }
+    }
+    
+    // 트레일링 SL 변경 시 Firestore 저장 + 차트 라인 갱신 (쓰로틀)
+    if (trailingUpdated) {
+        // Firestore 저장 (디바운스 500ms)
+        if (window._trailingSaveTimer) clearTimeout(window._trailingSaveTimer);
+        window._trailingSaveTimer = setTimeout(async () => {
+            try {
+                await db.collection('prop_challenges').doc(myParticipation.challengeId)
+                    .collection('participants').doc(myParticipation.participantId)
+                    .update({ trades: myParticipation.trades });
+            } catch (e) { console.warn('트레일링 저장 실패:', e); }
+        }, 500);
+        
+        // 차트 라인 즉시 갱신
+        drawPositionLinesLW();
+    }
+    
+    // ===== SL/TP 자동 트리거 =====
+    for (let i = 0; i < myParticipation.trades.length; i++) {
+        const trade = myParticipation.trades[i];
+        if (trade.status !== 'open' || !currentPrice) continue;
+        
+        let shouldClose = false;
+        let reason = '';
+        
+        if (trade.stopLoss) {
+            const slHit = trade.side === 'BUY' 
+                ? currentPrice <= trade.stopLoss 
+                : currentPrice >= trade.stopLoss;
+            if (slHit) {
+                shouldClose = true;
+                reason = trade.trailingStop?.activated ? 'TRAIL-SL' : 'SL';
+            }
+        }
+        
+        if (trade.takeProfit) {
+            const tpHit = trade.side === 'BUY' 
+                ? currentPrice >= trade.takeProfit 
+                : currentPrice <= trade.takeProfit;
+            if (tpHit) {
+                shouldClose = true;
+                reason = 'TP';
+            }
+        }
+        
+        if (shouldClose) {
+            autoClosePosition(i, reason);
+            return; // 재귀 방지: 한 번에 하나씩
+        }
+    }
+    
+    // 포지션 카운트 바 업데이트
+    updatePositionCountBar();
+    
+    if (openTrades.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:var(--accent); padding:1rem;">오픈 포지션 없음</p>';
+        return;
+    }
+    
+    container.innerHTML = '';
+    
+    openTrades.forEach((trade, index) => {
+        const actualIndex = myParticipation.trades.indexOf(trade);
+        const priceDiff = trade.side === 'BUY' 
+            ? (currentPrice - trade.entryPrice) 
+            : (trade.entryPrice - currentPrice);
+        
+        const pnl = priceDiff * trade.multiplier * trade.contracts;
+        const pnlColor = pnl >= 0 ? '#0066cc' : '#cc0000';
+        
+        const div = document.createElement('div');
+        div.style.cssText = 'padding:1rem; background:var(--bg); border-radius:6px; margin-bottom:0.5rem; border-left:4px solid ' + (trade.side === 'BUY' ? '#0066cc' : '#cc0000');
+        
+        // SL/TP 인라인 수정 UI
+        const ts = trade.trailingStop;
+        const trailBadge = (ts && ts.enabled) 
+            ? `<span style="display:inline-block; background:${ts.activated ? '#ff9800' : '#666'}; color:white; font-size:0.6rem; padding:1px 4px; border-radius:3px; margin-left:4px;">${ts.activated ? '🔄 TRAIL' : '⏳ 대기'}</span>` 
+            : '';
+        
+        let slTPHTML = `
+            <div style="display:flex; gap:4px; margin-top:6px; font-size:0.8rem; flex-wrap:wrap; align-items:center;">
+                <span style="color:#ff4444;">SL:</span>
+                <button onclick="adjustSLTP(${actualIndex},'sl',-0.25)" style="background:#333; color:#ff4444; border:none; border-radius:3px; padding:1px 6px; cursor:pointer; font-size:0.75rem;">−</button>
+                <span id="sl-val-${actualIndex}" style="color:#ff4444; font-weight:700; min-width:60px; text-align:center; cursor:pointer;" onclick="editSLTP(${actualIndex},'sl')">${trade.stopLoss ? trade.stopLoss.toFixed(2) : '없음'}</span>
+                <button onclick="adjustSLTP(${actualIndex},'sl',+0.25)" style="background:#333; color:#ff4444; border:none; border-radius:3px; padding:1px 6px; cursor:pointer; font-size:0.75rem;">+</button>
+                <span style="margin-left:6px; color:#00cc00;">TP:</span>
+                <button onclick="adjustSLTP(${actualIndex},'tp',-0.25)" style="background:#333; color:#00cc00; border:none; border-radius:3px; padding:1px 6px; cursor:pointer; font-size:0.75rem;">−</button>
+                <span id="tp-val-${actualIndex}" style="color:#00cc00; font-weight:700; min-width:60px; text-align:center; cursor:pointer;" onclick="editSLTP(${actualIndex},'tp')">${trade.takeProfit ? trade.takeProfit.toFixed(2) : '없음'}</span>
+                <button onclick="adjustSLTP(${actualIndex},'tp',+0.25)" style="background:#333; color:#00cc00; border:none; border-radius:3px; padding:1px 6px; cursor:pointer; font-size:0.75rem;">+</button>
+                ${trailBadge}
+            </div>
+        `;
+        
+        if (ts && ts.enabled && ts.activated) {
+            const hwm = ts.highWaterMark || trade.entryPrice;
+            slTPHTML += `<div style="font-size:0.7rem; color:#ff9800; margin-top:2px;">🔄 최${trade.side === 'BUY' ? '고' : '저'}가: ${hwm.toFixed(2)} | 거리: ${ts.distance}pt</div>`;
+        }
+        
+        // 분할 청산 버튼 (2계약 이상)
+        const partialCloseBtn = trade.contracts > 1 
+            ? `<button onclick="partialClosePosition(${actualIndex})" style="background:#886600; color:white; border:none; padding:0.3rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.65rem;">📊 분할</button>`
+            : '';
+        
+        div.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div style="flex:1;">
+                    <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.3rem;">
+                        <strong style="color:${trade.side === 'BUY' ? '#0066cc' : '#cc0000'}">${trade.side}</strong> 
+                        <span>${trade.contract} × ${trade.contracts}</span>
+                        <span style="font-size:0.75rem; color:var(--accent);">${trade.orderType}</span>
+                    </div>
+                    <div style="font-size:0.85rem;">
+                        진입: ${trade.entryPrice.toFixed(2)} → 현재: ${currentPrice.toFixed(2)}
+                    </div>
+                    ${slTPHTML}
+                    <div style="margin-top:0.5rem;">
+                        <strong style="color:${pnlColor}; font-size:1.2rem;">
+                            ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)}
+                        </strong>
+                        <span style="font-size:0.8rem; color:var(--accent); margin-left:0.5rem;">
+                            (${((pnl / trade.margin) * 100).toFixed(2)}%)
+                        </span>
+                    </div>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:0.3rem;">
+                    <button onclick="closePosition(${actualIndex})" style="background:#cc0000; color:white; border:none; padding:0.5rem 0.8rem; border-radius:4px; cursor:pointer; font-size:0.85rem; font-weight:bold;">
+                        ✕ CLOSE
+                    </button>
+                    ${partialCloseBtn}
+                    ${(ts && ts.enabled) ? `
+                        <button onclick="toggleTrailingForTrade(${actualIndex})" style="background:${ts.activated ? '#ff9800' : '#666'}; color:white; border:none; padding:0.3rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.6rem;">
+                            ${ts.activated ? '🔄 ON' : '⏸ OFF'}
+                        </button>
+                    ` : `
+                        <button onclick="enableTrailingForTrade(${actualIndex})" style="background:#444; color:#aaa; border:none; padding:0.3rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.6rem;">
+                            +트레일
+                        </button>
+                    `}
+                </div>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+async function modifyPosition(tradeIndex) {
+    const trade = myParticipation.trades[tradeIndex];
+    if (trade.status !== 'open') return;
+    
+    const newSL = prompt(`손절가 수정:\n현재: ${trade.stopLoss ? trade.stopLoss.toFixed(2) : '없음'}`, trade.stopLoss || '');
+    const newTP = prompt(`익절가 수정:\n현재: ${trade.takeProfit ? trade.takeProfit.toFixed(2) : '없음'}`, trade.takeProfit || '');
+    
+    try {
+        trade.stopLoss = newSL ? parseFloat(newSL) : null;
+        trade.takeProfit = newTP ? parseFloat(newTP) : null;
+        
+        await db.collection('prop_challenges').doc(myParticipation.challengeId)
+            .collection('participants').doc(myParticipation.participantId)
+            .update({ trades: myParticipation.trades });
+        
+        updateOpenPositions();
+        drawPositionLinesLW();
+    } catch (error) {
+        alert('수정 실패: ' + error.message);
+    }
+}
+
+// ★ SL/TP 인라인 ±0.25 조정
+async function adjustSLTP(tradeIndex, type, delta) {
+    const trade = myParticipation.trades[tradeIndex];
+    if (!trade || trade.status !== 'open') return;
+    
+    if (type === 'sl') {
+        trade.stopLoss = Math.round(((trade.stopLoss || trade.entryPrice) + delta) * 4) / 4;
+    } else {
+        trade.takeProfit = Math.round(((trade.takeProfit || trade.entryPrice) + delta) * 4) / 4;
+    }
+    
+    const el = document.getElementById(`${type === 'sl' ? 'sl' : 'tp'}-val-${tradeIndex}`);
+    if (el) el.textContent = (type === 'sl' ? trade.stopLoss : trade.takeProfit).toFixed(2);
+    
+    drawPositionLinesLW();
+    
+    if (window._sltpSaveTimer) clearTimeout(window._sltpSaveTimer);
+    window._sltpSaveTimer = setTimeout(async () => {
+        try {
+            await db.collection('prop_challenges').doc(myParticipation.challengeId)
+                .collection('participants').doc(myParticipation.participantId)
+                .update({ trades: myParticipation.trades });
+        } catch (e) { console.warn('SL/TP 저장 실패:', e); }
+    }, 500);
+}
+
+// ★ SL/TP 직접 입력
+async function editSLTP(tradeIndex, type) {
+    const trade = myParticipation.trades[tradeIndex];
+    if (!trade || trade.status !== 'open') return;
+    
+    const label = type === 'sl' ? '손절가' : '익절가';
+    const current = type === 'sl' ? trade.stopLoss : trade.takeProfit;
+    const input = prompt(`${label} 직접 입력:`, current ? current.toFixed(2) : '');
+    if (!input) return;
+    
+    const val = parseFloat(input);
+    if (isNaN(val) || val < 1000) { alert('유효하지 않은 가격'); return; }
+    
+    if (type === 'sl') trade.stopLoss = val;
+    else trade.takeProfit = val;
+    
+    drawPositionLinesLW();
+    
+    try {
+        await db.collection('prop_challenges').doc(myParticipation.challengeId)
+            .collection('participants').doc(myParticipation.participantId)
+            .update({ trades: myParticipation.trades });
+    } catch (e) { alert('저장 실패: ' + e.message); }
+    updateOpenPositions();
+}
+
+// ★ 분할 청산
+async function partialClosePosition(tradeIndex) {
+    const trade = myParticipation.trades[tradeIndex];
+    if (!trade || trade.status !== 'open' || trade.contracts <= 1) return;
+    
+    const input = prompt(`분할 청산\n\n현재: ${trade.side} ${trade.contract} × ${trade.contracts}계약\n\n몇 계약 청산? (1 ~ ${trade.contracts - 1})`, '1');
+    if (!input) return;
+    
+    const closeCount = parseInt(input);
+    if (isNaN(closeCount) || closeCount < 1 || closeCount >= trade.contracts) {
+        alert(`1 ~ ${trade.contracts - 1} 사이 숫자를 입력하세요`);
+        return;
+    }
+    
+    const remainCount = trade.contracts - closeCount;
+    const priceDiff = trade.side === 'BUY' ? (currentPrice - trade.entryPrice) : (trade.entryPrice - currentPrice);
+    const closePnl = priceDiff * trade.multiplier * closeCount;
+    const closeFee = (trade.fee / trade.contracts) * closeCount;
+    const netPnl = closePnl - closeFee;
+    const closeMargin = (trade.margin / trade.contracts) * closeCount;
+    
+    try {
+        trade.contracts = remainCount;
+        trade.margin = trade.margin - closeMargin;
+        trade.fee = trade.fee - closeFee;
+        
+        const closedTrade = {
+            ...JSON.parse(JSON.stringify(trade)),
+            contracts: closeCount, margin: closeMargin, fee: closeFee,
+            exitPrice: currentPrice, pnl: netPnl, status: 'closed',
+            closedAt: new Date(), closeReason: `분할청산 (${closeCount}/${closeCount + remainCount})`,
+        };
+        
+        myParticipation.trades.push(closedTrade);
+        myParticipation.currentBalance += closeMargin + netPnl;
+        
+        await db.collection('prop_challenges').doc(myParticipation.challengeId)
+            .collection('participants').doc(myParticipation.participantId)
+            .update({ trades: myParticipation.trades, currentBalance: myParticipation.currentBalance });
+        
+        console.log(`📊 분할 청산: ${closeCount}계약 청산, ${remainCount}계약 유지`);
+        updateTradingUI(); updateOpenPositions(); updateRiskGaugeUI(); drawPositionLinesLW();
+    } catch (error) {
+        alert('분할 청산 실패: ' + error.message);
+    }
+}
+
+// 기존 포지션에 트레일링 스탑 활성화/비활성화
+async function toggleTrailingForTrade(tradeIndex) {
+    const trade = myParticipation.trades[tradeIndex];
+    if (!trade || trade.status !== 'open' || !trade.trailingStop) return;
+    
+    trade.trailingStop.enabled = !trade.trailingStop.enabled;
+    if (!trade.trailingStop.enabled) {
+        trade.trailingStop.activated = false;
+    }
+    
+    try {
+        await db.collection('prop_challenges').doc(myParticipation.challengeId)
+            .collection('participants').doc(myParticipation.participantId)
+            .update({ trades: myParticipation.trades });
+        
+        const status = trade.trailingStop.enabled ? '활성화' : '비활성화';
+        console.log(`🔄 트레일링 ${status}: Trade #${tradeIndex}`);
+        updateOpenPositions();
+    } catch (e) {
+        console.error('트레일링 토글 실패:', e);
+    }
+}
+
+// 트레일링 없는 포지션에 트레일링 추가
+async function enableTrailingForTrade(tradeIndex) {
+    const trade = myParticipation.trades[tradeIndex];
+    if (!trade || trade.status !== 'open') return;
+    
+    const distance = prompt('트레일링 거리 (포인트):', '30');
+    if (!distance) return;
+    
+    const activation = prompt('활성화 수익 (포인트, 0=즉시):', '10');
+    
+    const distVal = parseFloat(distance) || 30;
+    const actVal = parseFloat(activation) || 0;
+    
+    trade.trailingStop = {
+        enabled: true,
+        distance: distVal,
+        activation: actVal,
+        highWaterMark: trade.side === 'BUY' ? Math.max(currentPrice, trade.entryPrice) : Math.min(currentPrice, trade.entryPrice),
+        activated: actVal === 0
+    };
+    
+    // SL이 없으면 자동 설정
+    if (!trade.stopLoss) {
+        if (trade.side === 'BUY') {
+            trade.stopLoss = Math.round((currentPrice - distVal) * 4) / 4;
+        } else {
+            trade.stopLoss = Math.round((currentPrice + distVal) * 4) / 4;
+        }
+    }
+    
+    try {
+        await db.collection('prop_challenges').doc(myParticipation.challengeId)
+            .collection('participants').doc(myParticipation.participantId)
+            .update({ trades: myParticipation.trades });
+        
+        alert(`✅ 트레일링 스탑 추가!\n거리: ${distVal}pt\nSL: ${trade.stopLoss.toFixed(2)}`);
+        updateOpenPositions();
+        drawPositionLinesLW();
+    } catch (e) {
+        alert('설정 실패: ' + e.message);
+    }
+}
+
+async function loadTradeHistory() {
+    if (!myParticipation || !myParticipation.trades) return;
+    
+    const container = document.getElementById('trade-history');
+    container.innerHTML = '';
+    
+    const closedTrades = myParticipation.trades.filter(t => t.status === 'closed');
+    
+    if (closedTrades.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:var(--accent); padding:1rem;">거래 내역 없음</p>';
+        return;
+    }
+    
+    closedTrades.slice().reverse().forEach((trade) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'padding:0.8rem; background:var(--bg); border-radius:6px; margin-bottom:0.5rem;';
+        
+        const sideColor = trade.side === 'BUY' ? '#0066cc' : '#cc0000';
+        const pnlColor = trade.pnl >= 0 ? '#0066cc' : '#cc0000';
+        
+        div.innerHTML = `
+            <div style="display:flex; justify-content:space-between;">
+                <div>
+                    <strong style="color:${sideColor}">${trade.side}</strong> ${trade.contract} × ${trade.contracts}
+                    <br>
+                    <span style="font-size:0.85rem; color:var(--accent);">
+                        ${trade.entryPrice.toFixed(2)} → ${trade.exitPrice.toFixed(2)}
+                    </span>
+                </div>
+                <div style="text-align:right;">
+                    <strong style="color:${pnlColor}; font-size:1.1rem;">
+                        ${trade.pnl >= 0 ? '+' : ''}$${trade.pnl.toFixed(2)}
+                    </strong>
+                    <br>
+                    <span style="font-size:0.75rem; color:var(--accent);">
+                        ${new Date(trade.closedAt.seconds * 1000).toLocaleString()}
+                    </span>
+                </div>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// Remove crypto pair change listener
+document.addEventListener('DOMContentLoaded', () => {
+    // NQ futures - no pair selection needed
+});
+
+// ========== NINJATRADER-STYLE FEATURES ==========
+
+function toggleOrderInputs() {
+    const orderType = document.getElementById('order-type').value;
+    const priceInputs = document.getElementById('price-inputs');
+    const limitDiv = document.getElementById('limit-price-div');
+    const stopDiv = document.getElementById('stop-price-div');
+    
+    if (orderType === 'MARKET') {
+        priceInputs.style.display = 'none';
+    } else if (orderType === 'LIMIT') {
+        priceInputs.style.display = 'block';
+        limitDiv.style.display = 'block';
+        stopDiv.style.display = 'none';
+        document.getElementById('limit-price').value = currentPrice.toFixed(2);
+    } else if (orderType === 'STOP') {
+        priceInputs.style.display = 'block';
+        limitDiv.style.display = 'none';
+        stopDiv.style.display = 'block';
+        document.getElementById('stop-price').value = currentPrice.toFixed(2);
+    } else if (orderType === 'STOP_LIMIT') {
+        priceInputs.style.display = 'block';
+        limitDiv.style.display = 'block';
+        stopDiv.style.display = 'block';
+        document.getElementById('limit-price').value = currentPrice.toFixed(2);
+        document.getElementById('stop-price').value = currentPrice.toFixed(2);
+    }
+}
+
+function toggleSLTP() {
+    const useSLTP = document.getElementById('use-sl-tp').checked;
+    const inputs = document.getElementById('sl-tp-inputs');
+    inputs.style.display = useSLTP ? 'block' : 'none';
+}
+
+// 트레일링 스탑 옵션 토글
+function toggleTrailingOptions() {
+    const use = document.getElementById('use-trailing-stop').checked;
+    const opts = document.getElementById('trailing-options');
+    if (opts) opts.style.display = use ? 'block' : 'none';
+}
+
+// CLOSE 버튼 — 가장 최근 오픈 포지션 청산
+async function closeLastPosition() {
+    if (window._closeLoading) return;
+    window._closeLoading = true;
+    setTimeout(() => { window._closeLoading = false; }, 1000);
+    if (!myParticipation || !myParticipation.trades) {
+        alert('오픈 포지션이 없습니다');
+        return;
+    }
+    
+    // 가장 최근 open 포지션 찾기
+    let lastIndex = -1;
+    for (let i = myParticipation.trades.length - 1; i >= 0; i--) {
+        if (myParticipation.trades[i].status === 'open') {
+            lastIndex = i;
+            break;
+        }
+    }
+    
+    if (lastIndex === -1) {
+        alert('오픈 포지션이 없습니다');
+        return;
+    }
+    
+    const trade = myParticipation.trades[lastIndex];
+    const priceDiff = trade.side === 'BUY' 
+        ? (currentPrice - trade.entryPrice) 
+        : (trade.entryPrice - currentPrice);
+    const pnl = priceDiff * trade.multiplier * trade.contracts;
+    
+    if (!confirm(`마지막 포지션 청산\n\n${trade.side} ${trade.contract} ×${trade.contracts}\n진입: ${trade.entryPrice.toFixed(2)} → 현재: ${currentPrice.toFixed(2)}\n예상 손익: ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)}\n\n청산하시겠습니까?`)) return;
+    
+    await closePosition(lastIndex);
+}
+
+// FLATTEN 버튼 — 전체 포지션 즉시 청산
+async function flattenAllPositions() {
+    if (!myParticipation || !myParticipation.trades) {
+        alert('오픈 포지션이 없습니다');
+        return;
+    }
+    
+    const openTrades = myParticipation.trades.filter(t => t.status === 'open');
+    if (openTrades.length === 0) {
+        alert('오픈 포지션이 없습니다');
+        return;
+    }
+    
+    let totalPnL = 0;
+    for (const trade of openTrades) {
+        const priceDiff = trade.side === 'BUY' 
+            ? (currentPrice - trade.entryPrice) 
+            : (trade.entryPrice - currentPrice);
+        totalPnL += priceDiff * trade.multiplier * trade.contracts;
+    }
+    
+    if (!confirm(`🚨 FLATTEN — 전체 포지션 즉시 청산\n\n오픈: ${openTrades.length}개\n예상 총 손익: ${totalPnL >= 0 ? '+' : ''}$${totalPnL.toFixed(2)}\n\n모두 청산하시겠습니까?`)) return;
+    
+    await closeAllPositions();
+}
+
+// 포지션 카운트 바 업데이트
+function updatePositionCountBar() {
+    const bar = document.getElementById('position-count-bar');
+    const text = document.getElementById('position-count-text');
+    if (!bar || !text) return;
+    
+    if (!myParticipation || !myParticipation.trades) {
+        bar.style.display = 'none';
+        return;
+    }
+    
+    const openTrades = myParticipation.trades.filter(t => t.status === 'open');
+    
+    if (openTrades.length === 0) {
+        bar.style.display = 'none';
+        return;
+    }
+    
+    bar.style.display = 'block';
+    
+    let totalPnL = 0;
+    let buyCount = 0, sellCount = 0;
+    for (const trade of openTrades) {
+        const priceDiff = trade.side === 'BUY' 
+            ? (currentPrice - trade.entryPrice) 
+            : (trade.entryPrice - currentPrice);
+        totalPnL += priceDiff * trade.multiplier * trade.contracts;
+        if (trade.side === 'BUY') buyCount++; else sellCount++;
+    }
+    
+    const pnlColor = totalPnL >= 0 ? '#0066cc' : '#cc0000';
+    text.innerHTML = `🟢 ${openTrades.length}개 포지션 (B:${buyCount} S:${sellCount}) | <strong style="color:${pnlColor}">${totalPnL >= 0 ? '+' : ''}$${totalPnL.toFixed(2)}</strong>`;
+}
+
+async function closeAllPositions(contractFilter) {
+    if (window._flattenLoading) return;
+    window._flattenLoading = true;
+    setTimeout(() => { window._flattenLoading = false; }, 1000);
+    
+    if (!myParticipation || !myParticipation.trades) return;
+    
+    // contract 필터: 특정 상품만 또는 전체
+    const openTrades = myParticipation.trades.filter(t => 
+        t.status === 'open' && (!contractFilter || t.contract === contractFilter)
+    );
+    
+    if (openTrades.length === 0) {
+        alert(`${contractFilter || '전체'} 오픈 포지션이 없습니다`);
+        return;
+    }
+    
+    try {
+        let totalPnL = 0;
+        let totalNetPnL = 0;
+        
+        for (let i = 0; i < myParticipation.trades.length; i++) {
+            const trade = myParticipation.trades[i];
+            if (trade.status === 'open' && (!contractFilter || trade.contract === contractFilter)) {
+                const priceDiff = trade.side === 'BUY' 
+                    ? (currentPrice - trade.entryPrice) 
+                    : (trade.entryPrice - currentPrice);
+                
+                const pnl = priceDiff * trade.multiplier * trade.contracts;
+                const fee = trade.fee || (RISK_CONFIG.tradeFeeRoundTrip * trade.contracts);
+                const netPnl = pnl - fee;
+                
+                trade.status = 'closed';
+                trade.exitPrice = currentPrice;
+                trade.pnl = netPnl;
+                trade.fee = fee;
+                trade.closedAt = new Date();
+                
+                totalPnL += netPnl + trade.margin;
+                totalNetPnL += netPnl;
+            }
+        }
+        
+        myParticipation.currentBalance += totalPnL;
+        myParticipation.dailyPnL = (myParticipation.dailyPnL || 0) + totalNetPnL;
+        
+        await db.collection('prop_challenges').doc(myParticipation.challengeId)
+            .collection('participants').doc(myParticipation.participantId)
+            .update({ 
+                trades: myParticipation.trades,
+                currentBalance: myParticipation.currentBalance,
+                dailyPnL: myParticipation.dailyPnL
+            });
+        
+        alert(`✅ ${contractFilter || '전체'} 포지션 청산!\n손익: $${totalNetPnL.toFixed(2)}`);
+        updateTradingUI();
+        updateOpenPositions();
+        loadTradeHistory();
+        
+        // 차트 라인 정리
+        setTimeout(() => { drawPositionLinesLW(); scrollToLatest(); }, 300);
+        
+        // ===== RISK CHECK =====
+        await checkDailyLossLimit();
+        await checkCumulativeLiquidation();
+        updateRiskGaugeUI();
+    } catch (error) {
+        alert('청산 실패: ' + error.message);
+    }
+}
+
+// Modify executeFuturesTrade to support advanced order types + SLOT SYSTEM + RISK CHECK
+async function executeFuturesTrade(side) {
+    // 더블클릭 방지 (1초)
+    if (window._tradeLoading) return;
+    window._tradeLoading = true;
+    setTimeout(() => { window._tradeLoading = false; }, 1000);
+    
+    if (!myParticipation) {
+        alert('챌린지에 먼저 참가하세요');
+        return;
+    }
+    
+    // ===== RISK CHECK: 일일 한도 =====
+    if (myParticipation.dailyLocked) {
+        const reason = myParticipation.adminSuspended 
+            ? `⛔ 관리자에 의해 거래가 중단되었습니다.\n사유: ${myParticipation.suspendReason || '미공개'}`
+            : '⚠️ 오늘의 거래가 종료되었습니다.\n내일 다시 도전하세요!';
+        alert(reason);
+        return;
+    }
+    
+    // ===== SLOT SYSTEM: CRNY 기반 계약 수 자동 계산 =====
+    const crnyBalance = userWallet?.balances?.crny || 0;
+    const slots = calculateSlots(crnyBalance);
+    
+    if (slots === 0) {
+        alert('🔴 CRNY를 보유해야 거래할 수 있습니다.\n\nWALLET에서 CRNY 잔액을 확인해주세요.');
+        return;
+    }
+    
+    const contract = document.getElementById('futures-contract').value;
+    
+    // ===== 상품 제한 체크 =====
+    const allowedProduct = myParticipation.allowedProduct || 'BOTH';
+    if (allowedProduct !== 'BOTH' && contract !== allowedProduct) {
+        alert(`⚠️ 이 챌린지에서는 ${allowedProduct}만 거래 가능합니다.`);
+        return;
+    }
+    
+    // ===== 계약 수: 슬롯 vs 챌린지 한도 중 작은 값 =====
+    const maxContracts = myParticipation.maxContracts || 7;
+    const contracts = Math.min(slots, maxContracts);
+    
+    const orderType = document.getElementById('order-type').value;
+    const multiplier = contract === 'NQ' ? 20 : 2;
+    const margin = contract === 'NQ' ? 15000 : 1500;
+    const requiredMargin = margin * contracts;
+    
+    // ===== 최대 동시 포지션 체크 =====
+    const maxPositions = myParticipation.maxPositions || 5;
+    const openCount = (myParticipation.trades || []).filter(t => t.status === 'open').length;
+    if (openCount >= maxPositions) {
+        alert(`⚠️ 최대 동시 포지션 ${maxPositions}개 도달!\n기존 포지션을 청산한 후 진입하세요.`);
+        return;
+    }
+    
+    if (requiredMargin > myParticipation.currentBalance) {
+        alert(`증거금이 부족합니다\n필요: $${requiredMargin.toLocaleString()}\n보유: $${myParticipation.currentBalance.toLocaleString()}`);
+        return;
+    }
+    
+    // 거래 제한 체크
+    if (!checkTradingLimits(contracts)) return;
+    
+    let entryPrice = currentPrice;
+    let orderTypeText = '시장가';
+    
+    // Get prices based on order type
+    if (orderType === 'LIMIT') {
+        entryPrice = parseFloat(document.getElementById('limit-price').value);
+        orderTypeText = `지정가 ${entryPrice.toFixed(2)}`;
+    } else if (orderType === 'STOP') {
+        entryPrice = parseFloat(document.getElementById('stop-price').value);
+        orderTypeText = `손절 ${entryPrice.toFixed(2)}`;
+    } else if (orderType === 'STOP_LIMIT') {
+        const stopPrice = parseFloat(document.getElementById('stop-price').value);
+        entryPrice = parseFloat(document.getElementById('limit-price').value);
+        orderTypeText = `손절지정가 ${stopPrice.toFixed(2)}/${entryPrice.toFixed(2)}`;
+    }
+    
+    // Get SL/TP settings
+    const useSLTP = document.getElementById('use-sl-tp').checked;
+    let stopLoss = null;
+    let takeProfit = null;
+    let trailingStop = null;
+    
+    if (useSLTP) {
+        const slPoints = parseFloat(document.getElementById('stop-loss-points').value) || 0;
+        const tpPoints = parseFloat(document.getElementById('take-profit-points').value) || 0;
+        
+        if (side === 'BUY') {
+            stopLoss = entryPrice - slPoints;
+            takeProfit = entryPrice + tpPoints;
+        } else {
+            stopLoss = entryPrice + slPoints;
+            takeProfit = entryPrice - tpPoints;
+        }
+        
+        // 트레일링 스탑 설정
+        const useTrailing = document.getElementById('use-trailing-stop')?.checked;
+        if (useTrailing) {
+            const trailDist = parseFloat(document.getElementById('trailing-distance').value) || 30;
+            const trailActivation = parseFloat(document.getElementById('trailing-activation').value) || 10;
+            trailingStop = {
+                enabled: true,
+                distance: trailDist,          // SL이 현재가로부터 유지할 거리
+                activation: trailActivation,   // 이만큼 수익 나야 트레일링 시작
+                highWaterMark: entryPrice,      // BUY: 최고가 추적 / SELL: 최저가 추적
+                activated: false                // 활성화 여부
+            };
+        }
+    }
+    
+    let confirmMsg = `${side} 포지션 진입\n\n` +
+        `상품: ${contract}\n` +
+        `👑 슬롯: ${slots}개 (CRNY ${Math.floor(crnyBalance)}개 기준)\n` +
+        `계약: ${contracts}개\n` +
+        `주문: ${orderTypeText}\n` +
+        `증거금: $${requiredMargin.toLocaleString()}\n` +
+        `포인트당: $${multiplier * contracts}`;
+    
+    if (useSLTP) {
+        confirmMsg += `\n\n손절: ${stopLoss.toFixed(2)}\n익절: ${takeProfit.toFixed(2)}`;
+        if (trailingStop) {
+            confirmMsg += `\n🔄 트레일링: ${trailingStop.distance}pt (${trailingStop.activation}pt 수익 후 활성화)`;
+        }
+    }
+    
+    confirmMsg += `\n\n실행하시겠습니까?`;
+    
+    if (!window.confirm(confirmMsg)) return;
+    
+    try {
+        const trade = {
+            contract: contract,
+            side: side,
+            contracts: contracts,
+            orderType: orderType,
+            entryPrice: entryPrice,
+            currentPrice: currentPrice,
+            multiplier: multiplier,
+            margin: requiredMargin,
+            stopLoss: stopLoss,
+            takeProfit: takeProfit,
+            trailingStop: trailingStop,
+            crnyAtEntry: Math.floor(crnyBalance),
+            slotsAtEntry: slots,
+            fee: RISK_CONFIG.tradeFeeRoundTrip * contracts,
+            timestamp: new Date(),
+            status: orderType === 'MARKET' ? 'open' : 'pending',
+            pnl: 0
+        };
+        
+        const trades = myParticipation.trades || [];
+        trades.push(trade);
+        
+        const newBalance = myParticipation.currentBalance - requiredMargin;
+        
+        await db.collection('prop_challenges').doc(myParticipation.challengeId)
+            .collection('participants').doc(myParticipation.participantId)
+            .update({ 
+                trades: trades,
+                currentBalance: newBalance
+            });
+        
+        myParticipation.trades = trades;
+        myParticipation.currentBalance = newBalance;
+        
+        const statusText = orderType === 'MARKET' ? '체결' : '접수';
+        alert(`✅ ${side} 주문 ${statusText}!\n${contract} ${contracts}계약 @ ${entryPrice.toFixed(2)}\n👑 슬롯: ${slots}개`);
+        
+        updateTradingUI();
+        updateOpenPositions();
+        updateRiskGaugeUI();
+        loadTradeHistory();
+        
+        // 차트에 라인 그리기 + 자동 정렬
+        setTimeout(() => { drawPositionLinesLW(); scrollToLatest(); }, 1000);
+    } catch (error) {
+        alert('거래 실패: ' + error.message);
+    }
+}
+
+// Quick chart trade (SLOT-based market order with default SL/TP)
+async function quickChartTrade(side, contractOverride) {
+    // 더블클릭 방지 (1초)
+    if (window._quickTradeLoading) return;
+    window._quickTradeLoading = true;
+    setTimeout(() => { window._quickTradeLoading = false; }, 1000);
+    
+    if (!myParticipation) {
+        alert('챌린지에 먼저 참가하세요');
+        return;
+    }
+    
+    // ===== RISK CHECK =====
+    if (myParticipation.dailyLocked) {
+        const reason = myParticipation.adminSuspended 
+            ? `⛔ 관리자에 의해 거래가 중단되었습니다.\n사유: ${myParticipation.suspendReason || '미공개'}`
+            : '⚠️ 오늘의 거래가 종료되었습니다.\n내일 다시 도전하세요!';
+        alert(reason);
+        return;
+    }
+    
+    // ===== SLOT SYSTEM =====
+    const crnyBalance = userWallet?.balances?.crny || 0;
+    const slots = calculateSlots(crnyBalance);
+    
+    if (slots === 0) {
+        alert('🔴 CRNY를 보유해야 거래할 수 있습니다.');
+        return;
+    }
+    
+    // ★ 탭 심볼을 직접 사용 (폼 드롭다운보다 우선)
+    const contract = getActiveTabSymbol() || document.getElementById('futures-contract')?.value || 'MNQ';
+    
+    // 상품 제한
+    const allowedProduct = myParticipation.allowedProduct || 'BOTH';
+    if (allowedProduct !== 'BOTH' && contract !== allowedProduct) {
+        alert(`⚠️ 이 챌린지에서는 ${allowedProduct}만 거래 가능합니다.`);
+        return;
+    }
+    
+    // 계약 수: 슬롯 vs 챌린지 한도
+    const maxContracts = myParticipation.maxContracts || 7;
+    const contracts = Math.min(slots, maxContracts);
+    
+    // 포지션 수 체크
+    const maxPositions = myParticipation.maxPositions || 5;
+    const openCount = (myParticipation.trades || []).filter(t => t.status === 'open').length;
+    if (openCount >= maxPositions) {
+        alert(`⚠️ 최대 동시 포지션 ${maxPositions}개 도달!`);
+        return;
+    }
+    
+    const multiplier = contract === 'NQ' ? 20 : 2;
+    const margin = (contract === 'NQ' ? 15000 : 1500) * contracts;
+    
+    if (margin > myParticipation.currentBalance) {
+        alert(`증거금이 부족합니다\n필요: $${margin.toLocaleString()}\n보유: $${myParticipation.currentBalance.toLocaleString()}`);
+        return;
+    }
+    
+    // ★ SL/TP: 항상 폼에서 읽기 (기본: SL 50, TP 100)
+    const slPoints = parseFloat(document.getElementById('stop-loss-points')?.value) || 50;
+    const tpPoints = parseFloat(document.getElementById('take-profit-points')?.value) || 100;
+    
+    let stopLoss = null;
+    let takeProfit = null;
+    let trailingStop = null;
+    
+    if (slPoints > 0) {
+        stopLoss = side === 'BUY' ? currentPrice - slPoints : currentPrice + slPoints;
+    }
+    if (tpPoints > 0) {
+        takeProfit = side === 'BUY' ? currentPrice + tpPoints : currentPrice - tpPoints;
+    }
+    
+    // 트레일링 스탑
+    const useTrailing = document.getElementById('use-trailing-stop')?.checked;
+    if (useTrailing && slPoints > 0) {
+        trailingStop = {
+            enabled: true, activated: false,
+            activation: parseFloat(document.getElementById('trailing-activation')?.value) || 10,
+            distance: parseFloat(document.getElementById('trailing-distance')?.value) || slPoints,
+            highWaterMark: currentPrice,
+        };
+    }
+    
+    try {
+        const trade = {
+            contract: contract,
+            side: side,
+            contracts: contracts,
+            orderType: 'MARKET',
+            entryPrice: currentPrice,
+            currentPrice: currentPrice,
+            multiplier: multiplier,
+            margin: margin,
+            stopLoss: stopLoss,
+            takeProfit: takeProfit,
+            trailingStop: trailingStop,
+            crnyAtEntry: Math.floor(crnyBalance),
+            slotsAtEntry: slots,
+            fee: RISK_CONFIG.tradeFeeRoundTrip * contracts,
+            timestamp: new Date(),
+            status: 'open',
+            pnl: 0
+        };
+        
+        const trades = myParticipation.trades || [];
+        trades.push(trade);
+        
+        const newBalance = myParticipation.currentBalance - margin;
+        
+        await db.collection('prop_challenges').doc(myParticipation.challengeId)
+            .collection('participants').doc(myParticipation.participantId)
+            .update({ 
+                trades: trades,
+                currentBalance: newBalance
+            });
+        
+        myParticipation.trades = trades;
+        myParticipation.currentBalance = newBalance;
+        
+        console.log(`✅ 차트 ${side} 주문 체결! ${slots}슬롯, SL: ${stopLoss.toFixed(2)}, TP: ${takeProfit.toFixed(2)}`);
+        
+        updateTradingUI();
+        updateOpenPositions();
+        updateRiskGaugeUI();
+        
+        // 차트에 라인 그리기 + 자동 정렬
+        setTimeout(() => {
+            drawPositionLinesLW();
+            scrollToLatest();
+        }, 500);
+    } catch (error) {
+        alert('거래 실패: ' + error.message);
+    }
+}
+
+// Lightweight Charts용 포지션 라인 그리기 (NQ + MNQ 양쪽)
+function drawPositionLinesLW() {
+    // 항상 먼저 기존 라인 제거
+    if (window.positionLines && window.candleSeries) {
+        window.positionLines.forEach(line => {
+            try { window.candleSeries.removePriceLine(line); } catch (e) {}
+        });
+    }
+    window.positionLines = [];
+    
+    if (!window.candleSeries || !myParticipation || !myParticipation.trades) return;
+    
+    // 현재 탭의 심볼에 해당하는 포지션만 표시
+    const tabSymbol = getActiveTabSymbol();
+    const openTrades = myParticipation.trades.filter(t => t.status === 'open' && t.contract === tabSymbol);
+    
+    if (openTrades.length === 0) return;
+    
+    openTrades.forEach((trade) => {
+        const entryLine = window.candleSeries.createPriceLine({
+            price: trade.entryPrice,
+            color: trade.side === 'BUY' ? '#0066cc' : '#cc0000',
+            lineWidth: 2,
+            lineStyle: LightweightCharts.LineStyle.Solid,
+            axisLabelVisible: true,
+            title: `${trade.side} ${trade.contract} ${trade.contracts}`,
+        });
+        window.positionLines.push(entryLine);
+        
+        if (trade.stopLoss) {
+            const isTrailing = trade.trailingStop?.activated;
+            const slLine = window.candleSeries.createPriceLine({
+                price: trade.stopLoss,
+                color: isTrailing ? '#ff9800' : '#ff0000',
+                lineWidth: 2,
+                lineStyle: isTrailing ? LightweightCharts.LineStyle.SparseDotted : LightweightCharts.LineStyle.Dashed,
+                axisLabelVisible: true,
+                title: isTrailing ? '🔄 TRAIL' : 'SL',
+            });
+            window.positionLines.push(slLine);
+        }
+        
+        if (trade.takeProfit) {
+            const tpLine = window.candleSeries.createPriceLine({
+                price: trade.takeProfit,
+                color: '#00cc00',
+                lineWidth: 2,
+                lineStyle: LightweightCharts.LineStyle.Dashed,
+                axisLabelVisible: true,
+                title: 'TP',
+            });
+            window.positionLines.push(tpLine);
+        }
+    });
+    
+    console.log(`📊 ${tabSymbol} ${openTrades.length}개 포지션 라인 표시`);
+}
+
+// 거래 제한 확인
+function checkTradingLimits(contracts) {
+    if (!myParticipation) return false;
+    
+    const maxContracts = myParticipation.maxContracts || 7;
+    const maxPositions = myParticipation.maxPositions || 20;
+    const maxDrawdown = myParticipation.maxDrawdown || 3000;
+    
+    // 계약 수 확인
+    if (contracts > maxContracts) {
+        alert(`❌ 최대 ${maxContracts}계약까지 가능합니다`);
+        return false;
+    }
+    
+    // 포지션 수 확인
+    const openPositions = myParticipation.trades?.filter(t => t.status === 'open').length || 0;
+    if (openPositions >= maxPositions) {
+        alert(`❌ 최대 ${maxPositions}개 포지션까지 가능합니다\n현재: ${openPositions}개`);
+        return false;
+    }
+    
+    // Drawdown 확인
+    const initialBalance = myParticipation.initialBalance || 100000;
+    const currentBalance = myParticipation.currentBalance || 100000;
+    const drawdown = initialBalance - currentBalance;
+    
+    if (drawdown >= maxDrawdown) {
+        alert(`🚨 청산 기준 도달!\n최대 손실: -$${maxDrawdown}\n현재 손실: -$${drawdown.toFixed(2)}`);
+        return false;
+    }
+    
+    return true;
+}
+
+// EOD 정산
+async function processEOD() {
+    if (!myParticipation) return;
+    
+    const totalPnL = myParticipation.currentBalance - myParticipation.initialBalance;
+    
+    if (totalPnL > 0) {
+        // 수익 발생 - CRFN으로 지급 가능
+        console.log(`💰 EOD 수익: $${totalPnL.toFixed(2)}`);
+        
+        // TODO: CRFN 토큰 지급 로직
+    }
+    
+    // lastEOD 업데이트
+    await db.collection('prop_challenges').doc(myParticipation.challengeId)
+        .collection('participants').doc(myParticipation.participantId)
+        .update({
+            lastEOD: new Date(),
+            dailyPnL: totalPnL
+        });
+}
+
+// ========== POLYGON.IO 실시간 CME 데이터 ==========
+
+let polygonWS = null;
+
+// Massive WebSocket 연결
+function connectMassiveRealtime() {
+    if (!window.MASSIVE_CONFIG || !window.MASSIVE_CONFIG.enabled) {
+        console.log('⚠️ Massive 비활성화 - Yahoo Finance 사용');
+        return;
+    }
+    
+    const apiKey = window.MASSIVE_CONFIG.apiKey;
+    
+    if (apiKey === 'YOUR_POLYGON_API_KEY') {
+        console.error('❌ Massive API Key를 설정하세요!');
+        return;
+    }
+    
+    polygonWS = new WebSocket('wss://socket.polygon.io/futures');
+    
+    polygonWS.onopen = () => {
+        console.log('📡 Massive 연결 중...');
+        
+        // 인증
+        polygonWS.send(JSON.stringify({
+            action: 'auth',
+            params: apiKey
+        }));
+    };
+    
+    polygonWS.onmessage = (event) => {
+        const messages = JSON.parse(event.data);
+        
+        messages.forEach(msg => {
+            if (msg.ev === 'status' && msg.status === 'auth_success') {
+                console.log('✅ Massive 인증 성공');
+                
+                // NQ 선물 구독
+                polygonWS.send(JSON.stringify({
+                    action: 'subscribe',
+                    params: 'AM.C:NQ*' // NQ 전체 (1분, 5분 등)
+                }));
+                
+                console.log('📊 NQ 선물 구독 완료');
+            }
+            
+            if (msg.ev === 'AM') {
+                // Aggregate Minute (1분봉)
+                handleMassiveAggregate(msg);
+            }
+        });
+    };
+    
+    polygonWS.onerror = (error) => {
+        console.error('❌ Massive 연결 오류:', error);
+    };
+    
+    polygonWS.onclose = () => {
+        console.log('🔌 Massive 연결 종료');
+        // 재연결
+        setTimeout(() => connectMassiveRealtime(), 5000);
+    };
+}
+
+// Massive 데이터 처리
+function handleMassiveAggregate(data) {
+    if (!window.candleSeries) return;
+    
+    const candle = {
+        time: Math.floor(data.s / 1000), // 밀리초 → 초
+        open: data.o,
+        high: data.h,
+        low: data.l,
+        close: data.c
+    };
+    
+    // 차트 업데이트
+    window.candleSeries.update(candle);
+    
+    // 현재가 업데이트
+    currentPrice = data.c;
+    updateNQPriceDisplay();
+    updateOpenPositions();
+    
+    console.log(`🔄 Massive 실시간: ${data.c.toFixed(2)}`);
+}
+
+// Massive REST API로 히스토리 데이터
+async function fetchMassiveHistory() {
+    if (!window.MASSIVE_CONFIG || !window.MASSIVE_CONFIG.enabled) {
+        return null;
+    }
+    
+    const apiKey = window.MASSIVE_CONFIG.apiKey;
+    
+    try {
+        const endDate = new Date().toISOString().split('T')[0];
+        const startDate = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        
+        const url = `https://api.polygon.io/v2/aggs/ticker/C:NQ/range/5/minute/${startDate}/${endDate}?adjusted=true&sort=asc&apiKey=${apiKey}`;
+        
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.results) {
+            const candles = data.results.map(r => ({
+                time: Math.floor(r.t / 1000),
+                open: r.o,
+                high: r.h,
+                low: r.l,
+                close: r.c
+            }));
+            
+            const volume = data.results.map(r => ({
+                time: Math.floor(r.t / 1000),
+                value: r.v,
+                color: r.c > r.o ? '#26a69a' : '#ef5350'
+            }));
+            
+            console.log('✅ Massive 히스토리 데이터:', candles.length, '개');
+            
+            return { candles, volume };
+        }
+    } catch (error) {
+        console.error('❌ Massive 히스토리 로드 실패:', error);
+    }
+    
+    return null;
+}
