@@ -1,0 +1,4166 @@
+// Cache Buster - Version 4.0 - ERC-20 Onchain Integration
+// Global State
+let currentUser = null;
+let userWallet = null;
+
+// ========== POLYGON ERC-20 토큰 컨트랙트 ==========
+const POLYGON_TOKENS = {
+    crny: {
+        name: 'CRNY (크라우니코인)',
+        address: '0xe56173b6a57680286253566B9C80Fcc175c88bE1',
+        decimals: 18,
+        symbol: 'CRNY'
+    },
+    fnc: {
+        name: 'FNC (포네크레딧)',
+        address: '0x68E3aA1049F583C2f1701fefc4443e398ebF32ee',
+        decimals: 18,
+        symbol: 'FNC'
+    },
+    crfn: {
+        name: 'CRFN (크라우니포네)',
+        address: '0x396DAd0C7625a4881cA0cd444Cd80A9bbce4A054',
+        decimals: 18,
+        symbol: 'CRFN'
+    }
+};
+
+// ERC-20 최소 ABI (조회 + 전송)
+const ERC20_ABI = [
+    { "constant": true, "inputs": [{"name": "_owner", "type": "address"}], "name": "balanceOf", "outputs": [{"name": "balance", "type": "uint256"}], "type": "function" },
+    { "constant": false, "inputs": [{"name": "_to", "type": "address"},{"name": "_value", "type": "uint256"}], "name": "transfer", "outputs": [{"name": "", "type": "bool"}], "type": "function" },
+    { "constant": true, "inputs": [], "name": "decimals", "outputs": [{"name": "", "type": "uint8"}], "type": "function" },
+    { "constant": true, "inputs": [], "name": "symbol", "outputs": [{"name": "", "type": "string"}], "type": "function" }
+];
+
+// ========== CRNY SLOT SYSTEM ==========
+const SLOT_TABLE = [
+    { min: 1,  max: 4,  slots: 1 },
+    { min: 5,  max: 6,  slots: 2 },
+    { min: 7,  max: 9,  slots: 3 },
+    { min: 10, max: 14, slots: 4 },
+    { min: 15, max: 20, slots: 5 },
+    { min: 21, max: 30, slots: 10 },
+    { min: 31, max: 50, slots: 20 },
+    { min: 51, max: 69, slots: 50 },
+    { min: 70, max: Infinity, slots: 70 }
+];
+
+const RISK_CONFIG = {
+    dailyLossLimit: -100,      // 일일 손실 한도 ($)
+    cumulativeLossLimit: -3000, // 누적 손실 한도 ($) - HTML 규칙과 일치
+    crnyBurnOnLiquidation: 1,  // 청산 시 소각 CRNY 개수
+    tradeFeeRoundTrip: 2.00,   // 왕복 수수료 ($)
+    mnqTickValue: 0.50,        // MNQ 1틱 가치 ($)
+    mnqPointValue: 2,          // MNQ 1포인트 가치 ($)
+    nqPointValue: 20           // NQ 1포인트 가치 ($)
+};
+
+// 슬롯 계산: CRNY 보유량 → 활성 슬롯 수
+function calculateSlots(crnyBalance) {
+    const balance = Math.floor(crnyBalance); // 정수 기준
+    if (balance <= 0) return 0;
+    
+    for (const tier of SLOT_TABLE) {
+        if (balance >= tier.min && balance <= tier.max) {
+            return tier.slots;
+        }
+    }
+    return 0;
+}
+
+// 슬롯 상태 UI 업데이트
+function updateSlotStatusUI() {
+    const crnyBalance = userWallet ? (userWallet.balances?.crny || 0) : 0;
+    const slots = calculateSlots(crnyBalance);
+    
+    // 슬롯 패널 업데이트
+    const crnyEl = document.getElementById('slot-crny-count');
+    const slotsEl = document.getElementById('slot-active-count');
+    const contractsEl = document.getElementById('slot-contract-count');
+    const messageEl = document.getElementById('slot-status-message');
+    const badgeEl = document.getElementById('slot-status-badge');
+    const displayEl = document.getElementById('slot-contracts-display');
+    
+    if (crnyEl) crnyEl.textContent = Math.floor(crnyBalance);
+    if (slotsEl) slotsEl.textContent = slots;
+    if (contractsEl) contractsEl.textContent = slots;
+    
+    // hidden input 업데이트 (기존 호환)
+    const tradeContracts = document.getElementById('trade-contracts');
+    if (tradeContracts) tradeContracts.value = Math.max(slots, 1);
+    
+    // 슬롯 계약 수 표시
+    if (displayEl) {
+        displayEl.textContent = slots > 0 ? `${slots} 계약` : '0 계약';
+        displayEl.style.color = slots > 0 ? '#0066cc' : '#cc0000';
+    }
+    
+    // 상태 메시지/배지
+    if (slots === 0) {
+        if (messageEl) messageEl.textContent = '🔴 CRNY를 보유해야 거래할 수 있습니다';
+        if (badgeEl) { badgeEl.textContent = '비활성'; badgeEl.style.background = '#ef5350'; }
+    } else {
+        if (messageEl) messageEl.textContent = `🟢 ${slots}슬롯 가동 중 / 보유 ${Math.floor(crnyBalance)} CRNY`;
+        if (badgeEl) { badgeEl.textContent = '활성'; badgeEl.style.background = '#00c853'; }
+    }
+}
+
+// ========== RISK MANAGEMENT ==========
+
+// 일일 손실 리셋 체크 (자정 UTC 기준)
+function checkDailyReset() {
+    if (!myParticipation) return;
+    
+    const now = new Date();
+    const todayUTC = now.toISOString().split('T')[0]; // YYYY-MM-DD
+    const lastReset = myParticipation.lastDailyReset || '';
+    
+    if (lastReset !== todayUTC) {
+        // 새로운 날 → 일일 손실 리셋
+        myParticipation.dailyPnL = 0;
+        myParticipation.dailyLocked = false;
+        myParticipation.lastDailyReset = todayUTC;
+        
+        // Firestore 업데이트
+        if (myParticipation.challengeId && myParticipation.participantId) {
+            db.collection('prop_challenges').doc(myParticipation.challengeId)
+                .collection('participants').doc(myParticipation.participantId)
+                .update({
+                    dailyPnL: 0,
+                    dailyLocked: false,
+                    lastDailyReset: todayUTC
+                }).catch(err => console.error('Daily reset error:', err));
+        }
+        
+        console.log('🔄 일일 손실 리셋 (새로운 날)');
+    }
+}
+
+// 리스크 게이지 UI 업데이트
+function updateRiskGaugeUI() {
+    if (!myParticipation) return;
+    
+    const dailyPnL = myParticipation.dailyPnL || 0;
+    const initial = myParticipation.initialBalance || 100000;
+    const current = myParticipation.currentBalance || 100000;
+    const cumulativePnL = current - initial;
+    
+    // 일일 손실 게이지
+    const dailyPercent = Math.min(Math.abs(Math.min(dailyPnL, 0)) / Math.abs(RISK_CONFIG.dailyLossLimit) * 100, 100);
+    const dailyBar = document.getElementById('daily-loss-bar');
+    const dailyText = document.getElementById('daily-loss-text');
+    
+    if (dailyBar) {
+        dailyBar.style.width = dailyPercent + '%';
+        dailyBar.style.background = dailyPercent >= 100 ? '#f44336' : dailyPercent >= 80 ? '#ff9800' : '#4caf50';
+    }
+    if (dailyText) {
+        dailyText.textContent = `$${dailyPnL.toFixed(0)} / -$${Math.abs(RISK_CONFIG.dailyLossLimit)}`;
+        dailyText.style.color = dailyPnL < 0 ? '#f44336' : '#4caf50';
+    }
+    
+    // 누적 손실 게이지
+    const cumulativePercent = Math.min(Math.abs(Math.min(cumulativePnL, 0)) / Math.abs(RISK_CONFIG.cumulativeLossLimit) * 100, 100);
+    const cumulativeBar = document.getElementById('cumulative-loss-bar');
+    const cumulativeText = document.getElementById('cumulative-loss-text');
+    
+    if (cumulativeBar) {
+        cumulativeBar.style.width = cumulativePercent + '%';
+        cumulativeBar.style.background = cumulativePercent >= 100 ? '#f44336' : cumulativePercent >= 80 ? '#ff9800' : '#4caf50';
+    }
+    if (cumulativeText) {
+        cumulativeText.textContent = `$${cumulativePnL.toFixed(0)} / -$${Math.abs(RISK_CONFIG.cumulativeLossLimit).toLocaleString()}`;
+        cumulativeText.style.color = cumulativePnL < 0 ? '#f44336' : '#4caf50';
+    }
+    
+    // 일일 한도 경고
+    const warningEl = document.getElementById('daily-limit-warning');
+    if (warningEl) {
+        warningEl.style.display = (myParticipation.dailyLocked) ? 'block' : 'none';
+    }
+    
+    // 버튼 활성/비활성
+    updateTradeButtonState();
+}
+
+// 거래 버튼 상태 관리
+function updateTradeButtonState() {
+    const locked = myParticipation && myParticipation.dailyLocked;
+    const noSlots = calculateSlots(userWallet?.balances?.crny || 0) === 0;
+    const disabled = locked || noSlots;
+    
+    const btnBuy = document.getElementById('btn-buy');
+    const btnSell = document.getElementById('btn-sell');
+    const btnChartBuy = document.getElementById('btn-chart-buy');
+    const btnChartSell = document.getElementById('btn-chart-sell');
+    
+    [btnBuy, btnSell, btnChartBuy, btnChartSell].forEach(btn => {
+        if (!btn) return;
+        btn.disabled = disabled;
+        btn.style.opacity = disabled ? '0.4' : '1';
+        btn.style.cursor = disabled ? 'not-allowed' : 'pointer';
+    });
+    
+    if (locked && btnBuy) {
+        btnBuy.textContent = '⚠️ 거래 정지';
+        btnSell.textContent = '⚠️ 거래 정지';
+    } else if (btnBuy) {
+        btnBuy.textContent = '📈 BUY';
+        btnSell.textContent = '📉 SELL';
+    }
+}
+
+// 일일 손실 체크 & 락 처리 (dailyPnL은 호출자가 이미 업데이트)
+async function checkDailyLossLimit() {
+    if (!myParticipation) return false;
+    
+    // 참가자별 일일 한도 사용 (없으면 전역 RISK_CONFIG 사용)
+    const dailyLimit = -(myParticipation.dailyLossLimit || Math.abs(RISK_CONFIG.dailyLossLimit));
+    
+    if (myParticipation.dailyPnL <= dailyLimit) {
+        myParticipation.dailyLocked = true;
+        
+        // Firestore 업데이트
+        await db.collection('prop_challenges').doc(myParticipation.challengeId)
+            .collection('participants').doc(myParticipation.participantId)
+            .update({
+                dailyPnL: myParticipation.dailyPnL,
+                dailyLocked: true
+            });
+        
+        updateRiskGaugeUI();
+        alert(`🚨 일일 손실 한도 도달! (-$${Math.abs(RISK_CONFIG.dailyLossLimit)})\n\n오늘의 거래가 종료됩니다.\n내일 자정(UTC)에 자동 해제됩니다.`);
+        return true; // locked
+    }
+    
+    // Firestore에 dailyPnL만 업데이트
+    await db.collection('prop_challenges').doc(myParticipation.challengeId)
+        .collection('participants').doc(myParticipation.participantId)
+        .update({ dailyPnL: myParticipation.dailyPnL });
+    
+    updateRiskGaugeUI();
+    return false;
+}
+
+// 누적 청산 체크 & CRNY 소각
+async function checkCumulativeLiquidation() {
+    if (!myParticipation) return false;
+    
+    const initial = myParticipation.initialBalance || 100000;
+    const current = myParticipation.currentBalance || 100000;
+    const cumulativeLoss = current - initial;
+    
+    if (cumulativeLoss <= -(myParticipation.maxDrawdown || Math.abs(RISK_CONFIG.cumulativeLossLimit))) {
+        // CRNY 소각 처리
+        const wallet = allWallets.find(w => w.id === currentWalletId);
+        if (!wallet) return false;
+        
+        const currentCrny = wallet.balances?.crny || 0;
+        const burnAmount = RISK_CONFIG.crnyBurnOnLiquidation;
+        
+        if (currentCrny < burnAmount) {
+            // CRNY가 없으면 거래 완전 차단
+            alert('🚨 CRNY가 부족하여 더 이상 거래할 수 없습니다.\nCRNY를 추가로 획득해주세요.');
+            return true;
+        }
+        
+        // Firestore에서 CRNY 차감
+        const newCrny = currentCrny - burnAmount;
+        await db.collection('users').doc(currentUser.uid)
+            .collection('wallets').doc(currentWalletId)
+            .update({ 'balances.crny': newCrny });
+        
+        wallet.balances.crny = newCrny;
+        userWallet.balances.crny = newCrny;
+        
+        // 청산 기록 저장
+        await db.collection('liquidation_log').add({
+            userId: currentUser.uid,
+            walletId: currentWalletId,
+            challengeId: myParticipation.challengeId,
+            participantId: myParticipation.participantId,
+            crnyBurned: burnAmount,
+            reason: 'cumulative_loss',
+            lossAmount: cumulativeLoss,
+            remainingCrny: newCrny,
+            timestamp: new Date()
+        });
+        
+        // 누적 손실 리셋 (계좌 다시 시작)
+        myParticipation.currentBalance = initial;
+        myParticipation.dailyPnL = 0;
+        
+        await db.collection('prop_challenges').doc(myParticipation.challengeId)
+            .collection('participants').doc(myParticipation.participantId)
+            .update({
+                currentBalance: initial,
+                dailyPnL: 0
+            });
+        
+        updateSlotStatusUI();
+        updateRiskGaugeUI();
+        updateTradingUI();
+        
+        alert(
+            `💀 누적 손실 -$${Math.abs(RISK_CONFIG.cumulativeLossLimit).toLocaleString()} 도달!\n\n` +
+            `🔥 CRNY ${burnAmount}개 소각됨\n` +
+            `👑 남은 CRNY: ${newCrny}개\n` +
+            `📊 새 슬롯: ${calculateSlots(newCrny)}개\n\n` +
+            `계좌가 초기화되었습니다.`
+        );
+        
+        return true;
+    }
+    
+    return false;
+}
+
+// Auth State Listener
+auth.onAuthStateChanged(async (user) => {
+    if (user) {
+        currentUser = user;
+        document.getElementById('auth-modal').style.display = 'none';
+        document.getElementById('user-email').textContent = user.email;
+        document.getElementById('user-info').style.display = 'block';
+        
+        // 관리자 메뉴 표시
+        if (user.email === ADMIN_EMAIL) {
+            const adminNav = document.getElementById('admin-nav-item');
+            if (adminNav) adminNav.style.display = 'block';
+        }
+        
+        await loadUserWallet();
+        await loadUserData();
+    } else {
+        document.getElementById('auth-modal').style.display = 'flex';
+        document.getElementById('user-info').style.display = 'none';
+        // 관리자 메뉴 숨기기
+        const adminNav = document.getElementById('admin-nav-item');
+        if (adminNav) adminNav.style.display = 'none';
+    }
+});
+
+// Signup
+async function signup() {
+    const email = document.getElementById('signup-email').value;
+    const password = document.getElementById('signup-password').value;
+    
+    if (!email || !password) {
+        alert('이메일과 비밀번호를 입력하세요');
+        return;
+    }
+    
+    const nickname = prompt('닉네임을 입력하세요 (SNS에 표시됨):');
+    if (!nickname) {
+        alert('닉네임은 필수입니다');
+        return;
+    }
+    
+    try {
+        const result = await auth.createUserWithEmailAndPassword(email, password);
+        
+        // Create wallet
+        const wallet = web3.eth.accounts.create();
+        
+        // Save to Firestore (legacy)
+        await db.collection('users').doc(result.user.uid).set({
+            email: email,
+            nickname: nickname,
+            walletAddress: wallet.address,
+            privateKey: wallet.privateKey,
+            balances: {
+                crny: 0,
+                fnc: 0,
+                crfn: 0
+            },
+            createdAt: new Date()
+        });
+        
+        // Create first wallet in subcollection
+        await db.collection('users').doc(result.user.uid)
+            .collection('wallets').add({
+                name: '크라우니 지갑 1',
+                walletAddress: wallet.address,
+                privateKey: wallet.privateKey,
+                isImported: false,
+                totalGasSubsidy: 0,
+                balances: { crny: 0, fnc: 0, crfn: 0 },
+                createdAt: new Date()
+            });
+        
+        alert(`✅ 가입 완료!\n닉네임: ${nickname}\n지갑 생성 완료!`);
+    } catch (error) {
+        console.error(error);
+        alert('가입 실패: ' + error.message);
+    }
+}
+
+// Login
+async function login() {
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    
+    try {
+        await auth.signInWithEmailAndPassword(email, password);
+    } catch (error) {
+        alert('로그인 실패: ' + error.message);
+    }
+}
+
+// Logout
+function logout() {
+    auth.signOut();
+    location.reload();
+}
+
+// ========== MULTI-WALLET SYSTEM ==========
+let currentWalletId = null;
+let allWallets = [];
+
+// Load User Wallet
+async function loadUserWallet() {
+    if (!currentUser) return;
+    
+    // Load all wallets
+    const walletsSnapshot = await db.collection('users').doc(currentUser.uid)
+        .collection('wallets').get();
+    
+    allWallets = [];
+    walletsSnapshot.forEach(doc => {
+        allWallets.push({ id: doc.id, ...doc.data() });
+    });
+    
+    // If no wallets, create first one
+    if (allWallets.length === 0) {
+        await createFirstWallet();
+        return;
+    }
+    
+    // Load wallet selector
+    const selector = document.getElementById('wallet-selector');
+    selector.innerHTML = '';
+    
+    allWallets.forEach((wallet, index) => {
+        const option = document.createElement('option');
+        option.value = wallet.id;
+        const type = wallet.isImported ? '📥' : '🏠';
+        const name = wallet.name || `지갑 ${index + 1}`;
+        const addr = wallet.walletAddress.slice(0, 6) + '...' + wallet.walletAddress.slice(-4);
+        option.textContent = `${type} ${name} (${addr})`;
+        selector.appendChild(option);
+    });
+    
+    // Load first wallet or previously selected
+    currentWalletId = allWallets[0].id;
+    displayCurrentWallet();
+}
+
+async function createFirstWallet() {
+    const web3 = new Web3();
+    const newAccount = web3.eth.accounts.create();
+    
+    const walletRef = await db.collection('users').doc(currentUser.uid)
+        .collection('wallets').add({
+            name: '크라우니 지갑 1',
+            walletAddress: newAccount.address,
+            privateKey: newAccount.privateKey,
+            isImported: false,
+            totalGasSubsidy: 0,
+            createdAt: new Date()
+        });
+    
+    currentWalletId = walletRef.id;
+    await loadUserWallet();
+}
+
+async function switchWallet() {
+    const selector = document.getElementById('wallet-selector');
+    currentWalletId = selector.value;
+    await displayCurrentWallet();
+}
+
+async function displayCurrentWallet() {
+    const wallet = allWallets.find(w => w.id === currentWalletId);
+    if (!wallet) return;
+    
+    userWallet = wallet;
+    
+    const addr = wallet.walletAddress;
+    document.getElementById('wallet-address').textContent = 
+        addr.slice(0, 6) + '...' + addr.slice(-4);
+    document.getElementById('wallet-address-full').textContent = addr;
+    
+    // Massivescan link
+    document.getElementById('polygonscan-link').href = 
+        `https://polygonscan.com/address/${addr}`;
+    
+    // Wallet type
+    const walletType = wallet.isImported ? '📥 외부 지갑' : '🏠 크라우니 지갑';
+    document.getElementById('wallet-type').textContent = walletType;
+    
+    // Gas subsidy info (only for Crowny wallets)
+    if (!wallet.isImported) {
+        document.getElementById('gas-subsidy-info').style.display = 'block';
+        const totalGas = wallet.totalGasSubsidy || 0;
+        document.getElementById('total-gas-subsidy').textContent = totalGas.toFixed(4);
+    } else {
+        document.getElementById('gas-subsidy-info').style.display = 'none';
+    }
+    
+    // Load balances
+    if (!wallet.balances) {
+        userWallet.balances = { crny: 0, fnc: 0, crfn: 0 };
+        await db.collection('users').doc(currentUser.uid)
+            .collection('wallets').doc(currentWalletId)
+            .update({ balances: { crny: 0, fnc: 0, crfn: 0 } });
+    }
+    
+    await loadRealBalances();
+    updateBalances();
+}
+
+function showAddWalletModal() {
+    const choice = prompt('지갑 추가:\n1. 새 크라우니 지갑 생성\n2. 외부 지갑 가져오기\n\n번호를 입력하세요:');
+    
+    if (choice === '1') {
+        createNewWallet();
+    } else if (choice === '2') {
+        showImportWallet();
+    }
+}
+
+function showImportWallet() {
+    const name = prompt('지갑 이름:') || '외부 지갑';
+    const privateKey = prompt('개인키를 입력하세요:\n(0x로 시작하는 64자리)');
+    if (!privateKey) return;
+    
+    try {
+        const web3 = new Web3();
+        const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+        
+        const confirm = window.confirm(
+            `이 지갑을 추가하시겠습니까?\n\n` +
+            `이름: ${name}\n` +
+            `주소: ${account.address}\n\n` +
+            `⚠️ 외부 지갑은 가스비가 자동 차감됩니다.`
+        );
+        
+        if (confirm) {
+            importExternalWallet(name, privateKey, account.address);
+        }
+    } catch (error) {
+        alert('잘못된 개인키입니다');
+    }
+}
+
+async function importExternalWallet(name, privateKey, address) {
+    try {
+        const walletRef = await db.collection('users').doc(currentUser.uid)
+            .collection('wallets').add({
+                name: name,
+                walletAddress: address,
+                privateKey: privateKey,
+                isImported: true,
+                balances: { crny: 0, fnc: 0, crfn: 0 },
+                importedAt: new Date()
+            });
+        
+        alert('✅ 외부 지갑 추가 완료!');
+        currentWalletId = walletRef.id;
+        await loadUserWallet();
+    } catch (error) {
+        console.error('Import error:', error);
+        alert('지갑 추가 실패: ' + error.message);
+    }
+}
+
+async function createNewWallet() {
+    try {
+        const name = prompt('지갑 이름:') || `크라우니 지갑 ${allWallets.length + 1}`;
+        
+        const web3 = new Web3();
+        const newAccount = web3.eth.accounts.create();
+        
+        const walletRef = await db.collection('users').doc(currentUser.uid)
+            .collection('wallets').add({
+                name: name,
+                walletAddress: newAccount.address,
+                privateKey: newAccount.privateKey,
+                isImported: false,
+                totalGasSubsidy: 0,
+                balances: { crny: 0, fnc: 0, crfn: 0 },
+                createdAt: new Date()
+            });
+        
+        alert('✅ 새 지갑 생성 완료!');
+        currentWalletId = walletRef.id;
+        await loadUserWallet();
+    } catch (error) {
+        console.error('Create wallet error:', error);
+        alert('지갑 생성 실패: ' + error.message);
+    }
+}
+
+async function deleteCurrentWallet() {
+    if (allWallets.length === 1) {
+        alert('마지막 지갑은 삭제할 수 없습니다.');
+        return;
+    }
+    
+    const wallet = allWallets.find(w => w.id === currentWalletId);
+    const confirm = window.confirm(
+        `지갑을 삭제하시겠습니까?\n\n` +
+        `${wallet.name}\n` +
+        `${wallet.walletAddress}\n\n` +
+        `⚠️ 이 작업은 되돌릴 수 없습니다!`
+    );
+    
+    if (!confirm) return;
+    
+    try {
+        await db.collection('users').doc(currentUser.uid)
+            .collection('wallets').doc(currentWalletId).delete();
+        
+        alert('✅ 지갑 삭제 완료!');
+        await loadUserWallet();
+    } catch (error) {
+        console.error('Delete error:', error);
+        alert('지갑 삭제 실패: ' + error.message);
+    }
+}
+
+// Load Real Balances from Massive
+async function loadRealBalances() {
+    if (!userWallet) return;
+    
+    try {
+        const address = userWallet.walletAddress;
+        
+        console.log('Loading balances for:', address);
+        
+        // 공통 함수로 온체인 잔액 조회
+        const balances = await getAllOnchainBalances(address);
+        userWallet.balances.crny = balances.crny;
+        userWallet.balances.fnc = balances.fnc;
+        userWallet.balances.crfn = balances.crfn;
+        
+        console.log('CRNY:', balances.crny, 'FNC:', balances.fnc, 'CRFN:', balances.crfn);
+        
+        // Update Firestore wallet subcollection
+        await db.collection('users').doc(currentUser.uid)
+            .collection('wallets').doc(currentWalletId).update({
+                'balances.crny': userWallet.balances.crny,
+                'balances.fnc': userWallet.balances.fnc,
+                'balances.crfn': userWallet.balances.crfn
+            });
+        
+        console.log('✅ Real balances loaded:', userWallet.balances);
+    } catch (error) {
+        console.error('❌ Balance load error:', error);
+        alert('잔액 조회 실패: ' + error.message);
+    }
+}
+
+// Copy Address
+function copyAddress() {
+    if (!userWallet) return;
+    
+    const address = userWallet.walletAddress;
+    
+    // Modern clipboard API
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(address).then(() => {
+            alert('✅ 주소가 복사되었습니다!');
+        }).catch(err => {
+            // Fallback
+            fallbackCopy(address);
+        });
+    } else {
+        // Fallback
+        fallbackCopy(address);
+    }
+}
+
+function fallbackCopy(text) {
+    const temp = document.createElement('textarea');
+    temp.value = text;
+    temp.style.position = 'fixed';
+    temp.style.left = '-999999px';
+    document.body.appendChild(temp);
+    temp.select();
+    temp.setSelectionRange(0, 99999);
+    
+    try {
+        document.execCommand('copy');
+        alert('✅ 주소가 복사되었습니다!');
+    } catch (err) {
+        alert('복사 실패. 수동으로 복사해주세요:\n' + text);
+    }
+    
+    document.body.removeChild(temp);
+}
+
+// Update Balances
+function updateBalances() {
+    if (!userWallet) return;
+    
+    document.getElementById('crny-balance').textContent = userWallet.balances.crny.toFixed(2);
+    document.getElementById('fnc-balance').textContent = userWallet.balances.fnc.toFixed(2);
+    document.getElementById('crfn-balance').textContent = userWallet.balances.crfn.toFixed(2);
+}
+
+// Load User Data (Messages, Posts)
+async function loadUserData() {
+    loadMessages();
+    loadSocialFeed();
+}
+
+// ========== MESSENGER ==========
+let currentChat = null;
+let currentChatOtherId = null;
+
+function showChats() {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('chats-view').style.display = 'block';
+    document.getElementById('contacts-view').style.display = 'none';
+}
+
+function showContacts() {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('chats-view').style.display = 'none';
+    document.getElementById('contacts-view').style.display = 'block';
+    loadContacts();
+}
+
+async function showAddContactModal() {
+    const email = prompt('추가할 연락처 이메일:');
+    if (!email) return;
+    
+    const name = prompt('표시 이름 (선택):') || email;
+    
+    // Check if user exists
+    const users = await db.collection('users').where('email', '==', email).get();
+    if (users.empty) {
+        alert('사용자를 찾을 수 없습니다');
+        return;
+    }
+    
+    const userId = users.docs[0].id;
+    
+    // Add to contacts
+    await db.collection('users').doc(currentUser.uid)
+        .collection('contacts').doc(userId).set({
+            email: email,
+            name: name,
+            addedAt: new Date()
+        });
+    
+    alert('✅ 연락처에 추가되었습니다');
+    loadContacts();
+}
+
+async function loadContacts() {
+    const contactList = document.getElementById('contact-list');
+    contactList.innerHTML = '<p style="padding:1rem; text-align:center;">📋 로딩 중...</p>';
+    
+    const contacts = await db.collection('users').doc(currentUser.uid)
+        .collection('contacts').get();
+    
+    contactList.innerHTML = '';
+    
+    if (contacts.empty) {
+        contactList.innerHTML = `
+            <div style="text-align:center; padding:3rem; color:var(--accent);">
+                <p style="font-size:3rem; margin-bottom:1rem;">👥</p>
+                <p style="font-size:1.1rem; margin-bottom:0.5rem;">연락처가 없습니다</p>
+                <p style="font-size:0.85rem; margin-bottom:1.5rem;">첫 연락처를 추가해보세요!</p>
+                <button onclick="showAddContact()" class="btn-primary">➕ 연락처 추가</button>
+            </div>
+        `;
+        return;
+    }
+    
+    for (const doc of contacts.docs) {
+        const contact = doc.data();
+        
+        // Get wallet address
+        const users = await db.collection('users').where('email', '==', contact.email).get();
+        let walletAddr = '';
+        if (!users.empty) {
+            const userData = users.docs[0].data();
+            if (userData.walletAddress) {
+                const addr = userData.walletAddress;
+                walletAddr = `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+            }
+        }
+        
+        const contactItem = document.createElement('div');
+        contactItem.className = 'contact-item';
+        contactItem.innerHTML = `
+            <div class="chat-avatar">👤</div>
+            <div class="contact-info">
+                <strong style="font-size:0.95rem;">${contact.name}</strong>
+                <p style="font-size:0.75rem; margin:0.2rem 0;">${contact.email}</p>
+                ${walletAddr ? `<p style="font-size:0.7rem; color:var(--accent); margin:0;">💳 ${walletAddr}</p>` : ''}
+            </div>
+            <button onclick='startChatWithContact("${contact.email}")' class="btn-chat">채팅</button>
+        `;
+        contactList.appendChild(contactItem);
+    }
+}
+
+async function startChatWithContact(email) {
+    try {
+        await startNewChat(email);
+        
+        // Switch to chats tab
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.getElementById('chats-view').style.display = 'block';
+        document.getElementById('contacts-view').style.display = 'none';
+        
+        // Show messenger page
+        showPage('messenger');
+    } catch (error) {
+        console.error('Chat start error:', error);
+        alert('채팅 시작 실패');
+    }
+}
+
+function showNewChatModal() {
+    const email = prompt('채팅할 사용자 이메일:');
+    if (!email) return;
+    startNewChat(email);
+}
+
+async function startNewChat(otherEmail) {
+    try {
+        console.log('Starting chat with:', otherEmail);
+        
+        if (otherEmail === currentUser.email) {
+            alert('자기 자신과는 채팅할 수 없습니다');
+            return;
+        }
+        
+        const users = await db.collection('users').where('email', '==', otherEmail).get();
+        console.log('Found users:', users.size);
+        
+        if (users.empty) {
+            alert('사용자를 찾을 수 없습니다');
+            return;
+        }
+        
+        const otherUser = users.docs[0];
+        const otherId = otherUser.id;
+        console.log('Other user ID:', otherId);
+        
+        // Check if chat exists
+        const existingChat = await db.collection('chats')
+            .where('participants', 'array-contains', currentUser.uid)
+            .get();
+        
+        console.log('Existing chats:', existingChat.size);
+        
+        let chatId = null;
+        
+        for (const doc of existingChat.docs) {
+            const chat = doc.data();
+            if (chat.participants.includes(otherId)) {
+                chatId = doc.id;
+                console.log('Found existing chat:', chatId);
+                break;
+            }
+        }
+        
+        // Create new chat if not exists
+        if (!chatId) {
+            console.log('Creating new chat...');
+            const newChat = await db.collection('chats').add({
+                participants: [currentUser.uid, otherId],
+                otherEmail: otherEmail,
+                myEmail: currentUser.email,
+                lastMessage: '',
+                lastMessageTime: new Date(),
+                createdAt: new Date()
+            });
+            chatId = newChat.id;
+            console.log('Created chat:', chatId);
+        }
+        
+        await loadMessages();
+        await openChat(chatId, otherId);
+        console.log('Chat opened successfully');
+    } catch (error) {
+        console.error('Start chat error:', error);
+        alert('채팅 시작 실패: ' + error.message);
+    }
+}
+
+async function loadMessages() {
+    const chatList = document.getElementById('chat-list');
+    chatList.innerHTML = '';
+    
+    const chats = await db.collection('chats')
+        .where('participants', 'array-contains', currentUser.uid)
+        .get();
+    
+    if (chats.empty) {
+        chatList.innerHTML = '<p style="padding:1rem; color:var(--accent);">채팅을 시작하세요</p>';
+        return;
+    }
+    
+    // Sort manually
+    const chatDocs = chats.docs.sort((a, b) => {
+        const aTime = a.data().lastMessageTime?.toMillis() || 0;
+        const bTime = b.data().lastMessageTime?.toMillis() || 0;
+        return bTime - aTime;
+    });
+    
+    for (const doc of chatDocs) {
+        const chat = doc.data();
+        const otherId = chat.participants.find(id => id !== currentUser.uid);
+        
+        const otherUserDoc = await db.collection('users').doc(otherId).get();
+        const otherEmail = otherUserDoc.data().email;
+        
+        const chatItem = document.createElement('div');
+        chatItem.className = 'chat-item';
+        chatItem.onclick = () => openChat(doc.id, otherId);
+        chatItem.innerHTML = `
+            <div class="chat-avatar">👤</div>
+            <div class="chat-preview">
+                <strong>${otherEmail}</strong>
+                <p>${chat.lastMessage || '메시지 없음'}</p>
+            </div>
+        `;
+        chatList.appendChild(chatItem);
+    }
+}
+
+async function openChat(chatId, otherId) {
+    currentChat = chatId;
+    currentChatOtherId = otherId;
+    
+    const otherUser = await db.collection('users').doc(otherId).get();
+    const otherEmail = otherUser.data().email;
+    document.getElementById('chat-username').textContent = otherEmail;
+    
+    // Show chat window
+    document.querySelector('.chat-window').style.display = 'flex';
+    
+    // Real-time listener
+    db.collection('chats').doc(chatId)
+        .collection('messages')
+        .orderBy('timestamp')
+        .onSnapshot(snapshot => {
+            const messagesDiv = document.getElementById('chat-messages');
+            messagesDiv.innerHTML = '';
+            
+            if (snapshot.empty) {
+                messagesDiv.innerHTML = '<p style="text-align:center; color:var(--accent); padding:2rem;">메시지를 보내보세요!</p>';
+            }
+            
+            snapshot.forEach(doc => {
+                const msg = doc.data();
+                const isMine = msg.senderId === currentUser.uid;
+                
+                const msgEl = document.createElement('div');
+                msgEl.style.cssText = `
+                    background: ${isMine ? 'var(--text)' : 'var(--bg)'};
+                    color: ${isMine ? 'white' : 'var(--text)'};
+                    padding: 0.8rem;
+                    border-radius: 12px;
+                    margin-bottom: 0.5rem;
+                    max-width: 70%;
+                    margin-left: ${isMine ? 'auto' : '0'};
+                    word-break: break-word;
+                `;
+                
+                let content = msg.text;
+                if (msg.tokenAmount) {
+                    content = `💰 ${msg.tokenAmount} ${msg.tokenType} 전송\n${msg.text || ''}`;
+                }
+                
+                msgEl.textContent = content;
+                messagesDiv.appendChild(msgEl);
+            });
+            
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        });
+    
+    console.log('Chat opened:', chatId, 'with', otherEmail);
+}
+
+async function sendMessage() {
+    if (!currentChat) {
+        alert('채팅을 선택하세요');
+        return;
+    }
+    
+    const input = document.getElementById('message-input');
+    const text = input.value.trim();
+    
+    if (!text) return;
+    
+    await db.collection('chats').doc(currentChat)
+        .collection('messages').add({
+            senderId: currentUser.uid,
+            text: text,
+            timestamp: new Date()
+        });
+    
+    await db.collection('chats').doc(currentChat).update({
+        lastMessage: text,
+        lastMessageTime: new Date()
+    });
+    
+    input.value = '';
+}
+
+async function sendTokenWithMessage() {
+    if (!currentChat || !currentChatOtherId) {
+        alert('채팅을 선택하세요');
+        return;
+    }
+    
+    const amount = prompt('전송할 CRNY 수량:');
+    if (!amount) return;
+    
+    const amountNum = parseFloat(amount);
+    if (amountNum <= 0 || amountNum > userWallet.balances.crny) {
+        alert(`잔액이 부족하거나 잘못된 수량입니다\n잔액: ${userWallet.balances.crny} CRNY`);
+        return;
+    }
+    
+    const message = prompt('메시지 (선택):') || '';
+    
+    // Update balances
+    await db.collection('users').doc(currentUser.uid).update({
+        'balances.crny': userWallet.balances.crny - amountNum
+    });
+    
+    const otherUser = await db.collection('users').doc(currentChatOtherId).get();
+    await db.collection('users').doc(currentChatOtherId).update({
+        'balances.crny': otherUser.data().balances.crny + amountNum
+    });
+    
+    // Send message with token
+    await db.collection('chats').doc(currentChat)
+        .collection('messages').add({
+            senderId: currentUser.uid,
+            text: message,
+            tokenAmount: amountNum,
+            tokenType: 'CRNY',
+            timestamp: new Date()
+        });
+    
+    await db.collection('chats').doc(currentChat).update({
+        lastMessage: `💰 ${amountNum} CRNY 전송`,
+        lastMessageTime: new Date()
+    });
+    
+    // Transaction record
+    await db.collection('transactions').add({
+        from: currentUser.uid,
+        to: currentChatOtherId,
+        amount: amountNum,
+        token: 'CRNY',
+        message: message,
+        timestamp: new Date()
+    });
+    
+    alert(`✅ ${amountNum} CRNY 전송 완료!`);
+    loadUserWallet();
+}
+
+// ========== SOCIAL FEED ==========
+async function loadSocialFeed() {
+    const feed = document.getElementById('social-feed');
+    feed.innerHTML = '<p style="text-align:center; padding:2rem; color:var(--accent);">📸 게시물 로딩 중...</p>';
+    
+    try {
+        const posts = await db.collection('posts')
+            .limit(50)
+            .get();
+        
+        // Sort manually
+        const sortedPosts = posts.docs.sort((a, b) => {
+            const aTime = a.data().timestamp?.toMillis() || 0;
+            const bTime = b.data().timestamp?.toMillis() || 0;
+            return bTime - aTime;
+        });
+        
+        feed.innerHTML = '';
+        
+        if (sortedPosts.length === 0) {
+            feed.innerHTML = `
+                <div style="text-align:center; padding:3rem; color:var(--accent);">
+                    <p style="font-size:3rem; margin-bottom:1rem;">📝</p>
+                    <p style="font-size:1.2rem; margin-bottom:0.5rem;">아직 게시물이 없습니다</p>
+                    <p style="font-size:0.9rem;">첫 게시물을 작성해보세요!</p>
+                </div>
+            `;
+            return;
+        }
+        
+        for (const doc of sortedPosts) {
+            const post = doc.data();
+            
+            // Get user info
+            const userDoc = await db.collection('users').doc(post.userId).get();
+            const userData = userDoc.exists ? userDoc.data() : { email: '알 수 없음' };
+            const userName = userData.nickname || userData.displayName || userData.email;
+            
+            const timeAgo = getTimeAgo(post.timestamp.toDate());
+            
+            // Likes display
+            const likedByMe = post.likedBy && post.likedBy.includes(currentUser.uid);
+            const likeCount = post.likes || 0;
+            const likeButton = likedByMe ? '❤️' : '🤍';
+            
+            const postEl = document.createElement('div');
+            postEl.className = 'post';
+            postEl.innerHTML = `
+                <div class="post-header">
+                    <div class="post-avatar">👤</div>
+                    <div class="post-info">
+                        <strong>${userName}</strong>
+                        <span>${timeAgo}</span>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <p>${post.text}</p>
+                    ${post.imageUrl ? `<img src="${post.imageUrl}" style="width:100%; border-radius:8px; margin-top:0.5rem;">` : ''}
+                </div>
+                <div class="post-actions">
+                    <button onclick="toggleLike('${doc.id}', ${likedByMe})">${likeButton} ${likeCount}</button>
+                    <button onclick="showLikedUsers('${doc.id}')">👥 좋아요</button>
+                    <button onclick="toggleComments('${doc.id}')">💬 댓글 ${(post.commentCount || 0)}</button>
+                </div>
+                <div id="comments-${doc.id}" style="display:none; margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border);">
+                    <div id="comment-list-${doc.id}"></div>
+                    <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+                        <input type="text" id="comment-input-${doc.id}" placeholder="댓글 입력..." style="flex:1; padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
+                        <button onclick="addComment('${doc.id}')" class="btn-primary" style="padding:0.5rem 1rem;">작성</button>
+                    </div>
+                </div>
+            `;
+            feed.appendChild(postEl);
+        }
+    } catch (error) {
+        console.error('Feed load error:', error);
+        feed.innerHTML = `
+            <div style="text-align:center; padding:3rem;">
+                <p style="font-size:2rem; margin-bottom:1rem;">⚠️</p>
+                <p style="color:red; margin-bottom:0.5rem;">로딩 실패</p>
+                <p style="font-size:0.85rem; color:var(--accent);">${error.message}</p>
+                <button onclick="loadSocialFeed()" class="btn-primary" style="margin-top:1rem;">다시 시도</button>
+            </div>
+        `;
+    }
+}
+
+async function toggleLike(postId, isLiked) {
+    const postRef = db.collection('posts').doc(postId);
+    const post = await postRef.get();
+    const data = post.data();
+    
+    let likedBy = data.likedBy || [];
+    let likes = data.likes || 0;
+    
+    if (isLiked) {
+        likedBy = likedBy.filter(uid => uid !== currentUser.uid);
+        likes = Math.max(0, likes - 1);
+    } else {
+        likedBy.push(currentUser.uid);
+        likes += 1;
+    }
+    
+    await postRef.update({ likedBy, likes });
+    loadSocialFeed();
+}
+
+async function showLikedUsers(postId) {
+    const post = await db.collection('posts').doc(postId).get();
+    const data = post.data();
+    const likedBy = data.likedBy || [];
+    
+    if (likedBy.length === 0) {
+        alert('아직 좋아요가 없습니다');
+        return;
+    }
+    
+    let message = '좋아요 한 사람:\n\n';
+    for (const uid of likedBy) {
+        const userDoc = await db.collection('users').doc(uid).get();
+        const userData = userDoc.data();
+        const userName = userData.nickname || userData.displayName || userData.email;
+        message += `👤 ${userName}\n`;
+    }
+    
+    alert(message);
+}
+
+async function toggleComments(postId) {
+    const commentsDiv = document.getElementById(`comments-${postId}`);
+    
+    if (commentsDiv.style.display === 'none') {
+        commentsDiv.style.display = 'block';
+        await loadComments(postId);
+    } else {
+        commentsDiv.style.display = 'none';
+    }
+}
+
+async function loadComments(postId) {
+    const commentList = document.getElementById(`comment-list-${postId}`);
+    commentList.innerHTML = '<p style="text-align:center; color:var(--accent);">로딩 중...</p>';
+    
+    const comments = await db.collection('posts').doc(postId)
+        .collection('comments')
+        .orderBy('timestamp', 'asc')
+        .get();
+    
+    commentList.innerHTML = '';
+    
+    if (comments.empty) {
+        commentList.innerHTML = '<p style="text-align:center; color:var(--accent); font-size:0.85rem;">첫 댓글을 남겨보세요!</p>';
+        return;
+    }
+    
+    for (const doc of comments.docs) {
+        const comment = doc.data();
+        const userDoc = await db.collection('users').doc(comment.userId).get();
+        const userData = userDoc.data();
+        const userName = userData.nickname || userData.displayName || userData.email;
+        
+        const commentEl = document.createElement('div');
+        commentEl.style.cssText = 'padding:0.8rem; background:var(--bg); border-radius:6px; margin-bottom:0.5rem;';
+        commentEl.innerHTML = `
+            <strong style="font-size:0.85rem;">${userName}</strong>
+            <p style="margin:0.3rem 0 0 0; font-size:0.9rem;">${comment.text}</p>
+            <span style="font-size:0.75rem; color:var(--accent);">${getTimeAgo(comment.timestamp.toDate())}</span>
+        `;
+        commentList.appendChild(commentEl);
+    }
+}
+
+async function addComment(postId) {
+    const input = document.getElementById(`comment-input-${postId}`);
+    const text = input.value.trim();
+    
+    if (!text) return;
+    
+    await db.collection('posts').doc(postId).collection('comments').add({
+        userId: currentUser.uid,
+        text: text,
+        timestamp: new Date()
+    });
+    
+    // Update comment count
+    const postRef = db.collection('posts').doc(postId);
+    const post = await postRef.get();
+    await postRef.update({
+        commentCount: (post.data().commentCount || 0) + 1
+    });
+    
+    input.value = '';
+    await loadComments(postId);
+}
+
+function getTimeAgo(date) {
+    const seconds = Math.floor((new Date() - date) / 1000);
+    
+    if (seconds < 60) return '방금 전';
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}분 전`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)}시간 전`;
+    return `${Math.floor(seconds / 86400)}일 전`;
+}
+
+async function createPost() {
+    const textarea = document.getElementById('post-text');
+    const fileInput = document.getElementById('post-image');
+    const text = textarea.value.trim();
+    
+    if (!text && !fileInput.files[0]) {
+        alert('내용 또는 이미지를 입력하세요');
+        return;
+    }
+    
+    try {
+        let imageUrl = null;
+        
+        // Upload image if exists
+        if (fileInput.files[0]) {
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            imageUrl = await new Promise((resolve, reject) => {
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        await db.collection('posts').add({
+            userId: currentUser.uid,
+            text: text,
+            imageUrl: imageUrl,
+            likes: 0,
+            likedBy: [],
+            commentCount: 0,
+            timestamp: new Date()
+        });
+        
+        textarea.value = '';
+        fileInput.value = '';
+        await loadSocialFeed();
+        alert('✅ 게시 완료!');
+    } catch (error) {
+        console.error('Post error:', error);
+        alert('게시 실패');
+    }
+}
+
+async function likePost(postId, currentLikes) {
+    try {
+        await db.collection('posts').doc(postId).update({
+            likes: currentLikes + 1
+        });
+        
+        await loadSocialFeed();
+    } catch (error) {
+        console.error('Like error:', error);
+    }
+}
+
+// ========== SEND TOKENS ==========
+let selectedToken = null;
+
+function selectToken(tokenType) {
+    selectedToken = tokenType;
+    
+    // Remove all selected classes
+    document.querySelectorAll('.token-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+    
+    // Add selected class
+    document.getElementById(`token-card-${tokenType}`).classList.add('selected');
+    
+    console.log('Selected token:', tokenType.toUpperCase());
+}
+
+async function showSendModal() {
+    if (!selectedToken) {
+        alert('전송할 토큰을 먼저 선택하세요');
+        return;
+    }
+    
+    const tokenType = selectedToken.toUpperCase();
+    const balance = userWallet.balances[selectedToken];
+    
+    const contacts = await db.collection('users').doc(currentUser.uid)
+        .collection('contacts').get();
+    
+    if (contacts.empty) {
+        const email = prompt('받는 사람 이메일:');
+        if (!email) return;
+        
+        const amount = prompt(`${email}에게 전송할 ${tokenType} 수량:\n(잔액: ${balance})`);
+        if (!amount) return;
+        
+        await sendTokensByEmail(email, parseFloat(amount), tokenType);
+    } else {
+        // Get wallet addresses for contacts
+        let contactList = `${tokenType} 전송 - 받는 사람 선택:\n\n`;
+        const contactsArray = [];
+        
+        for (const doc of contacts.docs) {
+            const contact = doc.data();
+            
+            // Get user's wallet address
+            const users = await db.collection('users').where('email', '==', contact.email).get();
+            let walletAddr = '';
+            if (!users.empty) {
+                const userData = users.docs[0].data();
+                if (userData.walletAddress) {
+                    const addr = userData.walletAddress;
+                    walletAddr = `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+                }
+            }
+            
+            contactsArray.push({...contact, walletAddr});
+            contactList += `${contactsArray.length}. ${contact.name}\n`;
+            contactList += `   ${contact.email}\n`;
+            if (walletAddr) {
+                contactList += `   지갑: ${walletAddr}\n`;
+            }
+            contactList += `\n`;
+        }
+        
+        contactList += `0. 직접 입력\n\n번호:`;
+        
+        const choice = prompt(contactList);
+        if (!choice) return;
+        
+        const choiceNum = parseInt(choice);
+        let recipientEmail;
+        
+        if (choiceNum === 0) {
+            recipientEmail = prompt('받는 사람 이메일:');
+        } else if (choiceNum > 0 && choiceNum <= contactsArray.length) {
+            recipientEmail = contactsArray[choiceNum - 1].email;
+        } else {
+            alert('잘못된 선택입니다');
+            return;
+        }
+        
+        if (!recipientEmail) return;
+        
+        const amount = prompt(`${recipientEmail}에게 전송할 ${tokenType} 수량:\n(잔액: ${balance})`);
+        if (!amount) return;
+        
+        await sendTokensByEmail(recipientEmail, parseFloat(amount), tokenType);
+    }
+}
+
+async function sendTokensByEmail(recipientEmail, amount, tokenType = 'CRNY') {
+    if (!userWallet) return;
+    
+    const tokenKey = tokenType.toLowerCase();
+    const balance = userWallet.balances[tokenKey];
+    
+    if (amount <= 0 || amount > balance) {
+        alert(`잔액이 부족하거나 잘못된 수량입니다\n잔액: ${balance} ${tokenType}`);
+        return;
+    }
+    
+    const users = await db.collection('users').where('email', '==', recipientEmail).get();
+    
+    if (users.empty) {
+        alert('사용자를 찾을 수 없습니다');
+        return;
+    }
+    
+    const recipientDoc = users.docs[0];
+    const recipient = recipientDoc.data();
+    
+    try {
+        // Check if Crowny wallet (gas subsidy) or external wallet
+        if (userWallet.isImported) {
+            alert('⚠️ 외부 지갑은 가스비가 차감됩니다.\n지갑에 MATIC이 충분한지 확인하세요.');
+            // TODO: Implement actual blockchain transfer with user's gas
+            alert('외부 지갑 전송은 곧 지원됩니다.');
+            return;
+        }
+        
+        // Crowny wallet - Admin gas subsidy
+        const gasEstimate = 0.001; // Estimated MATIC for transfer
+        
+        alert(`⏳ 전송 요청 중...\n가스비 ${gasEstimate} MATIC은 관리자가 대납합니다.`);
+        
+        // Request admin-sponsored transfer
+        await db.collection('transfer_requests').add({
+            from: currentUser.uid,
+            fromEmail: currentUser.email,
+            fromAddress: userWallet.walletAddress,
+            to: recipientDoc.id,
+            toEmail: recipientEmail,
+            toAddress: recipient.walletAddress,
+            amount: amount,
+            token: tokenType,
+            estimatedGas: gasEstimate,
+            status: 'pending',
+            requestedAt: new Date()
+        });
+        
+        alert(`✅ 전송 요청 완료!\n\n관리자가 처리 후:\n- ${amount} ${tokenType} 전송\n- 가스비 ${gasEstimate} MATIC 대납 기록`);
+        
+        console.log('Transfer requested:', {
+            from: currentUser.email,
+            to: recipientEmail,
+            amount: amount,
+            token: tokenType,
+            gas: gasEstimate
+        });
+        
+    } catch (error) {
+        console.error('❌ Transfer request error:', error);
+        alert('전송 요청 실패: ' + error.message);
+    }
+}
+
+// ========== UI HELPERS ==========
+function toggleMenu() {
+    document.getElementById('sidebar').classList.toggle('active');
+}
+
+function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    
+    document.getElementById(pageId).classList.add('active');
+    const navItem = document.querySelector(`[onclick="showPage('${pageId}')"]`);
+    if (navItem) navItem.classList.add('active');
+    
+    if (window.innerWidth <= 768) {
+        document.getElementById('sidebar').classList.remove('active');
+    }
+    
+    // Load page-specific data
+    if (pageId === 'social') {
+        loadSocialFeed();
+    }
+    if (pageId === 'prop-trading') {
+        loadPropTrading();
+        loadTradingDashboard();
+    }
+    if (pageId === 'admin') {
+        initAdminPage();
+    }
+}
+
+function showSignup() {
+    document.getElementById('login-form').style.display = 'none';
+    document.getElementById('signup-form').style.display = 'block';
+}
+
+function showLogin() {
+    document.getElementById('signup-form').style.display = 'none';
+    document.getElementById('login-form').style.display = 'block';
+}
+
+// Init Web3 (Polygon) - fallback RPC
+let web3;
+try {
+    web3 = new Web3('https://polygon-rpc.com');
+} catch(e) {
+    web3 = new Web3('https://rpc-mainnet.matic.quiknode.pro');
+}
+
+// ========== 온체인 ERC-20 함수 ==========
+
+// 특정 지갑의 ERC-20 잔액 조회
+async function getOnchainBalance(walletAddress, tokenKey) {
+    try {
+        const token = POLYGON_TOKENS[tokenKey.toLowerCase()];
+        if (!token) return 0;
+        
+        const contract = new web3.eth.Contract(ERC20_ABI, token.address);
+        const rawBalance = await contract.methods.balanceOf(walletAddress).call();
+        const balance = parseFloat(web3.utils.fromWei(rawBalance, 'ether'));
+        return balance;
+    } catch (error) {
+        console.error(`온체인 잔액 조회 실패 (${tokenKey}):`, error);
+        return 0;
+    }
+}
+
+// 3개 토큰 전체 잔액 조회
+async function getAllOnchainBalances(walletAddress) {
+    const [crny, fnc, crfn] = await Promise.all([
+        getOnchainBalance(walletAddress, 'crny'),
+        getOnchainBalance(walletAddress, 'fnc'),
+        getOnchainBalance(walletAddress, 'crfn')
+    ]);
+    return { crny, fnc, crfn };
+}
+
+// ERC-20 토큰 전송 (private key 필요)
+async function sendOnchainToken(fromPrivateKey, toAddress, tokenKey, amount) {
+    const token = POLYGON_TOKENS[tokenKey.toLowerCase()];
+    if (!token) throw new Error('알 수 없는 토큰: ' + tokenKey);
+    
+    const contract = new web3.eth.Contract(ERC20_ABI, token.address);
+    const amountWei = web3.utils.toWei(amount.toString(), 'ether');
+    
+    // 보내는 지갑 주소 추출
+    const account = web3.eth.accounts.privateKeyToAccount(fromPrivateKey);
+    const fromAddress = account.address;
+    
+    // 트랜잭션 데이터
+    const txData = contract.methods.transfer(toAddress, amountWei).encodeABI();
+    
+    // 가스 추정
+    const gasPrice = await web3.eth.getGasPrice();
+    let gasEstimate;
+    try {
+        gasEstimate = await contract.methods.transfer(toAddress, amountWei).estimateGas({ from: fromAddress });
+    } catch (e) {
+        gasEstimate = 100000; // 기본값
+    }
+    
+    const tx = {
+        from: fromAddress,
+        to: token.address,
+        data: txData,
+        gas: Math.floor(gasEstimate * 1.2), // 20% 여유
+        gasPrice: gasPrice
+    };
+    
+    // 서명 & 전송
+    const signedTx = await web3.eth.accounts.signTransaction(tx, fromPrivateKey);
+    const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+    
+    console.log(`✅ 온체인 전송 완료: ${amount} ${token.symbol} → ${toAddress}`);
+    console.log(`   TX: https://polygonscan.com/tx/${receipt.transactionHash}`);
+    
+    return receipt;
+}
+
+// ========== ADMIN FUNCTIONS ==========
+async function loadTransferRequests() {
+    if (currentUser.email !== 'kim.president.sk@gmail.com') return;
+    
+    const requests = await db.collection('transfer_requests')
+        .where('status', '==', 'pending')
+        .orderBy('requestedAt', 'desc')
+        .get();
+    
+    console.log('Transfer requests:', requests.size);
+    
+    requests.forEach(doc => {
+        const req = doc.data();
+        console.log(`Request: ${req.fromEmail} → ${req.toEmail}: ${req.amount} ${req.token}`);
+    });
+}
+
+async function adminMintTokens() {
+    if (currentUser.email !== 'kim.president.sk@gmail.com') {
+        alert('관리자만 사용 가능합니다');
+        return;
+    }
+    
+    const email = document.getElementById('admin-recipient')?.value;
+    const token = document.getElementById('admin-token')?.value || 'CRNY';
+    const amount = parseFloat(document.getElementById('admin-amount')?.value || 0);
+    
+    if (!email || amount <= 0) {
+        alert('이메일과 수량을 입력하세요');
+        return;
+    }
+    
+    const users = await db.collection('users').where('email', '==', email).get();
+    
+    if (users.empty) {
+        alert('사용자를 찾을 수 없습니다');
+        return;
+    }
+    
+    const userDoc = users.docs[0];
+    const userData = userDoc.data();
+    const tokenKey = token.toLowerCase();
+    
+    await db.collection('users').doc(userDoc.id).update({
+        [`balances.${tokenKey}`]: userData.balances[tokenKey] + amount
+    });
+    
+    await db.collection('transactions').add({
+        from: 'admin',
+        to: userDoc.id,
+        amount: amount,
+        token: token,
+        type: 'mint',
+        timestamp: new Date()
+    });
+    
+    alert(`✅ ${amount} ${token} 발급 완료!`);
+    
+    if (document.getElementById('admin-recipient')) {
+        document.getElementById('admin-recipient').value = '';
+        document.getElementById('admin-amount').value = '';
+    }
+}
+
+// ========== 관리자 기능: 강제 청산/중단 ==========
+const ADMIN_EMAIL = 'kim.president.sk@gmail.com';
+
+function isAdmin() {
+    return currentUser && currentUser.email === ADMIN_EMAIL;
+}
+
+// 관리자: 특정 사용자 전체 포지션 강제 청산
+async function adminForceCloseAll(targetUserId, targetParticipantId, challengeId) {
+    if (!isAdmin()) {
+        alert('관리자만 사용 가능합니다');
+        return;
+    }
+    
+    if (!window.confirm('⚠️ 관리자 강제 청산\n\n이 사용자의 모든 포지션을 강제 청산합니다.\n진행하시겠습니까?')) return;
+    
+    try {
+        const docRef = db.collection('prop_challenges').doc(challengeId)
+            .collection('participants').doc(targetParticipantId);
+        const doc = await docRef.get();
+        if (!doc.exists) { alert('참가자를 찾을 수 없습니다'); return; }
+        
+        const data = doc.data();
+        const trades = data.trades || [];
+        let totalPnL = 0;
+        
+        for (const trade of trades) {
+            if (trade.status === 'open') {
+                const priceDiff = trade.side === 'BUY' 
+                    ? (currentPrice - trade.entryPrice) 
+                    : (trade.entryPrice - currentPrice);
+                const pnl = priceDiff * trade.multiplier * trade.contracts;
+                const fee = trade.fee || (RISK_CONFIG.tradeFeeRoundTrip * trade.contracts);
+                
+                trade.status = 'closed';
+                trade.exitPrice = currentPrice;
+                trade.pnl = pnl - fee;
+                trade.fee = fee;
+                trade.closedAt = new Date();
+                trade.closeReason = 'ADMIN';
+                totalPnL += pnl - fee + trade.margin;
+            }
+        }
+        
+        const newBalance = (data.currentBalance || 0) + totalPnL;
+        
+        await docRef.update({
+            trades: trades,
+            currentBalance: newBalance
+        });
+        
+        // 관리자 로그
+        await db.collection('admin_log').add({
+            action: 'force_close_all',
+            adminEmail: currentUser.email,
+            targetUserId: targetUserId,
+            targetParticipantId: targetParticipantId,
+            challengeId: challengeId,
+            totalPnL: totalPnL,
+            timestamp: new Date()
+        });
+        
+        alert(`✅ 강제 청산 완료!\n손익: $${totalPnL.toFixed(2)}`);
+    } catch (error) {
+        alert('강제 청산 실패: ' + error.message);
+    }
+}
+
+// 관리자: 사용자 거래 중단 (dailyLocked 설정)
+async function adminSuspendTrading(targetParticipantId, challengeId, reason) {
+    if (!isAdmin()) {
+        alert('관리자만 사용 가능합니다');
+        return;
+    }
+    
+    const suspendReason = reason || prompt('중단 사유를 입력하세요:');
+    if (!suspendReason) return;
+    
+    try {
+        await db.collection('prop_challenges').doc(challengeId)
+            .collection('participants').doc(targetParticipantId)
+            .update({
+                dailyLocked: true,
+                adminSuspended: true,
+                suspendReason: suspendReason,
+                suspendedAt: new Date(),
+                suspendedBy: currentUser.email
+            });
+        
+        await db.collection('admin_log').add({
+            action: 'suspend_trading',
+            adminEmail: currentUser.email,
+            targetParticipantId: targetParticipantId,
+            challengeId: challengeId,
+            reason: suspendReason,
+            timestamp: new Date()
+        });
+        
+        alert(`✅ 거래 중단 처리 완료\n사유: ${suspendReason}`);
+    } catch (error) {
+        alert('중단 처리 실패: ' + error.message);
+    }
+}
+
+// 관리자: 거래 중단 해제
+async function adminResumeTrading(targetParticipantId, challengeId) {
+    if (!isAdmin()) {
+        alert('관리자만 사용 가능합니다');
+        return;
+    }
+    
+    try {
+        await db.collection('prop_challenges').doc(challengeId)
+            .collection('participants').doc(targetParticipantId)
+            .update({
+                dailyLocked: false,
+                adminSuspended: false,
+                suspendReason: null,
+                suspendedAt: null,
+                suspendedBy: null
+            });
+        
+        await db.collection('admin_log').add({
+            action: 'resume_trading',
+            adminEmail: currentUser.email,
+            targetParticipantId: targetParticipantId,
+            challengeId: challengeId,
+            timestamp: new Date()
+        });
+        
+        alert('✅ 거래 중단 해제 완료');
+        loadAdminParticipants(); // 새로고침
+    } catch (error) {
+        alert('해제 실패: ' + error.message);
+    }
+}
+
+// ========== 관리자 패널 UI ==========
+function initAdminPage() {
+    if (!isAdmin()) {
+        document.getElementById('admin-not-authorized').style.display = 'block';
+        document.getElementById('admin-panel').style.display = 'none';
+        return;
+    }
+    
+    document.getElementById('admin-not-authorized').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+    loadAdminWallet();
+    loadAdminParticipants();
+}
+
+// Admin 지갑 - 온체인 잔액 로드
+async function loadAdminWallet() {
+    if (!isAdmin()) return;
+    
+    const container = document.getElementById('admin-wallet-info');
+    if (!container) { console.error('admin-wallet-info 없음'); return; }
+    
+    container.innerHTML = '<p style="color:var(--accent);">🔄 온체인 잔액 조회 중... (v4.0)</p>';
+    
+    try {
+        // 1. Firestore에서 관리자 지갑 주소
+        console.log('🔍 Admin wallet: Firestore 조회 시작');
+        const wallets = await db.collection('users').doc(currentUser.uid)
+            .collection('wallets').limit(1).get();
+        
+        if (wallets.empty) {
+            container.innerHTML = '<p style="color:red;">❌ Firestore에 지갑 없음</p>';
+            return;
+        }
+        
+        const adminWalletData = wallets.docs[0].data();
+        const adminAddress = adminWalletData.walletAddress;
+        console.log('🔍 Admin wallet address:', adminAddress);
+        
+        if (!adminAddress) {
+            container.innerHTML = '<p style="color:red;">❌ walletAddress 필드 없음</p>';
+            return;
+        }
+        
+        // 2. 온체인 잔액 조회
+        console.log('🔍 온체인 잔액 조회 시작...');
+        const balances = await getAllOnchainBalances(adminAddress);
+        console.log('🔍 잔액:', balances);
+        
+        // 3. POL 잔액 (가스비)
+        const maticBalance = await web3.eth.getBalance(adminAddress);
+        const maticFormatted = parseFloat(web3.utils.fromWei(maticBalance, 'ether')).toFixed(4);
+        console.log('🔍 POL:', maticFormatted);
+        
+        container.innerHTML = `
+            <div style="font-size:0.8rem; color:var(--accent); margin-bottom:0.5rem;">
+                🔗 <span style="font-family:monospace;">${adminAddress.slice(0,6)}...${adminAddress.slice(-4)}</span>
+                <span style="margin-left:0.5rem; color:#8e24aa;">Polygon</span>
+            </div>
+            <div style="display:flex; gap:0.8rem; flex-wrap:wrap; margin-bottom:0.5rem;">
+                <div style="background:#fff3e0; padding:0.6rem 1rem; border-radius:6px; text-align:center; min-width:80px;">
+                    <div style="font-size:0.7rem; color:#e65100;">CRNY</div>
+                    <strong style="font-size:1.2rem;">${balances.crny.toLocaleString(undefined, {maximumFractionDigits:2})}</strong>
+                </div>
+                <div style="background:#e3f2fd; padding:0.6rem 1rem; border-radius:6px; text-align:center; min-width:80px;">
+                    <div style="font-size:0.7rem; color:#1565c0;">FNC</div>
+                    <strong style="font-size:1.2rem;">${balances.fnc.toLocaleString(undefined, {maximumFractionDigits:2})}</strong>
+                </div>
+                <div style="background:#e8f5e9; padding:0.6rem 1rem; border-radius:6px; text-align:center; min-width:80px;">
+                    <div style="font-size:0.7rem; color:#2e7d32;">CRFN</div>
+                    <strong style="font-size:1.2rem;">${balances.crfn.toLocaleString(undefined, {maximumFractionDigits:2})}</strong>
+                </div>
+                <div style="background:#f3e5f5; padding:0.6rem 1rem; border-radius:6px; text-align:center; min-width:80px;">
+                    <div style="font-size:0.7rem; color:#6a1b9a;">POL (가스)</div>
+                    <strong style="font-size:1.2rem;">${maticFormatted}</strong>
+                </div>
+            </div>
+            <button onclick="loadAdminWallet()" style="background:var(--accent); color:white; border:none; padding:0.4rem 0.8rem; border-radius:4px; cursor:pointer; font-size:0.8rem;">🔄 새로고침</button>
+        `;
+        
+        // 전역에 저장
+        window.adminWalletAddress = adminAddress;
+        window.adminWalletId = wallets.docs[0].id;
+        
+    } catch (error) {
+        console.error('Admin wallet load error:', error);
+        container.innerHTML = `<p style="color:red;">잔액 조회 실패: ${error.message}</p>
+            <button onclick="loadAdminWallet()" style="background:var(--accent); color:white; border:none; padding:0.4rem 0.8rem; border-radius:4px; cursor:pointer; font-size:0.8rem; margin-top:0.5rem;">🔄 다시 시도</button>`;
+    }
+}
+
+// Admin: 온체인 ERC-20 토큰 전송
+async function adminSendToken() {
+    if (!isAdmin()) return;
+    
+    const email = document.getElementById('admin-send-email').value;
+    const tokenKey = document.getElementById('admin-send-token').value;
+    const amount = parseFloat(document.getElementById('admin-send-amount').value);
+    
+    if (!email || !amount || amount <= 0) {
+        alert('이메일과 수량을 입력하세요');
+        return;
+    }
+    
+    try {
+        // 받는 사람 찾기
+        const users = await db.collection('users').where('email', '==', email).get();
+        if (users.empty) {
+            alert('사용자를 찾을 수 없습니다: ' + email);
+            return;
+        }
+        
+        const targetUser = users.docs[0];
+        const targetUserId = targetUser.id;
+        
+        // 받는 사람의 지갑 주소 찾기
+        const wallets = await db.collection('users').doc(targetUserId)
+            .collection('wallets').limit(1).get();
+        
+        if (wallets.empty) {
+            alert('사용자의 지갑을 찾을 수 없습니다');
+            return;
+        }
+        
+        const targetWalletData = wallets.docs[0].data();
+        const toAddress = targetWalletData.walletAddress;
+        
+        if (!toAddress) {
+            alert('받는 사람의 Polygon 지갑 주소가 없습니다');
+            return;
+        }
+        
+        // 관리자 private key 가져오기
+        const adminWallets = await db.collection('users').doc(currentUser.uid)
+            .collection('wallets').limit(1).get();
+        
+        if (adminWallets.empty) {
+            alert('관리자 지갑을 찾을 수 없습니다');
+            return;
+        }
+        
+        const adminWalletData = adminWallets.docs[0].data();
+        const fromPrivateKey = adminWalletData.privateKey;
+        const fromAddress = adminWalletData.walletAddress;
+        
+        if (!fromPrivateKey) {
+            alert('관리자 지갑의 개인키가 없습니다');
+            return;
+        }
+        
+        // 온체인 잔액 확인
+        const balance = await getOnchainBalance(fromAddress, tokenKey);
+        if (balance < amount) {
+            alert(`온체인 잔액 부족!\n보유: ${balance.toFixed(4)} ${tokenKey.toUpperCase()}\n필요: ${amount}`);
+            return;
+        }
+        
+        // MATIC 잔액 확인 (가스비)
+        const maticBalance = await web3.eth.getBalance(fromAddress);
+        const maticFormatted = parseFloat(web3.utils.fromWei(maticBalance, 'ether'));
+        if (maticFormatted < 0.01) {
+            alert(`⚠️ POL(MATIC) 잔액 부족! 가스비가 필요합니다.\n보유: ${maticFormatted.toFixed(4)} POL\n최소 0.01 POL 필요`);
+            return;
+        }
+        
+        const tokenSymbol = tokenKey.toUpperCase();
+        if (!window.confirm(
+            `🔗 온체인 토큰 전송\n\n` +
+            `보내는 사람: ${fromAddress.slice(0,6)}...${fromAddress.slice(-4)}\n` +
+            `받는 사람: ${email}\n` +
+            `  (${toAddress.slice(0,6)}...${toAddress.slice(-4)})\n` +
+            `토큰: ${amount} ${tokenSymbol}\n` +
+            `체인: Polygon\n\n` +
+            `⚠️ 온체인 트랜잭션은 취소할 수 없습니다.\n진행하시겠습니까?`
+        )) return;
+        
+        // 전송 진행 UI
+        const sendBtn = document.querySelector('[onclick="adminSendToken()"]');
+        if (sendBtn) {
+            sendBtn.textContent = '⏳ 전송 중...';
+            sendBtn.disabled = true;
+        }
+        
+        // 온체인 전송
+        const receipt = await sendOnchainToken(fromPrivateKey, toAddress, tokenKey, amount);
+        
+        // Firestore에도 기록 (내부 잔액 동기화)
+        const targetBalances = targetWalletData.balances || {};
+        await db.collection('users').doc(targetUserId)
+            .collection('wallets').doc(wallets.docs[0].id)
+            .update({
+                [`balances.${tokenKey}`]: (targetBalances[tokenKey] || 0) + amount
+            });
+        
+        // 거래 기록
+        await db.collection('transactions').add({
+            from: currentUser.uid,
+            fromEmail: ADMIN_EMAIL,
+            fromAddress: fromAddress,
+            to: targetUserId,
+            toEmail: email,
+            toAddress: toAddress,
+            amount: amount,
+            token: tokenSymbol,
+            type: 'onchain_transfer',
+            txHash: receipt.transactionHash,
+            chain: 'polygon',
+            timestamp: new Date()
+        });
+        
+        await db.collection('admin_log').add({
+            action: 'onchain_send_token',
+            adminEmail: currentUser.email,
+            targetEmail: email,
+            token: tokenSymbol,
+            amount: amount,
+            txHash: receipt.transactionHash,
+            timestamp: new Date()
+        });
+        
+        alert(
+            `✅ 온체인 전송 완료!\n\n` +
+            `${amount} ${tokenSymbol} → ${email}\n` +
+            `TX: ${receipt.transactionHash.slice(0,10)}...`
+        );
+        
+        document.getElementById('admin-send-email').value = '';
+        document.getElementById('admin-send-amount').value = '1';
+        loadAdminWallet();
+        
+    } catch (error) {
+        console.error('온체인 전송 실패:', error);
+        alert('전송 실패: ' + error.message);
+    } finally {
+        const sendBtn = document.querySelector('[onclick="adminSendToken()"]');
+        if (sendBtn) {
+            sendBtn.textContent = '보내기';
+            sendBtn.disabled = false;
+        }
+    }
+}
+
+// 관리자: 모든 챌린지의 참가자 목록 로드
+async function loadAdminParticipants() {
+    if (!isAdmin()) return;
+    
+    const container = document.getElementById('admin-participants-list');
+    container.innerHTML = '<p style="color:var(--accent);">로딩 중...</p>';
+    
+    try {
+        // 모든 챌린지 가져오기
+        const challenges = await db.collection('prop_challenges')
+            .orderBy('createdAt', 'desc')
+            .limit(5)
+            .get();
+        
+        if (challenges.empty) {
+            container.innerHTML = '<p style="color:var(--accent);">챌린지가 없습니다.</p>';
+            return;
+        }
+        
+        let html = '';
+        
+        for (const challengeDoc of challenges.docs) {
+            const challenge = challengeDoc.data();
+            const challengeId = challengeDoc.id;
+            
+            // 해당 챌린지의 참가자 가져오기
+            const participants = await db.collection('prop_challenges').doc(challengeId)
+                .collection('participants')
+                .get();
+            
+            html += `
+                <div style="border:1px solid var(--border); border-radius:8px; padding:1rem; margin-bottom:1rem;">
+                    <h4 style="margin-bottom:0.5rem;">📊 ${challenge.title || '챌린지'} <span style="font-size:0.75rem; color:var(--accent);">(${challengeId.slice(0,8)})</span></h4>
+                    <p style="font-size:0.8rem; color:var(--accent); margin-bottom:0.8rem;">참가자: ${participants.size}명</p>
+            `;
+            
+            if (participants.empty) {
+                html += '<p style="font-size:0.85rem; color:var(--accent);">참가자 없음</p>';
+            } else {
+                for (const pDoc of participants.docs) {
+                    const p = pDoc.data();
+                    const participantId = pDoc.id;
+                    const openTrades = (p.trades || []).filter(t => t.status === 'open');
+                    const initial = p.initialBalance || 100000;
+                    const current = p.currentBalance || 100000;
+                    const pnl = current - initial;
+                    const pnlColor = pnl >= 0 ? '#0066cc' : '#cc0000';
+                    const isSuspended = p.adminSuspended || false;
+                    const isLocked = p.dailyLocked || false;
+                    
+                    let statusBadge = '🟢 정상';
+                    if (isSuspended) statusBadge = '⛔ 관리자 중단';
+                    else if (isLocked) statusBadge = '🔒 일일 제한';
+                    
+                    html += `
+                        <div style="background:var(--bg); padding:0.8rem; border-radius:6px; margin-bottom:0.5rem; border-left:3px solid ${isSuspended ? '#cc0000' : '#0066cc'};">
+                            <div style="display:flex; justify-content:space-between; align-items:start; flex-wrap:wrap; gap:0.5rem;">
+                                <div>
+                                    <strong style="font-size:0.9rem;">${p.email || p.userId || '알 수 없음'}</strong>
+                                    <span style="font-size:0.75rem; margin-left:0.5rem;">${statusBadge}</span>
+                                    <div style="font-size:0.8rem; color:var(--accent); margin-top:0.3rem;">
+                                        잔액: $${current.toLocaleString()} | 
+                                        손익: <span style="color:${pnlColor}">${pnl >= 0 ? '+' : ''}$${pnl.toFixed(0)}</span> | 
+                                        포지션: ${openTrades.length}개
+                                    </div>
+                                    ${isSuspended ? `<div style="font-size:0.75rem; color:#cc0000; margin-top:0.2rem;">사유: ${p.suspendReason || '-'}</div>` : ''}
+                                </div>
+                                <div style="display:flex; gap:0.3rem; flex-wrap:wrap;">
+                                    ${openTrades.length > 0 ? `
+                                        <button onclick="adminForceCloseAll('${p.userId}', '${participantId}', '${challengeId}')" 
+                                            style="background:#cc0000; color:white; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
+                                            💥 강제 청산
+                                        </button>
+                                    ` : ''}
+                                    ${!isSuspended ? `
+                                        <button onclick="adminSuspendTrading('${participantId}', '${challengeId}')" 
+                                            style="background:#ff9800; color:white; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
+                                            ⛔ 거래 중단
+                                        </button>
+                                    ` : `
+                                        <button onclick="adminResumeTrading('${participantId}', '${challengeId}')" 
+                                            style="background:#4caf50; color:white; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
+                                            ✅ 중단 해제
+                                        </button>
+                                    `}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            html += '</div>';
+        }
+        
+        container.innerHTML = html;
+    } catch (error) {
+        container.innerHTML = `<p style="color:red;">로드 실패: ${error.message}</p>`;
+        console.error('Admin participants load error:', error);
+    }
+}
+
+// 관리자: 활동 로그 로드
+async function loadAdminLog() {
+    if (!isAdmin()) return;
+    
+    const container = document.getElementById('admin-log-list');
+    container.innerHTML = '<p style="color:var(--accent);">로딩 중...</p>';
+    
+    try {
+        const logs = await db.collection('admin_log')
+            .orderBy('timestamp', 'desc')
+            .limit(20)
+            .get();
+        
+        if (logs.empty) {
+            container.innerHTML = '<p style="color:var(--accent);">로그가 없습니다.</p>';
+            return;
+        }
+        
+        let html = '';
+        logs.forEach(doc => {
+            const log = doc.data();
+            const time = log.timestamp?.toDate ? log.timestamp.toDate().toLocaleString('ko-KR') : '-';
+            
+            let actionText = '';
+            let actionColor = '';
+            switch (log.action) {
+                case 'force_close_all':
+                    actionText = '💥 강제 청산';
+                    actionColor = '#cc0000';
+                    break;
+                case 'suspend_trading':
+                    actionText = '⛔ 거래 중단';
+                    actionColor = '#ff9800';
+                    break;
+                case 'resume_trading':
+                    actionText = '✅ 중단 해제';
+                    actionColor = '#4caf50';
+                    break;
+                default:
+                    actionText = log.action;
+                    actionColor = '#666';
+            }
+            
+            html += `
+                <div style="padding:0.6rem; border-bottom:1px solid var(--border); font-size:0.85rem;">
+                    <span style="color:${actionColor}; font-weight:600;">${actionText}</span>
+                    <span style="color:var(--accent); margin-left:0.5rem;">${time}</span>
+                    ${log.reason ? `<div style="font-size:0.75rem; color:var(--accent); margin-top:0.2rem;">사유: ${log.reason}</div>` : ''}
+                    ${log.totalPnL !== undefined ? `<div style="font-size:0.75rem; margin-top:0.2rem;">손익: $${log.totalPnL.toFixed(2)}</div>` : ''}
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+    } catch (error) {
+        container.innerHTML = `<p style="color:red;">로그 로드 실패: ${error.message}</p>`;
+    }
+}
+
+// ========== PROP TRADING ==========
+async function loadPropTrading() {
+    const container = document.getElementById('trading-challenges');
+    container.innerHTML = '<p style="text-align:center; padding:2rem;">로딩 중...</p>';
+    
+    try {
+        const challenges = await db.collection('prop_challenges')
+            .where('status', '==', 'active')
+            .get();
+        
+        container.innerHTML = '';
+        
+        if (challenges.empty) {
+            container.innerHTML = `
+                <div style="text-align:center; padding:3rem; color:var(--accent);">
+                    <p style="font-size:3rem; margin-bottom:1rem;">📊</p>
+                    <p>진행 중인 챌린지가 없습니다</p>
+                </div>
+            `;
+            return;
+        }
+        
+        for (const doc of challenges.docs) {
+            const challenge = doc.data();
+            const card = document.createElement('div');
+            card.style.cssText = 'background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem; border:2px solid var(--border);';
+            card.innerHTML = `
+                <h3 style="margin-bottom:0.5rem;">${challenge.name}</h3>
+                <p style="color:var(--accent); margin-bottom:1rem;">${challenge.description}</p>
+                
+                <div style="background:var(--bg); padding:1rem; border-radius:8px; margin-bottom:1rem;">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; font-size:0.9rem;">
+                        <div>
+                            <strong>💰 계좌:</strong> $${(challenge.initialBalance || 100000).toLocaleString()}
+                        </div>
+                        <div>
+                            <strong>📊 최대 계약:</strong> ${challenge.maxContracts || 7}개
+                        </div>
+                        <div>
+                            <strong>📈 최대 포지션:</strong> ${challenge.maxPositions || 20}개
+                        </div>
+                        <div>
+                            <strong>🚨 청산:</strong> -$${(challenge.maxDrawdown || 3000).toLocaleString()}
+                        </div>
+                        <div>
+                            <strong>⏰ 정산:</strong> ${challenge.settlement || 'EOD'}
+                        </div>
+                        <div>
+                            <strong>💎 상금:</strong> ${challenge.rewardToken || 'CRFN'} (매일)
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; font-size:0.9rem;">
+                    <div style="background:#e3f2fd; padding:0.8rem; border-radius:6px; text-align:center;">
+                        <div style="font-size:0.8rem; color:var(--accent);">참가비</div>
+                        <strong style="font-size:1.2rem; color:#0066cc;">${challenge.entryFee} CRNY</strong>
+                    </div>
+                    <div style="background:#f3e5f5; padding:0.8rem; border-radius:6px; text-align:center;">
+                        <div style="font-size:0.8rem; color:var(--accent);">참가자</div>
+                        <strong style="font-size:1.2rem; color:#9c27b0;">${challenge.participants || 0}명</strong>
+                    </div>
+                </div>
+                
+                <button onclick="joinChallenge('${doc.id}')" class="btn-primary" style="width:100%; padding:1rem; font-size:1.1rem;">
+                    🚀 챌린지 참가
+                </button>
+            `;
+            container.appendChild(card);
+        }
+    } catch (error) {
+        console.error('Load challenges error:', error);
+        container.innerHTML = '<p style="text-align:center; color:red;">로딩 실패</p>';
+    }
+}
+
+async function showCreateChallenge() {
+    if (!isAdmin()) {
+        alert('관리자만 챌린지를 생성할 수 있습니다');
+        return;
+    }
+    
+    // 입력 폼을 HTML로 표시
+    const formHTML = `
+        <div id="create-challenge-form" style="background:white; padding:1.5rem; border-radius:12px; margin-top:1rem; border:2px solid var(--accent);">
+            <h3 style="margin-bottom:1rem;">🆕 새 챌린지 생성</h3>
+            
+            <div style="display:grid; gap:0.8rem;">
+                <div>
+                    <label style="font-size:0.85rem; font-weight:600;">챌린지 이름</label>
+                    <input type="text" id="ch-name" value="교육게임 버전 1" style="width:100%; padding:0.6rem; border:1px solid var(--border); border-radius:6px; margin-top:0.3rem;">
+                </div>
+                
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">
+                    <div>
+                        <label style="font-size:0.85rem; font-weight:600;">💰 초기 계좌 ($)</label>
+                        <input type="number" id="ch-balance" value="100000" style="width:100%; padding:0.6rem; border:1px solid var(--border); border-radius:6px; margin-top:0.3rem;">
+                    </div>
+                    <div>
+                        <label style="font-size:0.85rem; font-weight:600;">🎫 참가비 (CRNY)</label>
+                        <input type="number" id="ch-fee" value="1" style="width:100%; padding:0.6rem; border:1px solid var(--border); border-radius:6px; margin-top:0.3rem;">
+                    </div>
+                </div>
+                
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">
+                    <div>
+                        <label style="font-size:0.85rem; font-weight:600;">📊 상품 제한</label>
+                        <select id="ch-product" style="width:100%; padding:0.6rem; border:1px solid var(--border); border-radius:6px; margin-top:0.3rem;">
+                            <option value="MNQ">MNQ (마이크로) 전용</option>
+                            <option value="NQ">NQ (미니) 전용</option>
+                            <option value="BOTH">MNQ + NQ 모두</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:0.85rem; font-weight:600;">📦 최대 계약 수</label>
+                        <input type="number" id="ch-max-contracts" value="1" style="width:100%; padding:0.6rem; border:1px solid var(--border); border-radius:6px; margin-top:0.3rem;">
+                    </div>
+                </div>
+                
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">
+                    <div>
+                        <label style="font-size:0.85rem; font-weight:600;">🔴 일일 손실 한도 ($)</label>
+                        <input type="number" id="ch-daily-limit" value="100" style="width:100%; padding:0.6rem; border:1px solid var(--border); border-radius:6px; margin-top:0.3rem;">
+                        <span style="font-size:0.7rem; color:var(--accent);">이 금액 손실 시 당일 거래 중단</span>
+                    </div>
+                    <div>
+                        <label style="font-size:0.85rem; font-weight:600;">💀 누적 청산 한도 ($)</label>
+                        <input type="number" id="ch-max-drawdown" value="2000" style="width:100%; padding:0.6rem; border:1px solid var(--border); border-radius:6px; margin-top:0.3rem;">
+                        <span style="font-size:0.7rem; color:var(--accent);">이 금액 손실 시 강제 청산 + CRNY 소각</span>
+                    </div>
+                </div>
+                
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">
+                    <div>
+                        <label style="font-size:0.85rem; font-weight:600;">📈 최대 동시 포지션</label>
+                        <input type="number" id="ch-max-positions" value="5" style="width:100%; padding:0.6rem; border:1px solid var(--border); border-radius:6px; margin-top:0.3rem;">
+                    </div>
+                    <div>
+                        <label style="font-size:0.85rem; font-weight:600;">⏳ 기간 (일)</label>
+                        <input type="number" id="ch-duration" value="30" style="width:100%; padding:0.6rem; border:1px solid var(--border); border-radius:6px; margin-top:0.3rem;">
+                    </div>
+                </div>
+                
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">
+                    <div>
+                        <label style="font-size:0.85rem; font-weight:600;">⏰ 정산</label>
+                        <select id="ch-settlement" style="width:100%; padding:0.6rem; border:1px solid var(--border); border-radius:6px; margin-top:0.3rem;">
+                            <option value="EOD">EOD (End of Day)</option>
+                            <option value="WEEKLY">주간</option>
+                            <option value="MONTHLY">월간</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:0.85rem; font-weight:600;">💎 상금 토큰</label>
+                        <select id="ch-reward" style="width:100%; padding:0.6rem; border:1px solid var(--border); border-radius:6px; margin-top:0.3rem;">
+                            <option value="CRFN">CRFN</option>
+                            <option value="CRNY">CRNY</option>
+                            <option value="FNC">FNC</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
+                    <button onclick="submitCreateChallenge()" class="btn-primary" style="flex:1; padding:0.8rem;">✅ 챌린지 생성</button>
+                    <button onclick="document.getElementById('create-challenge-form').remove()" style="flex:0.5; padding:0.8rem; background:var(--border); border:none; border-radius:6px; cursor:pointer;">취소</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // 기존 폼 제거 후 추가
+    const existing = document.getElementById('create-challenge-form');
+    if (existing) existing.remove();
+    
+    const container = document.getElementById('trading-challenges');
+    if (container) {
+        container.insertAdjacentHTML('afterend', formHTML);
+    }
+}
+
+async function submitCreateChallenge() {
+    if (!isAdmin()) return;
+    
+    const name = document.getElementById('ch-name').value;
+    if (!name) { alert('챌린지 이름을 입력하세요'); return; }
+    
+    try {
+        const challengeData = {
+            name: name,
+            description: name,
+            entryFee: parseFloat(document.getElementById('ch-fee').value) || 1,
+            initialBalance: parseFloat(document.getElementById('ch-balance').value) || 100000,
+            allowedProduct: document.getElementById('ch-product').value || 'MNQ',
+            maxContracts: parseInt(document.getElementById('ch-max-contracts').value) || 1,
+            dailyLossLimit: parseFloat(document.getElementById('ch-daily-limit').value) || 100,
+            maxDrawdown: parseFloat(document.getElementById('ch-max-drawdown').value) || 2000,
+            maxPositions: parseInt(document.getElementById('ch-max-positions').value) || 5,
+            duration: parseInt(document.getElementById('ch-duration').value) || 30,
+            settlement: document.getElementById('ch-settlement').value || 'EOD',
+            rewardToken: document.getElementById('ch-reward').value || 'CRFN',
+            participants: 0,
+            totalPool: 0,
+            status: 'active',
+            createdBy: currentUser.email,
+            createdAt: new Date()
+        };
+        
+        await db.collection('prop_challenges').add(challengeData);
+        
+        alert(`✅ 챌린지 생성 완료!\n\n${name}\n계좌: $${challengeData.initialBalance.toLocaleString()}\n상품: ${challengeData.allowedProduct}\n일일 한도: -$${challengeData.dailyLossLimit}\n청산: -$${challengeData.maxDrawdown}`);
+        
+        document.getElementById('create-challenge-form')?.remove();
+        loadPropTrading();
+    } catch (error) {
+        alert('생성 실패: ' + error.message);
+    }
+}
+
+async function joinChallenge(challengeId) {
+    const challenge = await db.collection('prop_challenges').doc(challengeId).get();
+    const data = challenge.data();
+    
+    const wallet = allWallets.find(w => w.id === currentWalletId);
+    
+    if (wallet.balances.crny < data.entryFee) {
+        alert(`CRNY 잔액이 부족합니다\n필요: ${data.entryFee} CRNY\n보유: ${wallet.balances.crny} CRNY`);
+        return;
+    }
+    
+    const productText = data.allowedProduct === 'MNQ' ? 'MNQ (마이크로) 전용' :
+                        data.allowedProduct === 'NQ' ? 'NQ (미니) 전용' : 'MNQ + NQ';
+    
+    const confirm = window.confirm(
+        `🎯 프랍 트레이딩 챌린지 참가\n\n` +
+        `${data.name}\n\n` +
+        `💰 가상 계좌: $${(data.initialBalance || 100000).toLocaleString()}\n` +
+        `📊 상품: ${productText}\n` +
+        `📦 최대 계약: ${data.maxContracts || 1}개\n` +
+        `📈 최대 포지션: ${data.maxPositions || 5}개\n` +
+        `🔴 일일 한도: -$${data.dailyLossLimit || 100}\n` +
+        `💀 청산 기준: -$${(data.maxDrawdown || 2000).toLocaleString()}\n` +
+        `⏰ 정산: ${data.settlement || 'EOD'}\n` +
+        `💎 상금: ${data.rewardToken || 'CRFN'}\n\n` +
+        `참가비: ${data.entryFee} CRNY\n\n` +
+        `✅ 참가비는 관리자 지갑으로 이동합니다`
+    );
+    
+    if (!confirm) return;
+    
+    try {
+        // Admin 전용 지갑 가져오기 또는 생성
+        let adminWalletRef = await db.collection('system_wallets').doc('admin').get();
+        
+        if (!adminWalletRef.exists) {
+            await db.collection('system_wallets').doc('admin').set({
+                name: '관리자 전용 지갑',
+                type: 'admin',
+                ownerEmail: ADMIN_EMAIL,
+                balances: { crny: 0, fnc: 0, crfn: 0 },
+                createdAt: new Date()
+            });
+            adminWalletRef = await db.collection('system_wallets').doc('admin').get();
+        }
+        
+        const adminWallet = adminWalletRef.data();
+        
+        // 사용자 CRNY 차감
+        await db.collection('users').doc(currentUser.uid)
+            .collection('wallets').doc(currentWalletId)
+            .update({
+                'balances.crny': wallet.balances.crny - data.entryFee
+            });
+        
+        // Admin 지갑에 CRNY 추가
+        await db.collection('system_wallets').doc('admin').update({
+            'balances.crny': (adminWallet.balances?.crny || 0) + data.entryFee
+        });
+        
+        // 참가자 추가 (챌린지 조건 포함)
+        await db.collection('prop_challenges').doc(challengeId)
+            .collection('participants').add({
+                userId: currentUser.uid,
+                email: currentUser.email,
+                walletId: currentWalletId,
+                joinedAt: new Date(),
+                initialBalance: data.initialBalance || 100000,
+                currentBalance: data.initialBalance || 100000,
+                allowedProduct: data.allowedProduct || 'MNQ',
+                maxContracts: data.maxContracts || 1,
+                maxPositions: data.maxPositions || 5,
+                dailyLossLimit: data.dailyLossLimit || 100,
+                maxDrawdown: data.maxDrawdown || 2000,
+                profitPercent: 0,
+                dailyPnL: 0,
+                totalPnL: 0,
+                trades: [],
+                status: 'active',
+                lastEOD: new Date()
+            });
+        
+        await db.collection('prop_challenges').doc(challengeId).update({
+            participants: (data.participants || 0) + 1,
+            totalPool: (data.totalPool || 0) + data.entryFee
+        });
+        
+        // 거래 기록
+        await db.collection('transactions').add({
+            from: currentUser.uid,
+            fromEmail: currentUser.email,
+            to: 'system:admin',
+            amount: data.entryFee,
+            token: 'CRNY',
+            type: 'challenge_entry',
+            challengeId: challengeId,
+            timestamp: new Date()
+        });
+        
+        alert(`✅ 챌린지 참가 완료!\n\n💰 ${data.entryFee} CRNY → 관리자 지갑\n💵 가상 계좌 $${(data.initialBalance || 100000).toLocaleString()} 지급\n📊 트레이딩 시작!`);
+        loadUserWallet();
+        loadPropTrading();
+        loadTradingDashboard();
+    } catch (error) {
+        console.error('Join error:', error);
+        alert('참가 실패: ' + error.message);
+    }
+}
+
+// ========== REAL-TIME CRYPTO TRADING ==========
+let currentPrice = 0;
+let priceWs = null;
+let myParticipation = null;
+
+async function loadTradingDashboard() {
+    console.log('🔍 loadTradingDashboard 시작, user:', currentUser?.uid);
+    // Check if user has active participation
+    try {
+        const challenges = await db.collection('prop_challenges')
+            .where('status', '==', 'active')
+            .get();
+        
+        console.log('🔍 활성 챌린지:', challenges.size, '개');
+        
+        for (const challengeDoc of challenges.docs) {
+            // 복합 인덱스 없이도 작동하도록 단일 필드 쿼리
+            const participants = await challengeDoc.ref.collection('participants')
+                .where('userId', '==', currentUser.uid)
+                .get();
+            
+            console.log('🔍 챌린지', challengeDoc.id, '참가자:', participants.size, '명');
+            
+            // 클라이언트에서 status 필터
+            const activeParticipant = participants.docs.find(d => d.data().status === 'active');
+            
+            if (activeParticipant) {
+                myParticipation = { 
+                    challengeId: challengeDoc.id,
+                    participantId: activeParticipant.id,
+                    ...activeParticipant.data() 
+                };
+                console.log('✅ myParticipation 설정됨:', myParticipation.participantId);
+                break;
+            }
+        }
+    } catch (error) {
+        console.error('❌ loadTradingDashboard error:', error);
+    }
+    
+    if (myParticipation) {
+        document.getElementById('trading-dashboard').style.display = 'block';
+        
+        // 규칙 동적 표시
+        const p = myParticipation;
+        const productText = p.allowedProduct === 'MNQ' ? 'MNQ (마이크로)' :
+                            p.allowedProduct === 'NQ' ? 'NQ (미니)' : 'MNQ + NQ';
+        const rulesEl = document.getElementById('prop-rules-display');
+        if (rulesEl) {
+            rulesEl.innerHTML = `
+                <p><strong>💰 계좌:</strong> $${(p.initialBalance || 100000).toLocaleString()} USD (가상)</p>
+                <p><strong>📊 거래 가능:</strong> ${productText} 최대 ${p.maxContracts || 1}계약</p>
+                <p><strong>📈 최대 포지션:</strong> ${p.maxPositions || 5}개 동시 운영</p>
+                <p><strong>🔴 일일 한도:</strong> -$${p.dailyLossLimit || 100} 손실 시 당일 거래 중단</p>
+                <p><strong>💀 청산:</strong> -$${(p.maxDrawdown || 2000).toLocaleString()} 손실 시 자동 청산</p>
+                <p><strong>⏰ 정산:</strong> ${p.settlement || 'EOD'}</p>
+                <p><strong>💎 상금:</strong> ${p.rewardToken || 'CRFN'} 토큰</p>
+            `;
+        }
+        
+        checkDailyReset();
+        updateSlotStatusUI();
+        updateRiskGaugeUI();
+        updateTradingUI();
+        
+        // display:block 후 DOM이 레이아웃을 잡도록 딜레이
+        setTimeout(() => {
+            initTradingViewChart();
+            connectPriceWebSocket();
+        }, 100);
+    } else {
+        document.getElementById('trading-dashboard').style.display = 'none';
+        // 규칙 기본 표시
+        const rulesEl = document.getElementById('prop-rules-display');
+        if (rulesEl) {
+            rulesEl.innerHTML = '<p>아래 챌린지에 참가하면 규칙이 표시됩니다.</p>';
+        }
+    }
+}
+
+function updateTradingUI() {
+    if (!myParticipation) return;
+    
+    const balance = myParticipation.currentBalance || 100000;
+    const initial = myParticipation.initialBalance || 100000;
+    const profit = ((balance - initial) / initial * 100).toFixed(2);
+    const positions = myParticipation.trades?.filter(t => t.status === 'open').length || 0;
+    
+    document.getElementById('trading-balance').textContent = `$${balance.toLocaleString()}`;
+    document.getElementById('trading-profit').textContent = `${profit >= 0 ? '+' : ''}${profit}%`;
+    document.getElementById('trading-profit').style.color = profit >= 0 ? '#0066cc' : '#cc0000';
+    document.getElementById('trading-positions').textContent = positions;
+}
+
+// ========================================
+// 실시간 캔들차트 (Databento Live)
+// ========================================
+const PRICE_SERVER = 'https://web-production-26db6.up.railway.app';
+const CANDLE_INTERVAL = 60; // 1분 캔들
+const POLL_INTERVAL = 1000; // 1초 폴링
+
+// 타임존 설정
+const TIMEZONES = {
+    'US': { label: '🇺🇸 뉴욕 (ET)', zone: 'America/New_York' },
+    'KR': { label: '🇰🇷 서울 (KST)', zone: 'Asia/Seoul' },
+    'JP': { label: '🇯🇵 도쿄 (JST)', zone: 'Asia/Tokyo' },
+    'UK': { label: '🇬🇧 런던 (GMT)', zone: 'Europe/London' },
+    'UTC': { label: '🌐 UTC', zone: 'UTC' }
+};
+let selectedTimezone = 'KR'; // 기본값: 한국
+
+// 틱 저장소
+window.liveTicks = [];
+window.liveChart = null;
+window.liveCandleSeries = null;
+window.liveEntryLine = null;
+
+async function initTradingViewChart() {
+    console.log('📊 initTradingViewChart 호출됨');
+    const container = document.getElementById('live-candle-chart');
+    
+    if (!container) {
+        console.error('❌ 차트 컨테이너 없음');
+        return;
+    }
+    
+    console.log('📊 컨테이너 크기:', container.clientWidth, 'x', container.clientHeight);
+    container.innerHTML = '';
+    
+    try {
+        // 다크 테마 캔들차트 생성
+        const chartHeight = window.innerWidth < 768 ? 300 : 400;
+        
+        // 타임존 오프셋 계산
+        const tzOffset = getTimezoneOffsetSeconds(selectedTimezone);
+        
+        const chart = LightweightCharts.createChart(container, {
+            width: container.clientWidth,
+            height: chartHeight,
+            layout: {
+                background: { color: '#1a1a2e' },
+                textColor: '#ccc',
+            },
+            grid: {
+                vertLines: { color: '#1e2d4a' },
+                horzLines: { color: '#1e2d4a' },
+            },
+            crosshair: {
+                mode: LightweightCharts.CrosshairMode.Normal,
+            },
+            rightPriceScale: {
+                borderColor: '#333',
+            },
+            timeScale: {
+                borderColor: '#333',
+                timeVisible: true,
+                secondsVisible: false,
+                tickMarkFormatter: (time) => {
+                    const d = new Date((time + tzOffset) * 1000);
+                    return `${String(d.getUTCHours()).padStart(2,'0')}:${String(d.getUTCMinutes()).padStart(2,'0')}`;
+                },
+            },
+            localization: {
+                timeFormatter: (time) => {
+                    const d = new Date((time + tzOffset) * 1000);
+                    return `${String(d.getUTCHours()).padStart(2,'0')}:${String(d.getUTCMinutes()).padStart(2,'0')}`;
+                },
+            },
+        });
+        
+        // 캔들 시리즈
+        const candleSeries = chart.addCandlestickSeries({
+            upColor: '#26a69a',
+            downColor: '#ef5350',
+            borderVisible: false,
+            wickUpColor: '#26a69a',
+            wickDownColor: '#ef5350',
+        });
+        
+        // 전역 저장
+        window.liveChart = chart;
+        window.liveCandleSeries = candleSeries;
+        window.candleSeries = candleSeries; // 호환성
+        window.lwChart = chart;
+        
+        // MA 라인 시리즈 (NQ 차트)
+        window.ma1Series = chart.addLineSeries({ color: '#ffeb3b', lineWidth: 1, priceLineVisible: false, lastValueVisible: false });
+        window.ma2Series = chart.addLineSeries({ color: '#26a69a', lineWidth: 1, priceLineVisible: false, lastValueVisible: false });
+        window.ma3Series = chart.addLineSeries({ color: '#ef5350', lineWidth: 1, priceLineVisible: false, lastValueVisible: false });
+        
+        // 반응형
+        window.addEventListener('resize', () => {
+            chart.applyOptions({ width: container.clientWidth });
+            if (window.mnqChart) {
+                const mnqContainer = document.getElementById('live-candle-chart-mnq');
+                if (mnqContainer) window.mnqChart.applyOptions({ width: mnqContainer.clientWidth });
+            }
+        });
+        
+        // === MNQ 차트 생성 ===
+        const mnqContainer = document.getElementById('live-candle-chart-mnq');
+        if (mnqContainer) {
+            mnqContainer.innerHTML = '';
+            const mnqChart = LightweightCharts.createChart(mnqContainer, {
+                width: mnqContainer.clientWidth,
+                height: 250,
+                layout: { background: { color: '#1a1a2e' }, textColor: '#ccc' },
+                grid: { vertLines: { color: '#1e2d4a' }, horzLines: { color: '#1e2d4a' } },
+                crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+                rightPriceScale: { borderColor: '#333' },
+                timeScale: {
+                    borderColor: '#333', timeVisible: true, secondsVisible: false,
+                    tickMarkFormatter: (time) => {
+                        const d = new Date((time + tzOffset) * 1000);
+                        return `${String(d.getUTCHours()).padStart(2,'0')}:${String(d.getUTCMinutes()).padStart(2,'0')}`;
+                    },
+                },
+                localization: {
+                    timeFormatter: (time) => {
+                        const d = new Date((time + tzOffset) * 1000);
+                        return `${String(d.getUTCHours()).padStart(2,'0')}:${String(d.getUTCMinutes()).padStart(2,'0')}`;
+                    },
+                },
+            });
+            
+            const mnqCandleSeries = mnqChart.addCandlestickSeries({
+                upColor: '#26a69a', downColor: '#ef5350',
+                borderVisible: false, wickUpColor: '#26a69a', wickDownColor: '#ef5350',
+            });
+            
+            // MNQ MA 라인
+            window.mnqMa1Series = mnqChart.addLineSeries({ color: '#ffeb3b', lineWidth: 1, priceLineVisible: false, lastValueVisible: false });
+            window.mnqMa2Series = mnqChart.addLineSeries({ color: '#26a69a', lineWidth: 1, priceLineVisible: false, lastValueVisible: false });
+            window.mnqMa3Series = mnqChart.addLineSeries({ color: '#ef5350', lineWidth: 1, priceLineVisible: false, lastValueVisible: false });
+            
+            window.mnqChart = mnqChart;
+            window.mnqCandleSeries = mnqCandleSeries;
+        }
+        
+        console.log('📊 실시간 캔들차트 준비 완료 (1분봉)');
+        
+        // 시간 타이머 시작
+        startClockTimer();
+        
+        // 실시간 데이터 수신 시작
+        startLiveDataFeed();
+        
+        return chart;
+    } catch (error) {
+        console.error('❌ 차트 로드 실패:', error);
+        container.innerHTML = '<p style="text-align:center; padding:2rem; color:#ff4444;">차트 로드 실패</p>';
+    }
+}
+
+// 타임존 오프셋 (초 단위)
+function getTimezoneOffsetSeconds(tzKey) {
+    const tz = TIMEZONES[tzKey]?.zone || 'Asia/Seoul';
+    const now = new Date();
+    const utcStr = now.toLocaleString('en-US', { timeZone: 'UTC' });
+    const tzStr = now.toLocaleString('en-US', { timeZone: tz });
+    const diff = (new Date(tzStr) - new Date(utcStr)) / 1000;
+    return diff;
+}
+
+// 타임존 변경
+function changeTimezone(tzKey) {
+    selectedTimezone = tzKey;
+    // 차트 재생성
+    if (window.liveChart) {
+        initTradingViewChart();
+    }
+    updateLiveClockDisplay();
+}
+
+// 현재 시간 표시 업데이트
+function updateLiveClockDisplay() {
+    const clockEl = document.getElementById('live-clock');
+    if (!clockEl) return;
+    
+    const tz = TIMEZONES[selectedTimezone];
+    const now = new Date();
+    const timeStr = now.toLocaleString('ko-KR', { 
+        timeZone: tz.zone,
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        hour12: false
+    });
+    const dateStr = now.toLocaleString('ko-KR', {
+        timeZone: tz.zone,
+        month: '2-digit', day: '2-digit',
+        weekday: 'short'
+    });
+    
+    clockEl.innerHTML = `<span style="color:#00ff88; font-weight:700;">${timeStr}</span> <span style="color:#888; font-size:0.65rem;">${dateStr} ${tz.label}</span>`;
+}
+
+// 차트 자동 정렬 (최신 캔들로 스크롤)
+function scrollToLatest() {
+    if (window.liveChart) window.liveChart.timeScale().scrollToRealTime();
+    if (window.mnqChart) window.mnqChart.timeScale().scrollToRealTime();
+}
+
+// 시간 타이머 시작
+function startClockTimer() {
+    if (window.clockInterval) clearInterval(window.clockInterval);
+    updateLiveClockDisplay();
+    window.clockInterval = setInterval(updateLiveClockDisplay, 1000);
+}
+
+// 실시간 데이터 수신 (1초마다)
+function startLiveDataFeed() {
+    if (window.liveDataInterval) {
+        clearInterval(window.liveDataInterval);
+    }
+    
+    // 먼저 히스토리 로드, 그 후 실시간 시작
+    loadCandleHistory().then(() => {
+        fetchLiveTick();
+        window.liveDataInterval = setInterval(fetchLiveTick, POLL_INTERVAL);
+        console.log('✅ 실시간 데이터 수신 시작 (1초 간격)');
+    });
+}
+
+// 서버에서 1분 캔들 히스토리 로드
+async function loadCandleHistory() {
+    try {
+        console.log('📊 캔들 히스토리 로딩...');
+        const res = await fetch(`${PRICE_SERVER}/api/market/candles?limit=1440`);
+        const data = await res.json();
+        
+        if (data && data.candles && data.candles.length > 0) {
+            // 히스토리 캔들을 틱으로 변환하여 liveTicks에 주입
+            // 각 캔들의 OHLC를 4개 틱으로 변환
+            window.liveTicks = [];
+            
+            for (const candle of data.candles) {
+                const t = candle.time;
+                window.liveTicks.push({ time: t, price: candle.open });
+                if (candle.high !== candle.open) {
+                    window.liveTicks.push({ time: t + 15, price: candle.high });
+                }
+                if (candle.low !== candle.high) {
+                    window.liveTicks.push({ time: t + 30, price: candle.low });
+                }
+                window.liveTicks.push({ time: t + 59, price: candle.close });
+            }
+            
+            // 차트 업데이트
+            updateLiveCandleChart();
+            scrollToLatest();
+            
+            console.log(`✅ ${data.count}개 캔들 히스토리 로드 완료 (${window.liveTicks.length}틱)`);
+        } else {
+            console.log('⚠️ 캔들 히스토리 없음 (서버 막 시작됨)');
+        }
+    } catch (err) {
+        console.warn('⚠️ 캔들 히스토리 로드 실패 (서버 미지원?):', err.message);
+    }
+}
+
+async function fetchLiveTick() {
+    try {
+        const res = await fetch(`${PRICE_SERVER}/api/market/live`);
+        const data = await res.json();
+        
+        if (!data || !data.price || data.price < 1000) return;
+        
+        const now = Math.floor(Date.now() / 1000);
+        
+        // 틱 저장
+        window.liveTicks.push({
+            time: now,
+            price: data.price,
+            bid: data.bid,
+            ask: data.ask
+        });
+        
+        // 최대 86400틱 보관 (24시간)
+        if (window.liveTicks.length > 86400) {
+            window.liveTicks.shift();
+        }
+        
+        // 현재가 업데이트
+        currentPrice = data.price;
+        
+        // UI 업데이트
+        updateLivePriceDisplay(data);
+        updateLiveCandleChart();
+        updateNQPriceDisplay();
+        updateOpenPositions();
+        updateLivePnL();
+        updateLiveStatus(true);
+        
+    } catch (err) {
+        console.error('⚠️ 데이터 수신 실패:', err);
+        updateLiveStatus(false);
+    }
+}
+
+// 가격 표시 업데이트
+function updateLivePriceDisplay(data) {
+    const priceEl = document.getElementById('live-price');
+    const bidEl = document.getElementById('live-bid');
+    const askEl = document.getElementById('live-ask');
+    const spreadEl = document.getElementById('live-spread');
+    
+    if (!priceEl) return;
+    
+    priceEl.textContent = data.price.toFixed(2);
+    
+    // 가격 색상 (이전 대비)
+    if (window.liveTicks.length >= 2) {
+        const prev = window.liveTicks[window.liveTicks.length - 2].price;
+        priceEl.style.color = data.price > prev ? '#00ff88' : data.price < prev ? '#ff4444' : '#00ff88';
+    }
+    
+    if (bidEl) bidEl.textContent = data.bid ? data.bid.toFixed(2) : '--';
+    if (askEl) askEl.textContent = data.ask ? data.ask.toFixed(2) : '--';
+    
+    if (spreadEl && data.bid && data.ask) {
+        spreadEl.textContent = (data.ask - data.bid).toFixed(2);
+    }
+}
+
+// 틱 → 10초 캔들 집계 후 차트 업데이트
+function updateLiveCandleChart() {
+    if (!window.liveCandleSeries || window.liveTicks.length < 2) return;
+    
+    const candles = aggregateTicksToCandles(window.liveTicks, CANDLE_INTERVAL);
+    
+    if (candles.length > 0) {
+        // NQ 차트
+        window.liveCandleSeries.setData(candles);
+        
+        // MNQ 차트 (같은 가격 데이터)
+        if (window.mnqCandleSeries) {
+            window.mnqCandleSeries.setData(candles);
+        }
+        
+        // MA 라인 업데이트
+        updateMALines(candles);
+    }
+}
+
+// MA 계산
+function calculateMA(candles, period) {
+    if (candles.length < period) return [];
+    const result = [];
+    for (let i = period - 1; i < candles.length; i++) {
+        let sum = 0;
+        for (let j = 0; j < period; j++) {
+            sum += candles[i - j].close;
+        }
+        result.push({ time: candles[i].time, value: sum / period });
+    }
+    return result;
+}
+
+// MA 라인 업데이트
+function updateMALines(candles) {
+    const ma1Period = parseInt(document.getElementById('ma1-period')?.value) || 5;
+    const ma2Period = parseInt(document.getElementById('ma2-period')?.value) || 20;
+    const ma3Period = parseInt(document.getElementById('ma3-period')?.value) || 60;
+    
+    const ma1Data = calculateMA(candles, ma1Period);
+    const ma2Data = calculateMA(candles, ma2Period);
+    const ma3Data = calculateMA(candles, ma3Period);
+    
+    // NQ 차트 MA
+    if (window.ma1Series && ma1Data.length) window.ma1Series.setData(ma1Data);
+    if (window.ma2Series && ma2Data.length) window.ma2Series.setData(ma2Data);
+    if (window.ma3Series && ma3Data.length) window.ma3Series.setData(ma3Data);
+    
+    // MNQ 차트 MA
+    if (window.mnqMa1Series && ma1Data.length) window.mnqMa1Series.setData(ma1Data);
+    if (window.mnqMa2Series && ma2Data.length) window.mnqMa2Series.setData(ma2Data);
+    if (window.mnqMa3Series && ma3Data.length) window.mnqMa3Series.setData(ma3Data);
+}
+
+// MA 세팅 토글
+function toggleMASettings() {
+    const panel = document.getElementById('ma-settings');
+    if (panel) panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+// MA 세팅 적용
+function applyMASettings() {
+    const candles = aggregateTicksToCandles(window.liveTicks, CANDLE_INTERVAL);
+    if (candles.length > 0) updateMALines(candles);
+    
+    const ma1 = document.getElementById('ma1-period')?.value || 5;
+    const ma2 = document.getElementById('ma2-period')?.value || 20;
+    const ma3 = document.getElementById('ma3-period')?.value || 60;
+    console.log(`📈 MA 설정 적용: ${ma1} / ${ma2} / ${ma3}`);
+}
+
+// 틱 데이터를 캔들로 집계
+function aggregateTicksToCandles(ticks, intervalSec) {
+    if (ticks.length === 0) return [];
+    
+    const candles = [];
+    let currentCandle = null;
+    
+    for (const tick of ticks) {
+        const candleTime = Math.floor(tick.time / intervalSec) * intervalSec;
+        
+        if (!currentCandle || currentCandle.time !== candleTime) {
+            if (currentCandle) candles.push(currentCandle);
+            currentCandle = {
+                time: candleTime,
+                open: tick.price,
+                high: tick.price,
+                low: tick.price,
+                close: tick.price
+            };
+        } else {
+            currentCandle.high = Math.max(currentCandle.high, tick.price);
+            currentCandle.low = Math.min(currentCandle.low, tick.price);
+            currentCandle.close = tick.price;
+        }
+    }
+    if (currentCandle) candles.push(currentCandle);
+    
+    return candles;
+}
+
+// 연결 상태 표시
+function updateLiveStatus(connected) {
+    const dot = document.getElementById('live-status-dot');
+    const text = document.getElementById('live-status-text');
+    if (dot) dot.style.background = connected ? '#00ff88' : '#ff4444';
+    if (text) text.textContent = connected ? `Databento Live · ${window.liveTicks.length}틱` : '연결 끊김';
+}
+
+// 실시간 손익 표시
+function updateLivePnL() {
+    const pnlBar = document.getElementById('live-pnl-bar');
+    const pnlEl = document.getElementById('live-pnl');
+    
+    if (!pnlBar || !pnlEl) return;
+    
+    // 오픈 포지션 확인
+    if (!myParticipation || !myParticipation.trades) {
+        pnlBar.style.display = 'none';
+        return;
+    }
+    
+    const openTrades = myParticipation.trades.filter(t => t.status === 'open');
+    if (openTrades.length === 0) {
+        pnlBar.style.display = 'none';
+        return;
+    }
+    
+    pnlBar.style.display = 'block';
+    
+    let totalPnL = 0;
+    for (const trade of openTrades) {
+        const multiplier = trade.product === 'MNQ' ? 2 : 20;
+        const contracts = trade.contracts || 1;
+        if (trade.side === 'BUY') {
+            totalPnL += (currentPrice - trade.entryPrice) * multiplier * contracts;
+        } else {
+            totalPnL += (trade.entryPrice - currentPrice) * multiplier * contracts;
+        }
+    }
+    
+    pnlEl.textContent = `${totalPnL >= 0 ? '+' : ''}$${totalPnL.toFixed(2)}`;
+    pnlEl.style.color = totalPnL > 0 ? '#00ff88' : totalPnL < 0 ? '#ff4444' : '#888';
+}
+
+// 하위 호환성 유지
+function startRealPriceUpdates() {
+    // startLiveDataFeed에서 처리하므로 여기서는 아무것도 안 함
+    console.log('ℹ️ 실시간 업데이트는 startLiveDataFeed에서 처리');
+}
+
+function fetchRealNQData() {
+    return { candles: [], volume: [] };
+}
+
+function generateSampleData() {
+    return { candles: [], volume: [] };
+}
+
+// 차트에 포지션 라인 그리기 (간소화 버전)
+// 손절가 업데이트 (차트에서 드래그)
+async function updateTradeStopLoss(tradeIndex, newPrice) {
+    try {
+        myParticipation.trades[tradeIndex].stopLoss = newPrice;
+        
+        await db.collection('prop_challenges').doc(myParticipation.challengeId)
+            .collection('participants').doc(myParticipation.participantId)
+            .update({ trades: myParticipation.trades });
+        
+        console.log(`✅ SL 업데이트: ${newPrice.toFixed(2)}`);
+        updateOpenPositions();
+    } catch (error) {
+        console.error('SL 업데이트 실패:', error);
+    }
+}
+
+// 익절가 업데이트 (차트에서 드래그)
+async function updateTradeTakeProfit(tradeIndex, newPrice) {
+    try {
+        myParticipation.trades[tradeIndex].takeProfit = newPrice;
+        
+        await db.collection('prop_challenges').doc(myParticipation.challengeId)
+            .collection('participants').doc(myParticipation.participantId)
+            .update({ trades: myParticipation.trades });
+        
+        console.log(`✅ TP 업데이트: ${newPrice.toFixed(2)}`);
+        updateOpenPositions();
+    } catch (error) {
+        console.error('TP 업데이트 실패:', error);
+    }
+}
+
+function updatePriceFromChart(chart) {
+    // TradingView 차트에서 현재 가격 가져오기
+    chart.getSeries().then(series => {
+        // 마지막 바 데이터 가져오기
+        const lastBar = series.lastBar();
+        if (lastBar) {
+            currentPrice = lastBar.close;
+            updateNQPriceDisplay();
+        }
+    }).catch(err => {
+        console.log('차트 데이터 로드 중...');
+        // Fallback: 모의 데이터
+        updateNQPrice();
+    });
+}
+
+function connectPriceWebSocket() {
+    // NQ 선물 가격 - Yahoo Finance API 사용 (무료, 15분 지연)
+    // 실시간은 유료이므로 모의 데이터 생성
+    updateNQPrice();
+    
+    // 5초마다 가격 업데이트 (모의)
+    if (window.nqPriceInterval) clearInterval(window.nqPriceInterval);
+    
+    window.nqPriceInterval = setInterval(updateNQPrice, 5000);
+}
+
+async function updateNQPrice() {
+    try {
+        // Railway 서버에서 Databento 실시간 NQ 가격 조회
+        const PRICE_SERVER = 'https://web-production-26db6.up.railway.app';
+        const response = await fetch(`${PRICE_SERVER}/api/market/live`);
+        const data = await response.json();
+        
+        if (data && data.price) {
+            currentPrice = data.price;
+            console.log(`📊 NQ 가격: ${currentPrice.toFixed(2)} (${data.source}) bid:${data.bid} ask:${data.ask}`);
+        } else {
+            if (!currentPrice) {
+                currentPrice = 25400;
+            }
+            console.log('⚠️ NQ 데이터 없음 (장 마감 가능성)');
+        }
+        
+        updateNQPriceDisplay();
+        
+    } catch (error) {
+        console.error('Price fetch error:', error);
+        if (!currentPrice) currentPrice = 25400;
+        updateNQPriceDisplay();
+    }
+}
+
+function updateNQPriceDisplay() {
+    const contract = document.getElementById('futures-contract')?.value || 'NQ';
+    const multiplier = contract === 'NQ' ? 20 : 2;
+    const tickSize = 0.25;
+    const tickValue = multiplier * tickSize;
+    
+    const priceEl = document.getElementById('current-nq-price');
+    const tickSizeEl = document.getElementById('tick-size');
+    const pointValueEl = document.getElementById('point-value');
+    const tickValueEl = document.getElementById('tick-value');
+    
+    if (priceEl) priceEl.textContent = currentPrice.toFixed(2);
+    if (tickSizeEl) tickSizeEl.textContent = tickSize.toFixed(2);
+    if (pointValueEl) pointValueEl.textContent = `$${multiplier}`;
+    if (tickValueEl) tickValueEl.textContent = `$${tickValue.toFixed(2)}`;
+    
+    updateOpenPositions();
+}
+
+function updateContractSpecs() {
+    updateNQPriceDisplay();
+}
+
+// (첫 번째 executeFuturesTrade 제거됨 - 아래 고급 버전이 최종)
+
+// SL/TP 자동 청산 (confirm 없이)
+async function autoClosePosition(tradeIndex, reason) {
+    if (!myParticipation) return;
+    
+    const trade = myParticipation.trades[tradeIndex];
+    if (trade.status !== 'open') return;
+    
+    const exitPrice = reason === 'SL' ? trade.stopLoss : 
+                      reason === 'TP' ? trade.takeProfit : currentPrice;
+    
+    const priceDiff = trade.side === 'BUY' 
+        ? (exitPrice - trade.entryPrice) 
+        : (trade.entryPrice - exitPrice);
+    
+    const pnl = priceDiff * trade.multiplier * trade.contracts;
+    const fee = trade.fee || (RISK_CONFIG.tradeFeeRoundTrip * trade.contracts);
+    const netPnl = pnl - fee;
+    
+    try {
+        trade.status = 'closed';
+        trade.exitPrice = exitPrice;
+        trade.pnl = netPnl;
+        trade.fee = fee;
+        trade.closedAt = new Date();
+        trade.closeReason = reason; // 'SL', 'TP', 'ADMIN'
+        
+        const newBalance = myParticipation.currentBalance + trade.margin + netPnl;
+        myParticipation.currentBalance = newBalance;
+        
+        // 일일 PnL 누적
+        myParticipation.dailyPnL = (myParticipation.dailyPnL || 0) + netPnl;
+        
+        await db.collection('prop_challenges').doc(myParticipation.challengeId)
+            .collection('participants').doc(myParticipation.participantId)
+            .update({ 
+                trades: myParticipation.trades,
+                currentBalance: newBalance,
+                dailyPnL: myParticipation.dailyPnL
+            });
+        
+        const emoji = reason === 'TP' ? '🟢' : '🔴';
+        console.log(`${emoji} 자동 청산 (${reason}): ${trade.contract} ${trade.side} @ ${exitPrice.toFixed(2)} → $${netPnl.toFixed(2)}`);
+        
+        // 알림
+        alert(`${emoji} ${reason} 자동 청산!\n\n${trade.contract} ${trade.side} × ${trade.contracts}\n진입: ${trade.entryPrice.toFixed(2)}\n청산: ${exitPrice.toFixed(2)}\n순손익: $${netPnl.toFixed(2)}`);
+        
+        updateTradingUI();
+        updateOpenPositions();
+        loadTradeHistory();
+        
+        await checkDailyLossLimit();
+        await checkCumulativeLiquidation();
+        updateRiskGaugeUI();
+        
+    } catch (error) {
+        console.error('자동 청산 실패:', error);
+    }
+}
+
+async function closePosition(tradeIndex) {
+    if (!myParticipation) return;
+    
+    const trade = myParticipation.trades[tradeIndex];
+    if (trade.status !== 'open') return;
+    
+    const priceDiff = trade.side === 'BUY' 
+        ? (currentPrice - trade.entryPrice) 
+        : (trade.entryPrice - currentPrice);
+    
+    const pnl = priceDiff * trade.multiplier * trade.contracts;
+    const fee = trade.fee || (RISK_CONFIG.tradeFeeRoundTrip * trade.contracts);
+    const netPnl = pnl - fee;
+    
+    try {
+        trade.status = 'closed';
+        trade.exitPrice = currentPrice;
+        trade.pnl = netPnl;
+        trade.fee = fee;
+        trade.closedAt = new Date();
+        
+        // 증거금 반환 + 순손익 반영
+        const newBalance = myParticipation.currentBalance + trade.margin + netPnl;
+        myParticipation.currentBalance = newBalance;
+        
+        // 일일 PnL 누적
+        myParticipation.dailyPnL = (myParticipation.dailyPnL || 0) + netPnl;
+        
+        await db.collection('prop_challenges').doc(myParticipation.challengeId)
+            .collection('participants').doc(myParticipation.participantId)
+            .update({ 
+                trades: myParticipation.trades,
+                currentBalance: newBalance,
+                dailyPnL: myParticipation.dailyPnL
+            });
+        
+        console.log(`✅ 청산: ${trade.side} ${trade.contract} x${trade.contracts} | PnL: $${netPnl.toFixed(2)}`);
+        
+        updateTradingUI();
+        updateOpenPositions();
+        loadTradeHistory();
+        
+        // ===== RISK CHECK: 일일 손실 한도 =====
+        await checkDailyLossLimit();
+        
+        // ===== RISK CHECK: 누적 청산 =====
+        await checkCumulativeLiquidation();
+        
+        updateRiskGaugeUI();
+        
+        // 차트 라인 업데이트 + 자동 정렬
+        setTimeout(() => { drawPositionLinesLW(); scrollToLatest(); }, 500);
+    } catch (error) {
+        alert('청산 실패: ' + error.message);
+    }
+}
+
+function updateOpenPositions() {
+    if (!myParticipation || !myParticipation.trades) return;
+    
+    const container = document.getElementById('open-positions');
+    const openTrades = myParticipation.trades.filter(t => t.status === 'open');
+    
+    // ===== SL/TP 자동 트리거 =====
+    for (let i = 0; i < myParticipation.trades.length; i++) {
+        const trade = myParticipation.trades[i];
+        if (trade.status !== 'open' || !currentPrice) continue;
+        
+        let shouldClose = false;
+        let reason = '';
+        
+        if (trade.stopLoss) {
+            const slHit = trade.side === 'BUY' 
+                ? currentPrice <= trade.stopLoss 
+                : currentPrice >= trade.stopLoss;
+            if (slHit) {
+                shouldClose = true;
+                reason = 'SL';
+            }
+        }
+        
+        if (trade.takeProfit) {
+            const tpHit = trade.side === 'BUY' 
+                ? currentPrice >= trade.takeProfit 
+                : currentPrice <= trade.takeProfit;
+            if (tpHit) {
+                shouldClose = true;
+                reason = 'TP';
+            }
+        }
+        
+        if (shouldClose) {
+            autoClosePosition(i, reason);
+            return; // 재귀 방지: 한 번에 하나씩
+        }
+    }
+    
+    if (openTrades.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:var(--accent); padding:1rem;">오픈 포지션 없음</p>';
+        return;
+    }
+    
+    container.innerHTML = '';
+    
+    openTrades.forEach((trade, index) => {
+        const actualIndex = myParticipation.trades.indexOf(trade);
+        const priceDiff = trade.side === 'BUY' 
+            ? (currentPrice - trade.entryPrice) 
+            : (trade.entryPrice - currentPrice);
+        
+        const pnl = priceDiff * trade.multiplier * trade.contracts;
+        const pnlColor = pnl >= 0 ? '#0066cc' : '#cc0000';
+        
+        // Check if SL/TP hit
+        let slHit = false;
+        let tpHit = false;
+        
+        if (trade.stopLoss) {
+            slHit = trade.side === 'BUY' 
+                ? currentPrice <= trade.stopLoss 
+                : currentPrice >= trade.stopLoss;
+        }
+        
+        if (trade.takeProfit) {
+            tpHit = trade.side === 'BUY' 
+                ? currentPrice >= trade.takeProfit 
+                : currentPrice <= trade.takeProfit;
+        }
+        
+        const div = document.createElement('div');
+        div.style.cssText = 'padding:1rem; background:var(--bg); border-radius:6px; margin-bottom:0.5rem; border-left:4px solid ' + (trade.side === 'BUY' ? '#0066cc' : '#cc0000');
+        
+        let slTPHTML = '';
+        if (trade.stopLoss || trade.takeProfit) {
+            slTPHTML = `
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-top:0.5rem; font-size:0.8rem;">
+                    ${trade.stopLoss ? `<div style="color:red;">SL: ${trade.stopLoss.toFixed(2)} ${slHit ? '🔴 HIT' : ''}</div>` : '<div></div>'}
+                    ${trade.takeProfit ? `<div style="color:green;">TP: ${trade.takeProfit.toFixed(2)} ${tpHit ? '🟢 HIT' : ''}</div>` : '<div></div>'}
+                </div>
+            `;
+        }
+        
+        div.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div style="flex:1;">
+                    <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.3rem;">
+                        <strong style="color:${trade.side === 'BUY' ? '#0066cc' : '#cc0000'}">${trade.side}</strong> 
+                        <span>${trade.contract} × ${trade.contracts}</span>
+                        <span style="font-size:0.75rem; color:var(--accent);">${trade.orderType}</span>
+                    </div>
+                    <div style="font-size:0.85rem;">
+                        진입: ${trade.entryPrice.toFixed(2)} → 현재: ${currentPrice.toFixed(2)}
+                    </div>
+                    ${slTPHTML}
+                    <div style="margin-top:0.5rem;">
+                        <strong style="color:${pnlColor}; font-size:1.2rem;">
+                            ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)}
+                        </strong>
+                        <span style="font-size:0.8rem; color:var(--accent); margin-left:0.5rem;">
+                            (${((pnl / trade.margin) * 100).toFixed(2)}%)
+                        </span>
+                    </div>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                    <button onclick="closePosition(${actualIndex})" style="background:#cc0000; color:white; border:none; padding:0.6rem 1rem; border-radius:4px; cursor:pointer; font-size:0.9rem; font-weight:bold;">
+                        ✕ CLOSE
+                    </button>
+                    <button onclick="modifyPosition(${actualIndex})" style="background:var(--border); color:var(--text); border:none; padding:0.3rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.7rem;">
+                        SL/TP수정
+                    </button>
+                </div>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+async function modifyPosition(tradeIndex) {
+    const trade = myParticipation.trades[tradeIndex];
+    if (trade.status !== 'open') return;
+    
+    const newSL = prompt(`손절가 수정:\n현재: ${trade.stopLoss ? trade.stopLoss.toFixed(2) : '없음'}`, trade.stopLoss || '');
+    const newTP = prompt(`익절가 수정:\n현재: ${trade.takeProfit ? trade.takeProfit.toFixed(2) : '없음'}`, trade.takeProfit || '');
+    
+    try {
+        trade.stopLoss = newSL ? parseFloat(newSL) : null;
+        trade.takeProfit = newTP ? parseFloat(newTP) : null;
+        
+        await db.collection('prop_challenges').doc(myParticipation.challengeId)
+            .collection('participants').doc(myParticipation.participantId)
+            .update({ trades: myParticipation.trades });
+        
+        alert('✅ 포지션 수정 완료!');
+        updateOpenPositions();
+    } catch (error) {
+        alert('수정 실패: ' + error.message);
+    }
+}
+
+async function loadTradeHistory() {
+    if (!myParticipation || !myParticipation.trades) return;
+    
+    const container = document.getElementById('trade-history');
+    container.innerHTML = '';
+    
+    const closedTrades = myParticipation.trades.filter(t => t.status === 'closed');
+    
+    if (closedTrades.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:var(--accent); padding:1rem;">거래 내역 없음</p>';
+        return;
+    }
+    
+    closedTrades.slice().reverse().forEach((trade) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'padding:0.8rem; background:var(--bg); border-radius:6px; margin-bottom:0.5rem;';
+        
+        const sideColor = trade.side === 'BUY' ? '#0066cc' : '#cc0000';
+        const pnlColor = trade.pnl >= 0 ? '#0066cc' : '#cc0000';
+        
+        div.innerHTML = `
+            <div style="display:flex; justify-content:space-between;">
+                <div>
+                    <strong style="color:${sideColor}">${trade.side}</strong> ${trade.contract} × ${trade.contracts}
+                    <br>
+                    <span style="font-size:0.85rem; color:var(--accent);">
+                        ${trade.entryPrice.toFixed(2)} → ${trade.exitPrice.toFixed(2)}
+                    </span>
+                </div>
+                <div style="text-align:right;">
+                    <strong style="color:${pnlColor}; font-size:1.1rem;">
+                        ${trade.pnl >= 0 ? '+' : ''}$${trade.pnl.toFixed(2)}
+                    </strong>
+                    <br>
+                    <span style="font-size:0.75rem; color:var(--accent);">
+                        ${new Date(trade.closedAt.seconds * 1000).toLocaleString()}
+                    </span>
+                </div>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// Remove crypto pair change listener
+document.addEventListener('DOMContentLoaded', () => {
+    // NQ futures - no pair selection needed
+});
+
+// ========== NINJATRADER-STYLE FEATURES ==========
+
+function toggleOrderInputs() {
+    const orderType = document.getElementById('order-type').value;
+    const priceInputs = document.getElementById('price-inputs');
+    const limitDiv = document.getElementById('limit-price-div');
+    const stopDiv = document.getElementById('stop-price-div');
+    
+    if (orderType === 'MARKET') {
+        priceInputs.style.display = 'none';
+    } else if (orderType === 'LIMIT') {
+        priceInputs.style.display = 'block';
+        limitDiv.style.display = 'block';
+        stopDiv.style.display = 'none';
+        document.getElementById('limit-price').value = currentPrice.toFixed(2);
+    } else if (orderType === 'STOP') {
+        priceInputs.style.display = 'block';
+        limitDiv.style.display = 'none';
+        stopDiv.style.display = 'block';
+        document.getElementById('stop-price').value = currentPrice.toFixed(2);
+    } else if (orderType === 'STOP_LIMIT') {
+        priceInputs.style.display = 'block';
+        limitDiv.style.display = 'block';
+        stopDiv.style.display = 'block';
+        document.getElementById('limit-price').value = currentPrice.toFixed(2);
+        document.getElementById('stop-price').value = currentPrice.toFixed(2);
+    }
+}
+
+function toggleSLTP() {
+    const useSLTP = document.getElementById('use-sl-tp').checked;
+    const inputs = document.getElementById('sl-tp-inputs');
+    inputs.style.display = useSLTP ? 'block' : 'none';
+}
+
+async function closeAllPositions(contractFilter) {
+    if (!myParticipation || !myParticipation.trades) return;
+    
+    // contract 필터: 특정 상품만 또는 전체
+    const openTrades = myParticipation.trades.filter(t => 
+        t.status === 'open' && (!contractFilter || t.contract === contractFilter)
+    );
+    
+    if (openTrades.length === 0) {
+        alert(`${contractFilter || '전체'} 오픈 포지션이 없습니다`);
+        return;
+    }
+    
+    try {
+        let totalPnL = 0;
+        let totalNetPnL = 0;
+        
+        for (let i = 0; i < myParticipation.trades.length; i++) {
+            const trade = myParticipation.trades[i];
+            if (trade.status === 'open' && (!contractFilter || trade.contract === contractFilter)) {
+                const priceDiff = trade.side === 'BUY' 
+                    ? (currentPrice - trade.entryPrice) 
+                    : (trade.entryPrice - currentPrice);
+                
+                const pnl = priceDiff * trade.multiplier * trade.contracts;
+                const fee = trade.fee || (RISK_CONFIG.tradeFeeRoundTrip * trade.contracts);
+                const netPnl = pnl - fee;
+                
+                trade.status = 'closed';
+                trade.exitPrice = currentPrice;
+                trade.pnl = netPnl;
+                trade.fee = fee;
+                trade.closedAt = new Date();
+                
+                totalPnL += netPnl + trade.margin;
+                totalNetPnL += netPnl;
+            }
+        }
+        
+        myParticipation.currentBalance += totalPnL;
+        myParticipation.dailyPnL = (myParticipation.dailyPnL || 0) + totalNetPnL;
+        
+        await db.collection('prop_challenges').doc(myParticipation.challengeId)
+            .collection('participants').doc(myParticipation.participantId)
+            .update({ 
+                trades: myParticipation.trades,
+                currentBalance: myParticipation.currentBalance,
+                dailyPnL: myParticipation.dailyPnL
+            });
+        
+        alert(`✅ ${contractFilter || '전체'} 포지션 청산!\n손익: $${totalNetPnL.toFixed(2)}`);
+        updateTradingUI();
+        updateOpenPositions();
+        loadTradeHistory();
+        
+        // ===== RISK CHECK =====
+        await checkDailyLossLimit();
+        await checkCumulativeLiquidation();
+        updateRiskGaugeUI();
+    } catch (error) {
+        alert('청산 실패: ' + error.message);
+    }
+}
+
+// Modify executeFuturesTrade to support advanced order types + SLOT SYSTEM + RISK CHECK
+async function executeFuturesTrade(side) {
+    if (!myParticipation) {
+        alert('챌린지에 먼저 참가하세요');
+        return;
+    }
+    
+    // ===== RISK CHECK: 일일 한도 =====
+    if (myParticipation.dailyLocked) {
+        const reason = myParticipation.adminSuspended 
+            ? `⛔ 관리자에 의해 거래가 중단되었습니다.\n사유: ${myParticipation.suspendReason || '미공개'}`
+            : '⚠️ 오늘의 거래가 종료되었습니다.\n내일 다시 도전하세요!';
+        alert(reason);
+        return;
+    }
+    
+    // ===== SLOT SYSTEM: CRNY 기반 계약 수 자동 계산 =====
+    const crnyBalance = userWallet?.balances?.crny || 0;
+    const slots = calculateSlots(crnyBalance);
+    
+    if (slots === 0) {
+        alert('🔴 CRNY를 보유해야 거래할 수 있습니다.\n\nWALLET에서 CRNY 잔액을 확인해주세요.');
+        return;
+    }
+    
+    const contract = document.getElementById('futures-contract').value;
+    
+    // ===== 상품 제한 체크 =====
+    const allowedProduct = myParticipation.allowedProduct || 'BOTH';
+    if (allowedProduct !== 'BOTH' && contract !== allowedProduct) {
+        alert(`⚠️ 이 챌린지에서는 ${allowedProduct}만 거래 가능합니다.`);
+        return;
+    }
+    
+    // ===== 계약 수: 슬롯 vs 챌린지 한도 중 작은 값 =====
+    const maxContracts = myParticipation.maxContracts || 7;
+    const contracts = Math.min(slots, maxContracts);
+    
+    const orderType = document.getElementById('order-type').value;
+    const multiplier = contract === 'NQ' ? 20 : 2;
+    const margin = contract === 'NQ' ? 15000 : 1500;
+    const requiredMargin = margin * contracts;
+    
+    // ===== 최대 동시 포지션 체크 =====
+    const maxPositions = myParticipation.maxPositions || 5;
+    const openCount = (myParticipation.trades || []).filter(t => t.status === 'open').length;
+    if (openCount >= maxPositions) {
+        alert(`⚠️ 최대 동시 포지션 ${maxPositions}개 도달!\n기존 포지션을 청산한 후 진입하세요.`);
+        return;
+    }
+    
+    if (requiredMargin > myParticipation.currentBalance) {
+        alert(`증거금이 부족합니다\n필요: $${requiredMargin.toLocaleString()}\n보유: $${myParticipation.currentBalance.toLocaleString()}`);
+        return;
+    }
+    
+    // 거래 제한 체크
+    if (!checkTradingLimits(contracts)) return;
+    
+    let entryPrice = currentPrice;
+    let orderTypeText = '시장가';
+    
+    // Get prices based on order type
+    if (orderType === 'LIMIT') {
+        entryPrice = parseFloat(document.getElementById('limit-price').value);
+        orderTypeText = `지정가 ${entryPrice.toFixed(2)}`;
+    } else if (orderType === 'STOP') {
+        entryPrice = parseFloat(document.getElementById('stop-price').value);
+        orderTypeText = `손절 ${entryPrice.toFixed(2)}`;
+    } else if (orderType === 'STOP_LIMIT') {
+        const stopPrice = parseFloat(document.getElementById('stop-price').value);
+        entryPrice = parseFloat(document.getElementById('limit-price').value);
+        orderTypeText = `손절지정가 ${stopPrice.toFixed(2)}/${entryPrice.toFixed(2)}`;
+    }
+    
+    // Get SL/TP settings
+    const useSLTP = document.getElementById('use-sl-tp').checked;
+    let stopLoss = null;
+    let takeProfit = null;
+    
+    if (useSLTP) {
+        const slPoints = parseFloat(document.getElementById('stop-loss-points').value) || 0;
+        const tpPoints = parseFloat(document.getElementById('take-profit-points').value) || 0;
+        
+        if (side === 'BUY') {
+            stopLoss = entryPrice - slPoints;
+            takeProfit = entryPrice + tpPoints;
+        } else {
+            stopLoss = entryPrice + slPoints;
+            takeProfit = entryPrice - tpPoints;
+        }
+    }
+    
+    let confirmMsg = `${side} 포지션 진입\n\n` +
+        `상품: ${contract}\n` +
+        `👑 슬롯: ${slots}개 (CRNY ${Math.floor(crnyBalance)}개 기준)\n` +
+        `계약: ${contracts}개\n` +
+        `주문: ${orderTypeText}\n` +
+        `증거금: $${requiredMargin.toLocaleString()}\n` +
+        `포인트당: $${multiplier * contracts}`;
+    
+    if (useSLTP) {
+        confirmMsg += `\n\n손절: ${stopLoss.toFixed(2)}\n익절: ${takeProfit.toFixed(2)}`;
+    }
+    
+    confirmMsg += `\n\n실행하시겠습니까?`;
+    
+    if (!window.confirm(confirmMsg)) return;
+    
+    try {
+        const trade = {
+            contract: contract,
+            side: side,
+            contracts: contracts,
+            orderType: orderType,
+            entryPrice: entryPrice,
+            currentPrice: currentPrice,
+            multiplier: multiplier,
+            margin: requiredMargin,
+            stopLoss: stopLoss,
+            takeProfit: takeProfit,
+            crnyAtEntry: Math.floor(crnyBalance),
+            slotsAtEntry: slots,
+            fee: RISK_CONFIG.tradeFeeRoundTrip * contracts,
+            timestamp: new Date(),
+            status: orderType === 'MARKET' ? 'open' : 'pending',
+            pnl: 0
+        };
+        
+        const trades = myParticipation.trades || [];
+        trades.push(trade);
+        
+        const newBalance = myParticipation.currentBalance - requiredMargin;
+        
+        await db.collection('prop_challenges').doc(myParticipation.challengeId)
+            .collection('participants').doc(myParticipation.participantId)
+            .update({ 
+                trades: trades,
+                currentBalance: newBalance
+            });
+        
+        myParticipation.trades = trades;
+        myParticipation.currentBalance = newBalance;
+        
+        const statusText = orderType === 'MARKET' ? '체결' : '접수';
+        alert(`✅ ${side} 주문 ${statusText}!\n${contract} ${contracts}계약 @ ${entryPrice.toFixed(2)}\n👑 슬롯: ${slots}개`);
+        
+        updateTradingUI();
+        updateOpenPositions();
+        updateRiskGaugeUI();
+        loadTradeHistory();
+        
+        // 차트에 라인 그리기 + 자동 정렬
+        setTimeout(() => { drawPositionLinesLW(); scrollToLatest(); }, 1000);
+    } catch (error) {
+        alert('거래 실패: ' + error.message);
+    }
+}
+
+// Quick chart trade (SLOT-based market order with default SL/TP)
+async function quickChartTrade(side, contractOverride) {
+    if (!myParticipation) {
+        alert('챌린지에 먼저 참가하세요');
+        return;
+    }
+    
+    // ===== RISK CHECK =====
+    if (myParticipation.dailyLocked) {
+        const reason = myParticipation.adminSuspended 
+            ? `⛔ 관리자에 의해 거래가 중단되었습니다.\n사유: ${myParticipation.suspendReason || '미공개'}`
+            : '⚠️ 오늘의 거래가 종료되었습니다.\n내일 다시 도전하세요!';
+        alert(reason);
+        return;
+    }
+    
+    // ===== SLOT SYSTEM =====
+    const crnyBalance = userWallet?.balances?.crny || 0;
+    const slots = calculateSlots(crnyBalance);
+    
+    if (slots === 0) {
+        alert('🔴 CRNY를 보유해야 거래할 수 있습니다.');
+        return;
+    }
+    
+    const contract = contractOverride || document.getElementById('futures-contract')?.value || 'MNQ';
+    
+    // 상품 제한
+    const allowedProduct = myParticipation.allowedProduct || 'BOTH';
+    if (allowedProduct !== 'BOTH' && contract !== allowedProduct) {
+        alert(`⚠️ 이 챌린지에서는 ${allowedProduct}만 거래 가능합니다.`);
+        return;
+    }
+    
+    // 계약 수: 슬롯 vs 챌린지 한도
+    const maxContracts = myParticipation.maxContracts || 7;
+    const contracts = Math.min(slots, maxContracts);
+    
+    // 포지션 수 체크
+    const maxPositions = myParticipation.maxPositions || 5;
+    const openCount = (myParticipation.trades || []).filter(t => t.status === 'open').length;
+    if (openCount >= maxPositions) {
+        alert(`⚠️ 최대 동시 포지션 ${maxPositions}개 도달!`);
+        return;
+    }
+    
+    const multiplier = contract === 'NQ' ? 20 : 2;
+    const margin = (contract === 'NQ' ? 15000 : 1500) * contracts;
+    
+    if (margin > myParticipation.currentBalance) {
+        alert(`증거금이 부족합니다`);
+        return;
+    }
+    
+    // SL/TP: 상품별 적정값 (MNQ: 10pt=$20, NQ: 10pt=$200)
+    const slPoints = contract === 'MNQ' ? 10 : 5;
+    const tpPoints = contract === 'MNQ' ? 20 : 10;
+    
+    const stopLoss = side === 'BUY' 
+        ? currentPrice - slPoints 
+        : currentPrice + slPoints;
+    
+    const takeProfit = side === 'BUY'
+        ? currentPrice + tpPoints
+        : currentPrice - tpPoints;
+    
+    try {
+        const trade = {
+            contract: contract,
+            side: side,
+            contracts: contracts,
+            orderType: 'MARKET',
+            entryPrice: currentPrice,
+            currentPrice: currentPrice,
+            multiplier: multiplier,
+            margin: margin,
+            stopLoss: stopLoss,
+            takeProfit: takeProfit,
+            crnyAtEntry: Math.floor(crnyBalance),
+            slotsAtEntry: slots,
+            fee: RISK_CONFIG.tradeFeeRoundTrip * contracts,
+            timestamp: new Date(),
+            status: 'open',
+            pnl: 0
+        };
+        
+        const trades = myParticipation.trades || [];
+        trades.push(trade);
+        
+        const newBalance = myParticipation.currentBalance - margin;
+        
+        await db.collection('prop_challenges').doc(myParticipation.challengeId)
+            .collection('participants').doc(myParticipation.participantId)
+            .update({ 
+                trades: trades,
+                currentBalance: newBalance
+            });
+        
+        myParticipation.trades = trades;
+        myParticipation.currentBalance = newBalance;
+        
+        console.log(`✅ 차트 ${side} 주문 체결! ${slots}슬롯, SL: ${stopLoss.toFixed(2)}, TP: ${takeProfit.toFixed(2)}`);
+        
+        updateTradingUI();
+        updateOpenPositions();
+        updateRiskGaugeUI();
+        
+        // 차트에 라인 그리기 + 자동 정렬
+        setTimeout(() => {
+            drawPositionLinesLW();
+            scrollToLatest();
+        }, 500);
+    } catch (error) {
+        alert('거래 실패: ' + error.message);
+    }
+}
+
+// Lightweight Charts용 포지션 라인 그리기
+function drawPositionLinesLW() {
+    if (!window.candleSeries || !myParticipation || !myParticipation.trades) {
+        console.log('⚠️ 차트 또는 포지션 없음');
+        return;
+    }
+    
+    const openTrades = myParticipation.trades.filter(t => t.status === 'open');
+    
+    // 기존 라인 제거
+    if (window.positionLines) {
+        window.positionLines.forEach(line => {
+            try {
+                window.candleSeries.removePriceLine(line);
+            } catch (e) {}
+        });
+    }
+    window.positionLines = [];
+    
+    openTrades.forEach((trade) => {
+        // 진입가 라인
+        const entryLine = window.candleSeries.createPriceLine({
+            price: trade.entryPrice,
+            color: trade.side === 'BUY' ? '#0066cc' : '#cc0000',
+            lineWidth: 2,
+            lineStyle: LightweightCharts.LineStyle.Solid,
+            axisLabelVisible: true,
+            title: `${trade.side} ${trade.contracts}`,
+        });
+        window.positionLines.push(entryLine);
+        
+        // 손절 라인
+        if (trade.stopLoss) {
+            const slLine = window.candleSeries.createPriceLine({
+                price: trade.stopLoss,
+                color: '#ff0000',
+                lineWidth: 2,
+                lineStyle: LightweightCharts.LineStyle.Dashed,
+                axisLabelVisible: true,
+                title: 'SL',
+            });
+            window.positionLines.push(slLine);
+        }
+        
+        // 익절 라인
+        if (trade.takeProfit) {
+            const tpLine = window.candleSeries.createPriceLine({
+                price: trade.takeProfit,
+                color: '#00cc00',
+                lineWidth: 2,
+                lineStyle: LightweightCharts.LineStyle.Dashed,
+                axisLabelVisible: true,
+                title: 'TP',
+            });
+            window.positionLines.push(tpLine);
+        }
+    });
+    
+    console.log(`📊 ${openTrades.length}개 포지션 라인 표시`);
+}
+
+// 거래 제한 확인
+function checkTradingLimits(contracts) {
+    if (!myParticipation) return false;
+    
+    const maxContracts = myParticipation.maxContracts || 7;
+    const maxPositions = myParticipation.maxPositions || 20;
+    const maxDrawdown = myParticipation.maxDrawdown || 3000;
+    
+    // 계약 수 확인
+    if (contracts > maxContracts) {
+        alert(`❌ 최대 ${maxContracts}계약까지 가능합니다`);
+        return false;
+    }
+    
+    // 포지션 수 확인
+    const openPositions = myParticipation.trades?.filter(t => t.status === 'open').length || 0;
+    if (openPositions >= maxPositions) {
+        alert(`❌ 최대 ${maxPositions}개 포지션까지 가능합니다\n현재: ${openPositions}개`);
+        return false;
+    }
+    
+    // Drawdown 확인
+    const initialBalance = myParticipation.initialBalance || 100000;
+    const currentBalance = myParticipation.currentBalance || 100000;
+    const drawdown = initialBalance - currentBalance;
+    
+    if (drawdown >= maxDrawdown) {
+        alert(`🚨 청산 기준 도달!\n최대 손실: -$${maxDrawdown}\n현재 손실: -$${drawdown.toFixed(2)}`);
+        return false;
+    }
+    
+    return true;
+}
+
+// EOD 정산
+async function processEOD() {
+    if (!myParticipation) return;
+    
+    const totalPnL = myParticipation.currentBalance - myParticipation.initialBalance;
+    
+    if (totalPnL > 0) {
+        // 수익 발생 - CRFN으로 지급 가능
+        console.log(`💰 EOD 수익: $${totalPnL.toFixed(2)}`);
+        
+        // TODO: CRFN 토큰 지급 로직
+    }
+    
+    // lastEOD 업데이트
+    await db.collection('prop_challenges').doc(myParticipation.challengeId)
+        .collection('participants').doc(myParticipation.participantId)
+        .update({
+            lastEOD: new Date(),
+            dailyPnL: totalPnL
+        });
+}
+
+// ========== POLYGON.IO 실시간 CME 데이터 ==========
+
+let polygonWS = null;
+
+// Massive WebSocket 연결
+function connectMassiveRealtime() {
+    if (!window.MASSIVE_CONFIG || !window.MASSIVE_CONFIG.enabled) {
+        console.log('⚠️ Massive 비활성화 - Yahoo Finance 사용');
+        return;
+    }
+    
+    const apiKey = window.MASSIVE_CONFIG.apiKey;
+    
+    if (apiKey === 'YOUR_POLYGON_API_KEY') {
+        console.error('❌ Massive API Key를 설정하세요!');
+        return;
+    }
+    
+    polygonWS = new WebSocket('wss://socket.polygon.io/futures');
+    
+    polygonWS.onopen = () => {
+        console.log('📡 Massive 연결 중...');
+        
+        // 인증
+        polygonWS.send(JSON.stringify({
+            action: 'auth',
+            params: apiKey
+        }));
+    };
+    
+    polygonWS.onmessage = (event) => {
+        const messages = JSON.parse(event.data);
+        
+        messages.forEach(msg => {
+            if (msg.ev === 'status' && msg.status === 'auth_success') {
+                console.log('✅ Massive 인증 성공');
+                
+                // NQ 선물 구독
+                polygonWS.send(JSON.stringify({
+                    action: 'subscribe',
+                    params: 'AM.C:NQ*' // NQ 전체 (1분, 5분 등)
+                }));
+                
+                console.log('📊 NQ 선물 구독 완료');
+            }
+            
+            if (msg.ev === 'AM') {
+                // Aggregate Minute (1분봉)
+                handleMassiveAggregate(msg);
+            }
+        });
+    };
+    
+    polygonWS.onerror = (error) => {
+        console.error('❌ Massive 연결 오류:', error);
+    };
+    
+    polygonWS.onclose = () => {
+        console.log('🔌 Massive 연결 종료');
+        // 재연결
+        setTimeout(() => connectMassiveRealtime(), 5000);
+    };
+}
+
+// Massive 데이터 처리
+function handleMassiveAggregate(data) {
+    if (!window.candleSeries) return;
+    
+    const candle = {
+        time: Math.floor(data.s / 1000), // 밀리초 → 초
+        open: data.o,
+        high: data.h,
+        low: data.l,
+        close: data.c
+    };
+    
+    // 차트 업데이트
+    window.candleSeries.update(candle);
+    
+    // 현재가 업데이트
+    currentPrice = data.c;
+    updateNQPriceDisplay();
+    updateOpenPositions();
+    
+    console.log(`🔄 Massive 실시간: ${data.c.toFixed(2)}`);
+}
+
+// Massive REST API로 히스토리 데이터
+async function fetchMassiveHistory() {
+    if (!window.MASSIVE_CONFIG || !window.MASSIVE_CONFIG.enabled) {
+        return null;
+    }
+    
+    const apiKey = window.MASSIVE_CONFIG.apiKey;
+    
+    try {
+        const endDate = new Date().toISOString().split('T')[0];
+        const startDate = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        
+        const url = `https://api.polygon.io/v2/aggs/ticker/C:NQ/range/5/minute/${startDate}/${endDate}?adjusted=true&sort=asc&apiKey=${apiKey}`;
+        
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.results) {
+            const candles = data.results.map(r => ({
+                time: Math.floor(r.t / 1000),
+                open: r.o,
+                high: r.h,
+                low: r.l,
+                close: r.c
+            }));
+            
+            const volume = data.results.map(r => ({
+                time: Math.floor(r.t / 1000),
+                value: r.v,
+                color: r.c > r.o ? '#26a69a' : '#ef5350'
+            }));
+            
+            console.log('✅ Massive 히스토리 데이터:', candles.length, '개');
+            
+            return { candles, volume };
+        }
+    } catch (error) {
+        console.error('❌ Massive 히스토리 로드 실패:', error);
+    }
+    
+    return null;
+}
