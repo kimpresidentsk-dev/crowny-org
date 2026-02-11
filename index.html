@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CROWNY PLATFORM</title>
+    <link rel="stylesheet" href="style.css?v=5.0">
+    
+    <!-- Firebase SDK -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-firestore-compat.min.js"></script>
+    
+    <!-- Thirdweb SDK -->
+    <script type="module">
+        import { createThirdwebClient } from "https://esm.sh/@thirdweb-dev/sdk@4";
+        window.thirdwebClient = createThirdwebClient({
+            clientId: "26c044bdfa2f575538d00945419126bf"
+        });
+    </script>
+    
+    <!-- Web3 -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    
+    <!-- Lightweight Charts -->
+    <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+    
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAqrMOtOCVTMqzsVEJgAMq5SBrpUzgABS8",
+            authDomain: "crowny-84b84.firebaseapp.com",
+            projectId: "crowny-84b84",
+            storageBucket: "crowny-84b84.firebasestorage.app",
+            messagingSenderId: "482020243607",
+            appId: "1:482020243607:web:8b60558c7af507f4bed1d2"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        window.auth = firebase.auth();
+        window.db = firebase.firestore();
+        
+        // Massive (구 Polygon.io) 실시간 CME 데이터 설정
+        window.MASSIVE_CONFIG = {
+            apiKey: 'UaNpU8hwqykC0pSPqSGYM9V5hLXtjIkX', // ✅ API Key 적용 완료!
+            enabled: true, // ✅ 실시간 활성화!
+            plan: 'Starter', // $199/월
+            symbol: 'C:NQ' // NQ E-mini 선물
+        };
+        
+        window.THIRDWEB_CONFIG = {
+            clientId: '26c044bdfa2f575538d00945419126bf',
+            contracts: {
+                CRNY: '0xe56173b6a57680286253566B9C80Fcc175c88bE1',
+                FNC: '0x68E3aA1049F583C2f1701fefc4443e398ebF32ee',
+                CRFN: '0x396DAd0C7625a4881cA0cd444Cd80A9bbce4A054'
+            }
+        };
+    </script>
+</head>
+<body>
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-content">
+            <h2>CROWNY</h2>
+            
+            <div id="login-form" class="auth-form">
+                <h3>로그인</h3>
+                <input type="email" id="login-email" placeholder="이메일" class="input">
+                <input type="password" id="login-password" placeholder="비밀번호" class="input">
+                <button onclick="login()" class="btn-primary">로그인</button>
+                <p>계정이 없으신가요? <a href="#" onclick="showSignup()">회원가입</a></p>
+            </div>
+            
+            <div id="signup-form" class="auth-form" style="display:none;">
+                <h3>회원가입</h3>
+                <input type="email" id="signup-email" placeholder="이메일" class="input">
+                <input type="password" id="signup-password" placeholder="비밀번호 (6자 이상)" class="input">
+                <button onclick="signup()" class="btn-primary">가입하기</button>
+                <p>이미 계정이 있으신가요? <a href="#" onclick="showLogin()">로그인</a></p>
+            </div>
+        </div>
+    </div>
+
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+    
+    <aside class="sidebar" id="sidebar">
+        <div class="logo">
+            <h1>CROWNY</h1>
+            <p>PRESENT</p>
+        </div>
+        
+        <div class="user-info" id="user-info">
+            <p id="user-email"></p>
+            <button onclick="logout()" class="btn-logout">로그아웃</button>
+        </div>
+        
+        <nav class="nav">
+            <a href="#" onclick="showPage('today')" class="nav-item active">TODAY</a>
+            <a href="#" onclick="showPage('wallet')" class="nav-item">WALLET</a>
+            <a href="#" onclick="showPage('messenger')" class="nav-item">MESSENGER</a>
+            <a href="#" onclick="showPage('social')" class="nav-item">SOCIAL</a>
+            <a href="#" onclick="showPage('art')" class="nav-item">ART</a>
+            <a href="#" onclick="showPage('mall')" class="nav-item">MALL</a>
+            <a href="#" onclick="showPage('fundraise')" class="nav-item">FUNDRAISE</a>
+            <a href="#" onclick="showPage('energy')" class="nav-item">ENERGY</a>
+            <a href="#" onclick="showPage('business')" class="nav-item">BUSINESS</a>
+            <a href="#" onclick="showPage('artist')" class="nav-item">ARTIST</a>
+            <a href="#" onclick="showPage('books')" class="nav-item">BOOKS</a>
+            <a href="#" onclick="showPage('credit')" class="nav-item">CREDIT</a>
+            <a href="#" onclick="showPage('prop-trading')" class="nav-item">PROP TRADING</a>
+            <a href="#" onclick="showPage('admin')" class="nav-item" id="admin-nav-item" style="display:none; color:#e94560;">🔐 ADMIN</a>
+        </nav>
+    </aside>
+
+    <main class="content">
+        <section id="today" class="page active">
+            <div class="hero">
+                <h2>GLOBAL BEAUTIE</h2>
+                <h1>전 세계를 하나로 연결하는<br>비즈니스 플랫폼</h1>
+            </div>
+
+            <div class="services">
+                <div class="service-card" onclick="showPage('wallet')">
+                    <span class="icon">💰</span>
+                    <h3>WALLET</h3>
+                </div>
+                <div class="service-card" onclick="showPage('messenger')">
+                    <span class="icon">💬</span>
+                    <h3>MESSENGER</h3>
+                </div>
+                <div class="service-card" onclick="showPage('social')">
+                    <span class="icon">📸</span>
+                    <h3>SOCIAL</h3>
+                </div>
+                <div class="service-card" onclick="showPage('art')">
+                    <span class="icon">🎨</span>
+                    <h3>ART</h3>
+                </div>
+                <div class="service-card" onclick="showPage('mall')">
+                    <span class="icon">🛒</span>
+                    <h3>MALL</h3>
+                </div>
+                <div class="service-card" onclick="showPage('fundraise')">
+                    <span class="icon">💝</span>
+                    <h3>FUNDRAISE</h3>
+                </div>
+                <div class="service-card" onclick="showPage('energy')">
+                    <span class="icon">☀️</span>
+                    <h3>ENERGY</h3>
+                </div>
+                <div class="service-card" onclick="showPage('business')">
+                    <span class="icon">🏢</span>
+                    <h3>BUSINESS</h3>
+                </div>
+                <div class="service-card" onclick="showPage('artist')">
+                    <span class="icon">🎤</span>
+                    <h3>ARTIST</h3>
+                </div>
+                <div class="service-card" onclick="showPage('books')">
+                    <span class="icon">📚</span>
+                    <h3>BOOKS</h3>
+                </div>
+                <div class="service-card" onclick="showPage('credit')">
+                    <span class="icon">💳</span>
+                    <h3>CREDIT</h3>
+                </div>
+                <div class="service-card" onclick="showPage('prop-trading')">
+                    <span class="icon">📊</span>
+                    <h3>PROP TRADING</h3>
+                </div>
+            </div>
+            
+            <div style="background:var(--bg); padding:1.5rem; border-radius:12px; margin-top:2rem;">
+                <h3 style="margin-bottom:1rem; font-size:1.1rem;">💡 크라우니 시작하기</h3>
+                <div style="line-height:2; font-size:0.9rem;">
+                    <p>✅ <strong>자동 생성된 지갑</strong>으로 바로 시작</p>
+                    <p>✅ <strong>가스비 무료</strong> (크라우니 지갑)</p>
+                    <p>✅ <strong>3가지 토큰</strong>: CRNY, FNC, CRFN</p>
+                    <p>✅ 메신저로 <strong>토큰 전송</strong> 가능</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="wallet" class="page">
+            <h2>💰 MY WALLET</h2>
+            
+            <!-- Wallet Selector -->
+            <div style="background:var(--bg); padding:1rem; border-radius:8px; margin-bottom:1rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                    <strong>내 지갑 목록</strong>
+                    <button onclick="showAddWalletModal()" class="btn-copy">➕ 추가</button>
+                </div>
+                <select id="wallet-selector" onchange="switchWallet()" style="width:100%; padding:0.8rem; border-radius:6px; border:1px solid var(--border); font-size:0.9rem;">
+                    <!-- Wallets will be loaded here -->
+                </select>
+            </div>
+            
+            <div class="wallet-info">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div style="flex:1;">
+                        <p><strong>주소:</strong> <span id="wallet-address"></span></p>
+                        <p id="wallet-address-full" style="font-family: monospace; font-size: 0.75rem; color: var(--accent); margin-top: 0.3rem;"></p>
+                        <p id="wallet-type" style="font-size: 0.7rem; color: var(--accent); margin-top: 0.3rem;"></p>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                        <button onclick="copyAddress()" class="btn-copy">📋 복사</button>
+                        <a id="polygonscan-link" href="#" target="_blank" class="btn-copy" style="text-decoration:none; text-align:center; display:block;">🔍 확인</a>
+                        <button onclick="deleteCurrentWallet()" class="btn-copy" style="background:var(--accent); color:white;">🗑️ 삭제</button>
+                    </div>
+                </div>
+                
+                <div id="gas-subsidy-info" style="background:var(--bg); padding:0.8rem; border-radius:8px; margin-bottom:1rem; display:none;">
+                    <p style="margin:0; font-size:0.85rem;">
+                        ⛽ 가스비 대납: <strong id="total-gas-subsidy">0</strong> MATIC
+                    </p>
+                </div>
+                
+                <div class="token-balances">
+                    <div class="token-card" onclick="selectToken('crny')" id="token-card-crny">
+                        <div class="token-icon">👑</div>
+                        <div class="token-info">
+                            <span class="token-name">CRNY</span>
+                            <span class="token-desc">권한</span>
+                        </div>
+                        <strong class="token-balance" id="crny-balance">0</strong>
+                    </div>
+                    
+                    <div class="token-card" onclick="selectToken('fnc')" id="token-card-fnc">
+                        <div class="token-icon">💳</div>
+                        <div class="token-info">
+                            <span class="token-name">FNC</span>
+                            <span class="token-desc">크레딧</span>
+                        </div>
+                        <strong class="token-balance" id="fnc-balance">0</strong>
+                    </div>
+                    
+                    <div class="token-card" onclick="selectToken('crfn')" id="token-card-crfn">
+                        <div class="token-icon">🎁</div>
+                        <div class="token-info">
+                            <span class="token-name">CRFN</span>
+                            <span class="token-desc">포네</span>
+                        </div>
+                        <strong class="token-balance" id="crfn-balance">0</strong>
+                    </div>
+                </div>
+                
+                <button onclick="showSendModal()" class="btn-action">선택한 토큰 전송</button>
+            </div>
+            
+            <!-- 소개자(레퍼럴) 시스템 -->
+            <div style="background:white; padding:1.5rem; border-radius:12px; margin-top:1rem;">
+                <h3 style="margin-bottom:1rem;">⭐ 소개자 프로그램</h3>
+                <p style="font-size:0.85rem; color:var(--accent); margin-bottom:1rem;">
+                    친구를 초대하면 가입 시 CRNY 1개 보상 + 챌린지 참가비의 10%를 받습니다!
+                </p>
+                <div id="referral-info" style="background:var(--bg); padding:1rem; border-radius:8px; margin-bottom:1rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                        <div>
+                            <span style="font-size:0.8rem; color:var(--accent);">내 소개 코드</span>
+                            <div id="my-referral-code" style="font-size:1.5rem; font-weight:700; color:var(--primary); letter-spacing:2px;">--</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:0.8rem; color:var(--accent);">초대한 친구</div>
+                            <div id="my-referral-count" style="font-size:1.2rem; font-weight:700;">0명</div>
+                        </div>
+                    </div>
+                    <div style="margin-top:0.8rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+                        <div style="flex:1; background:white; padding:0.5rem; border-radius:6px; text-align:center; min-width:80px;">
+                            <div style="font-size:0.7rem; color:var(--accent);">CRNY 수익</div>
+                            <div id="referral-earn-crny" style="font-weight:700;">0</div>
+                        </div>
+                        <div style="flex:1; background:white; padding:0.5rem; border-radius:6px; text-align:center; min-width:80px;">
+                            <div style="font-size:0.7rem; color:var(--accent);">FNC 수익</div>
+                            <div id="referral-earn-fnc" style="font-weight:700;">0</div>
+                        </div>
+                        <div style="flex:1; background:white; padding:0.5rem; border-radius:6px; text-align:center; min-width:80px;">
+                            <div style="font-size:0.7rem; color:var(--accent);">CRFN 수익</div>
+                            <div id="referral-earn-crfn" style="font-weight:700;">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:flex; gap:0.5rem;">
+                    <button onclick="generateReferralCode()" class="btn-primary" style="flex:1;">📎 소개 코드 생성</button>
+                    <button onclick="copyReferralCode()" class="btn-secondary" style="flex:1;">📋 코드 복사</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="messenger" class="page">
+            <h2>💬 MESSENGER</h2>
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                <button onclick="showNewChatModal()" class="btn-primary">새 채팅</button>
+                <button onclick="showAddContactModal()" class="btn-secondary">연락처 추가</button>
+            </div>
+            
+            <div class="messenger-container">
+                <div class="chat-sidebar">
+                    <div class="sidebar-tabs">
+                        <button class="tab-btn active" onclick="showChats()">채팅</button>
+                        <button class="tab-btn" onclick="showContacts()">연락처</button>
+                    </div>
+                    
+                    <div id="chats-view" class="sidebar-content">
+                        <div id="chat-list"></div>
+                    </div>
+                    
+                    <div id="contacts-view" class="sidebar-content" style="display:none;">
+                        <div id="contact-list"></div>
+                    </div>
+                </div>
+                
+                <div class="chat-window">
+                    <div class="chat-header">
+                        <strong id="chat-username">채팅 선택</strong>
+                    </div>
+                    <div class="chat-messages" id="chat-messages"></div>
+                    <div class="chat-input">
+                        <input type="text" id="message-input" placeholder="메시지..." onkeypress="if(event.key==='Enter') sendMessage()">
+                        <button onclick="sendTokenWithMessage()" class="btn-send-token">💰</button>
+                        <button onclick="sendMessage()">전송</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="social" class="page">
+            <h2>📸 SOCIAL</h2>
+            <div class="post-create">
+                <textarea id="post-text" placeholder="무슨 생각을 하고 계신가요?"></textarea>
+                <input type="file" id="post-image" accept="image/*" style="margin:0.5rem 0; padding:0.5rem; border:1px solid var(--border); border-radius:6px; width:100%;">
+                <button onclick="createPost()" class="btn-primary">📤 게시</button>
+            </div>
+            <div class="feed" id="social-feed"></div>
+        </section>
+
+        <!-- Digital Art Marketplace -->
+        <section id="art" class="page">
+            <h2>🎨 ART - 디지털 아트 거래소</h2>
+            
+            <!-- 작품 업로드 -->
+            <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                <h3 style="margin-bottom:1rem;">🖼️ 작품 등록</h3>
+                <div style="display:grid; gap:0.8rem;">
+                    <input type="text" id="art-title" placeholder="작품 제목" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    <textarea id="art-description" placeholder="작품 설명 (재료, 크기, 의미 등)" rows="3" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px; resize:vertical;"></textarea>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--accent);">카테고리</label>
+                            <select id="art-category" style="width:100%; padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                                <option value="painting">회화</option>
+                                <option value="digital">디지털 아트</option>
+                                <option value="photo">사진</option>
+                                <option value="sculpture">조각/설치</option>
+                                <option value="illustration">일러스트</option>
+                                <option value="calligraphy">서예/캘리</option>
+                                <option value="mixed">혼합 매체</option>
+                                <option value="ai">AI 아트</option>
+                                <option value="other">기타</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--accent);">판매 유형</label>
+                            <select id="art-sale-type" style="width:100%; padding:0.7rem; border:1px solid var(--border); border-radius:6px;" onchange="toggleArtSaleOptions()">
+                                <option value="fixed">고정가</option>
+                                <option value="auction">경매</option>
+                                <option value="display">전시만</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="art-price-section">
+                        <div style="display:grid; grid-template-columns:1fr auto; gap:0.5rem;">
+                            <input type="number" id="art-price" placeholder="가격" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                            <select id="art-price-token" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                                <option value="CRNY">CRNY</option>
+                                <option value="FNC">FNC</option>
+                                <option value="CRFN">CRFN</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="art-auction-section" style="display:none;">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+                            <div>
+                                <label style="font-size:0.8rem; color:var(--accent);">시작가</label>
+                                <input type="number" id="art-start-price" placeholder="시작가" style="width:100%; padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                            </div>
+                            <div>
+                                <label style="font-size:0.8rem; color:var(--accent);">경매 기간 (시간)</label>
+                                <input type="number" id="art-auction-hours" value="24" style="width:100%; padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                            </div>
+                        </div>
+                    </div>
+                    <input type="file" id="art-image" accept="image/*" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
+                    <button onclick="uploadArtwork()" class="btn-primary" style="padding:0.8rem;">🎨 작품 등록</button>
+                </div>
+            </div>
+            
+            <!-- 필터/검색 -->
+            <div style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
+                <select id="art-filter-category" onchange="loadArtGallery()" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px; flex:1; min-width:100px;">
+                    <option value="all">전체 카테고리</option>
+                    <option value="painting">회화</option>
+                    <option value="digital">디지털 아트</option>
+                    <option value="photo">사진</option>
+                    <option value="sculpture">조각/설치</option>
+                    <option value="illustration">일러스트</option>
+                    <option value="calligraphy">서예/캘리</option>
+                    <option value="mixed">혼합 매체</option>
+                    <option value="ai">AI 아트</option>
+                </select>
+                <select id="art-filter-sort" onchange="loadArtGallery()" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
+                    <option value="newest">최신순</option>
+                    <option value="popular">인기순</option>
+                    <option value="price-low">가격 낮은순</option>
+                    <option value="price-high">가격 높은순</option>
+                    <option value="auction">경매 중</option>
+                </select>
+                <button onclick="loadArtGallery()" style="background:var(--primary); color:white; border:none; padding:0.5rem 1rem; border-radius:6px; cursor:pointer;">🔄</button>
+            </div>
+            
+            <!-- 갤러리 그리드 -->
+            <div id="art-gallery" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:0.8rem;"></div>
+            
+            <!-- 내 컬렉션 -->
+            <div style="background:white; padding:1.5rem; border-radius:12px; margin-top:1.5rem;">
+                <h3 style="margin-bottom:1rem;">📁 내 컬렉션</h3>
+                <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
+                    <button onclick="loadMyArtworks()" class="btn-primary" style="flex:1;">🎨 내 작품</button>
+                    <button onclick="loadMyPurchases()" class="btn-secondary" style="flex:1;">🛒 구매한 작품</button>
+                </div>
+                <div id="my-art-collection"></div>
+            </div>
+        </section>
+
+        <!-- ========== MALL - 쇼핑몰 ========== -->
+        <section id="mall" class="page">
+            <h2>🛒 MALL - 쇼핑몰</h2>
+            
+            <!-- 상품 등록 -->
+            <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                <h3 style="margin-bottom:1rem;">📦 상품 등록</h3>
+                <div style="display:grid; gap:0.8rem;">
+                    <input type="text" id="product-title" placeholder="상품명" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    <textarea id="product-desc" placeholder="상품 설명" rows="2" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px; resize:vertical;"></textarea>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+                        <select id="product-category" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                            <option value="fashion">👗 패션</option>
+                            <option value="beauty">💄 뷰티</option>
+                            <option value="food">🍽️ 식품</option>
+                            <option value="digital">💻 디지털</option>
+                            <option value="health">💊 건강</option>
+                            <option value="home">🏠 생활</option>
+                            <option value="handmade">🧶 수공예</option>
+                            <option value="ticket">🎫 티켓/쿠폰</option>
+                            <option value="other">📦 기타</option>
+                        </select>
+                        <input type="number" id="product-stock" placeholder="재고 수량" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr auto; gap:0.5rem;">
+                        <input type="number" id="product-price" placeholder="가격" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                        <select id="product-token" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                            <option value="CRNY">CRNY</option>
+                            <option value="FNC">FNC</option>
+                            <option value="CRFN">CRFN</option>
+                        </select>
+                    </div>
+                    <input type="file" id="product-image" accept="image/*" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
+                    <button onclick="registerProduct()" class="btn-primary">📦 상품 등록</button>
+                </div>
+            </div>
+            
+            <!-- 필터 -->
+            <div style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
+                <select id="mall-filter-cat" onchange="loadMallProducts()" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px; flex:1;">
+                    <option value="all">전체</option>
+                    <option value="fashion">👗 패션</option>
+                    <option value="beauty">💄 뷰티</option>
+                    <option value="food">🍽️ 식품</option>
+                    <option value="digital">💻 디지털</option>
+                    <option value="health">💊 건강</option>
+                    <option value="home">🏠 생활</option>
+                    <option value="handmade">🧶 수공예</option>
+                    <option value="ticket">🎫 티켓/쿠폰</option>
+                </select>
+                <button onclick="loadMallProducts()" style="background:var(--primary); color:white; border:none; padding:0.5rem 1rem; border-radius:6px; cursor:pointer;">🔄</button>
+            </div>
+            
+            <div id="mall-products" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:0.8rem;"></div>
+            
+            <!-- 주문 내역 -->
+            <div style="background:white; padding:1.5rem; border-radius:12px; margin-top:1.5rem;">
+                <h3 style="margin-bottom:1rem;">📋 내 주문/판매</h3>
+                <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
+                    <button onclick="loadMyOrders()" class="btn-primary" style="flex:1;">🛒 주문 내역</button>
+                    <button onclick="loadMyProducts()" class="btn-secondary" style="flex:1;">📦 내 상품</button>
+                </div>
+                <div id="mall-my-list"></div>
+            </div>
+        </section>
+
+        <!-- ========== FUNDRAISE - 모금/기부 ========== -->
+        <section id="fundraise" class="page">
+            <h2>💝 FUNDRAISE - 모금/기부</h2>
+            
+            <!-- 캠페인 생성 -->
+            <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                <h3 style="margin-bottom:1rem;">🎯 캠페인 만들기</h3>
+                <div style="display:grid; gap:0.8rem;">
+                    <input type="text" id="fund-title" placeholder="캠페인 제목" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    <textarea id="fund-desc" placeholder="캠페인 설명 (목적, 사용 계획 등)" rows="3" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px; resize:vertical;"></textarea>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+                        <select id="fund-category" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                            <option value="charity">🤝 자선/구호</option>
+                            <option value="medical">🏥 의료/치료</option>
+                            <option value="education">📖 교육</option>
+                            <option value="environment">🌱 환경</option>
+                            <option value="startup">🚀 창업</option>
+                            <option value="community">👥 커뮤니티</option>
+                            <option value="animal">🐾 동물보호</option>
+                            <option value="disaster">🆘 재난구호</option>
+                            <option value="other">💝 기타</option>
+                        </select>
+                        <div>
+                            <input type="number" id="fund-goal" placeholder="목표 금액" style="width:100%; padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                        </div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--accent);">기간 (일)</label>
+                            <input type="number" id="fund-days" value="30" style="width:100%; padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                        </div>
+                        <select id="fund-token" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                            <option value="CRNY">CRNY</option>
+                            <option value="FNC">FNC</option>
+                        </select>
+                    </div>
+                    <input type="file" id="fund-image" accept="image/*" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
+                    <button onclick="createCampaign()" class="btn-primary">💝 캠페인 시작</button>
+                </div>
+            </div>
+            
+            <div id="fund-campaigns" style="display:grid; gap:1rem;"></div>
+        </section>
+
+        <!-- ========== ENERGY - 에너지 사업 ========== -->
+        <section id="energy" class="page">
+            <h2>☀️ ENERGY - 에너지 사업</h2>
+            
+            <div style="background:linear-gradient(135deg, #ff9800, #f44336); padding:1.5rem; border-radius:12px; margin-bottom:1rem; color:white;">
+                <h3>🌞 태양광 발전 투자</h3>
+                <p style="margin-top:0.5rem; opacity:0.9;">크라우니 토큰으로 태양광 발전소에 투자하고 발전 수익을 배분받으세요.</p>
+            </div>
+            
+            <!-- 발전소 프로젝트 -->
+            <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                <h3 style="margin-bottom:1rem;">⚡ 발전소 프로젝트</h3>
+                <button onclick="loadEnergyProjects()" class="btn-primary" style="margin-bottom:1rem;">🔄 프로젝트 새로고침</button>
+                <div id="energy-projects"></div>
+            </div>
+            
+            <!-- 내 투자 현황 -->
+            <div style="background:white; padding:1.5rem; border-radius:12px;">
+                <h3 style="margin-bottom:1rem;">📊 내 투자 현황</h3>
+                <div id="my-energy-investments">
+                    <p style="color:var(--accent);">투자한 프로젝트가 없습니다</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== BUSINESS - 크라우니 생태계 ========== -->
+        <section id="business" class="page">
+            <h2>🏢 BUSINESS - 크라우니 생태계</h2>
+            
+            <div style="background:linear-gradient(135deg, #1a1a2e, #16213e); padding:1.5rem; border-radius:12px; margin-bottom:1rem; color:white;">
+                <h3>🌐 크라우니 생태계 사업체</h3>
+                <p style="margin-top:0.5rem; opacity:0.9;">크라우니 토큰을 사용하는 파트너 비즈니스 네트워크</p>
+            </div>
+            
+            <!-- 사업체 등록 -->
+            <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                <h3 style="margin-bottom:1rem;">🏪 사업체 등록</h3>
+                <div style="display:grid; gap:0.8rem;">
+                    <input type="text" id="biz-name" placeholder="사업체명" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    <textarea id="biz-desc" placeholder="사업 소개" rows="2" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px; resize:vertical;"></textarea>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+                        <select id="biz-category" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                            <option value="retail">🏪 소매</option>
+                            <option value="food">🍽️ 요식업</option>
+                            <option value="service">🔧 서비스</option>
+                            <option value="tech">💻 테크</option>
+                            <option value="education">📖 교육</option>
+                            <option value="health">💊 헬스/뷰티</option>
+                            <option value="logistics">🚚 물류</option>
+                            <option value="entertainment">🎭 엔터</option>
+                            <option value="other">🏢 기타</option>
+                        </select>
+                        <input type="text" id="biz-country" placeholder="국가/지역" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    </div>
+                    <input type="text" id="biz-website" placeholder="웹사이트 (선택)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    <input type="file" id="biz-image" accept="image/*" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
+                    <button onclick="registerBusiness()" class="btn-primary">🏢 사업체 등록</button>
+                </div>
+            </div>
+            
+            <div id="business-list" style="display:grid; gap:1rem;"></div>
+        </section>
+
+        <!-- ========== ARTIST - 엔터테인먼트 ========== -->
+        <section id="artist" class="page">
+            <h2>🎤 ARTIST - 엔터테인먼트</h2>
+            
+            <div style="background:linear-gradient(135deg, #9C27B0, #E91E63); padding:1.5rem; border-radius:12px; margin-bottom:1rem; color:white;">
+                <h3>🌟 아티스트 플랫폼</h3>
+                <p style="margin-top:0.5rem; opacity:0.9;">음악, 공연, 콘텐츠 크리에이터를 위한 팬 후원 & 콘텐츠 마켓</p>
+            </div>
+            
+            <!-- 아티스트 프로필 등록 -->
+            <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                <h3 style="margin-bottom:1rem;">🎭 아티스트 등록</h3>
+                <div style="display:grid; gap:0.8rem;">
+                    <input type="text" id="artist-name" placeholder="활동명 / 아티스트명" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    <textarea id="artist-bio" placeholder="소개 (장르, 활동 이력 등)" rows="2" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px; resize:vertical;"></textarea>
+                    <select id="artist-genre" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                        <option value="music">🎵 음악</option>
+                        <option value="dance">💃 댄스</option>
+                        <option value="acting">🎬 연기</option>
+                        <option value="comedy">😂 코미디</option>
+                        <option value="creator">📹 크리에이터</option>
+                        <option value="model">📷 모델</option>
+                        <option value="dj">🎧 DJ</option>
+                        <option value="other">🌟 기타</option>
+                    </select>
+                    <input type="file" id="artist-photo" accept="image/*" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
+                    <button onclick="registerArtist()" class="btn-primary">🌟 아티스트 등록</button>
+                </div>
+            </div>
+            
+            <div id="artist-list" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:0.8rem;"></div>
+        </section>
+
+        <!-- ========== BOOKS - 출판 ========== -->
+        <section id="books" class="page">
+            <h2>📚 BOOKS - 출판</h2>
+            
+            <div style="background:linear-gradient(135deg, #795548, #4E342E); padding:1.5rem; border-radius:12px; margin-bottom:1rem; color:white;">
+                <h3>📖 크라우니 북스</h3>
+                <p style="margin-top:0.5rem; opacity:0.9;">전자책 출판, 판매, 구독 — 토큰으로 저작권 수익 배분</p>
+            </div>
+            
+            <!-- 책 등록 -->
+            <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                <h3 style="margin-bottom:1rem;">✍️ 책 등록</h3>
+                <div style="display:grid; gap:0.8rem;">
+                    <input type="text" id="book-title" placeholder="책 제목" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    <input type="text" id="book-author" placeholder="저자명" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    <textarea id="book-desc" placeholder="책 소개" rows="2" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px; resize:vertical;"></textarea>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+                        <select id="book-genre" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                            <option value="novel">📕 소설</option>
+                            <option value="essay">📗 에세이</option>
+                            <option value="selfhelp">📘 자기계발</option>
+                            <option value="business">📙 비즈니스</option>
+                            <option value="tech">💻 기술</option>
+                            <option value="poetry">🖋️ 시</option>
+                            <option value="children">🧒 아동</option>
+                            <option value="comic">📒 만화/웹툰</option>
+                            <option value="other">📚 기타</option>
+                        </select>
+                        <div style="display:flex; gap:0.3rem;">
+                            <input type="number" id="book-price" placeholder="가격" style="flex:1; padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                            <select id="book-token" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                                <option value="FNC">FNC</option>
+                                <option value="CRNY">CRNY</option>
+                            </select>
+                        </div>
+                    </div>
+                    <input type="file" id="book-cover" accept="image/*" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
+                    <button onclick="registerBook()" class="btn-primary">📚 책 등록</button>
+                </div>
+            </div>
+            
+            <div id="books-list" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:0.8rem;"></div>
+        </section>
+
+        <!-- ========== CREDIT - 개인금융 ========== -->
+        <section id="credit" class="page">
+            <h2>💳 CREDIT - 개인금융</h2>
+            
+            <div style="background:linear-gradient(135deg, #0066cc, #004d99); padding:1.5rem; border-radius:12px; margin-bottom:1rem; color:white;">
+                <h3>🏦 크라우니 P2P 금융</h3>
+                <p style="margin-top:0.5rem; opacity:0.9;">토큰 담보 대출, P2P 금융거래, 크레딧 스코어 관리</p>
+            </div>
+            
+            <!-- 내 크레딧 -->
+            <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                <h3 style="margin-bottom:1rem;">📊 내 크레딧</h3>
+                <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+                    <div style="flex:1; min-width:120px; background:var(--bg); padding:1rem; border-radius:8px; text-align:center;">
+                        <div style="font-size:0.8rem; color:var(--accent);">크레딧 점수</div>
+                        <div id="credit-score" style="font-size:2rem; font-weight:700; color:#0066cc;">--</div>
+                    </div>
+                    <div style="flex:1; min-width:120px; background:var(--bg); padding:1rem; border-radius:8px; text-align:center;">
+                        <div style="font-size:0.8rem; color:var(--accent);">대출 한도</div>
+                        <div id="credit-limit" style="font-size:1.5rem; font-weight:700;">--</div>
+                    </div>
+                    <div style="flex:1; min-width:120px; background:var(--bg); padding:1rem; border-radius:8px; text-align:center;">
+                        <div style="font-size:0.8rem; color:var(--accent);">활성 대출</div>
+                        <div id="active-loans" style="font-size:1.5rem; font-weight:700;">0건</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 대출 신청 -->
+            <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                <h3 style="margin-bottom:1rem;">💰 토큰 대출</h3>
+                <div style="display:grid; gap:0.8rem;">
+                    <div style="display:grid; grid-template-columns:1fr auto; gap:0.5rem;">
+                        <input type="number" id="loan-amount" placeholder="대출 금액" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                        <select id="loan-token" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                            <option value="FNC">FNC</option>
+                            <option value="CRNY">CRNY</option>
+                        </select>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--accent);">담보 (CRNY)</label>
+                            <input type="number" id="loan-collateral" placeholder="담보 수량" style="width:100%; padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--accent);">기간 (일)</label>
+                            <input type="number" id="loan-days" value="30" style="width:100%; padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                        </div>
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--accent);">이자율: 일 0.1% · 담보 비율: 150%</p>
+                    <button onclick="requestLoan()" class="btn-primary">💰 대출 신청</button>
+                </div>
+            </div>
+            
+            <!-- P2P 대출 목록 -->
+            <div style="background:white; padding:1.5rem; border-radius:12px;">
+                <h3 style="margin-bottom:1rem;">🤝 P2P 대출 마켓</h3>
+                <button onclick="loadLoanMarket()" class="btn-primary" style="margin-bottom:1rem;">🔄 새로고침</button>
+                <div id="loan-market"></div>
+            </div>
+        </section>
+
+        <!-- Prop Trading Page -->
+        <section id="prop-trading" class="page">
+            <h2>📊 PROP TRADING</h2>
+            
+            <div style="background:var(--bg); padding:1.5rem; border-radius:12px; margin-bottom:1.5rem;">
+                <h3 style="margin-bottom:1rem;">💡 프랍 트레이딩 규칙</h3>
+                <div id="prop-rules-display" style="line-height:1.8; font-size:0.9rem;">
+                    <p>챌린지에 참가하면 규칙이 표시됩니다.</p>
+                </div>
+            </div>
+            
+            <!-- Trading Dashboard (참가 후 표시) -->
+            <div id="trading-dashboard" style="display:none; margin-bottom:2rem;">
+                <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                    <h3>💼 내 트레이딩 계좌</h3>
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; margin-top:1rem;">
+                        <div style="text-align:center;">
+                            <p style="font-size:0.8rem; color:var(--accent);">계좌 잔액</p>
+                            <strong style="font-size:1.5rem;" id="trading-balance">$100,000</strong>
+                        </div>
+                        <div style="text-align:center;">
+                            <p style="font-size:0.8rem; color:var(--accent);">수익률</p>
+                            <strong style="font-size:1.5rem; color:green;" id="trading-profit">+0%</strong>
+                        </div>
+                        <div style="text-align:center;">
+                            <p style="font-size:0.8rem; color:var(--accent);">포지션</p>
+                            <strong style="font-size:1.5rem;" id="trading-positions">0</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 실시간 NQ 캔들차트 -->
+                <div style="background:#1a1a2e; padding:0.5rem; border-radius:12px; margin-bottom:1rem; overflow:hidden;">
+                    <!-- 시간 + 타임존 바 -->
+                    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; padding:6px 10px; background:#0d1b2a; border-radius:8px; margin-bottom:4px; gap:4px;">
+                        <div id="live-clock" style="font-size:0.85rem; color:#00ff88;">--:--:--</div>
+                        <div style="display:flex; gap:4px; flex-wrap:wrap;">
+                            <select id="tz-selector" onchange="changeTimezone(this.value)" style="background:#16213e; color:#ccc; border:1px solid #333; border-radius:4px; padding:2px 6px; font-size:0.7rem;">
+                                <option value="KR">🇰🇷 서울</option>
+                                <option value="US">🇺🇸 뉴욕</option>
+                                <option value="JP">🇯🇵 도쿄</option>
+                                <option value="UK">🇬🇧 런던</option>
+                                <option value="UTC">🌐 UTC</option>
+                            </select>
+                            <button onclick="scrollToLatest()" style="background:#16213e; color:#00ff88; border:1px solid #333; border-radius:4px; padding:2px 8px; font-size:0.7rem; cursor:pointer;">▶ 정렬</button>
+                            <button onclick="toggleMASettings()" style="background:#16213e; color:#ffab40; border:1px solid #333; border-radius:4px; padding:2px 8px; font-size:0.7rem; cursor:pointer;">📈 MA</button>
+                        </div>
+                    </div>
+                    
+                    <!-- MA 세팅 패널 (토글) -->
+                    <div id="ma-settings" style="display:none; padding:8px 10px; background:#0d1b2a; border-radius:8px; margin-bottom:4px;">
+                        <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
+                            <label style="color:#888; font-size:0.7rem;">MA1:</label>
+                            <input type="number" id="ma1-period" value="5" style="width:40px; background:#16213e; color:#00ff88; border:1px solid #333; border-radius:3px; padding:2px 4px; font-size:0.75rem; text-align:center;">
+                            <div style="width:12px; height:12px; background:#ffeb3b; border-radius:2px;"></div>
+                            
+                            <label style="color:#888; font-size:0.7rem; margin-left:8px;">MA2:</label>
+                            <input type="number" id="ma2-period" value="20" style="width:40px; background:#16213e; color:#26a69a; border:1px solid #333; border-radius:3px; padding:2px 4px; font-size:0.75rem; text-align:center;">
+                            <div style="width:12px; height:12px; background:#26a69a; border-radius:2px;"></div>
+                            
+                            <label style="color:#888; font-size:0.7rem; margin-left:8px;">MA3:</label>
+                            <input type="number" id="ma3-period" value="60" style="width:40px; background:#16213e; color:#ef5350; border:1px solid #333; border-radius:3px; padding:2px 4px; font-size:0.75rem; text-align:center;">
+                            <div style="width:12px; height:12px; background:#ef5350; border-radius:2px;"></div>
+                            
+                            <button onclick="applyMASettings()" style="background:#333; color:#ccc; border:none; border-radius:3px; padding:3px 8px; font-size:0.7rem; cursor:pointer; margin-left:4px;">적용</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 가격 바 -->
+                    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; padding:8px 10px; background:#16213e; border-radius:8px; margin-bottom:4px; gap:6px;">
+                        <div style="min-width:120px;">
+                            <span style="color:#888; font-size:0.7rem;">NQ 1분봉</span>
+                            <div id="live-price" style="font-size:1.4rem; font-weight:700; color:#00ff88;">--</div>
+                        </div>
+                        <div style="display:flex; gap:12px;">
+                            <div style="text-align:center;">
+                                <span style="color:#888; font-size:0.65rem;">BID</span>
+                                <div id="live-bid" style="color:#26a69a; font-weight:600; font-size:0.85rem;">--</div>
+                            </div>
+                            <div style="text-align:center;">
+                                <span style="color:#888; font-size:0.65rem;">ASK</span>
+                                <div id="live-ask" style="color:#ef5350; font-weight:600; font-size:0.85rem;">--</div>
+                            </div>
+                            <div style="text-align:center;">
+                                <span style="color:#888; font-size:0.65rem;">SPREAD</span>
+                                <div id="live-spread" style="color:#ffab40; font-weight:600; font-size:0.85rem;">--</div>
+                            </div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span id="live-status-dot" style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#ff4444; margin-right:4px;"></span>
+                            <span id="live-status-text" style="color:#888; font-size:0.65rem;">연결 중...</span>
+                        </div>
+                    </div>
+                    
+                    <!-- NQ 미니 차트 -->
+                    <div style="margin-bottom:4px;">
+                        <div style="padding:4px 10px; color:#888; font-size:0.7rem; display:flex; justify-content:space-between;">
+                            <span>📊 NQ E-mini (×$20)</span>
+                            <span id="nq-ma-info" style="color:#ffab40; font-size:0.65rem;"></span>
+                        </div>
+                        <div id="live-candle-chart" style="height:250px;"></div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-top:6px; padding:0 4px;">
+                            <button onclick="quickChartTrade('BUY','NQ')" style="background:#0066cc; color:white; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">
+                                📈 BUY
+                            </button>
+                            <button onclick="quickChartTrade('SELL','NQ')" style="background:#cc0000; color:white; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">
+                                📉 SELL
+                            </button>
+                            <button onclick="closeAllPositions('NQ')" style="background:#555; color:white; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">
+                                ✕ CLOSE
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- MNQ 마이크로 차트 -->
+                    <div style="margin-top:8px;">
+                        <div style="padding:4px 10px; color:#888; font-size:0.7rem; display:flex; justify-content:space-between;">
+                            <span>📊 MNQ Micro (×$2)</span>
+                            <span id="mnq-ma-info" style="color:#ffab40; font-size:0.65rem;"></span>
+                        </div>
+                        <div id="live-candle-chart-mnq" style="height:250px;"></div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-top:6px; padding:0 4px;">
+                            <button onclick="quickChartTrade('BUY','MNQ')" style="background:#0066cc; color:white; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">
+                                📈 BUY
+                            </button>
+                            <button onclick="quickChartTrade('SELL','MNQ')" style="background:#cc0000; color:white; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">
+                                📉 SELL
+                            </button>
+                            <button onclick="closeAllPositions('MNQ')" style="background:#555; color:white; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">
+                                ✕ CLOSE
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 실시간 손익 -->
+                    <div id="live-pnl-bar" style="text-align:center; padding:8px; margin-top:8px; background:#16213e; border-radius:8px; display:none;">
+                        <span style="color:#888; font-size:0.75rem;">실시간 손익</span>
+                        <div id="live-pnl" style="font-size:1.3rem; font-weight:700; color:#888;">$0.00</div>
+                    </div>
+                </div>
+                
+                <!-- Trading Controls -->
+                <div style="background:white; padding:1.5rem; border-radius:12px;">
+                    <h4 style="margin-bottom:1rem;">💹 나스닥100 선물 거래</h4>
+                    
+                    <!-- Contract and Quantity -->
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                        <div>
+                            <label style="font-size:0.85rem;">상품</label>
+                            <select id="futures-contract" onchange="updateContractSpecs()" style="width:100%; padding:0.8rem; border-radius:6px; margin-top:0.3rem;">
+                                <option value="NQ">NQ (E-mini Nasdaq-100)</option>
+                                <option value="MNQ">MNQ (Micro E-mini Nasdaq-100)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:0.85rem;">계약 수</label>
+                            <input type="number" id="trade-contracts" placeholder="1" min="1" value="1" style="width:100%; padding:0.8rem; border-radius:6px; margin-top:0.3rem;">
+                        </div>
+                    </div>
+                    
+                    <!-- Order Type Selection -->
+                    <div style="margin-bottom:1rem;">
+                        <label style="font-size:0.85rem; display:block; margin-bottom:0.3rem;">주문 타입</label>
+                        <select id="order-type" onchange="toggleOrderInputs()" style="width:100%; padding:0.8rem; border-radius:6px;">
+                            <option value="MARKET">시장가 (Market)</option>
+                            <option value="LIMIT">지정가 (Limit)</option>
+                            <option value="STOP">손절 (Stop Market)</option>
+                            <option value="STOP_LIMIT">손절 지정가 (Stop Limit)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Price Inputs (for Limit/Stop orders) -->
+                    <div id="price-inputs" style="display:none; margin-bottom:1rem;">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                            <div id="limit-price-div">
+                                <label style="font-size:0.85rem;">지정가</label>
+                                <input type="number" id="limit-price" step="0.25" style="width:100%; padding:0.8rem; border-radius:6px; margin-top:0.3rem;">
+                            </div>
+                            <div id="stop-price-div" style="display:none;">
+                                <label style="font-size:0.85rem;">손절가</label>
+                                <input type="number" id="stop-price" step="0.25" style="width:100%; padding:0.8rem; border-radius:6px; margin-top:0.3rem;">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Stop Loss / Take Profit -->
+                    <div style="background:var(--bg); padding:1rem; border-radius:6px; margin-bottom:1rem;">
+                        <label style="display:flex; align-items:center; margin-bottom:0.5rem;">
+                            <input type="checkbox" id="use-sl-tp" onchange="toggleSLTP()">
+                            <span style="margin-left:0.5rem; font-weight:bold;">손절/익절 자동 설정</span>
+                        </label>
+                        <div id="sl-tp-inputs" style="display:none; margin-top:1rem;">
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                                <div>
+                                    <label style="font-size:0.85rem;">손절 (포인트)</label>
+                                    <input type="number" id="stop-loss-points" placeholder="50" value="50" style="width:100%; padding:0.8rem; border-radius:6px; margin-top:0.3rem;">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.85rem;">익절 (포인트)</label>
+                                    <input type="number" id="take-profit-points" placeholder="100" value="100" style="width:100%; padding:0.8rem; border-radius:6px; margin-top:0.3rem;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Current Price Display with Ticks -->
+                    <div style="margin:1rem 0; padding:1rem; background:var(--bg); border-radius:6px;">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:0.8rem;">
+                            <div>
+                                <div style="font-size:0.75rem; color:var(--accent); margin-bottom:0.3rem;">현재가</div>
+                                <strong id="current-nq-price" style="font-size:1.3rem;">-</strong>
+                            </div>
+                            <div>
+                                <div style="font-size:0.75rem; color:var(--accent); margin-bottom:0.3rem;">틱 크기</div>
+                                <strong id="tick-size" style="font-size:1.3rem;">0.25</strong>
+                            </div>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; padding-top:0.8rem; border-top:1px solid var(--border);">
+                            <div>
+                                <div style="font-size:0.75rem; color:var(--accent);">포인트당 가치</div>
+                                <div id="point-value" style="font-size:0.9rem; font-weight:bold;">$20</div>
+                            </div>
+                            <div>
+                                <div style="font-size:0.75rem; color:var(--accent);">틱당 가치</div>
+                                <div id="tick-value" style="font-size:0.9rem; font-weight:bold;">$5</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Buy/Sell Buttons -->
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                        <button onclick="executeFuturesTrade('BUY')" style="background:#0066cc; color:white; padding:1.2rem; border:none; border-radius:6px; cursor:pointer; font-size:1.1rem; font-weight:bold;">
+                            📈 BUY
+                        </button>
+                        <button onclick="executeFuturesTrade('SELL')" style="background:#cc0000; color:white; padding:1.2rem; border:none; border-radius:6px; cursor:pointer; font-size:1.1rem; font-weight:bold;">
+                            📉 SELL
+                        </button>
+                    </div>
+                    
+                    <!-- Quick Close All -->
+                    <button onclick="closeAllPositions()" style="width:100%; margin-top:1rem; background:var(--accent); color:white; padding:1rem; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">
+                        🚨 전체 포지션 청산
+                    </button>
+                </div>
+                
+                <!-- Open Positions -->
+                <div style="background:white; padding:1.5rem; border-radius:12px; margin-top:1rem;">
+                    <h4 style="margin-bottom:1rem;">📊 오픈 포지션</h4>
+                    <div id="open-positions"></div>
+                </div>
+                
+                <!-- Trade History -->
+                <div style="background:white; padding:1.5rem; border-radius:12px; margin-top:1rem;">
+                    <h4 style="margin-bottom:1rem;">📋 거래 내역</h4>
+                    <div id="trade-history"></div>
+                </div>
+            </div>
+            
+            <!-- Challenges List -->
+            <div id="trading-challenges"></div>
+            
+            <div style="text-align:center; margin-top:2rem;">
+                <button onclick="showCreateChallenge()" class="btn-primary">➕ 새 챌린지 생성</button>
+            </div>
+        </section>
+
+        <!-- Admin Page (관리자만 표시) -->
+        <section id="admin" class="page">
+            <h2>🔐 ADMIN</h2>
+            
+            <div id="admin-not-authorized" style="text-align:center; padding:2rem; color:var(--accent);">
+                관리자 권한이 필요합니다.
+            </div>
+            
+            <div id="admin-panel" style="display:none;">
+                <!-- 관리자 레벨 표시 -->
+                <div id="admin-level-badge" style="text-align:center; padding:0.8rem; background:#1a1a2e; color:white; border-radius:8px; margin-bottom:1rem; font-size:0.9rem;"></div>
+                
+                <!-- Admin 지갑 (레벨 4+) -->
+                <div id="admin-wallet-section" style="display:none;">
+                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                        <h3 style="margin-bottom:1rem;">💰 Admin 지갑</h3>
+                        <div id="admin-wallet-info" style="margin-bottom:1rem;">
+                            <button onclick="loadAdminWallet()" class="btn-primary" style="margin-bottom:0.5rem;">🔄 지갑 새로고침</button>
+                        </div>
+                        <div style="background:var(--bg); padding:1rem; border-radius:8px; margin-bottom:1rem;">
+                            <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">📤 토큰 보내기 (온체인 Polygon)</h4>
+                            <div style="display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:0.5rem; align-items:end;">
+                                <div>
+                                    <label style="font-size:0.75rem;">받는 사람 이메일</label>
+                                    <input type="email" id="admin-send-email" placeholder="user@email.com" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.75rem;">토큰</label>
+                                    <select id="admin-send-token" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
+                                        <option value="crny">CRNY</option>
+                                        <option value="fnc">FNC</option>
+                                        <option value="crfn">CRFN</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-size:0.75rem;">수량</label>
+                                    <input type="number" id="admin-send-amount" value="1" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
+                                </div>
+                                <button onclick="adminSendToken()" style="background:#0066cc; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer; white-space:nowrap;">보내기</button>
+                            </div>
+                            <p style="font-size:0.7rem; color:var(--accent); margin-top:0.5rem;">⚠️ Polygon 온체인 전송 — POL(MATIC) 가스비 필요</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 회원 관리 (레벨 6 수퍼관리자) -->
+                <div id="admin-users-section" style="display:none;">
+                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                        <h3 style="margin-bottom:1rem;">👥 회원/관리자 관리</h3>
+                        <div style="background:var(--bg); padding:1rem; border-radius:8px; margin-bottom:1rem;">
+                            <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">🔑 관리자 레벨 변경</h4>
+                            <div style="display:grid; grid-template-columns:1fr auto auto; gap:0.5rem; align-items:end;">
+                                <div>
+                                    <label style="font-size:0.75rem;">이메일</label>
+                                    <input type="email" id="admin-level-email" placeholder="user@email.com" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.75rem;">레벨</label>
+                                    <select id="admin-level-select" style="padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
+                                        <option value="-1">-1 일반회원</option>
+                                        <option value="0">0 정회원 ⭐</option>
+                                        <option value="1">1 CS관리자 💬</option>
+                                        <option value="2">2 운영관리자 📝</option>
+                                        <option value="3">3 서비스관리자 🔧</option>
+                                        <option value="4">4 사업관리자 💼</option>
+                                        <option value="5">5 국가관리자 🌍</option>
+                                    </select>
+                                </div>
+                                <button onclick="setUserAdminLevel(document.getElementById('admin-level-email').value, parseInt(document.getElementById('admin-level-select').value))" style="background:#9C27B0; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">설정</button>
+                            </div>
+                        </div>
+                        <button onclick="loadAdminUserList()" class="btn-primary" style="margin-bottom:0.5rem;">🔄 회원 목록</button>
+                        <div id="admin-user-list"></div>
+                    </div>
+                </div>
+                
+                <!-- 참가자 관리 (레벨 3+) -->
+                <div id="admin-participants-section" style="display:none;">
+                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                        <h3 style="margin-bottom:1rem;">📊 챌린지 참가자 관리</h3>
+                        <button onclick="loadAdminParticipants()" class="btn-primary" style="margin-bottom:1rem;">🔄 참가자 목록 새로고침</button>
+                        <div id="admin-participants-list"></div>
+                    </div>
+                </div>
+                
+                <!-- 관리자 로그 (레벨 3+) -->
+                <div id="admin-log-section" style="display:none;">
+                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                        <h3 style="margin-bottom:1rem;">📋 관리자 활동 로그</h3>
+                        <button onclick="loadAdminLog()" class="btn-primary" style="margin-bottom:1rem;">🔄 로그 새로고침</button>
+                        <div id="admin-log-list"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="app.js?v=5.0"></script>
+</body>
+</html>
