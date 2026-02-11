@@ -1,0 +1,545 @@
+// ===== marketplace.js - 쇼핑몰, 모금, 에너지, 비즈니스, 아티스트, 출판, P2P크레딧 =====
+async function loadMallProducts() {
+    const container = document.getElementById('mall-products');
+    if (!container) return;
+    container.innerHTML = '<p style="text-align:center; color:var(--accent); grid-column:1/-1;">로딩...</p>';
+    try {
+        const brandFilter = window._mallBrandFilter || null;
+        let query = db.collection('products').where('status', '==', 'active');
+        if (brandFilter) query = query.where('category', '==', brandFilter);
+        const docs = await query.orderBy('createdAt', 'desc').limit(30).get();
+        if (docs.empty) { container.innerHTML = '<p style="text-align:center; color:var(--accent); grid-column:1/-1;">등록된 상품이 없습니다</p>'; return; }
+        container.innerHTML = '';
+        docs.forEach(d => {
+            const p = d.data();
+            container.innerHTML += `
+                <div onclick="viewProduct('${d.id}')" style="background:white; border-radius:10px; overflow:hidden; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                    <div style="height:140px; overflow:hidden; background:#f0f0f0;"><img src="${p.imageData}" style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div style="padding:0.6rem;">
+                        <div style="font-weight:600; font-size:0.85rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.title}</div>
+                        <div style="font-size:0.7rem; color:var(--accent);">${MALL_CATEGORIES[p.category] || ''} · ${p.sellerNickname || '판매자'}</div>
+                        <div style="font-weight:700; color:#0066cc; margin-top:0.3rem;">${p.price} ${p.priceToken}</div>
+                        <div style="font-size:0.7rem; color:var(--accent);">재고: ${p.stock - (p.sold||0)}개</div>
+                    </div>
+                </div>`;
+        });
+    } catch (e) { container.innerHTML = `<p style="color:red; grid-column:1/-1;">${e.message}</p>`; }
+}
+
+async function viewProduct(id) {
+    const doc = await db.collection('products').doc(id).get();
+    if (!doc.exists) return;
+    const p = doc.data(); const isOwner = currentUser?.uid === p.sellerId;
+    const remaining = p.stock - (p.sold || 0);
+    const modal = document.createElement('div');
+    modal.id = 'product-modal';
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    modal.innerHTML = `<div style="background:white; border-radius:12px; max-width:500px; width:100%; max-height:90vh; overflow-y:auto;">
+        <img src="${p.imageData}" style="width:100%; border-radius:12px 12px 0 0; max-height:40vh; object-fit:contain; background:#f0f0f0;">
+        <div style="padding:1.2rem;">
+            <h3>${p.title}</h3>
+            <p style="color:var(--accent); font-size:0.85rem; margin:0.5rem 0;">${MALL_CATEGORIES[p.category]} · 판매자: ${p.sellerNickname || p.sellerEmail}</p>
+            ${p.description ? `<p style="font-size:0.9rem; margin-bottom:1rem;">${p.description}</p>` : ''}
+            <div style="font-size:1.2rem; font-weight:700; color:#0066cc; margin-bottom:0.5rem;">${p.price} ${p.priceToken}</div>
+            <div style="font-size:0.85rem; color:var(--accent); margin-bottom:1rem;">재고: ${remaining}개</div>
+            ${!isOwner && remaining > 0 ? `<button onclick="buyProduct('${id}')" style="background:#0066cc; color:white; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; width:100%;">🛒 구매하기</button>` : ''}
+            ${remaining <= 0 ? '<p style="color:#cc0000; font-weight:700; text-align:center;">품절</p>' : ''}
+        </div></div>`;
+    document.body.appendChild(modal);
+}
+
+async function buyProduct(id) {
+    if (!currentUser) return;
+    try {
+        const doc = await db.collection('products').doc(id).get();
+        const p = doc.data();
+        if ((p.stock - (p.sold||0)) <= 0) { alert('품절입니다'); return; }
+        const tk = p.priceToken.toLowerCase();
+        const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
+        const bal = wallets.docs[0]?.data()?.balances || {};
+        if ((bal[tk]||0) < p.price) { alert(`${p.priceToken} 잔액 부족`); return; }
+        if (!confirm(`"${p.title}"\n${p.price} ${p.priceToken}로 구매?`)) return;
+        await wallets.docs[0].ref.update({ [`balances.${tk}`]: bal[tk] - p.price });
+        const sellerW = await db.collection('users').doc(p.sellerId).collection('wallets').limit(1).get();
+        if (!sellerW.empty) { const sb = sellerW.docs[0].data().balances||{}; await sellerW.docs[0].ref.update({ [`balances.${tk}`]: (sb[tk]||0) + p.price }); }
+        await db.collection('products').doc(id).update({ sold: (p.sold||0) + 1 });
+        await db.collection('orders').add({ productId:id, productTitle:p.title, buyerId:currentUser.uid, buyerEmail:currentUser.email, sellerId:p.sellerId, amount:p.price, token:p.priceToken, status:'paid', createdAt:new Date() });
+        await distributeReferralReward(currentUser.uid, p.price, p.priceToken);
+        alert(`🎉 "${p.title}" 구매 완료!`);
+        document.getElementById('product-modal')?.remove();
+        loadMallProducts(); loadUserWallet();
+    } catch (e) { alert('구매 실패: ' + e.message); }
+}
+
+async function loadMyOrders() { const c = document.getElementById('mall-my-list'); if (!c||!currentUser) return; c.innerHTML='로딩...';
+    try { const o = await db.collection('orders').where('buyerId','==',currentUser.uid).orderBy('createdAt','desc').limit(20).get();
+    if (o.empty) { c.innerHTML='<p style="color:var(--accent);">주문 내역 없음</p>'; return; }
+    c.innerHTML=''; o.forEach(d => { const x=d.data(); c.innerHTML += `<div style="padding:0.6rem; background:var(--bg); border-radius:6px; margin-bottom:0.4rem; font-size:0.85rem;"><strong>${x.productTitle}</strong> — ${x.amount} ${x.token} <span style="color:var(--accent);">· ${x.status}</span></div>`; });
+    } catch(e) { c.innerHTML=e.message; } }
+
+async function loadMyProducts() { const c = document.getElementById('mall-my-list'); if (!c||!currentUser) return; c.innerHTML='로딩...';
+    try { const o = await db.collection('products').where('sellerId','==',currentUser.uid).orderBy('createdAt','desc').limit(20).get();
+    if (o.empty) { c.innerHTML='<p style="color:var(--accent);">등록 상품 없음</p>'; return; }
+    c.innerHTML=''; o.forEach(d => { const x=d.data(); c.innerHTML += `<div style="padding:0.6rem; background:var(--bg); border-radius:6px; margin-bottom:0.4rem; font-size:0.85rem;"><strong>${x.title}</strong> — ${x.price} ${x.priceToken} · 판매: ${x.sold||0}/${x.stock}</div>`; });
+    } catch(e) { c.innerHTML=e.message; } }
+
+// ========== FUNDRAISE - 모금/기부 ==========
+
+async function createCampaign() {
+    if (!currentUser) { alert('로그인 필요'); return; }
+    const title = document.getElementById('fund-title').value.trim();
+    const goal = parseFloat(document.getElementById('fund-goal').value);
+    if (!title || !goal) { alert('제목과 목표 금액을 입력하세요'); return; }
+    const imageFile = document.getElementById('fund-image').files[0];
+    
+    try {
+        let imageData = '';
+        if (imageFile) imageData = await fileToBase64Resized(imageFile, 600);
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        const days = parseInt(document.getElementById('fund-days').value) || 30;
+        
+        await db.collection('campaigns').add({
+            title, description: document.getElementById('fund-desc').value.trim(),
+            category: document.getElementById('fund-category').value,
+            goal, raised: 0, token: document.getElementById('fund-token').value,
+            backers: 0, imageData,
+            creatorId: currentUser.uid, creatorEmail: currentUser.email,
+            creatorNickname: userDoc.data()?.nickname || '',
+            endDate: new Date(Date.now() + days * 86400000),
+            status: 'active', createdAt: new Date()
+        });
+        
+        alert(`💝 "${title}" 캠페인 시작!`);
+        document.getElementById('fund-title').value = '';
+        document.getElementById('fund-desc').value = '';
+        loadCampaigns();
+    } catch (e) { alert('실패: ' + e.message); }
+}
+
+async function loadCampaigns() {
+    const c = document.getElementById('fund-campaigns');
+    if (!c) return; c.innerHTML = '로딩...';
+    try {
+        const docs = await db.collection('campaigns').where('status','==','active').orderBy('createdAt','desc').limit(20).get();
+        if (docs.empty) { c.innerHTML = '<p style="color:var(--accent);">캠페인이 없습니다. 첫 캠페인을 만들어보세요!</p>'; return; }
+        c.innerHTML = '';
+        docs.forEach(d => {
+            const x = d.data();
+            const pct = Math.min(100, Math.round((x.raised / x.goal) * 100));
+            c.innerHTML += `
+                <div style="background:white; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                    ${x.imageData ? `<img src="${x.imageData}" style="width:100%; height:180px; object-fit:cover;">` : ''}
+                    <div style="padding:1rem;">
+                        <h4 style="margin-bottom:0.3rem;">${x.title}</h4>
+                        <p style="font-size:0.85rem; color:var(--accent); margin-bottom:0.8rem;">${x.creatorNickname || x.creatorEmail} · ${x.backers}명 참여</p>
+                        <div style="background:#e0e0e0; height:8px; border-radius:4px; margin-bottom:0.5rem;">
+                            <div style="background:#4CAF50; height:100%; border-radius:4px; width:${pct}%;"></div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:0.85rem;">
+                            <span style="font-weight:700;">${x.raised} / ${x.goal} ${x.token}</span>
+                            <span style="color:var(--accent);">${pct}%</span>
+                        </div>
+                        <button onclick="donateCampaign('${d.id}')" style="background:#4CAF50; color:white; border:none; padding:0.6rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.8rem; font-weight:700;">💝 기부하기</button>
+                    </div>
+                </div>`;
+        });
+    } catch (e) { c.innerHTML = e.message; }
+}
+
+async function donateCampaign(id) {
+    const amount = parseFloat(prompt('기부 금액:'));
+    if (!amount || amount <= 0) return;
+    try {
+        const doc = await db.collection('campaigns').doc(id).get();
+        const camp = doc.data();
+        const tk = camp.token.toLowerCase();
+        const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
+        const bal = wallets.docs[0]?.data()?.balances || {};
+        if ((bal[tk]||0) < amount) { alert('잔액 부족'); return; }
+        await wallets.docs[0].ref.update({ [`balances.${tk}`]: bal[tk] - amount });
+        await db.collection('campaigns').doc(id).update({ raised: camp.raised + amount, backers: camp.backers + 1 });
+        const creatorW = await db.collection('users').doc(camp.creatorId).collection('wallets').limit(1).get();
+        if (!creatorW.empty) { const cb = creatorW.docs[0].data().balances||{}; await creatorW.docs[0].ref.update({ [`balances.${tk}`]: (cb[tk]||0) + amount }); }
+        await db.collection('transactions').add({ from:currentUser.uid, to:camp.creatorId, amount, token:camp.token, type:'donation', campaignId:id, timestamp:new Date() });
+        alert(`💝 ${amount} ${camp.token} 기부 완료!`);
+        loadCampaigns(); loadUserWallet();
+    } catch (e) { alert('실패: ' + e.message); }
+}
+
+// ========== ENERGY - 에너지 사업 ==========
+
+async function loadEnergyProjects() {
+    const c = document.getElementById('energy-projects');
+    if (!c) return; c.innerHTML = '로딩...';
+    try {
+        const docs = await db.collection('energy_projects').where('status','==','active').orderBy('createdAt','desc').limit(10).get();
+        if (docs.empty) { c.innerHTML = '<p style="color:var(--accent);">등록된 프로젝트가 없습니다. 관리자가 프로젝트를 등록할 수 있습니다.</p>'; return; }
+        c.innerHTML = '';
+        docs.forEach(d => { const x = d.data(); const pct = Math.min(100, Math.round((x.invested / x.goal)*100));
+            c.innerHTML += `<div style="background:var(--bg); padding:1rem; border-radius:8px; margin-bottom:0.8rem;">
+                <h4>⚡ ${x.title}</h4><p style="font-size:0.85rem; color:var(--accent); margin:0.3rem 0;">${x.location || ''} · ${x.capacity || ''}kW · 예상 수익률 ${x.returnRate || 0}%</p>
+                <div style="background:#e0e0e0; height:6px; border-radius:3px; margin:0.5rem 0;"><div style="background:#ff9800; height:100%; border-radius:3px; width:${pct}%;"></div></div>
+                <div style="display:flex; justify-content:space-between; font-size:0.85rem;"><span>${x.invested||0}/${x.goal} CRNY</span><span>${pct}%</span></div>
+                <button onclick="investEnergy('${d.id}')" style="background:#ff9800; color:white; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.5rem;">☀️ 투자하기</button>
+            </div>`; });
+    } catch (e) { c.innerHTML = e.message; }
+}
+
+async function investEnergy(id) {
+    const amount = parseFloat(prompt('투자 금액 (CRNY):'));
+    if (!amount || amount <= 0) return;
+    try {
+        const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
+        const bal = wallets.docs[0]?.data()?.balances || {};
+        if ((bal.crny||0) < amount) { alert('CRNY 잔액 부족'); return; }
+        await wallets.docs[0].ref.update({ 'balances.crny': bal.crny - amount });
+        const doc = await db.collection('energy_projects').doc(id).get();
+        await db.collection('energy_projects').doc(id).update({ invested: (doc.data().invested||0) + amount, investors: (doc.data().investors||0) + 1 });
+        await db.collection('energy_investments').add({ projectId:id, userId:currentUser.uid, amount, timestamp:new Date() });
+        alert(`☀️ ${amount} CRNY 투자 완료!`); loadEnergyProjects(); loadUserWallet();
+    } catch (e) { alert('실패: ' + e.message); }
+}
+
+// ========== BUSINESS - 크라우니 생태계 ==========
+
+async function registerBusiness() {
+    if (!currentUser) return;
+    const name = document.getElementById('biz-name').value.trim();
+    if (!name) { alert('사업체명을 입력하세요'); return; }
+    try {
+        const imageFile = document.getElementById('biz-image').files[0];
+        let imageData = '';
+        if (imageFile) imageData = await fileToBase64Resized(imageFile, 600);
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        await db.collection('businesses').add({
+            name, description: document.getElementById('biz-desc').value.trim(),
+            category: document.getElementById('biz-category').value,
+            country: document.getElementById('biz-country').value.trim(),
+            website: document.getElementById('biz-website').value.trim(),
+            imageData, ownerId: currentUser.uid, ownerEmail: currentUser.email,
+            ownerNickname: userDoc.data()?.nickname || '',
+            rating: 0, reviews: 0, status: 'active', createdAt: new Date()
+        });
+        alert(`🏢 "${name}" 등록 완료!`);
+        document.getElementById('biz-name').value = '';
+        loadBusinessList();
+    } catch (e) { alert('실패: ' + e.message); }
+}
+
+async function loadBusinessList() {
+    const c = document.getElementById('business-list');
+    if (!c) return; c.innerHTML = '로딩...';
+    try {
+        const docs = await db.collection('businesses').where('status','==','active').orderBy('createdAt','desc').limit(20).get();
+        if (docs.empty) { c.innerHTML = '<p style="color:var(--accent);">등록된 사업체가 없습니다</p>'; return; }
+        const BIZ_CATS = {retail:'🏪',food:'🍽️',service:'🔧',tech:'💻',education:'📖',health:'💊',logistics:'🚚',entertainment:'🎭',other:'🏢'};
+        c.innerHTML = '';
+        docs.forEach(d => { const x = d.data();
+            c.innerHTML += `<div style="background:white; padding:1rem; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.08); display:flex; gap:1rem; align-items:center;">
+                ${x.imageData ? `<img src="${x.imageData}" style="width:70px; height:70px; border-radius:8px; object-fit:cover;">` : `<div style="width:70px; height:70px; background:var(--bg); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.5rem;">${BIZ_CATS[x.category]||'🏢'}</div>`}
+                <div style="flex:1;"><h4>${x.name}</h4><p style="font-size:0.8rem; color:var(--accent);">${BIZ_CATS[x.category]||''} · ${x.country||''} · ${x.ownerNickname||x.ownerEmail}</p>
+                ${x.description ? `<p style="font-size:0.85rem; margin-top:0.3rem;">${x.description.slice(0,80)}${x.description.length>80?'...':''}</p>` : ''}
+                ${x.website ? `<a href="${x.website}" target="_blank" style="font-size:0.8rem;">🔗 웹사이트</a>` : ''}</div></div>`; });
+    } catch (e) { c.innerHTML = e.message; }
+}
+
+// ========== ARTIST - 엔터테인먼트 ==========
+
+async function registerArtist() {
+    if (!currentUser) return;
+    const name = document.getElementById('artist-name').value.trim();
+    if (!name) { alert('아티스트명을 입력하세요'); return; }
+    try {
+        const imageFile = document.getElementById('artist-photo').files[0];
+        let imageData = '';
+        if (imageFile) imageData = await fileToBase64Resized(imageFile, 400);
+        await db.collection('artists').add({
+            name, bio: document.getElementById('artist-bio').value.trim(),
+            genre: document.getElementById('artist-genre').value,
+            imageData, userId: currentUser.uid, email: currentUser.email,
+            fans: 0, totalSupport: 0, status: 'active', createdAt: new Date()
+        });
+        alert(`🌟 "${name}" 등록 완료!`);
+        document.getElementById('artist-name').value = '';
+        loadArtistList();
+    } catch (e) { alert('실패: ' + e.message); }
+}
+
+async function loadArtistList() {
+    const c = document.getElementById('artist-list');
+    if (!c) return; c.innerHTML = '<p style="text-align:center; color:var(--accent); grid-column:1/-1;">로딩...</p>';
+    try {
+        const docs = await db.collection('artists').where('status','==','active').orderBy('fans','desc').limit(20).get();
+        if (docs.empty) { c.innerHTML = '<p style="text-align:center; color:var(--accent); grid-column:1/-1;">등록된 아티스트가 없습니다</p>'; return; }
+        const GENRES = {music:'🎵',dance:'💃',acting:'🎬',comedy:'😂',creator:'📹',model:'📷',dj:'🎧',other:'🌟'};
+        c.innerHTML = '';
+        docs.forEach(d => { const x = d.data();
+            c.innerHTML += `<div style="background:white; border-radius:10px; overflow:hidden; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                <div style="height:160px; overflow:hidden; background:linear-gradient(135deg,#9C27B0,#E91E63);">
+                ${x.imageData ? `<img src="${x.imageData}" style="width:100%; height:100%; object-fit:cover;">` : `<div style="height:100%; display:flex; align-items:center; justify-content:center; font-size:3rem; color:white;">${GENRES[x.genre]||'🌟'}</div>`}</div>
+                <div style="padding:0.6rem;"><div style="font-weight:700;">${x.name}</div>
+                <div style="font-size:0.75rem; color:var(--accent);">${GENRES[x.genre]||''} · 팬 ${x.fans}명</div>
+                <button onclick="supportArtist('${d.id}')" style="background:#E91E63; color:white; border:none; padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; margin-top:0.4rem; font-size:0.8rem;">💖 후원</button>
+                </div></div>`; });
+    } catch (e) { c.innerHTML = e.message; }
+}
+
+async function supportArtist(id) {
+    const amount = parseFloat(prompt('후원 금액 (CRNY):'));
+    if (!amount || amount <= 0) return;
+    try {
+        const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
+        const bal = wallets.docs[0]?.data()?.balances || {};
+        if ((bal.crny||0) < amount) { alert('CRNY 잔액 부족'); return; }
+        await wallets.docs[0].ref.update({ 'balances.crny': bal.crny - amount });
+        const doc = await db.collection('artists').doc(id).get(); const artist = doc.data();
+        const artistW = await db.collection('users').doc(artist.userId).collection('wallets').limit(1).get();
+        if (!artistW.empty) { const ab = artistW.docs[0].data().balances||{}; await artistW.docs[0].ref.update({ 'balances.crny': (ab.crny||0) + amount }); }
+        await db.collection('artists').doc(id).update({ totalSupport: (artist.totalSupport||0) + amount, fans: (artist.fans||0) + 1 });
+        await db.collection('transactions').add({ from:currentUser.uid, to:artist.userId, amount, token:'CRNY', type:'artist_support', artistId:id, timestamp:new Date() });
+        alert(`💖 ${artist.name}에게 ${amount} CRNY 후원!`); loadArtistList(); loadUserWallet();
+    } catch (e) { alert('실패: ' + e.message); }
+}
+
+// ========== BOOKS - 출판 ==========
+
+async function registerBook() {
+    if (!currentUser) return;
+    const title = document.getElementById('book-title').value.trim();
+    const price = parseFloat(document.getElementById('book-price').value);
+    if (!title) { alert('책 제목을 입력하세요'); return; }
+    try {
+        const coverFile = document.getElementById('book-cover').files[0];
+        let imageData = '';
+        if (coverFile) imageData = await fileToBase64Resized(coverFile, 400);
+        await db.collection('books').add({
+            title, author: document.getElementById('book-author').value.trim(),
+            description: document.getElementById('book-desc').value.trim(),
+            genre: document.getElementById('book-genre').value,
+            price: price || 0, priceToken: document.getElementById('book-token').value,
+            imageData, publisherId: currentUser.uid, publisherEmail: currentUser.email,
+            sold: 0, rating: 0, reviews: 0, status: 'active', createdAt: new Date()
+        });
+        alert(`📚 "${title}" 등록 완료!`);
+        document.getElementById('book-title').value = '';
+        loadBooksList();
+    } catch (e) { alert('실패: ' + e.message); }
+}
+
+async function loadBooksList() {
+    const c = document.getElementById('books-list');
+    if (!c) return; c.innerHTML = '<p style="text-align:center; color:var(--accent); grid-column:1/-1;">로딩...</p>';
+    try {
+        const docs = await db.collection('books').where('status','==','active').orderBy('createdAt','desc').limit(20).get();
+        if (docs.empty) { c.innerHTML = '<p style="text-align:center; color:var(--accent); grid-column:1/-1;">등록된 책이 없습니다</p>'; return; }
+        const GENRES = {novel:'📕',essay:'📗',selfhelp:'📘',business:'📙',tech:'💻',poetry:'🖋️',children:'🧒',comic:'📒',other:'📚'};
+        c.innerHTML = '';
+        docs.forEach(d => { const x = d.data();
+            c.innerHTML += `<div onclick="buyBook('${d.id}')" style="background:white; border-radius:10px; overflow:hidden; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                <div style="height:180px; overflow:hidden; background:#f5f0e8;">
+                ${x.imageData ? `<img src="${x.imageData}" style="width:100%; height:100%; object-fit:contain;">` : `<div style="height:100%; display:flex; align-items:center; justify-content:center; font-size:3rem;">${GENRES[x.genre]||'📚'}</div>`}</div>
+                <div style="padding:0.5rem;"><div style="font-weight:600; font-size:0.8rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${x.title}</div>
+                <div style="font-size:0.7rem; color:var(--accent);">${x.author||'저자 미상'}</div>
+                <div style="font-weight:700; color:#0066cc; font-size:0.85rem; margin-top:0.2rem;">${x.price>0 ? x.price+' '+x.priceToken : '무료'}</div></div></div>`; });
+    } catch (e) { c.innerHTML = e.message; }
+}
+
+async function buyBook(id) {
+    const doc = await db.collection('books').doc(id).get();
+    if (!doc.exists) return; const b = doc.data();
+    if (b.publisherId === currentUser?.uid) { alert('본인 책입니다'); return; }
+    if (b.price <= 0) { alert(`📖 "${b.title}" — 무료 열람!`); return; }
+    const tk = b.priceToken.toLowerCase();
+    const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
+    const bal = wallets.docs[0]?.data()?.balances || {};
+    if ((bal[tk]||0) < b.price) { alert('잔액 부족'); return; }
+    if (!confirm(`"${b.title}"\n${b.price} ${b.priceToken}로 구매?`)) return;
+    try {
+        await wallets.docs[0].ref.update({ [`balances.${tk}`]: bal[tk] - b.price });
+        const pubW = await db.collection('users').doc(b.publisherId).collection('wallets').limit(1).get();
+        if (!pubW.empty) { const pb = pubW.docs[0].data().balances||{}; await pubW.docs[0].ref.update({ [`balances.${tk}`]: (pb[tk]||0) + b.price }); }
+        await db.collection('books').doc(id).update({ sold: (b.sold||0) + 1 });
+        await db.collection('transactions').add({ from:currentUser.uid, to:b.publisherId, amount:b.price, token:b.priceToken, type:'book_purchase', bookId:id, timestamp:new Date() });
+        await distributeReferralReward(currentUser.uid, b.price, b.priceToken);
+        alert(`📖 "${b.title}" 구매 완료!`); loadUserWallet();
+    } catch (e) { alert('실패: ' + e.message); }
+}
+
+// ========== CREDIT - P2P 크레딧 ==========
+
+function showCreditTab(tab) {
+    document.querySelectorAll('.credit-panel').forEach(p => p.style.display = 'none');
+    document.querySelectorAll('.credit-tab').forEach(t => {
+        t.style.background = 'white'; t.style.color = 'var(--text)'; t.style.borderColor = 'var(--border)';
+    });
+    document.getElementById(`credit-${tab}`).style.display = 'block';
+    const btn = document.getElementById(`tab-${tab}`);
+    if (btn) { btn.style.background = 'var(--primary)'; btn.style.color = 'white'; btn.style.borderColor = 'var(--primary)'; }
+}
+
+// 환전 (수수료 0%)
+// swapTokens() → 위 오프체인 섹션으로 통합 이동됨
+
+// 품앗이 요청 (무이자 P2P)
+async function requestPumasi() {
+    if (!currentUser) return;
+    const amount = parseFloat(document.getElementById('pumasi-amount').value);
+    const reason = document.getElementById('pumasi-reason').value.trim();
+    const days = parseInt(document.getElementById('pumasi-days').value) || 30;
+    if (!amount || !reason) { alert('금액과 사유를 입력하세요'); return; }
+    
+    try {
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        await db.collection('pumasi_requests').add({
+            requesterId: currentUser.uid, requesterEmail: currentUser.email,
+            requesterNickname: userDoc.data()?.nickname || '',
+            amount, reason, days, interest: 0,
+            raised: 0, backers: 0,
+            dueDate: new Date(Date.now() + days * 86400000),
+            status: 'active', createdAt: new Date()
+        });
+        alert(`🤝 품앗이 ${amount} CRNY 요청 완료!\n공동체에 공유됩니다.`);
+        loadPumasiList();
+    } catch (e) { alert('실패: ' + e.message); }
+}
+
+async function loadPumasiList() {
+    const c = document.getElementById('pumasi-list');
+    if (!c) return; c.innerHTML = '로딩...';
+    try {
+        const docs = await db.collection('pumasi_requests').where('status','==','active').orderBy('createdAt','desc').limit(20).get();
+        if (docs.empty) { c.innerHTML = '<p style="color:var(--accent);">요청이 없습니다</p>'; return; }
+        c.innerHTML = '';
+        docs.forEach(d => { const x = d.data(); const pct = Math.min(100, Math.round((x.raised/x.amount)*100));
+            c.innerHTML += `<div style="background:white; padding:1rem; border-radius:8px; margin-bottom:0.5rem;">
+                <div style="display:flex; justify-content:space-between;"><strong>${x.requesterNickname || x.requesterEmail}</strong><span style="color:#0066cc; font-weight:700;">${x.amount} CRNY</span></div>
+                <p style="font-size:0.85rem; color:var(--accent); margin:0.3rem 0;">${x.reason}</p>
+                <div style="background:#e0e0e0; height:6px; border-radius:3px; margin:0.5rem 0;"><div style="background:#4CAF50; height:100%; border-radius:3px; width:${pct}%;"></div></div>
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem;"><span>${x.raised}/${x.amount} · ${x.backers}명</span><span style="color:#4CAF50;">이자 0%</span></div>
+                ${x.requesterId !== currentUser?.uid ? `<button onclick="contributePumasi('${d.id}')" style="background:#4CAF50; color:white; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.5rem;">🤝 도와주기</button>` : ''}
+            </div>`; });
+    } catch (e) { c.innerHTML = e.message; }
+}
+
+async function contributePumasi(id) {
+    const amount = parseFloat(prompt('도와줄 금액 (CRNY):'));
+    if (!amount || amount <= 0) return;
+    try {
+        const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
+        const bal = wallets.docs[0]?.data()?.balances || {};
+        if ((bal.crny||0) < amount) { alert('CRNY 잔액 부족'); return; }
+        await wallets.docs[0].ref.update({ 'balances.crny': bal.crny - amount });
+        const doc = await db.collection('pumasi_requests').doc(id).get(); const req = doc.data();
+        // 요청자에게 지급
+        const reqW = await db.collection('users').doc(req.requesterId).collection('wallets').limit(1).get();
+        if (!reqW.empty) { const rb = reqW.docs[0].data().balances||{}; await reqW.docs[0].ref.update({ 'balances.crny': (rb.crny||0) + amount }); }
+        await db.collection('pumasi_requests').doc(id).update({ raised: req.raised + amount, backers: req.backers + 1 });
+        await db.collection('transactions').add({ from:currentUser.uid, to:req.requesterId, amount, token:'CRNY', type:'pumasi', pumasiId:id, timestamp:new Date() });
+        alert(`🤝 ${amount} CRNY 도움 완료!`); loadPumasiList(); loadUserWallet();
+    } catch (e) { alert('실패: ' + e.message); }
+}
+
+// 보험 신청
+async function requestInsurance() {
+    if (!currentUser) return;
+    const type = document.getElementById('insurance-type').value;
+    const amount = parseFloat(document.getElementById('insurance-amount').value);
+    const reason = document.getElementById('insurance-reason').value.trim();
+    if (!amount || !reason) { alert('금액과 사유를 입력하세요'); return; }
+    
+    try {
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        await db.collection('insurance_requests').add({
+            requesterId: currentUser.uid, requesterEmail: currentUser.email,
+            requesterNickname: userDoc.data()?.nickname || '',
+            type, amount, reason,
+            status: 'pending', // 중간 관리자 승인 필요
+            approvedBy: null, funded: 0,
+            createdAt: new Date()
+        });
+        alert(`🛡️ 보험 신청 완료!\n중간 관리자의 검토 후 승인됩니다.`);
+    } catch (e) { alert('실패: ' + e.message); }
+}
+
+// 기부
+async function quickDonate() {
+    if (!currentUser) return;
+    const amount = parseFloat(document.getElementById('donate-amount').value);
+    const token = document.getElementById('donate-token-type').value;
+    const target = document.getElementById('donate-target').value;
+    if (!amount || amount < 1) { alert('최소 1 이상 기부해주세요'); return; }
+    
+    try {
+        const tk = token.toLowerCase();
+        const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
+        const bal = wallets.docs[0]?.data()?.balances || {};
+        if ((bal[tk]||0) < amount) { alert(`${token} 잔액 부족`); return; }
+        await wallets.docs[0].ref.update({ [`balances.${tk}`]: bal[tk] - amount });
+        
+        const donation = {
+            donorId: currentUser.uid, donorEmail: currentUser.email,
+            amount, token, targetType: target,
+            timestamp: new Date()
+        };
+        
+        if (target === 'designated') {
+            const targetEmail = document.getElementById('donate-target-email').value.trim();
+            if (targetEmail) {
+                donation.targetEmail = targetEmail;
+                const targetUsers = await db.collection('users').where('email','==',targetEmail).get();
+                if (!targetUsers.empty) {
+                    const tW = await db.collection('users').doc(targetUsers.docs[0].id).collection('wallets').limit(1).get();
+                    if (!tW.empty) { const tb = tW.docs[0].data().balances||{}; await tW.docs[0].ref.update({ [`balances.${tk}`]: (tb[tk]||0) + amount }); }
+                }
+            }
+        }
+        
+        await db.collection('donations').add(donation);
+        alert(`💝 ${amount} ${token} 기부 완료!`); loadUserWallet();
+    } catch (e) { alert('실패: ' + e.message); }
+}
+
+async function loadCreditInfo() {
+    if (!currentUser) return;
+    try {
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        const data = userDoc.data();
+        const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
+        const bal = wallets.docs[0]?.data()?.balances || {};
+        const crnyHeld = bal.crny || 0;
+        const score = Math.min(850, 300 + crnyHeld * 10 + (data.referralCount || 0) * 20);
+        
+        const scoreEl = document.getElementById('credit-score');
+        if (scoreEl) { scoreEl.textContent = score; scoreEl.style.color = score >= 700 ? '#4CAF50' : score >= 500 ? '#ff9800' : '#cc0000'; }
+        
+        const loans = await db.collection('pumasi_requests').where('requesterId','==',currentUser.uid).where('status','==','active').get();
+        const loansEl = document.getElementById('active-loans');
+        if (loansEl) loansEl.textContent = `${loans.size}건`;
+        
+        // 총 기부
+        const donations = await db.collection('donations').where('donorId','==',currentUser.uid).get();
+        let totalDonated = 0;
+        donations.forEach(d => totalDonated += d.data().amount || 0);
+        const donatedEl = document.getElementById('total-donated');
+        if (donatedEl) donatedEl.textContent = totalDonated;
+    } catch (e) { console.error(e); }
+}
+
+// 몰 브랜드 필터
+function filterMallBrand(brand) {
+    // product-category 셀렉트를 해당 브랜드로 설정하고 로드
+    const sel = document.getElementById('product-category');
+    if (sel) sel.value = brand;
+    
+    // mall-filter용 별도 처리
+    window._mallBrandFilter = brand;
+    loadMallProducts();
+}
+
+// 공통 이미지 리사이즈 유틸
+async function fileToBase64Resized(file, maxSize) {
+    const dataUrl = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file); });
+    return resizeImage(dataUrl, maxSize);
+}
+
