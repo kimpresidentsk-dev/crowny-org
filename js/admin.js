@@ -2393,15 +2393,16 @@ async function joinChallenge(challengeId, tierKey) {
     const offchain = userData.offchainBalances || {};
     const crtdBalance = offchain.crtd || 0;
     
+    console.log('🔍 joinChallenge 잔고체크:', { uid: currentUser.uid, offchain, crtdBalance, required: tier.deposit });
+    
     if (crtdBalance < tier.deposit) {
-        showToast(`CRTD 잔액 부족 — 필요: ${tier.deposit}, 보유: ${crtdBalance}`, 'warning');
+        alert(`CRTD 잔액 부족 — 필요: ${tier.deposit}, 보유: ${crtdBalance}`);
         return;
     }
     
     const productText = data.allowedProduct === 'BOTH' ? 'MNQ + NQ' : (data.allowedProduct || 'MNQ');
     
-    const ok = window.confirm(
-        `🎯 CRTD 프랍 트레이딩\n\n` +
+    const confirmMsg = 
         `📋 ${data.name} (${tierKey}군)\n\n` +
         `💎 참가비: ${tier.deposit} CRTD\n` +
         `💰 가상 계좌: $${tier.account.toLocaleString()}\n` +
@@ -2412,8 +2413,11 @@ async function joinChallenge(challengeId, tierKey) {
         `📈 +$${tier.profitThreshold.toLocaleString()} 초과분 → 1:1 CRTD 변환\n` +
         `💰 ${tier.withdrawUnit.toLocaleString()} CRTD 단위 인출 가능\n` +
         `🔴 일일 한도: -$${data.dailyLossLimit || 500}\n\n` +
-        `참가하시겠습니까?`
-    );
+        `참가하시겠습니까?`;
+    
+    const ok = typeof showConfirmModal === 'function' 
+        ? await showConfirmModal('🎯 CRTD 프랍 트레이딩', confirmMsg)
+        : window.confirm(confirmMsg);
     
     if (!ok) return;
     
