@@ -191,8 +191,8 @@ function updateRiskGaugeUI() {
 // 거래 버튼 상태 관리
 function updateTradeButtonState() {
     const locked = myParticipation && myParticipation.dailyLocked;
-    const noSlots = calculateSlots(userWallet?.balances?.crny || 0) === 0;
-    const disabled = locked || noSlots;
+    // CRTD 기반 시스템: CRNY 슬롯 체크 제거 (참가 = 100 CRTD 입금)
+    const disabled = locked;
     
     const btnBuy = document.getElementById('btn-buy');
     const btnSell = document.getElementById('btn-sell');

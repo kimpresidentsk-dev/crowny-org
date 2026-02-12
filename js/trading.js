@@ -26,6 +26,9 @@ async function reloadTradingSystem() {
             await initTradingViewChart();
         }
         
+        // 버튼 상태 업데이트
+        if (typeof updateTradeButtonState === 'function') updateTradeButtonState();
+        
         const ok = !!myParticipation && currentPrice > 0;
         if (statusEl) statusEl.textContent = ok 
             ? `✅ 완료! 참가: ${myParticipation?.participantId?.slice(0,8)}…, 가격: $${currentPrice.toFixed(2)}`
