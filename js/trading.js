@@ -865,34 +865,34 @@ async function loadCandleHistory(symbol) {
         const data = await res.json();
         
         if (data && data.candles && data.candles.length > 0) {
-            window.liveTicks = [];
+            // ★ 서버 캔들을 직접 저장 (틱 분해 안 함)
+            window._serverCandles = [];
             let prevClose = 0;
             for (const candle of data.candles) {
-                const t = candle.time;
-                const vol = candle.volume || candle.tick_count || 1;
-                // 스파이크 필터: 이전 캔들 대비 50pt 이상 점프 시 스킵
+                // 에러 데이터 필터: 100pt+ 점프 또는 200pt+ 범위
                 if (prevClose > 0 && Math.abs(candle.open - prevClose) > 100) {
-                    console.warn(`⚠️ 히스토리 스파이크 스킵: ${prevClose} → ${candle.open}`);
+                    console.warn(`⚠️ 히스토리 에러 스킵: ${prevClose} → ${candle.open}`);
                     continue;
                 }
-                // 캔들 내부 스파이크 필터: 비정상적 범위만 (200pt+ = 진짜 에러)
-                const bodyRange = Math.abs(candle.high - candle.low);
-                if (bodyRange > 200) {
-                    // 범위 100pt 초과 캔들은 open/close만 사용
-                    window.liveTicks.push({ time: t, price: candle.open, volume: Math.ceil(vol * 0.5) });
-                    window.liveTicks.push({ time: t + 59, price: candle.close, volume: Math.ceil(vol * 0.5) });
-                } else {
-                    window.liveTicks.push({ time: t, price: candle.open, volume: Math.ceil(vol * 0.25) });
-                    if (candle.high !== candle.open) {
-                        window.liveTicks.push({ time: t + 15, price: candle.high, volume: Math.ceil(vol * 0.25) });
-                    }
-                    if (candle.low !== candle.high) {
-                        window.liveTicks.push({ time: t + 30, price: candle.low, volume: Math.ceil(vol * 0.25) });
-                    }
-                    window.liveTicks.push({ time: t + 59, price: candle.close, volume: Math.ceil(vol * 0.25) });
+                if (Math.abs(candle.high - candle.low) > 200) {
+                    console.warn(`⚠️ 에러 캔들 스킵: range=${(candle.high - candle.low).toFixed(2)}`);
+                    continue;
                 }
+                window._serverCandles.push({
+                    time: candle.time,
+                    open: candle.open,
+                    high: candle.high,
+                    low: candle.low,
+                    close: candle.close,
+                    _volume: candle.volume || candle.tick_count || 1,
+                    _tickCount: candle.tick_count || 1,
+                });
                 prevClose = candle.close;
             }
+            // liveTicks도 유지 (틱차트/멘토용) — close 값만
+            window.liveTicks = window._serverCandles.map(c => ({
+                time: c.time + 59, price: c.close, volume: c._volume || 1,
+            }));
             updateLiveCandleChart();
             scrollToLatest();
             console.log(`✅ ${symbol} ${data.count}개 캔들 로드`);
@@ -1012,9 +1012,53 @@ function updateLiveCandleChart() {
         // 틱차트: N틱마다 1봉
         candles = aggregateTicksToTickCandles(window.liveTicks, tab.tickCount || 100);
     } else {
-        // 타임차트: N초마다 1봉
         const interval = (tab && tab.interval) ? tab.interval : 60;
-        candles = aggregateTicksToCandles(window.liveTicks, interval);
+        // ★ 서버 캔들이 있고 1분봉이면 직접 사용 (틱 분해 왜곡 방지)
+        if (window._serverCandles && window._serverCandles.length > 0 && interval === 60) {
+            candles = [...window._serverCandles];
+            // 실시간 틱으로 마지막 캔들 업데이트
+            if (window.liveTicks.length > 0 && candles.length > 0) {
+                const lastServerTime = candles[candles.length - 1].time;
+                const realtimeTicks = window.liveTicks.filter(t => t.time > lastServerTime + 59);
+                if (realtimeTicks.length > 0) {
+                    const now = Math.floor(Date.now() / 1000);
+                    const currentCandleTime = Math.floor(now / 60) * 60;
+                    let liveCandle = candles.find(c => c.time === currentCandleTime);
+                    if (!liveCandle) {
+                        liveCandle = { time: currentCandleTime, open: realtimeTicks[0].price, high: realtimeTicks[0].price, low: realtimeTicks[0].price, close: realtimeTicks[0].price, _volume: 0, _tickCount: 0 };
+                        candles.push(liveCandle);
+                    }
+                    for (const tick of realtimeTicks) {
+                        liveCandle.high = Math.max(liveCandle.high, tick.price);
+                        liveCandle.low = Math.min(liveCandle.low, tick.price);
+                        liveCandle.close = tick.price;
+                        liveCandle._volume += tick.volume || 1;
+                        liveCandle._tickCount++;
+                    }
+                }
+            }
+        } else if (window._serverCandles && window._serverCandles.length > 0 && interval > 60) {
+            // 상위 타임프레임: 서버 캔들을 집계
+            candles = [];
+            let cur = null;
+            for (const sc of window._serverCandles) {
+                const ct = Math.floor(sc.time / interval) * interval;
+                if (!cur || cur.time !== ct) {
+                    if (cur) candles.push(cur);
+                    cur = { time: ct, open: sc.open, high: sc.high, low: sc.low, close: sc.close, _volume: sc._volume, _tickCount: sc._tickCount };
+                } else {
+                    cur.high = Math.max(cur.high, sc.high);
+                    cur.low = Math.min(cur.low, sc.low);
+                    cur.close = sc.close;
+                    cur._volume += sc._volume;
+                    cur._tickCount += sc._tickCount;
+                }
+            }
+            if (cur) candles.push(cur);
+        } else {
+            // 폴백: 틱 기반 집계
+            candles = aggregateTicksToCandles(window.liveTicks, interval);
+        }
     }
     
     if (candles.length > 0) {
