@@ -763,9 +763,9 @@ async function initTradingViewChart() {
         window.lwChart = chart;
         
         // MA 라인
-        window.ma1Series = chart.addLineSeries({ color: '#ffeb3b', lineWidth: 2, lineStyle: 0, priceLineVisible: false, lastValueVisible: true, title: 'MA5' });
-        window.ma2Series = chart.addLineSeries({ color: '#FFA500', lineWidth: 2, lineStyle: 0, priceLineVisible: false, lastValueVisible: true, title: 'MA20' });
-        window.ma3Series = chart.addLineSeries({ color: '#FF3333', lineWidth: 2, lineStyle: 0, priceLineVisible: false, lastValueVisible: true, title: 'MA60' });
+        window.ma1Series = chart.addLineSeries({ color: '#ffeb3b', lineWidth: 2, lineStyle: 0, priceLineVisible: false, lastValueVisible: false, title: '' });
+        window.ma2Series = chart.addLineSeries({ color: '#FFA500', lineWidth: 2, lineStyle: 0, priceLineVisible: false, lastValueVisible: false, title: '' });
+        window.ma3Series = chart.addLineSeries({ color: '#FF3333', lineWidth: 2, lineStyle: 0, priceLineVisible: false, lastValueVisible: false, title: '' });
         
         window.addEventListener('resize', () => { chart.applyOptions({ width: container.clientWidth }); });
         
