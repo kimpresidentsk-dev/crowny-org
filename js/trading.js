@@ -764,8 +764,8 @@ async function initTradingViewChart() {
         
         // MA 라인
         window.ma1Series = chart.addLineSeries({ color: '#ffeb3b', lineWidth: 2, lineStyle: 0, priceLineVisible: false, lastValueVisible: true, title: 'MA5' });
-        window.ma2Series = chart.addLineSeries({ color: '#00bcd4', lineWidth: 2, lineStyle: 0, priceLineVisible: false, lastValueVisible: true, title: 'MA20' });
-        window.ma3Series = chart.addLineSeries({ color: '#e040fb', lineWidth: 2, lineStyle: 0, priceLineVisible: false, lastValueVisible: true, title: 'MA60' });
+        window.ma2Series = chart.addLineSeries({ color: '#FFA500', lineWidth: 2, lineStyle: 0, priceLineVisible: false, lastValueVisible: true, title: 'MA20' });
+        window.ma3Series = chart.addLineSeries({ color: '#FF3333', lineWidth: 2, lineStyle: 0, priceLineVisible: false, lastValueVisible: true, title: 'MA60' });
         
         window.addEventListener('resize', () => { chart.applyOptions({ width: container.clientWidth }); });
         
@@ -1128,8 +1128,8 @@ function toggleMASettings() {
 // MA 세팅 적용 + localStorage 저장
 function applyMASettings() {
     const ma1Color = document.getElementById('nq-ma1-color')?.value || '#ffeb3b';
-    const ma2Color = document.getElementById('nq-ma2-color')?.value || '#00bcd4';
-    const ma3Color = document.getElementById('nq-ma3-color')?.value || '#e040fb';
+    const ma2Color = document.getElementById('nq-ma2-color')?.value || '#FFA500';
+    const ma3Color = document.getElementById('nq-ma3-color')?.value || '#FF3333';
     const ma1Name = document.getElementById('nq-ma1-name')?.value || 'MA1';
     const ma2Name = document.getElementById('nq-ma2-name')?.value || 'MA2';
     const ma3Name = document.getElementById('nq-ma3-name')?.value || 'MA3';
