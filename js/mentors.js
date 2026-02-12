@@ -153,7 +153,7 @@ function getCloses(candles) { return candles.map(c => c.close); }
 
 const mentors = {
     kps: {
-        name: 'KPS', icon: '👑', style: '보수적', color: '#FFD700',
+        name: 'KPS', icon: '👑', avatar: 'img/mentor-kps.jpg', style: '보수적', color: '#FFD700',
         desc: '추세 추종 · EMA 크로스오버',
         analyze(candles, livePrice) {
             if (candles.length < 60) return { signal: 'wait', confidence: 0, message: '데이터 수집 중...', reason: '캔들 부족' };
@@ -196,7 +196,7 @@ const mentors = {
     },
 
     michael: {
-        name: '마이클', icon: '🎯', style: '공격적', color: '#FF4444',
+        name: '마이클', icon: '🎯', avatar: 'img/mentor-michael.jpg', style: '공격적', color: '#FF4444',
         desc: '모멘텀 스캘핑 · 변화율 감지',
         analyze(candles, livePrice) {
             if (candles.length < 10) return { signal: 'wait', confidence: 0, message: '데이터 수집 중...', reason: '캔들 부족' };
@@ -242,7 +242,7 @@ const mentors = {
     },
 
     matthew: {
-        name: '매튜', icon: '📊', style: '기술적', color: '#4488FF',
+        name: '매튜', icon: '📊', avatar: 'img/mentor-matthew.jpg', style: '기술적', color: '#4488FF',
         desc: 'RSI · MACD · 볼린저밴드',
         analyze(candles, livePrice) {
             if (candles.length < 30) return { signal: 'wait', confidence: 0, message: '지표 계산을 위한 데이터 수집 중...', reason: '캔들 부족' };
@@ -312,7 +312,7 @@ const mentors = {
     },
 
     hansun: {
-        name: '한선', icon: '🧘', style: '스윙', color: '#00CC88',
+        name: '한선', icon: '🧘', avatar: 'img/mentor-hansun.jpg', style: '스윙', color: '#00CC88',
         desc: '피보나치 · 지지/저항 · 패턴',
         analyze(candles, livePrice) {
             const ph = typeof getMentorParams === 'function' ? getMentorParams('hansun') : {};
@@ -468,7 +468,7 @@ function renderMentorPanel() {
         const isActive = activeMentorId === id;
         html += `
             <div class="mentor-avatar ${isActive ? 'active' : ''}" onclick="selectMentor('${id}')" style="border-color:${sc.color};">
-                <div class="mentor-avatar-icon">${mentor.icon}</div>
+                <div class="mentor-avatar-icon">${mentor.avatar ? `<img src="${mentor.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : mentor.icon}</div>
                 <div class="mentor-avatar-name">${mentor.name}</div>
                 <div class="mentor-avatar-signal" style="color:${sc.color};">${sc.emoji} ${sc.label}</div>
             </div>`;
@@ -487,7 +487,7 @@ function renderMentorPanel() {
         html += `
             <div class="mentor-detail-card" style="border-left:4px solid ${mentor.color}; background:${sc.bg};">
                 <div class="mentor-detail-header">
-                    <span class="mentor-detail-title">${mentor.icon} ${mentor.name} <span style="color:${mentor.color}; font-size:0.7rem;">${mentor.style}</span></span>
+                    <span class="mentor-detail-title">${mentor.avatar ? `<img src="${mentor.avatar}" style="width:24px;height:24px;border-radius:50%;vertical-align:middle;margin-right:4px;">` : mentor.icon} ${mentor.name} <span style="color:${mentor.color}; font-size:0.7rem;">${mentor.style}</span></span>
                     <span class="mentor-detail-signal" style="color:${sc.color}; font-weight:700;">${sc.label} ${sc.emoji}</span>
                 </div>
                 <div class="mentor-detail-message" style="${getMentorSettings().comment ? '' : 'display:none'}">"${result.message}"</div>
