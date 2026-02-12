@@ -943,7 +943,11 @@
                     <h3 style="margin-bottom:0.5rem;" data-i18n="credit.pumasi_title">🤝 품앗이 대출</h3>
                     <p style="font-size:0.85rem; color:var(--accent); margin-bottom:1rem;" data-i18n-html="credit.pumasi_desc">여러 사람의 토큰을 담보로 한 사람에게 무이자 대출<br>CROWNY.church 공동체 기반</p>
                     <div style="display:grid; gap:0.8rem;">
-                        <input type="number" id="pumasi-amount" placeholder="필요 금액 (CRNY)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--accent);">대상 (이메일 또는 닉네임)</label>
+                            <input type="text" id="pumasi-target" placeholder="비워두면 공동체 전체 공개" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px; width:100%; box-sizing:border-box;">
+                        </div>
+                        <input type="number" id="pumasi-amount" placeholder="필요 금액 (CRTD)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                         <textarea id="pumasi-reason" placeholder="사유 (공동체에 공유됩니다)" data-i18n-placeholder="placeholder.reason" rows="2" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px; resize:vertical;"></textarea>
                         <input type="number" id="pumasi-days" value="30" placeholder="상환 기간(일)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                         <p style="font-size:0.8rem; color:#4CAF50; font-weight:700;" data-i18n="credit.pumasi_no_interest">✅ 이자: 0% (형제에게 이자를 받지 않습니다)</p>
@@ -1749,7 +1753,7 @@
     <script src="js/group-chat.js?v=1.0"></script>
     <script src="js/send.js?v=9.5"></script>
     <script src="js/admin.js?v=13.1"></script>
-    <script src="js/marketplace.js?v=14.1"></script>
+    <script src="js/marketplace.js?v=14.2"></script>
     <script src="js/books.js?v=1.1"></script>
     <script src="js/trading.js?v=13.5"></script>
     <script src="js/mentor-learning.js?v=1.0" defer></script>

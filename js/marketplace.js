@@ -1069,19 +1069,42 @@ async function requestPumasi() {
     const amount = parseFloat(document.getElementById('pumasi-amount').value);
     const reason = document.getElementById('pumasi-reason').value.trim();
     const days = parseInt(document.getElementById('pumasi-days').value) || 30;
+    const targetInput = (document.getElementById('pumasi-target')?.value || '').trim();
     if (!amount || !reason) { showToast('금액과 사유를 입력하세요', 'warning'); return; }
     
     try {
         const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        // 대상 지정 시 이메일/닉네임으로 검색
+        let targetId = '', targetEmail = '', targetNickname = '';
+        if (targetInput) {
+            let targetDoc;
+            // 이메일 형식이면 이메일로 검색
+            if (targetInput.includes('@')) {
+                const q = await db.collection('users').where('email', '==', targetInput).limit(1).get();
+                if (!q.empty) targetDoc = q.docs[0];
+            } else {
+                const q = await db.collection('users').where('nickname', '==', targetInput).limit(1).get();
+                if (!q.empty) targetDoc = q.docs[0];
+            }
+            if (!targetDoc) { showToast('대상을 찾을 수 없습니다', 'error'); return; }
+            targetId = targetDoc.id;
+            targetEmail = targetDoc.data().email || '';
+            targetNickname = targetDoc.data().nickname || '';
+        }
+        
         await db.collection('pumasi_requests').add({
             requesterId: currentUser.uid, requesterEmail: currentUser.email,
             requesterNickname: userDoc.data()?.nickname || '',
+            targetId, targetEmail, targetNickname,
             amount, reason, days, interest: 0,
             raised: 0, backers: 0,
             dueDate: new Date(Date.now() + days * 86400000),
             status: 'active', createdAt: new Date()
         });
-        showToast(`🤝 품앗이 ${amount} CRTD 요청 완료!`, 'success');
+        showToast(`🤝 품앗이 ${amount} CRTD 요청 완료!${targetNickname ? ' (대상: '+targetNickname+')' : ''}`, 'success');
+        document.getElementById('pumasi-target').value = '';
+        document.getElementById('pumasi-amount').value = '';
+        document.getElementById('pumasi-reason').value = '';
         loadPumasiList();
     } catch (e) { showToast('실패: ' + e.message, 'error'); }
 }
@@ -1096,6 +1119,7 @@ async function loadPumasiList() {
         docs.forEach(d => { const x = d.data(); const pct = Math.min(100, Math.round((x.raised/x.amount)*100));
             c.innerHTML += `<div style="background:white; padding:1rem; border-radius:8px; margin-bottom:0.5rem;">
                 <div style="display:flex; justify-content:space-between;"><strong>${x.requesterNickname || x.requesterEmail}</strong><span style="color:#0066cc; font-weight:700;">${x.amount} CRTD</span></div>
+                ${x.targetNickname ? `<p style="font-size:0.8rem; color:#E91E63; margin:0.2rem 0;">→ 대상: ${x.targetNickname || x.targetEmail}</p>` : '<p style="font-size:0.8rem; color:var(--accent); margin:0.2rem 0;">공동체 전체 공개</p>'}
                 <p style="font-size:0.85rem; color:var(--accent); margin:0.3rem 0;">${x.reason}</p>
                 <div style="background:#e0e0e0; height:6px; border-radius:3px; margin:0.5rem 0;"><div style="background:#4CAF50; height:100%; border-radius:3px; width:${pct}%;"></div></div>
                 <div style="display:flex; justify-content:space-between; font-size:0.8rem;"><span>${x.raised}/${x.amount} · ${x.backers}명</span><span style="color:#4CAF50;">이자 0%</span></div>
