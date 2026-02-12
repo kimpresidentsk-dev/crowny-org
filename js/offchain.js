@@ -1,12 +1,43 @@
 // ===== offchain.js - 오프체인 포인트, 브릿지, 스왑 =====
-// ========== OFF-CHAIN (4대 유틸리티 포인트) ==========
-const OFFCHAIN_TOKENS_LIST = ['crtd', 'crac', 'crgc', 'creb'];
-const OFFCHAIN_TOKEN_NAMES = {
-    crtd: 'CRTD (트레이딩 달러)',
-    crac: 'CRAC (아트 크레딧)',
-    crgc: 'CRGC (굿즈 & 기빙)',
-    creb: 'CREB (에코 바이오)'
+// ========== OFF-CHAIN (동적 토큰 시스템) ==========
+
+// 기본 토큰 (Firestore 로드 실패 시 폴백)
+const DEFAULT_OFFCHAIN_TOKENS = {
+    crtd: { name: 'CRTD', fullName: '트레이딩 달러', icon: '📈', color: '#FF6D00', isDefault: true },
+    crac: { name: 'CRAC', fullName: '아트 크레딧', icon: '🎭', color: '#9C27B0', isDefault: true },
+    crgc: { name: 'CRGC', fullName: '굿즈 & 기빙', icon: '🛒', color: '#4CAF50', isDefault: true },
+    creb: { name: 'CREB', fullName: '에코 바이오', icon: '🌱', color: '#2196F3', isDefault: true }
 };
+
+// 동적 토큰 레지스트리 (런타임에 Firestore에서 로드)
+let OFFCHAIN_TOKEN_REGISTRY = { ...DEFAULT_OFFCHAIN_TOKENS };
+let OFFCHAIN_TOKENS_LIST = Object.keys(DEFAULT_OFFCHAIN_TOKENS);
+const OFFCHAIN_TOKEN_NAMES = {};
+
+// 토큰 레지스트리 초기화 (앱 시작 시 호출)
+async function loadTokenRegistry() {
+    try {
+        const doc = await db.collection('admin_config').doc('tokens').get();
+        if (doc.exists && doc.data().registry) {
+            const registry = doc.data().registry;
+            // 기본 토큰 + DB 토큰 병합
+            OFFCHAIN_TOKEN_REGISTRY = { ...DEFAULT_OFFCHAIN_TOKENS, ...registry };
+        }
+    } catch (e) {
+        console.warn('토큰 레지스트리 로드 실패 (기본값 사용):', e);
+    }
+    
+    // 목록/이름 동기화
+    OFFCHAIN_TOKENS_LIST = Object.keys(OFFCHAIN_TOKEN_REGISTRY);
+    for (const [key, info] of Object.entries(OFFCHAIN_TOKEN_REGISTRY)) {
+        OFFCHAIN_TOKEN_NAMES[key] = `${info.name} (${info.fullName})`;
+    }
+    console.log(`✅ 토큰 레지스트리: ${OFFCHAIN_TOKENS_LIST.length}개`, OFFCHAIN_TOKENS_LIST);
+}
+
+function getTokenInfo(tokenKey) {
+    return OFFCHAIN_TOKEN_REGISTRY[tokenKey] || { name: tokenKey.toUpperCase(), fullName: '', icon: '🪙', color: '#888' };
+}
 
 function isOffchainToken(tokenKey) {
     return OFFCHAIN_TOKENS_LIST.includes((tokenKey || '').toLowerCase());
@@ -19,15 +50,26 @@ async function loadOffchainBalances() {
         const userDoc = await db.collection('users').doc(currentUser.uid).get();
         if (!userDoc.exists) return;
         const data = userDoc.data();
-        const offchain = data.offchainBalances || { crtd: 0, crac: 0, crgc: 0, creb: 0 };
-        userWallet.offchainBalances = {
-            crtd: offchain.crtd || 0, crac: offchain.crac || 0,
-            crgc: offchain.crgc || 0, creb: offchain.creb || 0
-        };
+        const offchain = data.offchainBalances || {};
+        
+        // 동적 토큰 전부 로드
+        userWallet.offchainBalances = {};
+        for (const key of OFFCHAIN_TOKENS_LIST) {
+            userWallet.offchainBalances[key] = offchain[key] || 0;
+        }
+        // DB에 있지만 레지스트리에 없는 토큰도 보존
+        for (const [key, val] of Object.entries(offchain)) {
+            if (!userWallet.offchainBalances.hasOwnProperty(key)) {
+                userWallet.offchainBalances[key] = val;
+            }
+        }
         console.log('✅ Off-chain balances:', userWallet.offchainBalances);
     } catch (error) {
         console.error('❌ Off-chain balance error:', error);
-        userWallet.offchainBalances = { crtd: 0, crac: 0, crgc: 0, creb: 0 };
+        userWallet.offchainBalances = {};
+        for (const key of OFFCHAIN_TOKENS_LIST) {
+            userWallet.offchainBalances[key] = 0;
+        }
     }
 }
 
@@ -36,18 +78,21 @@ function showOffchainSendModal() {
     if (!userWallet) { alert('지갑을 먼저 연결하세요'); return; }
     const offchain = userWallet.offchainBalances || {};
 
-    // 이미 선택된 오프체인 토큰이면 바로 사용
     let tokenKey = (selectedToken && isOffchainToken(selectedToken)) ? selectedToken : null;
 
     if (!tokenKey) {
-        const info = OFFCHAIN_TOKENS_LIST.map((t, i) =>
-            `${i+1}. ${OFFCHAIN_TOKEN_NAMES[t]} — ${(offchain[t]||0).toLocaleString()} pt`
-        ).join('\n');
+        const activeTokens = OFFCHAIN_TOKENS_LIST.filter(t => (offchain[t] || 0) > 0);
+        if (activeTokens.length === 0) { alert('보유한 오프체인 토큰이 없습니다'); return; }
+        
+        const info = activeTokens.map((t, i) => {
+            const ti = getTokenInfo(t);
+            return `${i+1}. ${ti.icon} ${ti.name} — ${(offchain[t]||0).toLocaleString()} pt`;
+        }).join('\n');
         const choice = prompt(`⚡ 오프체인 포인트 전송\n\n${info}\n\n번호:`);
         if (!choice) return;
         const idx = parseInt(choice) - 1;
-        if (idx < 0 || idx >= OFFCHAIN_TOKENS_LIST.length) { alert('잘못된 선택'); return; }
-        tokenKey = OFFCHAIN_TOKENS_LIST[idx];
+        if (idx < 0 || idx >= activeTokens.length) { alert('잘못된 선택'); return; }
+        tokenKey = activeTokens[idx];
     }
 
     const tokenName = tokenKey.toUpperCase();
