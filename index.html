@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CROWNY PLATFORM</title>
-    <link rel="stylesheet" href="style.css?v=6.0">
+    <link rel="stylesheet" href="style.css?v=11.0">
     
     <!-- Firebase SDK -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-app-compat.min.js"></script>
@@ -144,7 +144,10 @@
         
         <div class="user-info" id="user-info">
             <p id="user-email"></p>
-            <button onclick="logout()" class="btn-logout">로그아웃</button>
+            <div style="display:flex;gap:0.4rem;margin-top:0.3rem;">
+                <button onclick="showProfileEdit()" class="btn-logout" style="flex:1;">✏️ 프로필</button>
+                <button onclick="logout()" class="btn-logout" style="flex:1;">로그아웃</button>
+            </div>
         </div>
         
         <nav class="nav">
@@ -161,7 +164,7 @@
             <a href="#" onclick="showPage('books')" class="nav-item">BOOKS</a>
             <a href="#" onclick="showPage('credit')" class="nav-item">CREDIT</a>
             <a href="#" onclick="showPage('prop-trading')" class="nav-item">PROP TRADING</a>
-            <a href="#" onclick="showPage('admin')" class="nav-item" id="admin-nav-item" style="display:none; color:#e94560;">🔐 ADMIN</a>
+            <a href="admin.html" class="nav-item" id="admin-nav-item" style="display:none; color:#e94560;">🔐 ADMIN</a>
         </nav>
     </aside>
 
@@ -497,7 +500,8 @@
                     <div class="chat-messages" id="chat-messages"></div>
                     <div class="chat-input">
                         <input type="text" id="message-input" placeholder="메시지..." onkeypress="if(event.key==='Enter') sendMessage()">
-                        <button onclick="sendTokenWithMessage()" class="btn-send-token">💰</button>
+                        <button onclick="sendChatImage()" class="btn-send-token" title="사진 전송">📷</button>
+                        <button onclick="sendTokenWithMessage()" class="btn-send-token" title="토큰 전송">💰</button>
                         <button onclick="sendMessage()">전송</button>
                     </div>
                 </div>
@@ -505,25 +509,22 @@
         </section>
 
         <section id="social" class="page">
-            <h2>📸 SOCIAL</h2>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <h2 style="margin:0;">📸 SOCIAL</h2>
+            </div>
             <div class="post-create">
-                <div style="display:flex; align-items:center; gap:0.8rem; margin-bottom:0.8rem;">
-                    <div style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, var(--accent), var(--text)); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0;">👤</div>
-                    <span style="color:var(--accent); font-size:0.9rem;">무슨 생각을 하고 계신가요?</span>
-                </div>
-                <textarea id="post-text" placeholder="게시물을 작성하세요..." style="border:1px solid var(--border); border-radius:12px; padding:1rem; font-size:0.95rem; line-height:1.5; resize:vertical; min-height:80px; width:100%; margin-bottom:0.6rem;"></textarea>
+                <textarea id="post-text" placeholder="무슨 생각을 하고 계신가요?" style="border:1px solid var(--border); border-radius:12px; padding:0.8rem; font-size:0.95rem; line-height:1.5; resize:none; min-height:60px; width:100%; margin-bottom:0.5rem;"></textarea>
                 <div style="display:flex; align-items:center; gap:0.5rem;">
-                    <label for="post-image" style="display:flex; align-items:center; gap:0.3rem; padding:0.5rem 1rem; background:var(--bg); border-radius:8px; cursor:pointer; font-size:0.85rem; border:1px solid var(--border);">📷 사진</label>
+                    <label for="post-image" style="display:flex; align-items:center; gap:0.3rem; padding:0.4rem 0.8rem; background:var(--bg); border-radius:20px; cursor:pointer; font-size:0.85rem; border:1px solid var(--border);">📷 사진</label>
                     <input type="file" id="post-image" accept="image/*" style="display:none;">
-                    <span id="post-image-name" style="font-size:0.8rem; color:var(--accent); flex:1;"></span>
-                    <button onclick="createPost()" class="btn-primary" style="padding:0.6rem 1.5rem; border-radius:24px;">게시</button>
+                    <span id="post-image-name" style="font-size:0.75rem; color:var(--accent); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></span>
+                    <button onclick="createPost()" class="btn-primary" style="padding:0.5rem 1.2rem; border-radius:20px; font-size:0.85rem;">게시</button>
                 </div>
             </div>
             <div class="feed" id="social-feed"></div>
             <script>
                 document.getElementById('post-image').addEventListener('change', function() {
-                    const nameEl = document.getElementById('post-image-name');
-                    nameEl.textContent = this.files[0] ? this.files[0].name : '';
+                    document.getElementById('post-image-name').textContent = this.files[0] ? this.files[0].name : '';
                 });
             </script>
         </section>
@@ -1485,390 +1486,9 @@
             </div>
         </section>
 
-        <!-- Admin Page (관리자만 표시) -->
-        <section id="admin" class="page">
-            <h2>🔐 ADMIN</h2>
-            
-            <div id="admin-not-authorized" style="text-align:center; padding:2rem; color:var(--accent);">
-                관리자 권한이 필요합니다.
-            </div>
-            
-            <div id="admin-panel" style="display:none;">
-                <!-- 관리자 레벨 표시 -->
-                <div id="admin-level-badge" style="text-align:center; padding:0.8rem; background:#1a1a2e; color:white; border-radius:8px; margin-bottom:1rem; font-size:0.9rem;"></div>
-                
-                <!-- ★ 관리자 탭 메뉴 -->
-                <div id="admin-tab-bar" style="display:flex; gap:4px; overflow-x:auto; padding:4px; background:#f0f0f0; border-radius:10px; margin-bottom:1rem;">
-                    <!-- JS에서 권한별 탭 동적 생성 -->
-                </div>
+        <!-- Admin moved to admin.html -->
+        <section id="admin" class="page" style="display:none;"></section>
 
-                <!-- ═══════════════════════════════════════════ -->
-                <!-- TAB 1: 🔥 오프체인 포인트 관리 (레벨 2+)   -->
-                <!-- ═══════════════════════════════════════════ -->
-                <div id="admin-tab-offchain" class="admin-tab-content" style="display:none;">
-                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
-                        <h3 style="margin-bottom:1rem;">🔥 오프체인 포인트 관리</h3>
-                        <p style="font-size:0.75rem; color:var(--accent); margin-bottom:1rem;">Firebase DB · Zero-Gas · 100 pt = 1 CRNY</p>
-                        
-                        <!-- 유저 잔액 조회 -->
-                        <div style="background:#e3f2fd; padding:1rem; border-radius:8px; margin-bottom:1rem;">
-                            <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">🔍 유저 오프체인 잔액 조회</h4>
-                            <div style="display:flex; gap:0.5rem; align-items:end;">
-                                <input type="email" id="admin-off-lookup-email" placeholder="user@email.com" style="flex:1; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
-                                <button onclick="adminLookupOffchain()" style="background:#1565c0; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer; white-space:nowrap;">조회</button>
-                            </div>
-                            <div id="admin-off-lookup-result" style="margin-top:0.5rem; font-size:0.85rem;"></div>
-                        </div>
-                        
-                        <!-- 포인트 발행 (민팅) — 수퍼관리자 전용 -->
-                        <div id="admin-mint-section" style="background:#e8f5e9; padding:1rem; border-radius:8px; margin-bottom:1rem;">
-                            <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">📈 포인트 발행 (민팅)</h4>
-                            <div style="display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:0.5rem; align-items:end;">
-                                <div>
-                                    <label style="font-size:0.7rem;">이메일</label>
-                                    <input type="email" id="admin-off-mint-email" placeholder="user@email.com" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
-                                </div>
-                                <div>
-                                    <label style="font-size:0.7rem;">토큰</label>
-                                    <select id="admin-off-mint-token" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
-                                        <option value="crtd">📈 CRTD</option>
-                                        <option value="crac">🎭 CRAC</option>
-                                        <option value="crgc">🛒 CRGC</option>
-                                        <option value="creb">🌱 CREB</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label style="font-size:0.7rem;">수량</label>
-                                    <input type="number" id="admin-off-mint-amount" value="100" min="1" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
-                                </div>
-                                <button onclick="adminMintOffchain()" style="background:#2e7d32; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">발행</button>
-                            </div>
-                            <div>
-                                <label style="font-size:0.7rem;">사유</label>
-                                <input type="text" id="admin-off-mint-reason" placeholder="이벤트 보상, 프로모션 등" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px; margin-top:0.3rem; box-sizing:border-box;">
-                            </div>
-                        </div>
-                        
-                        <!-- 포인트 차감 (소각) — 수퍼관리자 전용 -->
-                        <div id="admin-burn-section" style="background:#fce4ec; padding:1rem; border-radius:8px; margin-bottom:1rem;">
-                            <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">📉 포인트 차감 (소각)</h4>
-                            <div style="display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:0.5rem; align-items:end;">
-                                <div>
-                                    <label style="font-size:0.7rem;">이메일</label>
-                                    <input type="email" id="admin-off-burn-email" placeholder="user@email.com" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
-                                </div>
-                                <div>
-                                    <label style="font-size:0.7rem;">토큰</label>
-                                    <select id="admin-off-burn-token" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
-                                        <option value="crtd">📈 CRTD</option>
-                                        <option value="crac">🎭 CRAC</option>
-                                        <option value="crgc">🛒 CRGC</option>
-                                        <option value="creb">🌱 CREB</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label style="font-size:0.7rem;">수량</label>
-                                    <input type="number" id="admin-off-burn-amount" value="100" min="1" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
-                                </div>
-                                <button onclick="adminBurnOffchain()" style="background:#c62828; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">차감</button>
-                            </div>
-                            <div>
-                                <label style="font-size:0.7rem;">사유</label>
-                                <input type="text" id="admin-off-burn-reason" placeholder="패널티, 환불 등" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px; margin-top:0.3rem; box-sizing:border-box;">
-                            </div>
-                        </div>
-
-                        <!-- ★ 토큰 관리 (수퍼관리자 전용) -->
-                        <div id="admin-token-mgmt-section" style="background:linear-gradient(135deg,#fff8e1,#fff3e0); padding:1rem; border-radius:8px; margin-bottom:1rem; border:1px solid #ffcc80;">
-                            <h4 style="font-size:0.85rem; margin-bottom:0.6rem;">🪙 오프체인 토큰 관리</h4>
-                            
-                            <!-- 등록된 토큰 목록 -->
-                            <div id="admin-token-list" style="margin-bottom:0.8rem;"></div>
-                            
-                            <!-- 새 토큰 생성 -->
-                            <details style="margin-top:0.5rem;">
-                                <summary style="cursor:pointer; font-size:0.82rem; font-weight:600; color:#E65100;">➕ 새 토큰 생성</summary>
-                                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.4rem; margin-top:0.5rem;">
-                                    <div>
-                                        <label style="font-size:0.68rem;">KEY (영문소문자)</label>
-                                        <input type="text" id="new-token-key" placeholder="예: crpt" maxlength="10" style="width:100%; padding:0.4rem; border:1px solid var(--border); border-radius:4px; font-size:0.82rem;">
-                                    </div>
-                                    <div>
-                                        <label style="font-size:0.68rem;">이름 (대문자)</label>
-                                        <input type="text" id="new-token-name" placeholder="예: CRPT" maxlength="10" style="width:100%; padding:0.4rem; border:1px solid var(--border); border-radius:4px; font-size:0.82rem;">
-                                    </div>
-                                    <div>
-                                        <label style="font-size:0.68rem;">설명</label>
-                                        <input type="text" id="new-token-fullname" placeholder="예: 프라이빗 토큰" style="width:100%; padding:0.4rem; border:1px solid var(--border); border-radius:4px; font-size:0.82rem;">
-                                    </div>
-                                </div>
-                                <div style="display:grid; grid-template-columns:auto 1fr auto; gap:0.4rem; margin-top:0.4rem; align-items:end;">
-                                    <div>
-                                        <label style="font-size:0.68rem;">아이콘</label>
-                                        <input type="text" id="new-token-icon" value="🪙" maxlength="2" style="width:40px; padding:0.4rem; border:1px solid var(--border); border-radius:4px; text-align:center; font-size:1.1rem;">
-                                    </div>
-                                    <div>
-                                        <label style="font-size:0.68rem;">색상</label>
-                                        <input type="color" id="new-token-color" value="#FF6D00" style="width:100%; height:32px; border:1px solid var(--border); border-radius:4px; cursor:pointer;">
-                                    </div>
-                                    <button onclick="createCustomToken()" style="background:#E65100; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer; font-weight:600; font-size:0.82rem;">🪙 생성</button>
-                                </div>
-                            </details>
-                        </div>
-                        
-                        <!-- ★ 일괄 배포 (수퍼관리자 전용) -->
-                        <div id="admin-dist-section" style="background:linear-gradient(135deg,#e8eaf6,#e3f2fd); padding:1rem; border-radius:8px; margin-bottom:1rem; border:1px solid #90caf9;">
-                            <h4 style="font-size:0.85rem; margin-bottom:0.6rem;">📦 토큰 일괄 배포</h4>
-                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.4rem;">
-                                <div>
-                                    <label style="font-size:0.7rem;">토큰</label>
-                                    <select id="admin-dist-token" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
-                                        <option value="crtd">📈 CRTD</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label style="font-size:0.7rem;">1인당 수량</label>
-                                    <input type="number" id="admin-dist-amount" value="100" min="1" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
-                                </div>
-                            </div>
-                            <div style="margin-top:0.4rem;">
-                                <label style="font-size:0.7rem;">사유</label>
-                                <input type="text" id="admin-dist-reason" placeholder="이벤트 보상, 프로모션 등" style="width:100%; padding:0.4rem; border:1px solid var(--border); border-radius:4px; box-sizing:border-box;">
-                            </div>
-                            <div style="margin-top:0.4rem;">
-                                <label style="font-size:0.7rem;">대상 이메일 (줄바꿈/쉼표 구분)</label>
-                                <textarea id="admin-dist-emails" rows="4" placeholder="user1@email.com&#10;user2@email.com&#10;user3@email.com" style="width:100%; padding:0.4rem; border:1px solid var(--border); border-radius:4px; font-size:0.8rem; resize:vertical; box-sizing:border-box;"></textarea>
-                            </div>
-                            <div style="display:flex; gap:0.4rem; margin-top:0.5rem;">
-                                <button onclick="adminBatchDistribute()" style="flex:1; background:#1565C0; color:white; border:none; padding:0.5rem; border-radius:4px; cursor:pointer; font-weight:600; font-size:0.82rem;">📦 선택 배포</button>
-                                <button onclick="adminDistributeToAll()" style="flex:0.6; background:#7B1FA2; color:white; border:none; padding:0.5rem; border-radius:4px; cursor:pointer; font-weight:600; font-size:0.82rem;">🌐 전체 배포</button>
-                            </div>
-                            <div id="admin-dist-result" style="margin-top:0.5rem;"></div>
-                        </div>
-
-                        <!-- 최근 오프체인 거래 내역 -->
-                        <div style="background:var(--bg); padding:1rem; border-radius:8px;">
-                            <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">📜 최근 오프체인 거래 내역</h4>
-                            <button onclick="adminLoadOffchainTxLog()" style="background:#455a64; color:white; border:none; padding:0.4rem 0.8rem; border-radius:4px; cursor:pointer; font-size:0.8rem; margin-bottom:0.5rem;">🔄 새로고침</button>
-                            <div id="admin-off-tx-log" style="max-height:300px; overflow-y:auto;"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ═══════════════════════════════════════════ -->
-                <!-- TAB 2: 💰 온체인 지갑 (레벨 4+)           -->
-                <!-- ═══════════════════════════════════════════ -->
-                <div id="admin-tab-wallet" class="admin-tab-content" style="display:none;">
-                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
-                        <h3 style="margin-bottom:1rem;">💰 온체인 지갑 관리</h3>
-                        <div id="admin-wallet-info" style="margin-bottom:1rem;">
-                            <button onclick="loadAdminWallet()" class="btn-primary" style="margin-bottom:0.5rem;">🔄 지갑 새로고침</button>
-                        </div>
-                        <div style="background:var(--bg); padding:1rem; border-radius:8px; margin-bottom:1rem;">
-                            <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">📤 토큰 보내기 (온체인 Polygon)</h4>
-                            <div style="display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:0.5rem; align-items:end;">
-                                <div>
-                                    <label style="font-size:0.75rem;">받는 사람 이메일</label>
-                                    <input type="email" id="admin-send-email" placeholder="user@email.com" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
-                                </div>
-                                <div>
-                                    <label style="font-size:0.75rem;">토큰</label>
-                                    <select id="admin-send-token" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
-                                        <option value="crny">CRNY</option>
-                                        <option value="fnc">FNC</option>
-                                        <option value="crfn">CRFN</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label style="font-size:0.75rem;">수량</label>
-                                    <input type="number" id="admin-send-amount" value="1" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
-                                </div>
-                                <button onclick="adminSendToken()" style="background:#0066cc; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer; white-space:nowrap;">보내기</button>
-                            </div>
-                            <p style="font-size:0.7rem; color:var(--accent); margin-top:0.5rem;">⚠️ Polygon 온체인 전송 — POL(MATIC) 가스비 필요</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ═══════════════════════════════════════════ -->
-                <!-- TAB 3: 📊 챌린지 관리 (레벨 3+)           -->
-                <!-- ═══════════════════════════════════════════ -->
-                <div id="admin-tab-challenge" class="admin-tab-content" style="display:none;">
-                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
-                        <h3 style="margin-bottom:1rem;">📊 챌린지 참가자 관리</h3>
-                        <button onclick="loadAdminParticipants()" class="btn-primary" style="margin-bottom:1rem;">🔄 참가자 목록 새로고침</button>
-                        <div id="admin-participants-list"></div>
-                    </div>
-                </div>
-
-                <!-- ═══════════════════════════════════════════ -->
-                <!-- TAB 4: 👥 회원 관리 (레벨 6)              -->
-                <!-- ═══════════════════════════════════════════ -->
-                <div id="admin-tab-users" class="admin-tab-content" style="display:none;">
-                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
-                        <h3 style="margin-bottom:1rem;">👥 관리자 계층 관리</h3>
-                        <!-- 권한 매트릭스 -->
-                        <div style="background:#f3e5f5; padding:1rem; border-radius:8px; margin-bottom:1rem;">
-                            <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">📋 계층 권한표</h4>
-                            <div style="font-size:0.75rem; line-height:1.8;">
-                                <div>👑 <strong>Lv6 수퍼</strong>: 토큰 발행/차감 + 쿼터 설정 + Lv5 임명</div>
-                                <div>🌍 <strong>Lv5 국가</strong>: 온·오프체인 + 챌린지 + Lv4 임명</div>
-                                <div>💼 <strong>Lv4 사업</strong>: 온·오프체인 + 챌린지 + Lv3 임명</div>
-                                <div>🔧 <strong>Lv3 서비스</strong>: 오프체인(조회) + 챌린지 + Lv2 임명</div>
-                                <div>📝 <strong>Lv2 운영</strong>: 오프체인(조회) 전용</div>
-                                <div>💬 <strong>Lv1 CS</strong>: 읽기 전용</div>
-                            </div>
-                        </div>
-                        <button onclick="loadAdminUserList()" class="btn-primary" style="margin-bottom:0.5rem;">🔄 관리자 현황</button>
-                        <div id="admin-user-list"></div>
-                    </div>
-                </div>
-
-                <!-- ═══════════════════════════════════════════ -->
-                <!-- TAB 5: 🎁 기부풀 관리 (레벨 3+)           -->
-                <!-- ═══════════════════════════════════════════ -->
-                <div id="admin-tab-giving" class="admin-tab-content" style="display:none;">
-                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
-                        <h3 style="margin-bottom:1rem;">🎁 기부풀 관리 (CRGC)</h3>
-                        <button onclick="adminLoadGivingPool()" class="btn-primary" style="margin-bottom:1rem;">🔄 기부풀 현황</button>
-                        <div id="admin-giving-pool-info" style="background:#e8f5e9; padding:1rem; border-radius:8px; margin-bottom:1rem;"></div>
-                        <div>
-                            <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">🎯 기부풀 분배</h4>
-                            <div style="display:flex; gap:0.5rem; align-items:end;">
-                                <div style="flex:1;">
-                                    <label style="font-size:0.7rem;">받는 사람 이메일</label>
-                                    <input type="email" id="admin-giving-email" placeholder="user@email.com" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
-                                </div>
-                                <div>
-                                    <label style="font-size:0.7rem;">수량 (CRGC pt)</label>
-                                    <input type="number" id="admin-giving-amount" value="100" min="1" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
-                                </div>
-                                <button onclick="adminDistributeGivingPool()" style="background:#00897b; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">분배</button>
-                            </div>
-                        </div>
-                        <div style="margin-top:1rem;">
-                            <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">📜 기부풀 로그</h4>
-                            <div id="admin-giving-log" style="max-height:250px; overflow-y:auto;"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ═══════════════════════════════════════════ -->
-                <!-- TAB 6.5: ⚖️ 비율 관리 (수퍼관리자)         -->
-                <!-- ═══════════════════════════════════════════ -->
-                <div id="admin-tab-rate" class="admin-tab-content" style="display:none;">
-                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
-                        <h3 style="margin-bottom:1rem;">⚖️ 오프체인/CRNY 교환 비율</h3>
-                        <p style="font-size:0.85rem; color:#666; margin-bottom:1rem;">
-                            토큰별로 개별 비율을 설정할 수 있습니다.<br>
-                            변경 시 2단계 확인이 필요하며, 모든 변경은 로그에 기록됩니다.
-                        </p>
-                        
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin-bottom:1.5rem;">
-                            <div style="background:linear-gradient(135deg,#fff3e0,#ffe0b2); padding:1rem; border-radius:10px; border:1px solid #ffcc80;">
-                                <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
-                                    <span style="font-size:1.2rem;">📈</span>
-                                    <strong style="font-size:0.9rem;">CRTD</strong>
-                                    <span style="font-size:0.7rem; color:#e65100;">트레이딩</span>
-                                </div>
-                                <div style="display:flex; gap:0.4rem; align-items:center;">
-                                    <input type="number" id="rate-crtd" value="100" min="1" max="10000" style="flex:1; padding:0.6rem; border:1px solid #ffcc80; border-radius:6px; font-size:1rem; font-weight:700; box-sizing:border-box;">
-                                    <span style="font-size:0.75rem; color:#666;">pt/CRNY</span>
-                                </div>
-                            </div>
-                            <div style="background:linear-gradient(135deg,#fce4ec,#f8bbd0); padding:1rem; border-radius:10px; border:1px solid #f48fb1;">
-                                <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
-                                    <span style="font-size:1.2rem;">🎭</span>
-                                    <strong style="font-size:0.9rem;">CRAC</strong>
-                                    <span style="font-size:0.7rem; color:#c2185b;">엔터테인먼트</span>
-                                </div>
-                                <div style="display:flex; gap:0.4rem; align-items:center;">
-                                    <input type="number" id="rate-crac" value="100" min="1" max="10000" style="flex:1; padding:0.6rem; border:1px solid #f48fb1; border-radius:6px; font-size:1rem; font-weight:700; box-sizing:border-box;">
-                                    <span style="font-size:0.75rem; color:#666;">pt/CRNY</span>
-                                </div>
-                            </div>
-                            <div style="background:linear-gradient(135deg,#e0f2f1,#b2dfdb); padding:1rem; border-radius:10px; border:1px solid #80cbc4;">
-                                <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
-                                    <span style="font-size:1.2rem;">🛒</span>
-                                    <strong style="font-size:0.9rem;">CRGC</strong>
-                                    <span style="font-size:0.7rem; color:#00695c;">커머스</span>
-                                </div>
-                                <div style="display:flex; gap:0.4rem; align-items:center;">
-                                    <input type="number" id="rate-crgc" value="100" min="1" max="10000" style="flex:1; padding:0.6rem; border:1px solid #80cbc4; border-radius:6px; font-size:1rem; font-weight:700; box-sizing:border-box;">
-                                    <span style="font-size:0.75rem; color:#666;">pt/CRNY</span>
-                                </div>
-                            </div>
-                            <div style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9); padding:1rem; border-radius:10px; border:1px solid #81c784;">
-                                <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
-                                    <span style="font-size:1.2rem;">🌱</span>
-                                    <strong style="font-size:0.9rem;">CREB</strong>
-                                    <span style="font-size:0.7rem; color:#2e7d32;">에코·바이오</span>
-                                </div>
-                                <div style="display:flex; gap:0.4rem; align-items:center;">
-                                    <input type="number" id="rate-creb" value="100" min="1" max="10000" style="flex:1; padding:0.6rem; border:1px solid #81c784; border-radius:6px; font-size:1rem; font-weight:700; box-sizing:border-box;">
-                                    <span style="font-size:0.75rem; color:#666;">pt/CRNY</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div style="margin-bottom:1rem;">
-                            <label style="font-size:0.8rem; color:#666; display:block; margin-bottom:0.3rem;">📝 변경 사유 (필수)</label>
-                            <input type="text" id="rate-change-reason" placeholder="비율 변경 사유를 입력하세요" style="width:100%; padding:0.7rem; border:1px solid #ddd; border-radius:8px; font-size:0.9rem; box-sizing:border-box;">
-                        </div>
-                        
-                        <button onclick="requestRateChange()" style="width:100%; background:#ff5722; color:white; border:none; padding:0.9rem; border-radius:8px; cursor:pointer; font-weight:700; font-size:1rem;">⚖️ 비율 변경</button>
-                        
-                        <h4 style="margin:1.5rem 0 0.8rem;">📜 변경 이력</h4>
-                        <div id="admin-rate-history" style="max-height:300px; overflow-y:auto;">
-                            변경 이력이 없습니다
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ═══════════════════════════════════════════ -->
-                <!-- TAB 6: 📋 관리자 로그 (레벨 3+)           -->
-                <!-- ═══════════════════════════════════════════ -->
-                <div id="admin-tab-log" class="admin-tab-content" style="display:none;">
-                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
-                        <h3 style="margin-bottom:1rem;">📋 관리자 활동 로그</h3>
-                        <button onclick="loadAdminLog()" class="btn-primary" style="margin-bottom:1rem;">🔄 로그 새로고침</button>
-                        <div id="admin-log-list"></div>
-                    </div>
-                </div>
-
-                <!-- 쿠폰 관리 탭 -->
-                <div id="admin-tab-coupon" class="admin-tab-content" style="display:none;">
-                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
-                        <h3 style="margin-bottom:1rem;">🎟️ 쿠폰 관리</h3>
-                        <div style="display:grid; gap:0.8rem;">
-                            <div style="display:flex; gap:0.5rem;">
-                                <input type="text" id="coupon-code" placeholder="쿠폰 코드 (영문/숫자)" style="flex:1; padding:0.6rem; border:1px solid #ddd; border-radius:6px; text-transform:uppercase;">
-                                <select id="coupon-token" style="padding:0.6rem; border:1px solid #ddd; border-radius:6px;">
-                                    <option value="crtd">CRTD</option>
-                                    <option value="crac">CRAC</option>
-                                    <option value="crgc">CRGC</option>
-                                    <option value="creb">CREB</option>
-                                </select>
-                            </div>
-                            <div style="display:flex; gap:0.5rem;">
-                                <input type="number" id="coupon-amount" placeholder="지급 수량" style="flex:1; padding:0.6rem; border:1px solid #ddd; border-radius:6px;">
-                                <input type="number" id="coupon-max-uses" placeholder="최대 사용 (0=무제한)" value="0" style="flex:1; padding:0.6rem; border:1px solid #ddd; border-radius:6px;">
-                            </div>
-                            <div style="display:flex; gap:0.5rem;">
-                                <input type="datetime-local" id="coupon-expiry" style="flex:1; padding:0.6rem; border:1px solid #ddd; border-radius:6px;">
-                                <input type="text" id="coupon-desc" placeholder="설명 (선택)" style="flex:1; padding:0.6rem; border:1px solid #ddd; border-radius:6px;">
-                            </div>
-                            <button onclick="createCoupon()" class="btn-primary">🎟️ 쿠폰 생성</button>
-                        </div>
-                    </div>
-                    <div style="background:white; padding:1.5rem; border-radius:12px;">
-                        <h3 style="margin-bottom:1rem;">📋 쿠폰 목록</h3>
-                        <button onclick="loadCouponList()" class="btn-primary" style="margin-bottom:1rem;">🔄 새로고침</button>
-                        <div id="coupon-list"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
 
     </main>
 
@@ -1959,7 +1579,7 @@
     <script src="js/auth.js?v=9.5"></script>
     <script src="js/wallet.js?v=9.5"></script>
     <script src="js/offchain.js?v=10.0"></script>
-    <script src="js/social.js?v=9.5"></script>
+    <script src="js/social.js?v=11.0"></script>
     <script src="js/send.js?v=9.5"></script>
     <script src="js/admin.js?v=10.0"></script>
     <script src="js/marketplace.js?v=10.0"></script>

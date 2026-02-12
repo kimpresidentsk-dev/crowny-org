@@ -23,7 +23,9 @@ function showPage(pageId) {
         loadTradingDashboard();
     }
     if (pageId === 'admin') {
-        initAdminPage();
+        // Admin is now a separate page
+        window.location.href = 'admin.html';
+        return;
     }
     if (pageId === 'art') {
         loadArtGallery();
