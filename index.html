@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CROWNY PLATFORM</title>
-    <link rel="stylesheet" href="style.css?v=15.3">
+    <link rel="stylesheet" href="style.css?v=15.4">
     
     <!-- Firebase SDK -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-app-compat.min.js"></script>
@@ -696,7 +696,11 @@
         <section id="mall" class="page">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                 <h2 style="margin:0;" data-i18n="mall.title">🛒 MALL</h2>
-                <button class="admin-register-btn" id="mall-register-btn" onclick="openRegisterModal('mall')" data-i18n="mall.register">➕ 상품 등록</button>
+                <div style="display:flex; gap:0.4rem; align-items:center;">
+                    <button onclick="showPage('wishlist'); loadWishlist();" style="background:none; border:1px solid #e91e63; color:#e91e63; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem;">❤️</button>
+                    <button onclick="showPage('cart'); loadCart();" style="background:none; border:1px solid #0066cc; color:#0066cc; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem; position:relative;">🛒 <span id="cart-badge" style="display:none; position:absolute; top:-6px; right:-6px; background:#e53935; color:white; font-size:0.6rem; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;">0</span></button>
+                    <button class="admin-register-btn" id="mall-register-btn" onclick="openRegisterModal('mall')" data-i18n="mall.register">➕ 상품 등록</button>
+                </div>
             </div>
             
             <div class="section-banner" id="mall-banner" style="background:linear-gradient(135deg, #1a1a2e, #16213e);">
@@ -739,6 +743,42 @@
                     <button onclick="loadSellerOrders()" style="flex:1; background:#ff9800; color:white; border:none; padding:0.6rem; border-radius:6px; cursor:pointer; font-weight:600;" data-i18n="mall.seller_orders">📬 받은 주문</button>
                 </div>
                 <div id="mall-my-list"></div>
+            </div>
+        </section>
+
+        <!-- ========== PRODUCT DETAIL - 상품 상세 ========== -->
+        <section id="product-detail" class="page">
+            <div id="product-detail-content" style="max-width:600px; margin:0 auto;">
+                <p style="text-align:center; color:var(--accent);">로딩 중...</p>
+            </div>
+        </section>
+
+        <!-- ========== CART - 장바구니 ========== -->
+        <section id="cart" class="page">
+            <div style="max-width:600px; margin:0 auto;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                    <h2 style="margin:0;">🛒 장바구니</h2>
+                    <button onclick="showPage('mall')" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">← 쇼핑 계속</button>
+                </div>
+                <div id="cart-items" style="margin-bottom:1rem;"></div>
+                <div id="cart-summary" style="display:none; background:white; padding:1rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                    <div style="display:flex; justify-content:space-between; font-size:1.1rem; font-weight:700; margin-bottom:1rem;">
+                        <span>총 결제 금액</span>
+                        <span id="cart-total" style="color:#0066cc;">0 CRGC</span>
+                    </div>
+                    <button onclick="checkoutCart()" style="background:#0066cc; color:white; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; width:100%; font-size:1rem;">💳 일괄 결제</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== WISHLIST - 찜 목록 ========== -->
+        <section id="wishlist" class="page">
+            <div style="max-width:600px; margin:0 auto;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                    <h2 style="margin:0;">❤️ 찜 목록</h2>
+                    <button onclick="showPage('mall')" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">← 쇼핑 계속</button>
+                </div>
+                <div id="wishlist-items"></div>
             </div>
         </section>
 
@@ -1745,7 +1785,7 @@
     
     <!-- ===== CROWNY v9.5 모듈화 JS (로드 순서 중요!) ===== -->
     <script src="js/config.js?v=12.4"></script>
-    <script src="js/ui.js?v=12.5"></script>
+    <script src="js/ui.js?v=12.6"></script>
     <script src="js/auth.js?v=9.5"></script>
     <script src="js/wallet.js?v=11.0"></script>
     <script src="js/offchain.js?v=10.0"></script>
@@ -1754,7 +1794,7 @@
     <script src="js/group-chat.js?v=1.0"></script>
     <script src="js/send.js?v=9.5"></script>
     <script src="js/admin.js?v=13.1"></script>
-    <script src="js/marketplace.js?v=14.3"></script>
+    <script src="js/marketplace.js?v=15.0"></script>
     <script src="js/books.js?v=1.1"></script>
     <script src="js/trading.js?v=13.5"></script>
     <script src="js/mentor-learning.js?v=1.0" defer></script>

@@ -58,6 +58,13 @@ function showPage(pageId) {
     }
     if (pageId === 'mall') {
         loadMallProducts();
+        updateCartBadge();
+    }
+    if (pageId === 'cart') {
+        if (typeof loadCart === 'function') loadCart();
+    }
+    if (pageId === 'wishlist') {
+        if (typeof loadWishlist === 'function') loadWishlist();
     }
     if (pageId === 'fundraise') {
         loadCampaigns();
