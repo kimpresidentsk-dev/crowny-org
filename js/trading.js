@@ -2196,9 +2196,6 @@ async function executeFuturesTrade(side) {
         return;
     }
     
-    // ===== CRTD 참가비 기반 (CRNY 불필요) =====
-    const slots = myParticipation ? Math.max(1, calculateSlots(userWallet?.balances?.crny || 0)) : 1;
-    
     const contract = document.getElementById('futures-contract').value;
     
     // ===== 상품별 권한 체크 (tradingTier) =====
@@ -2207,14 +2204,13 @@ async function executeFuturesTrade(side) {
         return;
     }
     
-    // ===== 계약 수: 유저 입력 → 권한 + 슬롯 검증 =====
+    // ===== 계약 수: 유저 입력 → 권한 검증 (CRTD 시스템: 슬롯 불필요) =====
     const tierMax = getMaxContracts(contract);
     const inputContracts = parseInt(document.getElementById('trade-contracts')?.value) || 1;
-    const effectiveMax = Math.min(tierMax, slots);
-    const contracts = Math.min(inputContracts, effectiveMax);
+    const contracts = Math.min(inputContracts, tierMax);
     
-    if (inputContracts > effectiveMax) {
-        showToast(`⚠️ 최대 ${effectiveMax}계약 가능 → ${contracts}계약으로 조정`, 'warning');
+    if (inputContracts > tierMax) {
+        showToast(`⚠️ 최대 ${tierMax}계약 가능 → ${contracts}계약으로 조정`, 'warning');
     }
     
     const orderType = document.getElementById('order-type').value;
@@ -2331,8 +2327,8 @@ async function executeFuturesTrade(side) {
             stopLoss: stopLoss,
             takeProfit: takeProfit,
             trailingStop: trailingStop,
-            crnyAtEntry: Math.floor(userWallet?.balances?.crny || 0),
-            slotsAtEntry: slots,
+            
+            
             fee: tradeFee,
             timestamp: new Date(),
             status: orderType === 'MARKET' ? 'open' : 'pending',
@@ -2396,9 +2392,6 @@ async function quickChartTrade(side, contractOverride) {
         return;
     }
     
-    // ===== CRTD 참가비 기반 (CRNY 불필요) =====
-    const slots = myParticipation ? Math.max(1, calculateSlots(userWallet?.balances?.crny || 0)) : 1;
-    
     // ★ 탭 심볼을 직접 사용
     const contract = getActiveTabSymbol() || document.getElementById('futures-contract')?.value || 'MNQ';
     
@@ -2408,10 +2401,10 @@ async function quickChartTrade(side, contractOverride) {
         return;
     }
     
-    // 계약 수: 폼 입력 → 권한 + 슬롯 검증
+    // 계약 수: 폼 입력 → 권한 검증 (CRTD 시스템: 슬롯 불필요)
     const tierMax = getMaxContracts(contract);
     const inputContracts = parseInt(document.getElementById('trade-contracts')?.value) || 1;
-    const contracts = Math.min(inputContracts, tierMax, slots);
+    const contracts = Math.min(inputContracts, tierMax);
     
     // 포지션 수 체크
     const maxPositions = myParticipation.maxPositions || 5;
@@ -2474,8 +2467,8 @@ async function quickChartTrade(side, contractOverride) {
             stopLoss: stopLoss,
             takeProfit: takeProfit,
             trailingStop: trailingStop,
-            crnyAtEntry: Math.floor(userWallet?.balances?.crny || 0),
-            slotsAtEntry: slots,
+            
+            
             fee: tradeFee,
             timestamp: new Date(),
             status: 'open',
