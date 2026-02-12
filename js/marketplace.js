@@ -2,7 +2,11 @@
 
 const ORDER_STATUS_LABELS = { paid:t('mall.status_paid','💰 결제완료'), shipping:t('mall.status_shipping','🚚 배송중'), delivered:t('mall.status_delivered','✅ 배송완료'), cancelled:t('mall.status_cancelled','❌ 취소') };
 const ORDER_STATUS_COLORS = { paid:'#ff9800', shipping:'#2196f3', delivered:'#4CAF50', cancelled:'#cc0000' };
-const MALL_CATEGORIES = {'뷰티':'💄 뷰티','음향':'🔊 음향','헬스':'💪 헬스','생활':'☕ 생활','전자':'🔋 전자','패션':'👗 패션','식품':'🍽️ 식품','기타':'📦 기타'};
+const MALL_CATEGORIES = {
+    'present':'💄 프레즌트','doctor':'💊 포닥터','medical':'🏥 메디컬','avls':'🎬 AVLs',
+    'solution':'🔐 프라이빗','architect':'🏗️ 아키텍트','mall':'🛒 크라우니몰','designers':'👗 디자이너스',
+    '뷰티':'💄 화장품','음향':'🔊 음향','헬스':'💪 헬스','생활':'☕ 생활','전자':'🔋 전자','패션':'👗 패션','식품':'🍽️ 식품','기타':'📦 기타'
+};
 
 function renderStars(rating, size='0.85rem') {
     let s = '';
@@ -1367,10 +1371,25 @@ async function joinGye(gyeId) {
 function filterMallBrand(brand) {
     // product-category 셀렉트를 해당 브랜드로 설정하고 로드
     const sel = document.getElementById('product-category');
-    if (sel) sel.value = brand;
+    if (sel && brand) sel.value = brand;
     
     // mall-filter용 별도 처리
     window._mallBrandFilter = brand;
+    
+    // 활성 카드 하이라이트
+    document.querySelectorAll('.mall-brand-card').forEach(c => {
+        c.classList.remove('active');
+        c.style.outline = 'none';
+        c.style.opacity = '1';
+    });
+    const activeCard = document.querySelector(`.mall-brand-card[data-brand="${brand || 'all'}"]`);
+    if (activeCard) {
+        activeCard.classList.add('active');
+        activeCard.style.outline = '2px solid var(--gold, #D4AF37)';
+    }
+    // 비활성 카드 살짝 투명
+    document.querySelectorAll('.mall-brand-card:not(.active)').forEach(c => c.style.opacity = '0.6');
+    
     loadMallProducts();
 }
 

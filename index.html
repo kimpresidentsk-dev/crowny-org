@@ -705,15 +705,16 @@
             </div>
             
             <!-- 브랜드 카테고리 -->
-            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:0.5rem; margin-bottom:1rem;">
-                <div onclick="filterMallBrand('present')" style="background:#FDEBD0; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong data-i18n-html="mall.brand.present_card">💄 프레즌트</strong><br><span style="color:var(--accent);">화장품</span></div>
-                <div onclick="filterMallBrand('doctor')" style="background:#D5F5E3; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong data-i18n-html="mall.brand.doctor_card">💊 포닥터</strong><br><span style="color:var(--accent);">건강기능식품</span></div>
-                <div onclick="filterMallBrand('medical')" style="background:#D6EAF8; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong data-i18n-html="mall.brand.medical_card">🏥 메디컬</strong><br><span style="color:var(--accent);">의료기기</span></div>
-                <div onclick="filterMallBrand('avls')" style="background:#E8DAEF; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong data-i18n-html="mall.brand.avls_card">🎬 AVLs</strong><br><span style="color:var(--accent);">음향/영상/조명</span></div>
-                <div onclick="filterMallBrand('solution')" style="background:#F2F3F4; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong data-i18n-html="mall.brand.solution_card">🔐 프라이빗</strong><br><span style="color:var(--accent);">방송/보안</span></div>
-                <div onclick="filterMallBrand('architect')" style="background:#FADBD8; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong data-i18n-html="mall.brand.architect_card">🏗️ 아키텍트</strong><br><span style="color:var(--accent);">건축</span></div>
-                <div onclick="filterMallBrand('mall')" style="background:#FCF3CF; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong data-i18n-html="mall.brand.mall_card">🛒 크라우니몰</strong><br><span style="color:var(--accent);">식품/가전</span></div>
-                <div onclick="filterMallBrand('designers')" style="background:#EBDEF0; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong data-i18n-html="mall.brand.designers_card">👗 디자이너스</strong><br><span style="color:var(--accent);">의류/잡화</span></div>
+            <div id="mall-brand-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:0.5rem; margin-bottom:1rem;">
+                <div onclick="filterMallBrand(null)" class="mall-brand-card active" data-brand="all" style="background:#333; color:white; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>🏪 전체</strong><br><span style="opacity:0.7;">ALL</span></div>
+                <div onclick="filterMallBrand('present')" class="mall-brand-card" data-brand="present" style="background:#FDEBD0; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>💄 프레즌트</strong><br><span style="color:var(--accent);">화장품</span></div>
+                <div onclick="filterMallBrand('doctor')" class="mall-brand-card" data-brand="doctor" style="background:#D5F5E3; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>💊 포닥터</strong><br><span style="color:var(--accent);">건강기능식품</span></div>
+                <div onclick="filterMallBrand('medical')" class="mall-brand-card" data-brand="medical" style="background:#D6EAF8; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>🏥 메디컬</strong><br><span style="color:var(--accent);">의료기기</span></div>
+                <div onclick="filterMallBrand('avls')" class="mall-brand-card" data-brand="avls" style="background:#E8DAEF; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>🎬 AVLs</strong><br><span style="color:var(--accent);">음향/영상/조명</span></div>
+                <div onclick="filterMallBrand('solution')" class="mall-brand-card" data-brand="solution" style="background:#F2F3F4; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>🔐 프라이빗</strong><br><span style="color:var(--accent);">방송/보안</span></div>
+                <div onclick="filterMallBrand('architect')" class="mall-brand-card" data-brand="architect" style="background:#FADBD8; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>🏗️ 아키텍트</strong><br><span style="color:var(--accent);">건축</span></div>
+                <div onclick="filterMallBrand('mall')" class="mall-brand-card" data-brand="mall" style="background:#FCF3CF; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>🛒 크라우니몰</strong><br><span style="color:var(--accent);">식품/가전</span></div>
+                <div onclick="filterMallBrand('designers')" class="mall-brand-card" data-brand="designers" style="background:#EBDEF0; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>👗 디자이너스</strong><br><span style="color:var(--accent);">의류/잡화</span></div>
             </div>
             
             <!-- 검색/정렬 -->
@@ -1753,7 +1754,7 @@
     <script src="js/group-chat.js?v=1.0"></script>
     <script src="js/send.js?v=9.5"></script>
     <script src="js/admin.js?v=13.1"></script>
-    <script src="js/marketplace.js?v=14.2"></script>
+    <script src="js/marketplace.js?v=14.3"></script>
     <script src="js/books.js?v=1.1"></script>
     <script src="js/trading.js?v=13.5"></script>
     <script src="js/mentor-learning.js?v=1.0" defer></script>

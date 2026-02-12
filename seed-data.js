@@ -29,15 +29,15 @@ async function seed() {
 
   // 1. Products (Mall) - 9개
   const products = [
-    { title: '멜로우 마스크팩 세트', description: '프리미엄 보습 마스크팩 10매입. 히알루론산 함유.', price: 25500, token: 'CRGC', category: '뷰티', image: '🧴' },
-    { title: '크라우니 블루투스 스피커', description: '360도 서라운드 사운드. IPX7 방수.', price: 89000, token: 'CRGC', category: '음향', image: '🔊' },
-    { title: '아르띠스떼 에너지크림', description: '피부 에너지를 채워주는 고보습 크림 50ml.', price: 76500, token: 'CRGC', category: '뷰티', image: '✨' },
-    { title: '크라우니 무선 이어폰 Pro', description: 'ANC 노이즈캔슬링. 30시간 배터리.', price: 159000, token: 'CRGC', category: '음향', image: '🎧' },
-    { title: '고센스 스포츠겔', description: '근육 피로 회복 마사지겔 200ml.', price: 32000, token: 'CRGC', category: '헬스', image: '💪' },
-    { title: '크라우니 텀블러 500ml', description: '진공 단열 스테인리스. 12시간 보온.', price: 28000, token: 'CRGC', category: '생활', image: '☕' },
-    { title: '멜로우 클렌징 폼', description: '약산성 저자극 클렌징. 민감성 피부용.', price: 18500, token: 'CRGC', category: '뷰티', image: '🫧' },
-    { title: '크라우니 보조배터리 20000mAh', description: 'PD 65W 급속충전. 노트북 충전 가능.', price: 55000, token: 'CRGC', category: '전자', image: '🔋' },
-    { title: '아로마 디퓨저 세트', description: '초음파 가습 겸용. 라벤더/유칼립투스 오일 포함.', price: 42000, token: 'CRGC', category: '생활', image: '🌿' },
+    { title: '멜로우 마스크팩 세트', description: '프리미엄 보습 마스크팩 10매입. 히알루론산 함유.', price: 25500, token: 'CRGC', category: 'present', image: '🧴' },
+    { title: '크라우니 블루투스 스피커', description: '360도 서라운드 사운드. IPX7 방수.', price: 89000, token: 'CRGC', category: 'avls', image: '🔊' },
+    { title: '아르띠스떼 에너지크림', description: '피부 에너지를 채워주는 고보습 크림 50ml.', price: 76500, token: 'CRGC', category: 'present', image: '✨' },
+    { title: '크라우니 무선 이어폰 Pro', description: 'ANC 노이즈캔슬링. 30시간 배터리.', price: 159000, token: 'CRGC', category: 'avls', image: '🎧' },
+    { title: '고센스 스포츠겔', description: '근육 피로 회복 마사지겔 200ml.', price: 32000, token: 'CRGC', category: 'doctor', image: '💪' },
+    { title: '크라우니 텀블러 500ml', description: '진공 단열 스테인리스. 12시간 보온.', price: 28000, token: 'CRGC', category: 'mall', image: '☕' },
+    { title: '멜로우 클렌징 폼', description: '약산성 저자극 클렌징. 민감성 피부용.', price: 18500, token: 'CRGC', category: 'present', image: '🫧' },
+    { title: '크라우니 보조배터리 20000mAh', description: 'PD 65W 급속충전. 노트북 충전 가능.', price: 55000, token: 'CRGC', category: 'mall', image: '🔋' },
+    { title: '아로마 디퓨저 세트', description: '초음파 가습 겸용. 라벤더/유칼립투스 오일 포함.', price: 42000, token: 'CRGC', category: 'mall', image: '🌿' },
   ];
 
   for (const p of products) {
