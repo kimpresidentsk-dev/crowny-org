@@ -132,12 +132,12 @@ async function loadDashboard() {
             
             <!-- Quick Shortcuts -->
             <div class="dash-card">
-                <h4>⚡ ${t('dashboard.shortcuts', '빠른 바로가기')}</h4>
-                <div class="dash-shortcuts">
-                    <button onclick="showPage('prop-trading')" class="dash-shortcut-btn">📊 ${t('section.prop_trading', 'TRADING')}</button>
-                    <button onclick="showPage('messenger')" class="dash-shortcut-btn">💬 ${t('section.messenger', 'MESSENGER')}</button>
-                    <button onclick="showPage('social')" class="dash-shortcut-btn">📸 ${t('section.social', 'SOCIAL')}</button>
-                    <button onclick="showPage('wallet')" class="dash-shortcut-btn">💰 ${t('section.wallet', 'WALLET')}</button>
+                <h4 style="display:flex;align-items:center;justify-content:space-between;">
+                    <span>⚡ ${t('dashboard.shortcuts', '빠른 바로가기')}</span>
+                    <button onclick="editShortcuts()" style="background:none;border:none;cursor:pointer;font-size:1rem;opacity:0.6;" title="${t('dashboard.edit_shortcuts','편집')}">✏️</button>
+                </h4>
+                <div class="dash-shortcuts" id="dash-shortcuts-container">
+                    ${renderShortcuts()}
                 </div>
             </div>
             
@@ -158,3 +158,107 @@ async function loadDashboard() {
         </div>
     `;
 }
+
+// ========== Quick Shortcuts (사용자 커스텀) ==========
+
+const ALL_PAGES = [
+    { id:'dashboard', icon:'📊', label:'DASHBOARD' },
+    { id:'today', icon:'🏠', label:'TODAY' },
+    { id:'messenger', icon:'💬', label:'MESSENGER' },
+    { id:'social', icon:'📸', label:'SOCIAL' },
+    { id:'wallet', icon:'💰', label:'WALLET' },
+    { id:'prop-trading', icon:'📈', label:'PROP TRADING' },
+    { id:'credit', icon:'💳', label:'CREDIT' },
+    { id:'mall', icon:'🛒', label:'MALL' },
+    { id:'art', icon:'🎨', label:'ART' },
+    { id:'books', icon:'📚', label:'BOOKS' },
+    { id:'artist', icon:'🌟', label:'ARTIST' },
+    { id:'energy', icon:'⚡', label:'ENERGY' },
+    { id:'business', icon:'🏢', label:'BUSINESS' },
+    { id:'fundraise', icon:'💝', label:'FUNDRAISE' },
+    { id:'settings', icon:'⚙️', label:'SETTINGS' },
+];
+
+const DEFAULT_SHORTCUTS = ['prop-trading','messenger','social','wallet'];
+
+function getShortcuts() {
+    try {
+        const saved = localStorage.getItem('crowny_shortcuts');
+        if (saved) return JSON.parse(saved);
+    } catch(e) {}
+    return DEFAULT_SHORTCUTS;
+}
+
+function saveShortcuts(list) {
+    localStorage.setItem('crowny_shortcuts', JSON.stringify(list));
+}
+
+function renderShortcuts() {
+    const ids = getShortcuts();
+    return ids.map(id => {
+        const p = ALL_PAGES.find(x => x.id === id);
+        if (!p) return '';
+        const url = `${location.origin}${location.pathname}#page=${id}`;
+        return `<button onclick="showPage('${id}')" class="dash-shortcut-btn" title="${url}">${p.icon} ${p.label}</button>`;
+    }).join('');
+}
+
+async function editShortcuts() {
+    const current = getShortcuts();
+    const modal = document.createElement('div');
+    modal.id = 'shortcut-edit-modal';
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+
+    const items = ALL_PAGES.map(p => {
+        const checked = current.includes(p.id) ? 'checked' : '';
+        return `<label style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0;border-bottom:1px solid #f0f0f0;cursor:pointer;">
+            <input type="checkbox" value="${p.id}" ${checked} style="width:18px;height:18px;accent-color:var(--gold,#D4AF37);">
+            <span style="font-size:1rem;">${p.icon}</span>
+            <span style="font-size:0.9rem;font-weight:500;">${p.label}</span>
+        </label>`;
+    }).join('');
+
+    modal.innerHTML = `<div style="background:white;border-radius:12px;max-width:400px;width:100%;max-height:80vh;overflow-y:auto;padding:1.2rem;">
+        <h3 style="margin-bottom:0.8rem;">⚡ ${t('dashboard.edit_shortcuts','바로가기 편집')}</h3>
+        <p style="font-size:0.8rem;color:#888;margin-bottom:1rem;">${t('dashboard.shortcut_hint','원하는 메뉴를 선택하세요 (최대 8개)')}</p>
+        <div id="shortcut-checklist">${items}</div>
+        <div style="display:flex;gap:0.5rem;margin-top:1rem;">
+            <button onclick="saveShortcutEdit()" style="flex:1;background:#0066cc;color:white;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;font-weight:700;">${t('common.save','저장')}</button>
+            <button onclick="document.getElementById('shortcut-edit-modal').remove()" style="flex:1;background:#eee;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;">${t('common.cancel','취소')}</button>
+        </div>
+        <div style="margin-top:0.8rem;padding-top:0.8rem;border-top:1px solid #eee;">
+            <p style="font-size:0.75rem;color:#888;">💡 ${t('dashboard.share_hint','각 페이지는 링크로 공유 가능합니다')}</p>
+        </div>
+    </div>`;
+    document.body.appendChild(modal);
+}
+
+function saveShortcutEdit() {
+    const checks = document.querySelectorAll('#shortcut-checklist input[type=checkbox]:checked');
+    const selected = Array.from(checks).map(c => c.value).slice(0, 8);
+    if (selected.length === 0) { showToast(t('dashboard.select_one','최소 1개를 선택하세요'), 'warning'); return; }
+    saveShortcuts(selected);
+    const container = document.getElementById('dash-shortcuts-container');
+    if (container) container.innerHTML = renderShortcuts();
+    document.getElementById('shortcut-edit-modal')?.remove();
+    showToast('⚡ ' + t('dashboard.shortcuts_saved','바로가기 저장 완료!'), 'success');
+}
+
+// ========== URL Anchor Routing ==========
+
+function handleHashRoute() {
+    const hash = location.hash;
+    if (!hash) return;
+    const params = new URLSearchParams(hash.slice(1));
+    const page = params.get('page');
+    if (page && typeof showPage === 'function') {
+        showPage(page);
+    }
+}
+
+window.addEventListener('hashchange', handleHashRoute);
+// 초기 로드 시에도 체크 (로그인 후)
+document.addEventListener('crownyReady', handleHashRoute);
+// 즉시 체크 (이미 로그인된 경우)
+if (document.readyState === 'complete') setTimeout(handleHashRoute, 500);

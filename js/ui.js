@@ -8,9 +8,16 @@ function showPage(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     
-    document.getElementById(pageId).classList.add('active');
+    const el = document.getElementById(pageId);
+    if (!el) return;
+    el.classList.add('active');
     const navItem = document.querySelector(`[onclick="showPage('${pageId}')"]`);
     if (navItem) navItem.classList.add('active');
+    
+    // URL 앵커 업데이트 (뒤로가기/공유 지원)
+    if (location.hash !== `#page=${pageId}`) {
+        history.replaceState(null, '', `#page=${pageId}`);
+    }
     
     document.getElementById('sidebar').classList.remove('active');
     
