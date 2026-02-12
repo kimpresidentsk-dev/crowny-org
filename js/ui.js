@@ -73,7 +73,7 @@ function showPage(pageId) {
         loadCampaigns();
     }
     if (pageId === 'energy') {
-        loadEnergyProjects();
+        filterCrebCategory('all');
     }
     if (pageId === 'business') {
         loadBusinessList();

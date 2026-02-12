@@ -184,7 +184,7 @@
             <a href="#" onclick="showPage('artist')" class="nav-item">🌟 ARTIST<span class="nav-sub" data-i18n="nav.artist">아티스트</span></a>
             <hr class="nav-divider">
             <div class="nav-group-label">ECOSYSTEM</div>
-            <a href="#" onclick="showPage('energy')" class="nav-item">⚡ ENERGY<span class="nav-sub" data-i18n="nav.energy">에너지</span></a>
+            <a href="#" onclick="showPage('energy')" class="nav-item">🔬 CREB LABS<span class="nav-sub" data-i18n="nav.creb_labs">미래기술</span></a>
             <a href="#" onclick="showPage('business')" class="nav-item">🏢 BUSINESS<span class="nav-sub" data-i18n="nav.business">사업</span></a>
             <a href="#" onclick="showPage('fundraise')" class="nav-item">💝 FUNDRAISE<span class="nav-sub" data-i18n="nav.fundraise">모금</span></a>
             <hr class="nav-divider">
@@ -246,8 +246,8 @@
                     <h3>FUNDRAISE</h3>
                 </div>
                 <div class="service-card" onclick="showPage('energy')">
-                    <span class="icon">☀️</span>
-                    <h3>ENERGY</h3>
+                    <span class="icon">🔬</span>
+                    <h3>CREB LABS</h3>
                 </div>
                 <div class="service-card" onclick="showPage('business')">
                     <span class="icon">🏢</span>
@@ -990,22 +990,49 @@
             </div>
         </section>
 
-        <!-- ========== ENERGY - 에너지 사업 ========== -->
+        <!-- ========== CREB LABS - 미래기술 투자 ========== -->
         <section id="energy" class="page">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-                <h2 style="margin:0;" data-i18n="energy.title">⚡ ENERGY</h2>
+                <h2 style="margin:0;" data-i18n="energy.title">🔬 CREB LABS</h2>
                 <button class="admin-register-btn" id="energy-register-btn" onclick="openRegisterModal('energy')" data-i18n="energy.register">➕ 프로젝트 등록</button>
             </div>
             
-            <div class="section-banner" id="energy-banner" style="background:linear-gradient(135deg, #134e5e, #71b280);">
-                <h3 data-i18n="energy.banner_title">⚡ ENERGY — 신재생 에너지 투자</h3>
-                <p data-i18n="energy.banner_desc">태양광 발전 소액투자 → 실제 발전 수익 배분 · 1 CREB 투자 → 매달 최대 5 CREB 수익</p>
+            <div class="section-banner" id="energy-banner" style="background:linear-gradient(135deg, #0d2137, #1a5276, #2e86c1);">
+                <h3 data-i18n="energy.banner_title">🔬 CREB LABS — 미래를 위한 투자 플랫폼</h3>
+                <p data-i18n="energy.banner_desc">에너지 · 유전공학 · 생명공학 · AI·로보틱스 — CREB로 미래에 투자하세요</p>
+            </div>
+            
+            <!-- 카테고리 탭 -->
+            <div id="creb-category-tabs" style="display:flex; gap:0.4rem; margin-bottom:1rem; overflow-x:auto; padding-bottom:0.3rem;">
+                <button onclick="filterCrebCategory('all')" class="creb-tab active" data-cat="all" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #666; background:white; cursor:pointer; white-space:nowrap; font-size:0.85rem;">🌍 전체</button>
+                <button onclick="filterCrebCategory('energy')" class="creb-tab" data-cat="energy" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #ff9800; background:white; cursor:pointer; white-space:nowrap; font-size:0.85rem; color:#ff9800;">⚡ 에너지</button>
+                <button onclick="filterCrebCategory('genetics')" class="creb-tab" data-cat="genetics" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #E91E63; background:white; cursor:pointer; white-space:nowrap; font-size:0.85rem; color:#E91E63;">🧬 유전공학</button>
+                <button onclick="filterCrebCategory('biotech')" class="creb-tab" data-cat="biotech" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #4CAF50; background:white; cursor:pointer; white-space:nowrap; font-size:0.85rem; color:#4CAF50;">🔬 생명공학</button>
+                <button onclick="filterCrebCategory('ai_robotics')" class="creb-tab" data-cat="ai_robotics" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #2196F3; background:white; cursor:pointer; white-space:nowrap; font-size:0.85rem; color:#2196F3;">🤖 AI·로보틱스</button>
             </div>
             
             <!-- 시뮬레이션 모드 배지 -->
             <div style="background:#FFF3E0; border:2px solid #FF9800; padding:0.8rem; border-radius:8px; margin-bottom:1rem; text-align:center;">
                 <span style="font-weight:700; color:#E65100;" data-i18n="energy.simulation_mode">🧪 현재 시뮬레이션 모드</span>
-                <p style="font-size:0.8rem; color:var(--accent); margin-top:0.3rem;" data-i18n="energy.simulation_desc">실제 발전소 구축 전 시뮬레이션으로 수익 구조를 체험합니다</p>
+                <p style="font-size:0.8rem; color:var(--accent); margin-top:0.3rem;" data-i18n="energy.simulation_desc">실제 구축 전 시뮬레이션으로 투자 구조를 체험합니다</p>
+            </div>
+            
+            <!-- 임팩트 대시보드 -->
+            <div id="creb-impact-dashboard" style="background:linear-gradient(135deg,#f8f9fa,#e8f5e9); padding:1.2rem; border-radius:12px; margin-bottom:1rem; display:none;">
+                <h4 style="margin:0 0 0.8rem 0;">🌍 당신의 투자가 만든 변화</h4>
+                <div style="display:flex; gap:0.8rem; flex-wrap:wrap; margin-bottom:0.8rem;">
+                    <div style="flex:1; min-width:80px; background:white; padding:0.6rem; border-radius:8px; text-align:center;">
+                        <div style="font-size:0.7rem; color:var(--accent);">총 투자</div>
+                        <div id="impact-total-creb" style="font-weight:700;">0 CREB</div>
+                    </div>
+                    <div style="flex:1; min-width:80px; background:white; padding:0.6rem; border-radius:8px; text-align:center;">
+                        <div style="font-size:0.7rem; color:var(--accent);">참여 프로젝트</div>
+                        <div id="impact-project-count" style="font-weight:700;">0개</div>
+                    </div>
+                </div>
+                <div id="impact-category-bars" style="margin-bottom:0.8rem;"></div>
+                <div id="impact-messages" style="font-size:0.8rem; color:#555;"></div>
+                <div id="impact-sdg-badges" style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.5rem;"></div>
             </div>
             
             <!-- 수익 현황 -->
@@ -1029,7 +1056,7 @@
             
             <!-- 프로젝트 -->
             <div style="background:white; padding:1.5rem; border-radius:12px;">
-                <h3 style="margin-bottom:1rem;" data-i18n="energy.projects_title">⚡ 발전소 프로젝트</h3>
+                <h3 style="margin-bottom:1rem;" data-i18n="energy.projects_title">🔬 CREB LABS 프로젝트</h3>
                 <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
                     <button onclick="loadEnergyProjects()" class="btn-primary" style="flex:1;" data-i18n="energy.refresh_projects">🔄 프로젝트 새로고침</button>
                     <button onclick="loadMyEnergyInvestments()" class="btn-secondary" style="flex:1;" data-i18n="energy.my_investments">📋 내 투자 내역</button>
@@ -1761,20 +1788,31 @@
         </div>
     </div>
 
-    <!-- Energy Project Modal -->
+    <!-- CREB LABS Project Modal -->
     <div class="register-modal-overlay" id="modal-energy">
         <div class="register-modal-content">
             <button class="modal-close-btn" onclick="closeRegisterModal('energy')">&times;</button>
-            <h3 style="margin-bottom:1rem;" data-i18n="modal.energy_register">⚡ 프로젝트 등록</h3>
+            <h3 style="margin-bottom:1rem;" data-i18n="modal.energy_register">🔬 프로젝트 등록</h3>
             <div style="display:grid; gap:0.8rem;">
                 <input type="text" id="energy-title" placeholder="프로젝트명" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                <input type="text" id="energy-location" placeholder="위치" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                <select id="energy-category" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    <option value="energy">⚡ 에너지</option>
+                    <option value="genetics">🧬 유전공학</option>
+                    <option value="biotech">🔬 생명공학</option>
+                    <option value="ai_robotics">🤖 AI·로보틱스</option>
+                </select>
+                <select id="energy-invest-type" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    <option value="return">💰 수익형</option>
+                    <option value="donation">💝 기부형</option>
+                    <option value="hybrid">🔄 하이브리드</option>
+                </select>
+                <input type="text" id="energy-location" placeholder="위치/분야" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
-                    <input type="number" id="energy-capacity" placeholder="용량 (kW)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    <input type="number" id="energy-capacity" placeholder="용량/규모" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                     <input type="number" id="energy-return" placeholder="수익률 (%)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                 </div>
-                <input type="number" id="energy-goal" placeholder="목표 금액 (CRNY)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                <button onclick="createEnergyProject(); closeRegisterModal('energy');" class="btn-primary" data-i18n="modal.energy_register">⚡ 프로젝트 등록</button>
+                <input type="number" id="energy-goal" placeholder="목표 금액 (CREB)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                <button onclick="createEnergyProject(); closeRegisterModal('energy');" class="btn-primary" data-i18n="modal.energy_register">🔬 프로젝트 등록</button>
             </div>
         </div>
     </div>
@@ -1962,7 +2000,7 @@
     <script src="js/group-chat.js?v=2.0"></script>
     <script src="js/send.js?v=9.5"></script>
     <script src="js/admin.js?v=13.3"></script>
-    <script src="js/marketplace.js?v=17.1"></script>
+    <script src="js/marketplace.js?v=18.0"></script>
     <script src="js/books.js?v=1.1"></script>
     <script src="js/trading.js?v=13.5"></script>
     <script src="js/mentor-learning.js?v=1.0" defer></script>

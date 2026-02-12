@@ -3074,3 +3074,7 @@ a:not(.nav-item) {
     flex: 1; height: 20px; display: flex; align-items: center; gap: 2px;
 }
 .msg-actions-bar button.msg-action-btn { font-size: 0.75rem !important; padding: 2px 4px !important; }
+
+/* CREB LABS category tabs */
+.creb-tab.active { font-weight: 700; }
+.creb-tab:hover { opacity: 0.8; }

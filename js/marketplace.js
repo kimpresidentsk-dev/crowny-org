@@ -664,16 +664,72 @@ async function donateCampaign(id) {
     } catch (e) { showToast('실패: ' + e.message, 'error'); }
 }
 
-// ========== ENERGY - 에너지 사업 ==========
+// ========== CREB LABS - 미래기술 투자 ==========
+
+const CREB_CATEGORIES = {
+    energy: { icon: '⚡', color: '#ff9800', label: '에너지', sdg: 'SDG 7' },
+    genetics: { icon: '🧬', color: '#E91E63', label: '유전공학', sdg: 'SDG 3' },
+    biotech: { icon: '🔬', color: '#4CAF50', label: '생명공학', sdg: 'SDG 3' },
+    ai_robotics: { icon: '🤖', color: '#2196F3', label: 'AI·로보틱스', sdg: 'SDG 9' }
+};
+
+const CREB_INVEST_TYPES = {
+    return: { icon: '💰', label: '수익형', color: '#ff9800', bg: '#FFF3E0' },
+    donation: { icon: '💝', label: '기부형 · 선한 투자', color: '#4CAF50', bg: '#E8F5E9' },
+    hybrid: { icon: '🔄', label: '하이브리드', color: '#2196F3', bg: '#E3F2FD' }
+};
+
+const CREB_IMPACT = {
+    energy: { unit: 'kW 청정에너지 생산에 기여', factor: 0.5 },
+    genetics: { unit: '시간 희귀질환 연구 지원', factor: 0.01 },
+    biotech: { unit: '단계 신약 파이프라인 진행', factor: 0.005 },
+    ai_robotics: { unit: '건 AI 학습 데이터 처리', factor: 0.1 }
+};
+
+let _crebCurrentFilter = 'all';
+
+function filterCrebCategory(cat) {
+    _crebCurrentFilter = cat;
+    document.querySelectorAll('.creb-tab').forEach(b => {
+        b.classList.toggle('active', b.dataset.cat === cat);
+        if (b.dataset.cat === cat) { b.style.background = cat === 'all' ? '#333' : (CREB_CATEGORIES[cat]?.color || '#333'); b.style.color = 'white'; }
+        else { b.style.background = 'white'; b.style.color = b.dataset.cat === 'all' ? '#666' : (CREB_CATEGORIES[b.dataset.cat]?.color || '#666'); }
+    });
+    loadEnergyProjects();
+}
+
+function getInvestType(x) {
+    if (x.investType) return x.investType;
+    if (x.returnRate > 0) return 'return';
+    return 'return';
+}
+
+function renderInvestBadge(x) {
+    const itype = getInvestType(x);
+    const info = CREB_INVEST_TYPES[itype] || CREB_INVEST_TYPES['return'];
+    return `<span style="display:inline-block; padding:0.15rem 0.5rem; border-radius:10px; font-size:0.7rem; background:${info.bg}; color:${info.color}; font-weight:600;">${info.icon} ${info.label}</span>`;
+}
+
+function renderMilestones(milestones) {
+    if (!milestones || !milestones.length) return '';
+    return milestones.map(m => {
+        const pct = Math.min(100, Math.round((m.current / m.target) * 100));
+        return `<div style="margin-top:0.3rem;"><div style="font-size:0.7rem; color:#555;">${m.name} (${pct}%)</div><div style="background:#e0e0e0; height:4px; border-radius:2px;"><div style="background:#2196F3; height:100%; border-radius:2px; width:${pct}%;"></div></div></div>`;
+    }).join('');
+}
 
 async function loadEnergyProjects() {
     const c = document.getElementById('energy-projects');
     if (!c) return; c.innerHTML = '로딩...';
     try {
-        const docs = await db.collection('energy_projects').where('status','==','active').orderBy('createdAt','desc').limit(10).get();
-        if (docs.empty) { c.innerHTML = '<p style="color:var(--accent);">등록된 프로젝트가 없습니다. 관리자가 프로젝트를 등록할 수 있습니다.</p>'; return; }
+        let query = db.collection('energy_projects').where('status','==','active').orderBy('createdAt','desc').limit(20);
+        const docs = await query.get();
+        if (docs.empty) { c.innerHTML = '<p style="color:var(--accent);">등록된 프로젝트가 없습니다.</p>'; return; }
         c.innerHTML = '';
         docs.forEach(d => { const x = d.data();
+            const cat = x.category || 'energy';
+            if (_crebCurrentFilter !== 'all' && cat !== _crebCurrentFilter) return;
+            const catInfo = CREB_CATEGORIES[cat] || CREB_CATEGORIES.energy;
             const xTitle = x.name || x.title || '';
             const xGoal = x.goal || x.targetAmount || 0;
             const xInvested = x.invested || x.currentAmount || 0;
@@ -682,18 +738,126 @@ async function loadEnergyProjects() {
             const rate = x.returnRate || 0;
             const exMonthly = (100 * rate / 100 / 12).toFixed(2);
             const isAdmin = currentUser && (currentUser.email === 'admin@crowny.org' || currentUser.uid === x.creatorId);
-            c.innerHTML += `<div style="background:var(--bg); padding:1rem; border-radius:8px; margin-bottom:0.8rem;">
-                <h4>⚡ ${xTitle}</h4><p style="font-size:0.85rem; color:var(--accent); margin:0.3rem 0;">${x.location || ''} · ${x.capacity || ''}kW · 예상 수익률 ${rate}%</p>
-                <div style="font-size:0.8rem; color:#2e7d32; margin-top:0.3rem;">💰 100 CREB 투자 시 → 월 ${exMonthly} CREB (연 ${rate}%)</div>
+            const itype = getInvestType(x);
+            c.innerHTML += `<div style="background:var(--bg); padding:1rem; border-radius:8px; margin-bottom:0.8rem; border-left:4px solid ${catInfo.color};" onclick="openProjectDetail('${d.id}')" data-category="${cat}">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
+                    <h4 style="margin:0;">${catInfo.icon} ${xTitle}</h4>
+                    <span style="font-size:0.7rem; padding:0.15rem 0.5rem; border-radius:10px; background:${catInfo.color}15; color:${catInfo.color}; font-weight:600;">${catInfo.label}</span>
+                </div>
+                <div style="margin-bottom:0.3rem;">${renderInvestBadge(x)}</div>
+                <p style="font-size:0.85rem; color:var(--accent); margin:0.3rem 0;">${x.location || ''} ${x.capacity ? '· ' + x.capacity + 'kW' : ''} ${rate > 0 ? '· 예상 수익률 ' + rate + '%' : ''}</p>
+                ${rate > 0 ? `<div style="font-size:0.8rem; color:#2e7d32; margin-top:0.3rem;">💰 100 CREB 투자 시 → 월 ${exMonthly} CREB (연 ${rate}%)</div>` : ''}
+                ${itype === 'donation' ? `<div style="font-size:0.8rem; color:#4CAF50; margin-top:0.3rem;">💝 순수 기부 · 수익 없이 미래를 위한 투자</div>` : ''}
+                ${itype === 'hybrid' ? `<div style="font-size:0.8rem; color:#2196F3; margin-top:0.3rem;">🔄 수익 50% + 재투자 50%</div>` : ''}
                 <div style="font-size:0.75rem; color:var(--accent);">👥 투자자 ${xInvestors}명</div>
-                <div style="background:#e0e0e0; height:6px; border-radius:3px; margin:0.5rem 0;"><div style="background:#ff9800; height:100%; border-radius:3px; width:${pct}%;"></div></div>
+                <div style="background:#e0e0e0; height:6px; border-radius:3px; margin:0.5rem 0;"><div style="background:${catInfo.color}; height:100%; border-radius:3px; width:${pct}%;"></div></div>
                 <div style="display:flex; justify-content:space-between; font-size:0.85rem;"><span>${xInvested}/${xGoal} CREB</span><span>${pct}%</span></div>
-                <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
-                    <button onclick="investEnergy('${d.id}')" style="background:#ff9800; color:white; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; flex:1;">${t('energy.invest_btn','☀️ 투자하기')}</button>
+                ${renderMilestones(x.milestones)}
+                <div style="display:flex; gap:0.5rem; margin-top:0.5rem;" onclick="event.stopPropagation();">
+                    <button onclick="investEnergy('${d.id}')" style="background:${catInfo.color}; color:white; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; flex:1;">${t('energy.invest_btn','☀️ 투자하기')}</button>
                     ${isAdmin ? `<button onclick="distributeEnergyReturns('${d.id}')" style="background:#1976D2; color:white; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; flex:1; font-size:0.8rem;">${t('energy.distribute','📊 수익 배분')}</button>` : ''}
                 </div>
             </div>`; });
+        if (!c.innerHTML.trim()) c.innerHTML = '<p style="color:var(--accent);">이 카테고리에 프로젝트가 없습니다.</p>';
     } catch (e) { c.innerHTML = e.message; }
+}
+
+// 프로젝트 상세 모달
+async function openProjectDetail(projectId) {
+    try {
+        const doc = await db.collection('energy_projects').doc(projectId).get();
+        if (!doc.exists) return;
+        const x = doc.data();
+        const cat = x.category || 'energy';
+        const catInfo = CREB_CATEGORIES[cat] || CREB_CATEGORIES.energy;
+        const rate = x.returnRate || 0;
+        const xTitle = x.name || x.title || '';
+        const xGoal = x.goal || 0;
+        const xInvested = x.invested || 0;
+        const pct = Math.min(100, Math.round((xInvested/xGoal)*100));
+
+        let teamHtml = '';
+        if (x.teamMembers && x.teamMembers.length) {
+            teamHtml = `<div style="margin-top:1rem;"><h4>👥 팀</h4>${x.teamMembers.map(m => `<div style="padding:0.3rem 0; font-size:0.85rem;">${m.name} — ${m.role || ''}</div>`).join('')}</div>`;
+        }
+
+        let milestonesHtml = '';
+        if (x.milestones && x.milestones.length) {
+            milestonesHtml = `<div style="margin-top:1rem;"><h4>📋 마일스톤</h4>${x.milestones.map(m => {
+                const mp = Math.min(100, Math.round((m.current/m.target)*100));
+                return `<div style="margin:0.5rem 0;"><div style="font-size:0.85rem; font-weight:600;">${m.name}</div><div style="background:#e0e0e0; height:6px; border-radius:3px; margin:0.3rem 0;"><div style="background:${catInfo.color}; height:100%; border-radius:3px; width:${mp}%;"></div></div><div style="font-size:0.75rem; color:var(--accent);">${m.current}/${m.target} (${mp}%)</div></div>`;
+            }).join('')}</div>`;
+        }
+
+        // Load comments
+        let commentsHtml = '';
+        try {
+            const comments = await db.collection('energy_projects').doc(projectId).collection('energy_comments').orderBy('createdAt','desc').limit(20).get();
+            if (!comments.empty) {
+                commentsHtml = comments.docs.map(c => {
+                    const cd = c.data();
+                    const date = cd.createdAt?.toDate ? cd.createdAt.toDate().toLocaleDateString('ko-KR') : '';
+                    return `<div style="padding:0.5rem; background:var(--bg); border-radius:6px; margin-bottom:0.4rem;"><div style="font-size:0.75rem; color:var(--accent);">${cd.nickname || '익명'} · ${date}</div><div style="font-size:0.85rem;">${cd.text}</div></div>`;
+                }).join('');
+            }
+        } catch(e) {}
+
+        // Load investors
+        let investorsHtml = '';
+        try {
+            const invs = await db.collection('energy_investments').where('projectId','==',projectId).orderBy('timestamp','desc').limit(10).get();
+            if (!invs.empty) {
+                investorsHtml = `<div style="margin-top:1rem;"><h4>💰 최근 투자자</h4>${invs.docs.map(i => {
+                    const id = i.data();
+                    return `<div style="font-size:0.8rem; padding:0.2rem 0;">익명 · ${id.amount} CREB</div>`;
+                }).join('')}</div>`;
+            }
+        } catch(e) {}
+
+        const modalHtml = `<div id="creb-project-modal" style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); z-index:10000; display:flex; align-items:center; justify-content:center; padding:1rem;" onclick="if(event.target===this)this.remove();">
+            <div style="background:white; border-radius:12px; max-width:550px; width:100%; max-height:90vh; overflow-y:auto; padding:1.5rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                    <h3 style="margin:0;">${catInfo.icon} ${xTitle}</h3>
+                    <button onclick="document.getElementById('creb-project-modal').remove()" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+                </div>
+                <div style="display:flex; gap:0.5rem; margin-bottom:0.8rem;">
+                    <span style="padding:0.2rem 0.6rem; border-radius:10px; font-size:0.75rem; background:${catInfo.color}15; color:${catInfo.color}; font-weight:600;">${catInfo.label}</span>
+                    ${renderInvestBadge(x)}
+                    <span style="padding:0.2rem 0.6rem; border-radius:10px; font-size:0.75rem; background:#f0f0f0; color:#666;">${catInfo.sdg}</span>
+                </div>
+                <p style="color:var(--accent);">${x.description || x.location || ''}</p>
+                <div style="background:#e0e0e0; height:8px; border-radius:4px; margin:0.8rem 0;"><div style="background:${catInfo.color}; height:100%; border-radius:4px; width:${pct}%;"></div></div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:1rem;"><span>${xInvested}/${xGoal} CREB (${pct}%)</span><span>수익률 ${rate}%</span></div>
+                ${teamHtml}${milestonesHtml}${investorsHtml}
+                <div style="margin-top:1rem;"><h4>💬 댓글</h4>
+                    <div style="display:flex; gap:0.5rem; margin-bottom:0.8rem;">
+                        <input type="text" id="creb-comment-input" placeholder="질문이나 의견..." style="flex:1; padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
+                        <button onclick="postCrebComment('${projectId}')" style="background:${catInfo.color}; color:white; border:none; padding:0.5rem 1rem; border-radius:6px; cursor:pointer;">등록</button>
+                    </div>
+                    ${commentsHtml}
+                </div>
+                <button onclick="investEnergy('${projectId}'); document.getElementById('creb-project-modal').remove();" class="btn-primary" style="width:100%; margin-top:1rem;">💰 투자하기</button>
+            </div>
+        </div>`;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    } catch(e) { console.error(e); }
+}
+
+async function postCrebComment(projectId) {
+    if (!currentUser) { showToast('로그인이 필요합니다', 'warning'); return; }
+    const input = document.getElementById('creb-comment-input');
+    const text = input?.value.trim();
+    if (!text) return;
+    try {
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        await db.collection('energy_projects').doc(projectId).collection('energy_comments').add({
+            userId: currentUser.uid, nickname: userDoc.data()?.nickname || '익명',
+            text, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        showToast('댓글 등록!', 'success');
+        document.getElementById('creb-project-modal')?.remove();
+        openProjectDetail(projectId);
+    } catch(e) { showToast('실패: ' + e.message, 'error'); }
 }
 
 async function investEnergy(id) {
@@ -1540,15 +1704,19 @@ async function createEnergyProject() {
     const capacity = parseFloat(document.getElementById('energy-capacity')?.value) || 0;
     const returnRate = parseFloat(document.getElementById('energy-return')?.value) || 0;
     const goal = parseFloat(document.getElementById('energy-goal')?.value) || 0;
+    const category = document.getElementById('energy-category')?.value || 'energy';
+    const investType = document.getElementById('energy-invest-type')?.value || 'return';
     if (!title || !goal) { showToast('프로젝트명과 목표 금액을 입력하세요', 'warning'); return; }
     try {
         await db.collection('energy_projects').add({
-            title, location, capacity, returnRate, goal,
+            title, location, capacity, returnRate, goal, category, investType,
             invested: 0, investors: 0, status: 'active',
+            milestones: [], teamMembers: [],
             creatorId: currentUser.uid,
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
-        showToast(`⚡ "${title}" 프로젝트 등록!`, 'success');
+        const catInfo = CREB_CATEGORIES[category] || CREB_CATEGORIES.energy;
+        showToast(`${catInfo.icon} "${title}" 프로젝트 등록!`, 'success');
         document.getElementById('energy-title').value = '';
         loadEnergyProjects();
     } catch (e) { showToast('실패: ' + e.message, 'error'); }
@@ -1666,38 +1834,42 @@ async function loadMyEnergyInvestments() {
     c.innerHTML = '<p style="text-align:center; color:var(--accent);">로딩...</p>';
     try {
         const docs = await db.collection('energy_investments').where('userId', '==', currentUser.uid).orderBy('timestamp', 'desc').get();
-        if (docs.empty) { c.innerHTML = '<p style="color:var(--accent);">투자 내역이 없습니다</p>'; return; }
+        if (docs.empty) { c.innerHTML = '<p style="color:var(--accent);">투자 내역이 없습니다</p>'; document.getElementById('creb-impact-dashboard').style.display = 'none'; return; }
         
-        // 프로젝트 정보 캐시
         const projCache = {};
         let totalInvested = 0, totalMonthly = 0;
+        const catTotals = { energy: 0, genetics: 0, biotech: 0, ai_robotics: 0 };
+        const projectIds = new Set();
         let rows = '';
         
         for (const d of docs.docs) {
             const inv = d.data();
             if (!projCache[inv.projectId]) {
                 const pDoc = await db.collection('energy_projects').doc(inv.projectId).get();
-                const pData = pDoc.exists ? pDoc.data() : { title: '삭제된 프로젝트', returnRate: 0 };
+                const pData = pDoc.exists ? pDoc.data() : { title: '삭제된 프로젝트', returnRate: 0, category: 'energy' };
                 if (!pData.title) pData.title = pData.name || '프로젝트';
                 projCache[inv.projectId] = pData;
             }
             const proj = projCache[inv.projectId];
+            const cat = proj.category || 'energy';
+            const catInfo = CREB_CATEGORIES[cat] || CREB_CATEGORIES.energy;
             const rate = proj.returnRate || 0;
             const monthlyReturn = (inv.amount * rate / 100 / 12);
-            const annualReturn = (inv.amount * rate / 100);
             totalInvested += inv.amount;
             totalMonthly += monthlyReturn;
+            catTotals[cat] = (catTotals[cat] || 0) + inv.amount;
+            projectIds.add(inv.projectId);
             const dateStr = inv.timestamp?.toDate ? inv.timestamp.toDate().toLocaleDateString('ko-KR') : '-';
             
-            rows += `<div style="background:var(--bg); padding:0.8rem; border-radius:8px; margin-bottom:0.5rem;">
+            rows += `<div style="background:var(--bg); padding:0.8rem; border-radius:8px; margin-bottom:0.5rem; border-left:3px solid ${catInfo.color};">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div>
-                        <strong>⚡ ${proj.title}</strong>
-                        <div style="font-size:0.75rem; color:var(--accent);">${dateStr} · ${inv.token || 'CRNY'}</div>
+                        <strong>${catInfo.icon} ${proj.title}</strong>
+                        <div style="font-size:0.75rem; color:var(--accent);">${dateStr} · ${inv.token || 'CREB'}</div>
                     </div>
                     <div style="text-align:right;">
-                        <div style="font-weight:700; color:#ff9800;">${inv.amount} ${inv.token || 'CRNY'}</div>
-                        <div style="font-size:0.75rem; color:#4CAF50;">월 ${monthlyReturn.toFixed(2)} CREB (연 ${rate}%)</div>
+                        <div style="font-weight:700; color:${catInfo.color};">${inv.amount} ${inv.token || 'CREB'}</div>
+                        ${rate > 0 ? `<div style="font-size:0.75rem; color:#4CAF50;">월 ${monthlyReturn.toFixed(2)} CREB (연 ${rate}%)</div>` : `<div style="font-size:0.75rem; color:#4CAF50;">💝 기부</div>`}
                     </div>
                 </div>
             </div>`;
@@ -1711,11 +1883,54 @@ async function loadMyEnergyInvestments() {
             </div>
             ${rows}`;
         
-        // 상단 투자 현황도 업데이트
+        // 상단 투자 현황
         const ei = document.getElementById('energy-invested');
         if (ei) ei.textContent = `${totalInvested.toFixed(1)} CREB`;
         const em = document.getElementById('energy-monthly');
         if (em) em.textContent = `${totalMonthly.toFixed(2)} CREB`;
+
+        // 임팩트 대시보드
+        const dashboard = document.getElementById('creb-impact-dashboard');
+        if (dashboard) {
+            dashboard.style.display = 'block';
+            document.getElementById('impact-total-creb').textContent = `${totalInvested.toFixed(0)} CREB`;
+            document.getElementById('impact-project-count').textContent = `${projectIds.size}개`;
+            
+            // 카테고리 바
+            const barsEl = document.getElementById('impact-category-bars');
+            let barsHtml = '';
+            for (const [cat, amount] of Object.entries(catTotals)) {
+                if (amount <= 0) continue;
+                const ci = CREB_CATEGORIES[cat];
+                const pct = Math.round((amount / totalInvested) * 100);
+                barsHtml += `<div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.3rem;">
+                    <span style="font-size:0.8rem; min-width:80px;">${ci.icon} ${ci.label}</span>
+                    <div style="flex:1; background:#e0e0e0; height:8px; border-radius:4px;"><div style="background:${ci.color}; height:100%; border-radius:4px; width:${pct}%;"></div></div>
+                    <span style="font-size:0.75rem; color:var(--accent); min-width:35px;">${pct}%</span>
+                </div>`;
+            }
+            barsEl.innerHTML = barsHtml;
+            
+            // 임팩트 메시지
+            const msgEl = document.getElementById('impact-messages');
+            let msgs = '';
+            for (const [cat, amount] of Object.entries(catTotals)) {
+                if (amount <= 0) continue;
+                const ci = CREB_CATEGORIES[cat];
+                const imp = CREB_IMPACT[cat];
+                const val = (amount * imp.factor).toFixed(1);
+                msgs += `<div style="margin:0.2rem 0;">${ci.icon} ${val} ${imp.unit}</div>`;
+            }
+            msgEl.innerHTML = msgs;
+            
+            // SDG 배지
+            const sdgEl = document.getElementById('impact-sdg-badges');
+            const sdgs = new Set();
+            for (const [cat, amount] of Object.entries(catTotals)) {
+                if (amount > 0) sdgs.add(CREB_CATEGORIES[cat].sdg);
+            }
+            sdgEl.innerHTML = [...sdgs].map(s => `<span style="display:inline-block; padding:0.2rem 0.6rem; border-radius:12px; background:#E3F2FD; color:#1565C0; font-size:0.75rem; font-weight:600;">🏅 ${s}</span>`).join('');
+        }
     } catch (e) { c.innerHTML = `<p style="color:red;">${e.message}</p>`; }
 }
 
