@@ -545,6 +545,7 @@
                 <div style="display:flex; gap:0.5rem;">
                     <button onclick="showNewChatModal()" class="btn-primary" style="padding:0.6rem 1rem; border-radius:10px; font-size:0.85rem;" data-i18n="messenger.new_chat">✏️ 새 채팅</button>
                     <button onclick="showNewGroupModal()" class="btn-primary" style="padding:0.6rem 1rem; border-radius:10px; font-size:0.85rem;" data-i18n="messenger.new_group">👥 새 그룹</button>
+                    <button onclick="E2ECrypto.showStartSecretChatModal()" class="btn-primary" style="padding:0.6rem 1rem; border-radius:10px; font-size:0.85rem; background:#e65100;">🔒 비밀 채팅</button>
                     <button onclick="showAddContactModal()" class="btn-secondary" style="padding:0.6rem 1rem; border-radius:10px; font-size:0.85rem;" data-i18n="messenger.contacts">📋 연락처</button>
                 </div>
             </div>
@@ -1960,6 +1961,14 @@
         #btn-chart-sell:active, #btn-sell:active { transform: scale(0.98); }
         #btn-close-last:hover, #btn-flatten:hover { filter: brightness(1.15); }
         .trade-btn-disabled { opacity: 0.5; cursor: not-allowed !important; pointer-events: none; }
+        /* Toggle Switch */
+        .toggle-switch { position:relative; display:inline-block; width:44px; height:24px; }
+        .toggle-switch input { opacity:0; width:0; height:0; }
+        .toggle-slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#ccc; border-radius:24px; transition:0.3s; }
+        .toggle-slider::before { content:''; position:absolute; height:18px; width:18px; left:3px; bottom:3px; background:white; border-radius:50%; transition:0.3s; }
+        .toggle-switch input:checked + .toggle-slider { background:#4CAF50; }
+        .toggle-switch input:checked + .toggle-slider::before { transform:translateX(20px); }
+        .toggle-switch input:disabled + .toggle-slider { opacity:0.5; cursor:not-allowed; }
     </style>
     
     <script>
@@ -2011,11 +2020,12 @@
     <script src="js/auth.js?v=9.5"></script>
     <script src="js/wallet.js?v=11.0"></script>
     <script src="js/offchain.js?v=10.0"></script>
-    <script src="js/social.js?v=18.1"></script>
+    <script src="js/e2e-crypto.js?v=1.0"></script>
+    <script src="js/social.js?v=19.0"></script>
     <script src="js/friends.js?v=2.1"></script>
     <script src="js/stories.js?v=1.1"></script>
     <script src="js/explore.js?v=1.1"></script>
-    <script src="js/group-chat.js?v=2.1"></script>
+    <script src="js/group-chat.js?v=3.0"></script>
     <script src="js/send.js?v=9.5"></script>
     <script src="js/admin.js?v=13.4"></script>
     <script src="js/marketplace.js?v=18.1"></script>

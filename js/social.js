@@ -523,6 +523,11 @@ async function loadMessages() {
         chatItem.className = 'chat-item';
         chatItem.dataset.chatId = doc.id;
         chatItem.onclick = () => openChat(doc.id, otherId);
+        const secIndicators = [];
+        if (chat.secret) secIndicators.push('🔒');
+        else if (chat.e2eEnabled !== false) secIndicators.push('🔒');
+        if (chat.autoDeleteAfter > 0) secIndicators.push('⏱️');
+
         chatItem.innerHTML = `
             <div style="position:relative;">
                 ${avatarHTML(info.photoURL, info.nickname, 44)}
@@ -530,7 +535,7 @@ async function loadMessages() {
             </div>
             <div class="chat-preview" style="flex:1;min-width:0;">
                 <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <strong>${info.nickname}</strong>
+                    <strong>${chat.secret ? '🔒 ' : ''}${info.nickname}${secIndicators.length ? ' <span style="font-size:0.7rem;opacity:0.5;">' + secIndicators.join('') + '</span>' : ''}</strong>
                     ${lastTime ? `<span class="chat-time">${getTimeAgo(lastTime)}</span>` : ''}
                 </div>
                 <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -598,6 +603,32 @@ async function openChat(chatId, otherId) {
         }
     });
 
+    // Get chat settings for E2E / secret / auto-delete indicators
+    let _chatSettings = {};
+    let _screenshotCleanup = null;
+    try {
+        const chatDocData = await db.collection('chats').doc(chatId).get();
+        _chatSettings = chatDocData.data() || {};
+    } catch (e) {}
+
+    // Secret chat screenshot detection
+    if (_chatSettings.secret && typeof E2ECrypto !== 'undefined') {
+        _screenshotCleanup = E2ECrypto.setupScreenshotDetection(chatId, otherId);
+    }
+
+    // Update header with security indicators
+    const secIcons = [];
+    if (_chatSettings.e2eEnabled !== false) secIcons.push('🔒');
+    if (_chatSettings.autoDeleteAfter > 0) secIcons.push('⏱️');
+    if (_chatSettings.secret) secIcons.push('🤫');
+    if (secIcons.length > 0) {
+        const headerEl = document.getElementById('chat-username');
+        const secBadge = document.createElement('span');
+        secBadge.style.cssText = 'font-size:0.7rem;margin-left:0.3rem;opacity:0.7;';
+        secBadge.textContent = secIcons.join(' ');
+        headerEl.querySelector('strong')?.appendChild(secBadge);
+    }
+
     // Listen for messages
     chatUnsubscribe = db.collection('chats').doc(chatId)
         .collection('messages').orderBy('timestamp')
@@ -630,6 +661,19 @@ async function openChat(chatId, otherId) {
             for (const doc of snapshot.docs) {
                 const msg = doc.data();
                 const msgId = doc.id;
+
+                // Skip expired messages
+                if (typeof E2ECrypto !== 'undefined' && E2ECrypto.isMessageExpired(msg)) continue;
+
+                // Decrypt E2E message
+                if (msg.encrypted && typeof E2ECrypto !== 'undefined') {
+                    try {
+                        msg._decryptedText = await E2ECrypto.decryptMessage(msg, currentUser.uid);
+                    } catch (e) {
+                        msg._decryptedText = '🔒 암호화된 메시지 (복호화 불가)';
+                    }
+                }
+
                 const isMine = msg.senderId === currentUser.uid;
                 const timestamp = msg.timestamp?.toDate?.() || new Date();
 
@@ -703,14 +747,20 @@ async function openChat(chatId, otherId) {
                         content += `<div style="background:linear-gradient(135deg,#FFD700,#FFA000);color:#333;padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
                     }
                     // Text (skip for sticker/gif)
-                    if (msg.text && msgType !== 'sticker' && msgType !== 'gif') {
+                    const displayText = msg._decryptedText || msg.text;
+                    if (displayText && msgType !== 'sticker' && msgType !== 'gif') {
+                        // Signature warning
+                        let sigWarning = '';
+                        if (msg._decryptedText && msg._decryptedText.endsWith('⚠️ 서명 검증 실패')) {
+                            sigWarning = '<div style="font-size:0.7rem;color:#e65100;margin-top:0.2rem;">⚠️ 서명 검증 실패</div>';
+                        }
                         // Link preview
                         if (typeof parseLinkPreviews === 'function') {
-                            const parsed = parseLinkPreviews(msg.text);
-                            content += `<span>${parsed.html}</span>`;
+                            const parsed = parseLinkPreviews(displayText);
+                            content += `<span>${parsed.html}</span>${sigWarning}`;
                             if (parsed.previews) content += parsed.previews;
                         } else {
-                            content += `<span>${msg.text}</span>`;
+                            content += `<span>${displayText}</span>${sigWarning}`;
                         }
                     }
                 }
@@ -738,16 +788,25 @@ async function openChat(chatId, otherId) {
                     }
                 }
 
+                // Auto-delete remaining time
+                let expiryHTML = '';
+                if (msg.expiresAt && typeof E2ECrypto !== 'undefined') {
+                    const remaining = E2ECrypto.getRemainingTime(msg);
+                    if (remaining) expiryHTML = `<span style="font-size:0.65rem;color:#e65100;margin-left:0.3rem;">⏱️${remaining}</span>`;
+                }
+
                 // Action buttons (reaction + reply + forward + pin + delete)
                 let actionsHTML = '';
                 if (!msg.deleted) {
                     const side = isMine ? 'left' : 'right';
                     const sName = senderInfo.nickname.replace(/'/g, "\\'");
-                    const mText = (msg.text || '').replace(/'/g, "\\'").substring(0, 80);
+                    const mText = (displayText || msg.text || '').replace(/'/g, "\\'").substring(0, 80);
                     actionsHTML = `<div class="msg-actions-bar ${side}" id="actions-${msgId}">`;
                     actionsHTML += `<button class="msg-action-btn" onclick="showReactionPicker('${msgId}')">😊</button>`;
                     actionsHTML += `<button class="msg-action-btn" onclick="setReplyTo('${msgId}','${mText}','${msg.senderId}','${sName}')">↩️</button>`;
-                    actionsHTML += `<button class="msg-action-btn" onclick="forwardMessage('${msgId}')">↗️</button>`;
+                    if (!_chatSettings.noForward && !_chatSettings.secret) {
+                        actionsHTML += `<button class="msg-action-btn" onclick="forwardMessage('${msgId}')">↗️</button>`;
+                    }
                     actionsHTML += `<button class="msg-action-btn" onclick="pinMessage('${msgId}','${mText}')">📌</button>`;
                     if (isMine) actionsHTML += `<button class="msg-action-btn" onclick="deleteMessage('${msgId}')">🗑️</button>`;
                     actionsHTML += '</div>';
@@ -761,7 +820,7 @@ async function openChat(chatId, otherId) {
                         ${actionsHTML}
                         <div style="background:${isMine ? 'var(--text)' : '#f0f0f0'};color:${isMine ? 'white' : 'var(--text)'};padding:0.6rem 0.8rem;border-radius:${isMine ? '12px 12px 0 12px' : '12px 12px 12px 0'};word-break:break-word;font-size:0.9rem;line-height:1.4;">${content}</div>
                         ${reactionsHTML}
-                        <div class="msg-time" style="${isMine ? 'justify-content:flex-end;' : ''}">${formatMsgTime(timestamp)}${readReceipt}</div>
+                        <div class="msg-time" style="${isMine ? 'justify-content:flex-end;' : ''}">${msg.encrypted ? '🔒 ' : ''}${formatMsgTime(timestamp)}${expiryHTML}${readReceipt}</div>
                     </div>`;
                 messagesDiv.appendChild(msgEl);
             }
@@ -874,6 +933,35 @@ async function sendMessage() {
     const internalMatch = text.match(/#page=(\w+)&id=([\w-]+)/);
     if (internalMatch) {
         msgData.internalLink = { page: internalMatch[1], id: internalMatch[2] };
+    }
+
+    // E2E Encryption
+    if (typeof E2ECrypto !== 'undefined') {
+        try {
+            const chatSettings = await E2ECrypto.getChatSettings(currentChat);
+            if (chatSettings.e2eEnabled !== false) {
+                let encrypted = null;
+                if (currentChatOtherId) {
+                    // 1:1 chat
+                    encrypted = await E2ECrypto.encryptMessage(text, currentChatOtherId, currentUser.uid);
+                } else if (chatSettings.participants) {
+                    // Group chat
+                    encrypted = await E2ECrypto.encryptMessageForGroup(text, chatSettings.participants, currentUser.uid);
+                }
+                if (encrypted) {
+                    msgData.encryptedMessage = encrypted.encryptedMessage;
+                    msgData.encryptedKeys = encrypted.encryptedKeys;
+                    msgData.iv = encrypted.iv;
+                    msgData.encrypted = true;
+                    msgData.signature = encrypted.signature;
+                    msgData.text = '🔒 암호화된 메시지';
+                }
+            }
+            // Auto-delete
+            if (chatSettings.autoDeleteAfter && chatSettings.autoDeleteAfter > 0) {
+                msgData.expiresAt = E2ECrypto.getExpiresAt(chatSettings.autoDeleteAfter);
+            }
+        } catch (e) { console.warn('[E2E] Encryption failed, sending plaintext:', e); }
     }
 
     await db.collection('chats').doc(currentChat).collection('messages').add(msgData);
@@ -1468,6 +1556,7 @@ function showChatMenu() {
     menu.style.top = '48px';
     menu.style.right = '8px';
     menu.innerHTML = `
+        ${currentChat ? `<button class="chat-menu-item" onclick="E2ECrypto.showChatSecuritySettings('${currentChat}');this.closest('.chat-menu-dropdown').remove();">🔐 보안 설정</button>` : ''}
         <button class="chat-menu-item danger" onclick="leaveChat()">🚪 ${t('social.leave_chat','채팅방 나가기')}</button>`;
     header.style.position = 'relative';
     header.appendChild(menu);

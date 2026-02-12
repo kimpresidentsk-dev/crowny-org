@@ -592,11 +592,14 @@ async function loadMessagesWithGroups() {
 
         if (chat.type === 'group') {
             const memberCount = chat.participants ? chat.participants.length : 0;
+            const gSecIcons = [];
+            if (chat.e2eEnabled !== false) gSecIcons.push('🔒');
+            if (chat.autoDeleteAfter > 0) gSecIcons.push('⏱️');
             chatItem.onclick = () => openGroupChat(doc.id);
             chatItem.innerHTML = `
                 <div class="group-avatar-icon chat-list-group-icon">👥</div>
                 <div class="chat-preview">
-                    <strong>👥 ${chat.groupName} <span class="group-member-count">(${memberCount})</span></strong>
+                    <strong>👥 ${chat.groupName} <span class="group-member-count">(${memberCount})</span>${gSecIcons.length ? ' <span style="font-size:0.7rem;opacity:0.5;">' + gSecIcons.join('') + '</span>' : ''}</strong>
                     <p>${chat.lastMessage || t('social.no_messages', '메시지 없음')}</p>
                 </div>`;
         } else {
