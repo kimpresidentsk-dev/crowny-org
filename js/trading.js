@@ -753,7 +753,7 @@ async function initTradingViewChart() {
         
         const candleSeries = chart.addCandlestickSeries({
             upColor: '#0066cc', downColor: '#cc0000',
-            wickUpColor: '#888888', wickDownColor: '#888888',
+            wickUpColor: '#444444', wickDownColor: '#444444',
             borderUpColor: '#0066cc', borderDownColor: '#cc0000',
         });
         
@@ -1070,7 +1070,7 @@ function updateLiveCandleChart() {
                 // body가 전체 범위의 20% 미만 → 회색 (도지/팽이)
                 c.color = '#666666';
                 c.borderColor = '#888888';
-                c.wickColor = '#888888';
+                c.wickColor = '#444444';
             }
         }
         window.liveCandleSeries.setData(candles);
