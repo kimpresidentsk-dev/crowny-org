@@ -298,7 +298,7 @@ async function loadMessages() {
     if (!chatList) return;
     chatList.innerHTML = '';
     const chats = await db.collection('chats').where('participants', 'array-contains', currentUser.uid).get();
-    if (chats.empty) { chatList.innerHTML = '<p style="padding:1rem; color:var(--accent); text-align:center;">${t('social.start_chat','채팅을 시작하세요')}</p>'; return; }
+    if (chats.empty) { chatList.innerHTML = `<p style="padding:1rem; color:var(--accent); text-align:center;">${t('social.start_chat','채팅을 시작하세요')}</p>`; return; }
 
     const chatDocs = chats.docs.sort((a, b) => {
         const aTime = a.data().lastMessageTime?.toMillis?.() || 0;
@@ -341,7 +341,7 @@ async function openChat(chatId, otherId) {
             const messagesDiv = document.getElementById('chat-messages');
             messagesDiv.innerHTML = '';
             if (snapshot.empty) {
-                messagesDiv.innerHTML = '<p style="text-align:center; color:var(--accent); padding:2rem;">${t('social.send_first','메시지를 보내보세요!')}</p>';
+                messagesDiv.innerHTML = `<p style="text-align:center; color:var(--accent); padding:2rem;">${t('social.send_first','메시지를 보내보세요!')}</p>`;
             }
             // Cache sender info
             const senderCache = {};
@@ -582,7 +582,7 @@ async function loadComments(postId) {
     const list = document.getElementById(`comment-list-${postId}`);
     list.innerHTML = '';
     const comments = await db.collection('posts').doc(postId).collection('comments').orderBy('timestamp', 'asc').get();
-    if (comments.empty) { list.innerHTML = '<p style="text-align:center; color:var(--accent); font-size:0.8rem;">${t('social.first_comment','첫 댓글을 남겨보세요!')}</p>'; return; }
+    if (comments.empty) { list.innerHTML = `<p style="text-align:center; color:var(--accent); font-size:0.8rem;">${t('social.first_comment','첫 댓글을 남겨보세요!')}</p>`; return; }
     for (const doc of comments.docs) {
         const c = doc.data();
         const info = await getUserDisplayInfo(c.userId);
