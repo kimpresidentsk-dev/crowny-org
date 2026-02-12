@@ -490,11 +490,11 @@ function renderMentorPanel() {
                     <span class="mentor-detail-title">${mentor.icon} ${mentor.name} <span style="color:${mentor.color}; font-size:0.7rem;">${mentor.style}</span></span>
                     <span class="mentor-detail-signal" style="color:${sc.color}; font-weight:700;">${sc.label} ${sc.emoji}</span>
                 </div>
-                <div class="mentor-detail-message">"${result.message}"</div>
+                <div class="mentor-detail-message" style="${getMentorSettings().comment ? '' : 'display:none'}">"${result.message}"</div>
                 <div class="mentor-detail-confidence">
                     <span>신뢰도: <span style="font-family:monospace; letter-spacing:1px; color:${sc.color};">${confBar}</span> ${confPct}%</span>
                 </div>
-                <div class="mentor-detail-reason">${result.reason}</div>
+                <div class="mentor-detail-reason" style="${getMentorSettings().comment ? '' : 'display:none'}">${result.reason}</div>
                 ${typeof renderMentorPerformanceUI === 'function' ? renderMentorPerformanceUI(activeMentorId) : ''}
             </div>`;
     }
