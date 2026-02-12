@@ -1105,7 +1105,18 @@
                     </div>
                     
                     <!-- 🤖 멘토 패널 -->
-                    <div id="mentor-panel" style="margin-top:8px; padding:8px; background:#0d1b2a; border-radius:8px;">
+                    <div id="mentor-settings-bar" style="margin-top:8px; display:flex; gap:6px; justify-content:flex-end; align-items:center;">
+                        <label style="font-size:0.65rem; color:#888; display:flex; align-items:center; gap:3px; cursor:pointer;">
+                            <input type="checkbox" id="mentor-toggle-panel" checked onchange="toggleMentorSetting('panel')" style="width:14px;height:14px;accent-color:#C9A84C;"> 멘토봇
+                        </label>
+                        <label style="font-size:0.65rem; color:#888; display:flex; align-items:center; gap:3px; cursor:pointer;">
+                            <input type="checkbox" id="mentor-toggle-comment" checked onchange="toggleMentorSetting('comment')" style="width:14px;height:14px;accent-color:#C9A84C;"> 안내멘트
+                        </label>
+                        <label style="font-size:0.65rem; color:#888; display:flex; align-items:center; gap:3px; cursor:pointer;">
+                            <input type="checkbox" id="mentor-toggle-notif" checked onchange="toggleMentorSetting('notif')" style="width:14px;height:14px;accent-color:#C9A84C;"> 알림
+                        </label>
+                    </div>
+                    <div id="mentor-panel" style="margin-top:4px; padding:8px; background:#0d1b2a; border-radius:8px;">
                         <div style="color:#888; font-size:0.7rem; text-align:center; padding:8px;">🤖 멘토 분석 로딩 중...</div>
                     </div>
                 </div>
@@ -1610,7 +1621,8 @@
     <script src="js/admin.js?v=10.0"></script>
     <script src="js/marketplace.js?v=12.0"></script>
     <script src="js/trading.js?v=9.8"></script>
-    <script src="js/mentors.js?v=1.0"></script>
+    <script src="js/mentor-learning.js?v=1.0"></script>
+    <script src="js/mentors.js?v=2.0"></script>
     <script src="js/notifications.js?v=1.0"></script>
     <script src="js/app-art.js?v=1.0"></script>
 </body>

@@ -1,5 +1,39 @@
-// ===== mentors.js v1.0 - Trading Mentor Bot System =====
-// 4 mentor bots with unique strategies analyzing real-time market data
+// ===== mentors.js v2.1 - Trading Mentor Bot System (Self-Improving) =====
+// 4 mentor bots with unique strategies + adaptive parameter tuning
+
+// ========== MENTOR SETTINGS ==========
+const MENTOR_SETTINGS_KEY = 'mentorSettings';
+function getMentorSettings() {
+    try {
+        const s = JSON.parse(localStorage.getItem(MENTOR_SETTINGS_KEY));
+        return { panel: s?.panel !== false, comment: s?.comment !== false, notif: s?.notif !== false };
+    } catch { return { panel: true, comment: true, notif: true }; }
+}
+function saveMentorSettings(s) { localStorage.setItem(MENTOR_SETTINGS_KEY, JSON.stringify(s)); }
+
+function toggleMentorSetting(key) {
+    const s = getMentorSettings();
+    s[key] = !s[key];
+    saveMentorSettings(s);
+    applyMentorSettings();
+}
+window.toggleMentorSetting = toggleMentorSetting;
+
+function applyMentorSettings() {
+    const s = getMentorSettings();
+    const panel = document.getElementById('mentor-panel');
+    if (panel) panel.style.display = s.panel ? '' : 'none';
+    // checkboxes sync
+    const cb1 = document.getElementById('mentor-toggle-panel');
+    const cb2 = document.getElementById('mentor-toggle-comment');
+    const cb3 = document.getElementById('mentor-toggle-notif');
+    if (cb1) cb1.checked = s.panel;
+    if (cb2) cb2.checked = s.comment;
+    if (cb3) cb3.checked = s.notif;
+}
+
+// Init settings on load
+document.addEventListener('DOMContentLoaded', applyMentorSettings);
 
 // ========== TECHNICAL INDICATORS ==========
 
@@ -123,34 +157,39 @@ const mentors = {
         desc: '추세 추종 · EMA 크로스오버',
         analyze(candles, livePrice) {
             if (candles.length < 60) return { signal: 'wait', confidence: 0, message: '데이터 수집 중...', reason: '캔들 부족' };
+            const p = typeof getMentorParams === 'function' ? getMentorParams('kps') : {};
+            const emaShort = p.emaShort || 20;
+            const emaLong = p.emaLong || 50;
+            const crossTh = p.crossThreshold || 0.5;
+            const trendMin = p.trendMinGap || 5;
+
             const closes = getCloses(candles);
-            const ema20 = calcEMA(closes, 20);
-            const ema50 = calcEMA(closes, 50);
-            if (ema20.length < 3 || ema50.length < 3) return { signal: 'wait', confidence: 0, message: '지표 계산 중...', reason: 'EMA 데이터 부족' };
+            const emaS = calcEMA(closes, emaShort);
+            const emaL = calcEMA(closes, emaLong);
+            if (emaS.length < 3 || emaL.length < 3) return { signal: 'wait', confidence: 0, message: '지표 계산 중...', reason: 'EMA 데이터 부족' };
 
-            const offset = ema20.length - ema50.length;
-            const cur20 = ema20[ema20.length - 1];
-            const cur50 = ema50[ema50.length - 1];
-            const prev20 = ema20[ema20.length - 2];
-            const prev50 = ema50[ema50.length - 2];
+            const curS = emaS[emaS.length - 1];
+            const curL = emaL[emaL.length - 1];
+            const prevS = emaS[emaS.length - 2];
+            const prevL = emaL[emaL.length - 2];
 
-            const bullish = cur20 > cur50;
-            const justCrossedUp = prev20 <= prev50 + 0.5 && cur20 > cur50;
-            const justCrossedDown = prev20 >= prev50 - 0.5 && cur20 < cur50;
-            const trendStrength = Math.abs(cur20 - cur50);
-            const priceAboveEma = livePrice > cur20;
+            const bullish = curS > curL;
+            const justCrossedUp = prevS <= prevL + crossTh && curS > curL;
+            const justCrossedDown = prevS >= prevL - crossTh && curS < curL;
+            const trendStrength = Math.abs(curS - curL);
+            const priceAboveEma = livePrice > curS;
 
             if (justCrossedUp && priceAboveEma) {
-                return { signal: 'buy', confidence: 85, message: '추세 확인됐습니다. 매수 진입 적기입니다.', reason: `EMA20(${cur20.toFixed(1)}) > EMA50(${cur50.toFixed(1)}) 골든크로스` };
+                return { signal: 'buy', confidence: 85, message: '추세 확인됐습니다. 매수 진입 적기입니다.', reason: `EMA${emaShort}(${curS.toFixed(1)}) > EMA${emaLong}(${curL.toFixed(1)}) 골든크로스` };
             }
             if (justCrossedDown && !priceAboveEma) {
-                return { signal: 'sell', confidence: 80, message: '추세 전환 감지. 매도 고려하세요.', reason: `EMA20(${cur20.toFixed(1)}) < EMA50(${cur50.toFixed(1)}) 데드크로스` };
+                return { signal: 'sell', confidence: 80, message: '추세 전환 감지. 매도 고려하세요.', reason: `EMA${emaShort}(${curS.toFixed(1)}) < EMA${emaLong}(${curL.toFixed(1)}) 데드크로스` };
             }
-            if (bullish && priceAboveEma && trendStrength > 5) {
-                return { signal: 'hold', confidence: 65, message: '큰 흐름은 상승입니다. 포지션 유지하세요.', reason: `EMA20 > EMA50, 차이 ${trendStrength.toFixed(1)}pt` };
+            if (bullish && priceAboveEma && trendStrength > trendMin) {
+                return { signal: 'hold', confidence: 65, message: '큰 흐름은 상승입니다. 포지션 유지하세요.', reason: `EMA${emaShort} > EMA${emaLong}, 차이 ${trendStrength.toFixed(1)}pt` };
             }
-            if (!bullish && !priceAboveEma && trendStrength > 5) {
-                return { signal: 'hold', confidence: 60, message: '하락 추세 유지 중. 매도 포지션 유지.', reason: `EMA20 < EMA50, 차이 ${trendStrength.toFixed(1)}pt` };
+            if (!bullish && !priceAboveEma && trendStrength > trendMin) {
+                return { signal: 'hold', confidence: 60, message: '하락 추세 유지 중. 매도 포지션 유지.', reason: `EMA${emaShort} < EMA${emaLong}, 차이 ${trendStrength.toFixed(1)}pt` };
             }
             return { signal: 'wait', confidence: 40, message: '큰 흐름을 봅시다. 지금은 기다림의 시간입니다.', reason: `EMA 수렴 중, 차이 ${trendStrength.toFixed(1)}pt` };
         }
@@ -161,38 +200,41 @@ const mentors = {
         desc: '모멘텀 스캘핑 · 변화율 감지',
         analyze(candles, livePrice) {
             if (candles.length < 10) return { signal: 'wait', confidence: 0, message: '데이터 수집 중...', reason: '캔들 부족' };
+            const p = typeof getMentorParams === 'function' ? getMentorParams('michael') : {};
+            const momCandles = p.momentumCandles || 3;
+            const volMult = p.volSpikeMult || 1.5;
+            const strongTh = p.strongThreshold || 0.08;
+            const weakTh = p.weakThreshold || 0.04;
+            const rocTh = p.rocThreshold || 0.03;
 
             const recent = candles.slice(-10);
             const closes = recent.map(c => c.close);
             const volumes = recent.map(c => c.volume || 1);
 
-            // Price rate of change (last 3 candles)
-            const roc3 = ((livePrice - closes[closes.length - 3]) / closes[closes.length - 3]) * 100;
+            const rocN = ((livePrice - closes[closes.length - momCandles]) / closes[closes.length - momCandles]) * 100;
             const roc1 = ((livePrice - closes[closes.length - 1]) / closes[closes.length - 1]) * 100;
 
-            // Volume spike detection
             const avgVol = volumes.slice(0, -2).reduce((a, b) => a + b, 0) / (volumes.length - 2);
             const lastVol = volumes[volumes.length - 1];
             const volSpike = avgVol > 0 ? lastVol / avgVol : 1;
 
-            // Momentum
-            const momentum = roc3;
-            const isVolSpike = volSpike > 1.5;
+            const momentum = rocN;
+            const isVolSpike = volSpike > volMult;
 
-            if (momentum > 0.08 && isVolSpike) {
+            if (momentum > strongTh && isVolSpike) {
                 return { signal: 'buy', confidence: 90, message: '지금이다! 빠르게 들어가! 🚀', reason: `모멘텀 +${(momentum * 100).toFixed(0)}bp, 거래량 ${volSpike.toFixed(1)}x 스파이크` };
             }
-            if (momentum < -0.08 && isVolSpike) {
+            if (momentum < -strongTh && isVolSpike) {
                 return { signal: 'sell', confidence: 88, message: '숏 진입! 빠르게 먹고 나와!', reason: `모멘텀 ${(momentum * 100).toFixed(0)}bp, 거래량 ${volSpike.toFixed(1)}x 스파이크` };
             }
-            if (Math.abs(momentum) > 0.04) {
+            if (Math.abs(momentum) > weakTh) {
                 const dir = momentum > 0 ? 'buy' : 'sell';
                 return { signal: dir, confidence: 65, message: momentum > 0 ? '움직임 감지! 매수 준비!' : '하락 가속! 매도 준비!', reason: `모멘텀 ${(momentum * 100).toFixed(0)}bp${isVolSpike ? ', 볼륨↑' : ''}` };
             }
-            if (roc1 > 0.03) {
+            if (roc1 > rocTh) {
                 return { signal: 'buy', confidence: 55, message: '약한 상승 움직임. 주시 중...', reason: `단기 ROC +${(roc1 * 100).toFixed(0)}bp` };
             }
-            if (roc1 < -0.03) {
+            if (roc1 < -rocTh) {
                 return { signal: 'sell', confidence: 55, message: '약한 하락 움직임. 주시 중...', reason: `단기 ROC ${(roc1 * 100).toFixed(0)}bp` };
             }
             return { signal: 'wait', confidence: 30, message: '움직임이 없다... 기다려. 타이밍이 올 거야.', reason: `모멘텀 ${(momentum * 100).toFixed(0)}bp, 볼륨 ${volSpike.toFixed(1)}x` };
@@ -204,10 +246,19 @@ const mentors = {
         desc: 'RSI · MACD · 볼린저밴드',
         analyze(candles, livePrice) {
             if (candles.length < 30) return { signal: 'wait', confidence: 0, message: '지표 계산을 위한 데이터 수집 중...', reason: '캔들 부족' };
+            const pm = typeof getMentorParams === 'function' ? getMentorParams('matthew') : {};
+            const rsiP = pm.rsiPeriod || 14;
+            const rsiOB = pm.rsiOverbought || 70;
+            const rsiOS = pm.rsiOversold || 30;
+            const mFast = pm.macdFast || 12;
+            const mSlow = pm.macdSlow || 26;
+            const mSig = pm.macdSignal || 9;
+            const bbP = pm.bbPeriod || 20;
+
             const closes = getCloses(candles);
-            const rsiArr = calcRSI(closes, 14);
-            const macd = calcMACD(closes);
-            const bb = calcBollingerBands(closes, 20, 2);
+            const rsiArr = calcRSI(closes, rsiP);
+            const macd = calcMACD(closes, mFast, mSlow, mSig);
+            const bb = calcBollingerBands(closes, bbP, 2);
 
             const rsi = rsiArr.length > 0 ? rsiArr[rsiArr.length - 1] : 50;
             const macdVal = macd.macd.length > 0 ? macd.macd[macd.macd.length - 1] : 0;
@@ -222,8 +273,8 @@ const mentors = {
             const reasons = [];
 
             // RSI
-            if (rsi < 30) { buySignals++; reasons.push(`RSI ${rsi.toFixed(0)} 과매도`); }
-            else if (rsi > 70) { sellSignals++; reasons.push(`RSI ${rsi.toFixed(0)} 과매수`); }
+            if (rsi < rsiOS) { buySignals++; reasons.push(`RSI ${rsi.toFixed(0)} 과매도`); }
+            else if (rsi > rsiOB) { sellSignals++; reasons.push(`RSI ${rsi.toFixed(0)} 과매수`); }
             else if (rsi < 40) { buySignals += 0.5; reasons.push(`RSI ${rsi.toFixed(0)} 저위`); }
             else if (rsi > 60) { sellSignals += 0.5; reasons.push(`RSI ${rsi.toFixed(0)} 고위`); }
 
@@ -264,14 +315,21 @@ const mentors = {
         name: '한선', icon: '🧘', style: '스윙', color: '#00CC88',
         desc: '피보나치 · 지지/저항 · 패턴',
         analyze(candles, livePrice) {
-            if (candles.length < 100) return { signal: 'wait', confidence: 0, message: '장기 분석을 위한 데이터 수집 중...', reason: '캔들 부족 (100개 이상 필요)' };
+            const ph = typeof getMentorParams === 'function' ? getMentorParams('hansun') : {};
+            const fibLB = ph.fibLookback || 100;
+            const srLB = ph.srLookback || 80;
+            const srSens = ph.srSensitivity || 0.05;
+            const fibProxTh = ph.fibProxThreshold || 0.03;
+            const patTh = ph.patternThreshold || 0.03;
+
+            if (candles.length < fibLB) return { signal: 'wait', confidence: 0, message: '장기 분석을 위한 데이터 수집 중...', reason: `캔들 부족 (${fibLB}개 이상 필요)` };
 
             const closes = getCloses(candles);
-            const recent100 = closes.slice(-100);
-            const high = Math.max(...recent100);
-            const low = Math.min(...recent100);
+            const recentN = closes.slice(-fibLB);
+            const high = Math.max(...recentN);
+            const low = Math.min(...recentN);
             const fib = calcFibonacciLevels(high, low);
-            const sr = findSupportResistance(closes, 80);
+            const sr = findSupportResistance(closes, srLB);
 
             // Fibonacci level proximity
             const fibLevels = [
@@ -301,23 +359,23 @@ const mentors = {
                 ema20long[ema20long.length - 1] > ema50long[ema50long.length - 1];
 
             // Double bottom / top detection (simplified)
-            const last50 = recent100.slice(-50);
+            const last50 = recentN.slice(-50);
             const lows50 = [];
             const highs50 = [];
             for (let i = 2; i < last50.length - 2; i++) {
                 if (last50[i] < last50[i-1] && last50[i] < last50[i-2] && last50[i] < last50[i+1] && last50[i] < last50[i+2]) lows50.push(last50[i]);
                 if (last50[i] > last50[i-1] && last50[i] > last50[i-2] && last50[i] > last50[i+1] && last50[i] > last50[i+2]) highs50.push(last50[i]);
             }
-            const hasDoubleBottom = lows50.length >= 2 && Math.abs(lows50[lows50.length-1] - lows50[lows50.length-2]) < range * 0.03;
-            const hasDoubleTop = highs50.length >= 2 && Math.abs(highs50[highs50.length-1] - highs50[highs50.length-2]) < range * 0.03;
+            const hasDoubleBottom = lows50.length >= 2 && Math.abs(lows50[lows50.length-1] - lows50[lows50.length-2]) < range * patTh;
+            const hasDoubleTop = highs50.length >= 2 && Math.abs(highs50[highs50.length-1] - highs50[highs50.length-2]) < range * patTh;
 
             // Decisions
-            if (fibProximity < 0.03 && nearSupport && Math.abs(livePrice - nearSupport) < range * 0.05) {
+            if (fibProximity < fibProxTh && nearSupport && Math.abs(livePrice - nearSupport) < range * srSens) {
                 return { signal: 'buy', confidence: 80,
                     message: `이 구간은 피보나치 ${nearestFib.level} 되돌림 + 지지선입니다. 매수 기회.`,
                     reason: `Fib ${nearestFib.level}(${nearestFib.price.toFixed(1)}) 근접, 지지 ${nearSupport.toFixed(1)}` };
             }
-            if (fibProximity < 0.03 && nearResist && Math.abs(livePrice - nearResist) < range * 0.05) {
+            if (fibProximity < fibProxTh && nearResist && Math.abs(livePrice - nearResist) < range * srSens) {
                 return { signal: 'sell', confidence: 75,
                     message: `피보나치 ${nearestFib.level} + 저항 구간. 매도 또는 관망.`,
                     reason: `Fib ${nearestFib.level}(${nearestFib.price.toFixed(1)}) 근접, 저항 ${nearResist.toFixed(1)}` };
@@ -348,6 +406,8 @@ let mentorUpdateInterval = null;
 let activeMentorId = null;
 
 function initMentorPanel() {
+    // Initialize learning system
+    if (typeof initMentorLearning === 'function') initMentorLearning();
     renderMentorPanel();
     // Start periodic updates (every 10 seconds)
     if (mentorUpdateInterval) clearInterval(mentorUpdateInterval);
@@ -367,11 +427,17 @@ function updateMentorAnalysis() {
             const result = mentor.analyze(candles, currentPrice);
             const prev = mentorResults[id];
 
-            // Detect signal change for toast
+            // Detect signal change for toast (respect notif setting)
             if (prev && prev.signal !== result.signal && mentorPreviousSignals[id] !== result.signal) {
                 const signalKo = { buy: '매수', sell: '매도', hold: '유지', wait: '관망' };
-                showToast(`${mentor.icon} ${mentor.name}: ${signalKo[prev.signal] || prev.signal} → ${signalKo[result.signal] || result.signal}으로 변경`, 'info', 4000);
-                if (typeof notifyTradingSignal === 'function') notifyTradingSignal(`${mentor.icon} ${mentor.name}`, prev.signal, result.signal);
+                if (getMentorSettings().notif) {
+                    showToast(`${mentor.icon} ${mentor.name}: ${signalKo[prev.signal] || prev.signal} → ${signalKo[result.signal] || result.signal}으로 변경`, 'info', 4000);
+                    if (typeof notifyTradingSignal === 'function') notifyTradingSignal(`${mentor.icon} ${mentor.name}`, prev.signal, result.signal);
+                }
+            }
+            // Log signal for learning system
+            if (result.signal !== mentorPreviousSignals[id] && typeof logMentorSignal === 'function') {
+                logMentorSignal(id, result.signal, result.confidence, currentPrice);
             }
             mentorPreviousSignals[id] = result.signal;
             mentorResults[id] = result;
@@ -429,6 +495,7 @@ function renderMentorPanel() {
                     <span>신뢰도: <span style="font-family:monospace; letter-spacing:1px; color:${sc.color};">${confBar}</span> ${confPct}%</span>
                 </div>
                 <div class="mentor-detail-reason">${result.reason}</div>
+                ${typeof renderMentorPerformanceUI === 'function' ? renderMentorPerformanceUI(activeMentorId) : ''}
             </div>`;
     }
 
