@@ -1557,7 +1557,7 @@ async function loadSocialFeed() {
                     ${post.duration ? `<span style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.7);color:white;padding:2px 6px;border-radius:4px;font-size:0.7rem;">${Math.floor(post.duration)}s</span>` : ''}
                 </div>`;
             } else if (post.imageUrl) {
-                mediaHTML = `<div style="margin:0 -1.2rem;"><img src="${post.imageUrl}" style="width:100%;display:block;" loading="lazy"></div>`;
+                mediaHTML = `<div style="margin:0 -1.2rem;position:relative;" onclick="handlePostDoubleTap('${doc.id}',this)"><img src="${post.imageUrl}" style="width:100%;display:block;" loading="lazy"></div>`;
             }
 
             // Service link HTML
@@ -1570,6 +1570,7 @@ async function loadSocialFeed() {
 
             const postEl = document.createElement('div');
             postEl.className = 'post';
+            postEl.setAttribute('data-post-id', doc.id);
             postEl.innerHTML = `
                 <div class="post-header">
                     ${avatarHTML(userInfo.photoURL, userInfo.nickname, 36)}
@@ -1584,7 +1585,9 @@ async function loadSocialFeed() {
                 <div class="post-actions-bar" style="display:flex;align-items:center;gap:1.2rem;padding:0.6rem 0;">
                     <button onclick="toggleLike('${doc.id}', ${likedByMe})" class="post-action-btn" style="background:none;border:none;cursor:pointer;font-size:1.3rem;padding:0;line-height:1;display:flex;align-items:center;gap:0.3rem;transition:transform 0.15s;" onmousedown="this.style.transform='scale(1.1)'" onmouseup="this.style.transform='scale(1)'">${likedByMe ? '❤️' : '🤍'}<span style="font-size:0.85rem;color:var(--text);font-weight:600;">${likeCount || ''}</span></button>
                     <button onclick="toggleComments('${doc.id}')" class="post-action-btn" style="background:none;border:none;cursor:pointer;font-size:1.2rem;padding:0;line-height:1;display:flex;align-items:center;gap:0.3rem;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span style="font-size:0.85rem;color:var(--text);font-weight:600;">${commentCount || ''}</span></button>
-                    <button onclick="sharePost('${doc.id}')" class="post-action-btn" style="background:none;border:none;cursor:pointer;font-size:1.2rem;padding:0;line-height:1;display:flex;align-items:center;gap:0.3rem;">📤<span style="font-size:0.85rem;color:var(--text);font-weight:600;">${post.shareCount || ''}</span></button>
+                    <button onclick="sharePostWebAPI('${doc.id}')" class="post-action-btn" style="background:none;border:none;cursor:pointer;font-size:1.2rem;padding:0;line-height:1;display:flex;align-items:center;gap:0.3rem;">📤<span style="font-size:0.85rem;color:var(--text);font-weight:600;">${post.shareCount || ''}</span></button>
+                    <span style="flex:1;"></span>
+                    <button onclick="toggleSavePost('${doc.id}')" class="post-action-btn" style="background:none;border:none;cursor:pointer;font-size:1.2rem;padding:0;line-height:1;">🔖</button>
                 </div>
                 <div style="font-size:0.85rem;">
                     ${likeCount > 0 ? `<div style="font-weight:700;margin-bottom:0.2rem;cursor:pointer;" onclick="showLikedUsers('${doc.id}')">${t('social.likes','좋아요')} ${likeCount}${t('social.count','개')}</div>` : ''}
@@ -1621,6 +1624,11 @@ async function toggleLike(postId, isLiked) {
     } else {
         likedBy.push(currentUser.uid);
         likes += 1;
+        // Social notification
+        if (data.userId !== currentUser.uid && typeof createSocialNotification === 'function') {
+            const myInfo = await getUserDisplayInfo(currentUser.uid);
+            createSocialNotification(data.userId, 'like', `${myInfo.nickname}님이 게시물을 좋아합니다`, { targetId: postId });
+        }
     }
     await postRef.update({ likedBy, likes });
     loadSocialFeed();
@@ -1640,7 +1648,7 @@ async function showLikedUsers(postId) {
 
 async function toggleComments(postId) {
     const div = document.getElementById(`comments-${postId}`);
-    if (div.style.display === 'none') { div.style.display = 'block'; await loadComments(postId); }
+    if (div.style.display === 'none') { div.style.display = 'block'; await (typeof loadCommentsWithReplies === 'function' ? loadCommentsWithReplies(postId) : loadComments(postId)); }
     else div.style.display = 'none';
 }
 
@@ -1666,9 +1674,26 @@ async function addComment(postId) {
     await db.collection('posts').doc(postId).collection('comments').add({ userId: currentUser.uid, text, timestamp: new Date() });
     const postRef = db.collection('posts').doc(postId);
     const post = await postRef.get();
-    await postRef.update({ commentCount: (post.data().commentCount || 0) + 1 });
+    const postData = post.data();
+    await postRef.update({ commentCount: (postData.commentCount || 0) + 1 });
+    // Social notification
+    if (postData.userId !== currentUser.uid && typeof createSocialNotification === 'function') {
+        const myInfo = await getUserDisplayInfo(currentUser.uid);
+        createSocialNotification(postData.userId, 'comment', `${myInfo.nickname}님이 댓글을 남겼습니다`, { targetId: postId });
+    }
+    // Check mentions
+    const mentions = extractMentions ? extractMentions(text) : [];
+    for (const mention of mentions) {
+        try {
+            const users = await db.collection('users').where('nickname', '==', mention).limit(1).get();
+            if (!users.empty && users.docs[0].id !== currentUser.uid) {
+                const myInfo = await getUserDisplayInfo(currentUser.uid);
+                createSocialNotification(users.docs[0].id, 'mention', `${myInfo.nickname}님이 회원님을 언급했습니다`, { targetId: postId });
+            }
+        } catch (e) {}
+    }
     input.value = '';
-    await loadComments(postId);
+    await (typeof loadCommentsWithReplies === 'function' ? loadCommentsWithReplies(postId) : loadComments(postId));
     loadSocialFeed();
 }
 
@@ -1977,8 +2002,13 @@ async function createPost() {
             });
         }
 
+        // Extract hashtags and mentions
+        const hashtags = typeof extractHashtags === 'function' ? extractHashtags(text) : [];
+        const mentions = typeof extractMentions === 'function' ? extractMentions(text) : [];
+
         const postData = {
-            userId: currentUser.uid, text, imageUrl, likes: 0, likedBy: [], commentCount: 0, shareCount: 0, timestamp: new Date()
+            userId: currentUser.uid, text, imageUrl, likes: 0, likedBy: [], commentCount: 0, shareCount: 0, timestamp: new Date(),
+            hashtags, mentions
         };
 
         if (videoUrl) {
@@ -2002,7 +2032,20 @@ async function createPost() {
             postData.serviceLink = _pendingServiceLink;
         }
 
-        await db.collection('posts').add(postData);
+        const newPostRef = await db.collection('posts').add(postData);
+
+        // Send mention notifications
+        if (mentions.length > 0 && typeof createSocialNotification === 'function') {
+            const myInfo = await getUserDisplayInfo(currentUser.uid);
+            for (const mention of mentions) {
+                try {
+                    const users = await db.collection('users').where('nickname', '==', mention).limit(1).get();
+                    if (!users.empty && users.docs[0].id !== currentUser.uid) {
+                        createSocialNotification(users.docs[0].id, 'mention', `${myInfo.nickname}님이 회원님을 언급했습니다`, { targetId: newPostRef.id });
+                    }
+                } catch (e) {}
+            }
+        }
 
         // Reset state
         textarea.value = '';
@@ -2169,6 +2212,16 @@ async function editContact(contactDocId, currentName) {
 
 // ========== SOCIAL FEED FILTER ==========
 function setSocialFilter(filter) {
+    // Show feed wrapper, hide others
+    const wrapper = document.getElementById('social-feed-wrapper');
+    const explore = document.getElementById('explore-content');
+    const notifContent = document.getElementById('social-notifications-content');
+    const profileContent = document.getElementById('full-profile-content');
+    if (wrapper) wrapper.style.display = 'block';
+    if (explore) explore.style.display = 'none';
+    if (notifContent) notifContent.style.display = 'none';
+    if (profileContent) profileContent.style.display = 'none';
+
     document.querySelectorAll('.social-filter-tab').forEach(b => {
         b.classList.remove('active');
         b.style.color = '#999';
@@ -2346,4 +2399,457 @@ async function deleteContact(contactDocId, contactName) {
         showToast(t('social.contact_deleted','✅ 연락처가 삭제되었습니다'), 'success');
         loadContacts();
     } catch (error) { showToast(t('social.delete_fail','삭제 실패') + ': ' + error.message, 'error'); }
+}
+
+// ========== SOCIAL NOTIFICATIONS TAB ==========
+async function showSocialNotifications() {
+    const wrapper = document.getElementById('social-feed-wrapper');
+    const explore = document.getElementById('explore-content');
+    const profile = document.getElementById('full-profile-content');
+    const notifContent = document.getElementById('social-notifications-content');
+    if (wrapper) wrapper.style.display = 'none';
+    if (explore) explore.style.display = 'none';
+    if (profile) profile.style.display = 'none';
+    if (notifContent) notifContent.style.display = 'block';
+
+    // Update tab
+    document.querySelectorAll('.social-filter-tab').forEach(b => {
+        b.classList.remove('active');
+        b.style.color = '#999';
+        b.style.borderBottomColor = 'transparent';
+    });
+    const btn = document.querySelector('.social-filter-tab[data-filter="notifications"]');
+    if (btn) { btn.classList.add('active'); btn.style.color = 'var(--text)'; btn.style.borderBottomColor = 'var(--text)'; }
+
+    notifContent.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--accent);">🔔 알림 로딩 중...</p>';
+
+    try {
+        const snap = await db.collection('social_notifications').doc(currentUser.uid).collection('items')
+            .orderBy('createdAt', 'desc').limit(50).get();
+
+        if (snap.empty) {
+            notifContent.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--accent);"><p style="font-size:2rem;">🔔</p><p>아직 알림이 없습니다</p></div>';
+            return;
+        }
+
+        let html = '<div style="display:flex;justify-content:flex-end;margin-bottom:0.5rem;"><button onclick="markAllSocialNotifsRead()" style="background:none;border:none;color:#0066cc;font-size:0.8rem;cursor:pointer;font-weight:600;">모두 읽음</button></div>';
+        for (const doc of snap.docs) {
+            const n = doc.data();
+            const isRead = n.read;
+            const info = n.fromUid ? await getUserDisplayInfo(n.fromUid) : { nickname: '시스템', photoURL: '' };
+            const timeAgo = getTimeAgo(n.createdAt?.toDate?.() || new Date());
+            const icons = { like: '❤️', comment: '💬', follow: '👤', mention: '📢', story_reply: '📸' };
+            const icon = icons[n.notifType] || '🔔';
+
+            html += `<div onclick="handleSocialNotifClick('${doc.id}','${n.notifType}','${n.targetId || ''}','${n.fromUid || ''}')" style="display:flex;gap:0.6rem;padding:0.7rem;border-bottom:1px solid rgba(0,0,0,0.04);cursor:pointer;background:${isRead ? 'white' : 'rgba(33,150,243,0.04)'};">
+                ${avatarHTML(info.photoURL, info.nickname, 40)}
+                <div style="flex:1;min-width:0;">
+                    <div style="font-size:0.85rem;${isRead ? '' : 'font-weight:600;'}">${icon} ${n.message}</div>
+                    <div style="font-size:0.7rem;color:var(--accent);margin-top:0.15rem;">${timeAgo}</div>
+                </div>
+                ${isRead ? '' : '<span style="width:8px;height:8px;border-radius:50%;background:#0095f6;flex-shrink:0;margin-top:0.3rem;"></span>'}
+            </div>`;
+        }
+        notifContent.innerHTML = html;
+
+        // Mark badge
+        updateSocialNotifBadge();
+    } catch (e) {
+        notifContent.innerHTML = `<p style="text-align:center;color:red;">${e.message}</p>`;
+    }
+}
+
+async function handleSocialNotifClick(docId, type, targetId, fromUid) {
+    // Mark as read
+    try {
+        await db.collection('social_notifications').doc(currentUser.uid).collection('items').doc(docId).update({ read: true });
+    } catch (e) {}
+
+    if (type === 'follow' && fromUid) {
+        showUserProfile(fromUid);
+    } else if ((type === 'like' || type === 'comment' || type === 'mention') && targetId) {
+        showExploreTab(false);
+        setSocialFilter('all');
+        setTimeout(() => {
+            const el = document.querySelector(`[data-post-id="${targetId}"]`);
+            if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.style.boxShadow = '0 0 0 3px #0066cc'; setTimeout(() => el.style.boxShadow = '', 3000); }
+        }, 500);
+    } else if (type === 'story_reply' && fromUid) {
+        showPage('messenger');
+    }
+}
+
+async function markAllSocialNotifsRead() {
+    try {
+        const snap = await db.collection('social_notifications').doc(currentUser.uid).collection('items')
+            .where('read', '==', false).get();
+        const batch = db.batch();
+        snap.docs.forEach(doc => batch.update(doc.ref, { read: true }));
+        await batch.commit();
+        showSocialNotifications();
+    } catch (e) {}
+}
+
+async function createSocialNotification(userId, notifType, message, data = {}) {
+    if (!userId || userId === currentUser?.uid) return;
+    try {
+        await db.collection('social_notifications').doc(userId).collection('items').add({
+            notifType,
+            message,
+            fromUid: currentUser.uid,
+            targetId: data.targetId || '',
+            read: false,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            ...data
+        });
+    } catch (e) { console.warn('Social notif error:', e); }
+}
+
+async function updateSocialNotifBadge() {
+    if (!currentUser) return;
+    try {
+        const snap = await db.collection('social_notifications').doc(currentUser.uid).collection('items')
+            .where('read', '==', false).limit(50).get();
+        const badge = document.getElementById('social-notif-badge');
+        if (badge) {
+            if (snap.size > 0) { badge.style.display = 'inline-block'; badge.textContent = snap.size > 99 ? '99+' : snap.size; }
+            else badge.style.display = 'none';
+        }
+    } catch (e) {}
+}
+
+// ========== FULL PROFILE PAGE ==========
+async function showFullProfile(uid) {
+    uid = uid || currentUser?.uid;
+    if (!uid) return;
+
+    const wrapper = document.getElementById('social-feed-wrapper');
+    const explore = document.getElementById('explore-content');
+    const notifContent = document.getElementById('social-notifications-content');
+    const profileContent = document.getElementById('full-profile-content');
+    if (wrapper) wrapper.style.display = 'none';
+    if (explore) explore.style.display = 'none';
+    if (notifContent) notifContent.style.display = 'none';
+    if (profileContent) profileContent.style.display = 'block';
+
+    // Update tab
+    document.querySelectorAll('.social-filter-tab').forEach(b => {
+        b.classList.remove('active');
+        b.style.color = '#999';
+        b.style.borderBottomColor = 'transparent';
+    });
+    const btn = document.querySelector('.social-filter-tab[data-filter="profile"]');
+    if (btn) { btn.classList.add('active'); btn.style.color = 'var(--text)'; btn.style.borderBottomColor = 'var(--text)'; }
+
+    profileContent.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--accent);">프로필 로딩 중...</p>';
+
+    try {
+        const info = await getUserDisplayInfo(uid);
+        const followCounts = await getFollowCounts(uid);
+        const postsSnap = await db.collection('posts').where('userId', '==', uid).orderBy('timestamp', 'desc').get();
+        const isMe = uid === currentUser.uid;
+        const amFollowing = isMe ? false : await isFollowing(uid);
+        const userDoc = await db.collection('users').doc(uid).get();
+        const userData = userDoc.data() || {};
+
+        let html = `
+        <div style="text-align:center;padding:1rem 0;">
+            ${avatarHTML(info.photoURL, info.nickname, 80)}
+            <h3 style="margin:0.5rem 0 0.2rem;">${info.nickname}</h3>
+            ${info.statusMessage ? `<p style="font-size:0.85rem;color:#666;margin:0;">${info.statusMessage}</p>` : ''}
+            ${userData.bio ? `<p style="font-size:0.85rem;color:#444;margin:0.3rem 0;">${userData.bio}</p>` : ''}
+            ${userData.profileLink ? `<a href="${userData.profileLink}" target="_blank" style="font-size:0.8rem;color:#0066cc;">${userData.profileLink}</a>` : ''}
+        </div>
+        <div class="profile-stats">
+            <div><div class="stat-num">${postsSnap.size}</div><div class="stat-label">게시물</div></div>
+            <div onclick="showFollowList('${uid}','followers')"><div class="stat-num">${followCounts.followers}</div><div class="stat-label">팔로워</div></div>
+            <div onclick="showFollowList('${uid}','following')"><div class="stat-num">${followCounts.following}</div><div class="stat-label">팔로잉</div></div>
+        </div>
+        <div style="display:flex;gap:0.5rem;padding:0.8rem 0;">
+            ${isMe ? `<button onclick="showProfileEdit()" style="flex:1;padding:0.6rem;border:1px solid var(--border);border-radius:8px;background:white;cursor:pointer;font-weight:600;font-size:0.85rem;">✏️ 프로필 편집</button>`
+                : `<button onclick="followUser('${uid}');showFullProfile('${uid}')" style="flex:1;padding:0.6rem;border:none;border-radius:8px;background:${amFollowing ? 'white' : '#0095f6'};color:${amFollowing ? 'var(--text)' : 'white'};${amFollowing ? 'border:1px solid var(--border);' : ''}cursor:pointer;font-weight:600;font-size:0.85rem;">${amFollowing ? '팔로잉 ✓' : '팔로우'}</button>
+                   <button onclick="startChatFromProfile('${uid}')" style="flex:1;padding:0.6rem;border:1px solid var(--border);border-radius:8px;background:white;cursor:pointer;font-weight:600;font-size:0.85rem;">💬 메시지</button>`}
+        </div>`;
+
+        // Profile tabs
+        html += `<div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:0.5rem;">
+            <button class="profile-tab-btn active" onclick="switchProfileTab('posts','${uid}')">📷 게시물</button>
+            <button class="profile-tab-btn" onclick="switchProfileTab('shorts','${uid}')">🎬 숏폼</button>
+            <button class="profile-tab-btn" onclick="switchProfileTab('saved','${uid}')">🔖 저장됨</button>
+        </div>`;
+
+        // Posts grid
+        html += '<div id="profile-posts-grid" class="profile-grid">';
+        const allPosts = postsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const regularPosts = allPosts.filter(p => !p.videoUrl);
+        for (const post of regularPosts) {
+            if (post.imageUrl) {
+                html += `<div class="profile-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><img src="${post.imageUrl}" loading="lazy"></div>`;
+            } else {
+                html += `<div class="profile-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><div style="width:100%;height:100%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;padding:0.5rem;"><span style="color:white;font-size:0.7rem;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;">${(post.text || '').substring(0, 60)}</span></div></div>`;
+            }
+        }
+        html += '</div>';
+
+        profileContent.innerHTML = html;
+    } catch (e) {
+        profileContent.innerHTML = `<p style="color:red;text-align:center;">${e.message}</p>`;
+    }
+}
+
+async function switchProfileTab(tab, uid) {
+    document.querySelectorAll('.profile-tab-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+
+    const grid = document.getElementById('profile-posts-grid');
+    if (!grid) return;
+    grid.innerHTML = '<p style="text-align:center;padding:1rem;color:var(--accent);">로딩...</p>';
+
+    try {
+        if (tab === 'posts') {
+            const snap = await db.collection('posts').where('userId', '==', uid).orderBy('timestamp', 'desc').get();
+            const posts = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(p => !p.videoUrl);
+            grid.innerHTML = '';
+            grid.className = 'profile-grid';
+            for (const post of posts) {
+                if (post.imageUrl) {
+                    grid.innerHTML += `<div class="profile-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><img src="${post.imageUrl}" loading="lazy"></div>`;
+                } else {
+                    grid.innerHTML += `<div class="profile-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><div style="width:100%;height:100%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;padding:0.5rem;"><span style="color:white;font-size:0.7rem;">${(post.text || '').substring(0, 60)}</span></div></div>`;
+                }
+            }
+            if (posts.length === 0) grid.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--accent);">게시물이 없습니다</p>';
+        } else if (tab === 'shorts') {
+            const snap = await db.collection('posts').where('userId', '==', uid).orderBy('timestamp', 'desc').get();
+            const videos = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(p => p.videoUrl);
+            grid.innerHTML = '';
+            grid.className = 'profile-grid';
+            for (const post of videos) {
+                grid.innerHTML += `<div class="profile-grid-item" onclick="openShortsViewer('${post.id}')"><video src="${post.videoUrl}" muted preload="metadata" style="width:100%;height:100%;object-fit:cover;"></video><span style="position:absolute;top:4px;right:4px;color:white;font-size:0.8rem;text-shadow:0 1px 3px rgba(0,0,0,0.8);">🎬</span></div>`;
+            }
+            if (videos.length === 0) grid.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--accent);">숏폼이 없습니다</p>';
+        } else if (tab === 'saved') {
+            const savedSnap = await db.collection('users').doc(uid).collection('savedPosts').orderBy('savedAt', 'desc').get();
+            grid.innerHTML = '';
+            grid.className = 'profile-grid';
+            for (const doc of savedSnap.docs) {
+                const postDoc = await db.collection('posts').doc(doc.id).get();
+                if (!postDoc.exists) continue;
+                const post = postDoc.data();
+                if (post.imageUrl) {
+                    grid.innerHTML += `<div class="profile-grid-item" onclick="scrollToPostOrOpen('${doc.id}')"><img src="${post.imageUrl}" loading="lazy"></div>`;
+                } else if (post.videoUrl) {
+                    grid.innerHTML += `<div class="profile-grid-item" onclick="openShortsViewer('${doc.id}')"><video src="${post.videoUrl}" muted preload="metadata" style="width:100%;height:100%;object-fit:cover;"></video></div>`;
+                } else {
+                    grid.innerHTML += `<div class="profile-grid-item"><div style="width:100%;height:100%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;"><span style="font-size:0.7rem;">${(post.text || '').substring(0, 40)}</span></div></div>`;
+                }
+            }
+            if (savedSnap.empty) grid.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--accent);">저장된 게시물이 없습니다</p>';
+        }
+    } catch (e) {
+        grid.innerHTML = `<p style="color:red;">${e.message}</p>`;
+    }
+}
+
+async function showFollowList(uid, type) {
+    try {
+        const snap = await db.collection('users').doc(uid).collection(type === 'followers' ? 'followers' : 'following').get();
+        if (snap.empty) { showToast('목록이 비어있습니다', 'info'); return; }
+
+        let html = '';
+        for (const doc of snap.docs) {
+            const info = await getUserDisplayInfo(doc.id);
+            const amFollowingThis = currentUser ? await isFollowing(doc.id) : false;
+            html += `<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0;border-bottom:1px solid #f0f0f0;">
+                <div onclick="showFullProfile('${doc.id}')" style="cursor:pointer;">${avatarHTML(info.photoURL, info.nickname, 36)}</div>
+                <span style="flex:1;font-size:0.9rem;font-weight:600;cursor:pointer;" onclick="showFullProfile('${doc.id}')">${info.nickname}</span>
+                ${doc.id !== currentUser?.uid ? `<button onclick="followUser('${doc.id}');this.textContent='${amFollowingThis ? '팔로우' : '팔로잉 ✓'}'" style="padding:0.3rem 0.6rem;border:${amFollowingThis ? 'none' : '1px solid #ddd'};border-radius:6px;background:${amFollowingThis ? '#0095f6' : 'white'};color:${amFollowingThis ? 'white' : 'var(--text)'};font-size:0.8rem;cursor:pointer;">${amFollowingThis ? '팔로잉' : '팔로우'}</button>` : ''}
+            </div>`;
+        }
+
+        const modal = document.createElement('div');
+        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+        modal.innerHTML = `<div style="background:white;padding:1.2rem;border-radius:16px;max-width:380px;width:100%;max-height:70vh;overflow-y:auto;">
+            <h4 style="margin-bottom:0.8rem;">${type === 'followers' ? '팔로워' : '팔로잉'} ${snap.size}명</h4>
+            ${html}
+            <button onclick="this.parentElement.parentElement.remove()" style="width:100%;margin-top:0.8rem;padding:0.6rem;border:1px solid #ddd;border-radius:8px;background:white;cursor:pointer;">닫기</button>
+        </div>`;
+        document.body.appendChild(modal);
+    } catch (e) { showToast('목록 로드 실패', 'error'); }
+}
+
+// ========== DOUBLE-TAP LIKE ==========
+let _lastTapTime = 0;
+let _lastTapPostId = null;
+
+function handlePostDoubleTap(postId, mediaEl) {
+    const now = Date.now();
+    if (_lastTapPostId === postId && now - _lastTapTime < 300) {
+        // Double tap - like!
+        doubleTapLike(postId, mediaEl);
+        _lastTapTime = 0;
+        _lastTapPostId = null;
+    } else {
+        _lastTapTime = now;
+        _lastTapPostId = postId;
+    }
+}
+
+async function doubleTapLike(postId, container) {
+    // Show heart animation
+    if (container) {
+        const heart = document.createElement('div');
+        heart.className = 'double-tap-heart';
+        heart.textContent = '❤️';
+        container.style.position = 'relative';
+        container.appendChild(heart);
+        setTimeout(() => heart.remove(), 900);
+    }
+    // Like the post if not already liked
+    const postRef = db.collection('posts').doc(postId);
+    const post = await postRef.get();
+    const data = post.data();
+    if (data.likedBy && data.likedBy.includes(currentUser.uid)) return;
+    let likedBy = data.likedBy || [];
+    likedBy.push(currentUser.uid);
+    await postRef.update({ likedBy, likes: (data.likes || 0) + 1 });
+
+    // Notification
+    if (data.userId !== currentUser.uid) {
+        const myInfo = await getUserDisplayInfo(currentUser.uid);
+        await createSocialNotification(data.userId, 'like', `${myInfo.nickname}님이 게시물을 좋아합니다`, { targetId: postId });
+    }
+    loadSocialFeed();
+}
+
+// ========== NESTED COMMENTS (REPLIES) ==========
+async function loadCommentsWithReplies(postId) {
+    const list = document.getElementById(`comment-list-${postId}`);
+    if (!list) return;
+    list.innerHTML = '';
+
+    const comments = await db.collection('posts').doc(postId).collection('comments')
+        .orderBy('timestamp', 'asc').get();
+    if (comments.empty) { list.innerHTML = `<p style="text-align:center;color:var(--accent);font-size:0.8rem;">${t('social.first_comment','첫 댓글을 남겨보세요!')}</p>`; return; }
+
+    const topLevel = [];
+    const replies = {};
+    comments.docs.forEach(doc => {
+        const c = { id: doc.id, ...doc.data() };
+        if (c.parentId) {
+            if (!replies[c.parentId]) replies[c.parentId] = [];
+            replies[c.parentId].push(c);
+        } else {
+            topLevel.push(c);
+        }
+    });
+
+    for (const c of topLevel) {
+        const info = await getUserDisplayInfo(c.userId);
+        const el = document.createElement('div');
+        el.style.cssText = 'margin-bottom:0.5rem;font-size:0.85rem;line-height:1.4;';
+        el.innerHTML = `
+            <div style="display:flex;align-items:flex-start;gap:0.4rem;">
+                <div onclick="showUserProfile('${c.userId}')" style="cursor:pointer;flex-shrink:0;">${avatarHTML(info.photoURL, info.nickname, 24)}</div>
+                <div style="flex:1;">
+                    <strong style="cursor:pointer;" onclick="showUserProfile('${c.userId}')">${info.nickname}</strong>
+                    ${truncateWalletAddresses(c.text)}
+                    <div style="font-size:0.7rem;color:var(--accent);margin-top:0.1rem;">
+                        ${getTimeAgo(c.timestamp?.toDate?.() || new Date())}
+                        <button onclick="showReplyInput('${postId}','${c.id}')" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:0.7rem;font-weight:600;">답글</button>
+                    </div>
+                </div>
+            </div>`;
+
+        // Replies
+        if (replies[c.id]) {
+            for (const r of replies[c.id]) {
+                const rInfo = await getUserDisplayInfo(r.userId);
+                const rEl = document.createElement('div');
+                rEl.className = 'reply-comment';
+                rEl.style.cssText = 'margin-top:0.3rem;font-size:0.82rem;';
+                rEl.innerHTML = `<div style="display:flex;align-items:flex-start;gap:0.4rem;">
+                    <div onclick="showUserProfile('${r.userId}')" style="cursor:pointer;flex-shrink:0;">${avatarHTML(rInfo.photoURL, rInfo.nickname, 20)}</div>
+                    <div><strong onclick="showUserProfile('${r.userId}')" style="cursor:pointer;">${rInfo.nickname}</strong> ${truncateWalletAddresses(r.text)}
+                    <div style="font-size:0.65rem;color:var(--accent);">${getTimeAgo(r.timestamp?.toDate?.() || new Date())}</div></div>
+                </div>`;
+                el.appendChild(rEl);
+            }
+        }
+
+        // Reply input (hidden)
+        const replyDiv = document.createElement('div');
+        replyDiv.id = `reply-input-${postId}-${c.id}`;
+        replyDiv.style.cssText = 'display:none;margin-left:2rem;margin-top:0.3rem;';
+        replyDiv.innerHTML = `<div style="display:flex;gap:0.4rem;align-items:center;">
+            <input type="text" placeholder="답글..." style="flex:1;padding:0.3rem 0.6rem;border:none;border-bottom:1px solid var(--border);font-size:0.8rem;outline:none;" onkeypress="if(event.key==='Enter')addReply('${postId}','${c.id}',this)">
+            <button onclick="addReply('${postId}','${c.id}',this.previousElementSibling)" style="background:none;border:none;color:#0066cc;font-weight:700;cursor:pointer;font-size:0.8rem;">게시</button>
+        </div>`;
+        el.appendChild(replyDiv);
+
+        list.appendChild(el);
+    }
+}
+
+function showReplyInput(postId, commentId) {
+    const el = document.getElementById(`reply-input-${postId}-${commentId}`);
+    if (el) { el.style.display = el.style.display === 'none' ? 'block' : 'none'; el.querySelector('input')?.focus(); }
+}
+
+async function addReply(postId, parentId, input) {
+    const text = input.value.trim();
+    if (!text) return;
+    await db.collection('posts').doc(postId).collection('comments').add({
+        userId: currentUser.uid, text, parentId, timestamp: new Date()
+    });
+    const postRef = db.collection('posts').doc(postId);
+    const post = await postRef.get();
+    await postRef.update({ commentCount: (post.data().commentCount || 0) + 1 });
+    input.value = '';
+    loadCommentsWithReplies(postId);
+}
+
+// ========== WEB SHARE API ==========
+async function sharePostWebAPI(postId) {
+    const post = await db.collection('posts').doc(postId).get();
+    const data = post.data();
+    const url = generateShareURL('post', postId);
+
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: 'Crowny 게시물',
+                text: data.text ? data.text.substring(0, 100) : '게시물을 확인하세요!',
+                url
+            });
+        } catch (e) { /* user cancelled */ }
+    } else {
+        await copyShareURL('post', postId);
+    }
+    // Increment share count
+    await db.collection('posts').doc(postId).update({
+        shareCount: firebase.firestore.FieldValue.increment(1)
+    });
+}
+
+// ========== LOCATION TAG ==========
+// Added to post creation (location field in create post area)
+
+// ========== INIT SOCIAL ENHANCEMENTS ==========
+function initSocialEnhancements() {
+    // Init stories
+    if (typeof initStories === 'function') initStories();
+    // Update social notif badge
+    updateSocialNotifBadge();
+    setInterval(updateSocialNotifBadge, 60000);
+}
+
+// Auto-init when social page loads
+const _origLoadUserData = window.loadUserData;
+if (_origLoadUserData) {
+    window.loadUserData = async function() {
+        await _origLoadUserData();
+        initSocialEnhancements();
+    };
 }

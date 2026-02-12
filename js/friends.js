@@ -229,6 +229,10 @@ async function followUser(targetUid) {
             await db.collection('notifications').add({
                 userId: targetUid, type: 'new_follower', message: '', fromUid: currentUser.uid, read: false, createdAt: new Date()
             });
+            // Social notification
+            if (typeof createSocialNotification === 'function') {
+                createSocialNotification(targetUid, 'follow', `${myInfo.nickname}님이 팔로우했습니다`, {});
+            }
             showToast(t('friends.followed', '✅ 팔로우했습니다'), 'success');
         }
     } catch (e) {

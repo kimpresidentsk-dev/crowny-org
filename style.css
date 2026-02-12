@@ -3078,3 +3078,32 @@ a:not(.nav-item) {
 /* CREB LABS category tabs */
 .creb-tab.active { font-weight: 700; }
 .creb-tab:hover { opacity: 0.8; }
+
+/* ===== STORIES ===== */
+#story-ring-container::-webkit-scrollbar { display: none; }
+.story-ring-item { display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;min-width:70px; }
+.story-ring-item .story-username { font-size:0.65rem;color:var(--text);max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center; }
+.story-avatar-wrap { padding:3px;border-radius:50%;background:transparent; }
+.story-avatar-wrap.has-story { background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);padding:3px; }
+.story-avatar-wrap.has-story img, .story-avatar-wrap.has-story > div { border:2px solid white; }
+.story-avatar-wrap.viewed { background:linear-gradient(45deg,#ccc,#999);padding:3px; }
+.story-avatar-wrap.viewed img, .story-avatar-wrap.viewed > div { border:2px solid white; }
+.story-add-badge { position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border-radius:50%;background:#0095f6;color:white;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid white; }
+
+/* ===== DOUBLE-TAP HEART ===== */
+@keyframes heartPop { 0%{transform:scale(0);opacity:1} 50%{transform:scale(1.2);opacity:1} 100%{transform:scale(1);opacity:0} }
+.double-tap-heart { position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);font-size:80px;pointer-events:none;z-index:10;animation:heartPop 0.8s ease-out forwards; }
+
+/* ===== PROFILE PAGE ===== */
+.profile-stats { display:flex;justify-content:space-around;text-align:center;padding:0.8rem 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border); }
+.profile-stats > div { cursor:pointer; }
+.profile-stats .stat-num { font-weight:700;font-size:1.1rem; }
+.profile-stats .stat-label { font-size:0.75rem;color:var(--accent); }
+.profile-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:2px; }
+.profile-grid-item { aspect-ratio:1;overflow:hidden;cursor:pointer;position:relative; }
+.profile-grid-item img, .profile-grid-item video { width:100%;height:100%;object-fit:cover;display:block; }
+.profile-tab-btn { background:none;border:none;padding:0.5rem 1rem;cursor:pointer;font-size:0.85rem;font-weight:600;color:#999;border-bottom:2px solid transparent; }
+.profile-tab-btn.active { color:var(--text);border-bottom-color:var(--text); }
+
+/* ===== NESTED COMMENTS ===== */
+.reply-comment { margin-left:2rem;padding-left:0.5rem;border-left:2px solid #eee; }
