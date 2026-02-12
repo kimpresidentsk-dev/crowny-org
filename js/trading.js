@@ -120,12 +120,22 @@ function applyTradingPermissions() {
         else if (tier.NQ > 0) dropdown.value = 'NQ';
     }
     
-    // 계약 수 입력 제한
+    // 계약 수 드롭다운 동적 생성
     const selected = dropdown.value;
     const max = getMaxContracts(selected);
     if (contractInput) {
-        contractInput.max = max;
-        contractInput.value = Math.min(parseInt(contractInput.value) || 1, max);
+        const currentVal = parseInt(contractInput.value) || 1;
+        contractInput.innerHTML = '';
+        for (let i = 1; i <= max; i++) {
+            const opt = document.createElement('option');
+            opt.value = i;
+            opt.textContent = i;
+            if (i === Math.min(currentVal, max)) opt.selected = true;
+            contractInput.appendChild(opt);
+        }
+        if (max === 0) {
+            contractInput.innerHTML = '<option value="0" disabled>불가</option>';
+        }
     }
     if (maxLabel) maxLabel.textContent = `(${t('trading.max','최대')} ${max})`;
     
@@ -2365,13 +2375,14 @@ async function executeFuturesTrade(side) {
         const copyLabel = copyAccounts > 1 ? ` (×${copyAccounts}계정)` : '';
         showToast(`✅ ${side} 주문 ${statusText}! ${contract} ${contracts}계약${copyLabel} @ ${entryPrice.toFixed(2)}`, 'success');
         
-        updateTradingUI();
-        updateOpenPositions();
-        updateRiskGaugeUI();
-        loadTradeHistory();
-        
-        // 차트에 라인 그리기 + 자동 정렬
-        setTimeout(() => { drawPositionLinesLW(); scrollToLatest(); }, 1000);
+        try { updateTradingUI(); updateOpenPositions(); updateRiskGaugeUI(); loadTradeHistory(); setTimeout(() => { drawPositionLinesLW(); scrollToLatest(); }, 1000); } catch(uiErr) { console.warn("UI update warning:", uiErr); }
+
+
+
+
+
+
+
     } catch (error) {
         showToast('거래 실패: ' + error.message, 'error');
     }
@@ -2501,17 +2512,18 @@ async function quickChartTrade(side, contractOverride) {
         myParticipation.trades = trades;
         myParticipation.currentBalance = newBalance;
         
-        console.log(`✅ 차트 ${side} 주문 체결! ${slots}슬롯, 카피:${copyAccounts}, SL: ${stopLoss.toFixed(2)}, TP: ${takeProfit.toFixed(2)}`);
+        console.log(`✅ 차트 ${side} 주문 체결! 카피:${copyAccounts}, SL: ${stopLoss.toFixed(2)}, TP: ${takeProfit.toFixed(2)}`);
         
-        updateTradingUI();
-        updateOpenPositions();
-        updateRiskGaugeUI();
-        
-        // 차트에 라인 그리기 + 자동 정렬
-        setTimeout(() => {
-            drawPositionLinesLW();
-            scrollToLatest();
-        }, 500);
+        try { updateTradingUI(); updateOpenPositions(); updateRiskGaugeUI(); setTimeout(() => { drawPositionLinesLW(); scrollToLatest(); }, 500); } catch(uiErr) { console.warn("UI update warning:", uiErr); }
+
+
+
+
+
+
+
+
+
     } catch (error) {
         showToast('거래 실패: ' + error.message, 'error');
     }
