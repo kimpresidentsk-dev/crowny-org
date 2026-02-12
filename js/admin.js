@@ -2802,15 +2802,21 @@ async function joinChallenge(challengeId, tierKey) {
 const MALL_CATEGORIES = { present:'💄 프레즌트', doctor:'💊 포닥터', medical:'🏥 메디컬', avls:'🎬 AVLs', solution:'🔐 프라이빗', architect:'🏗️ 아키텍트', mall:'🛒 크라우니몰', designers:'👗 디자이너스', other:'📦 기타' };
 
 async function registerProduct() {
-    if (!currentUser) { alert('로그인 필요'); return; }
+    if (!currentUser) { showToast('로그인 필요', 'warning'); return; }
     const title = document.getElementById('product-title').value.trim();
     const price = parseFloat(document.getElementById('product-price').value);
-    const imageFile = document.getElementById('product-image').files[0];
-    if (!title || !price) { alert('상품명과 가격을 입력하세요'); return; }
-    if (!imageFile) { alert('상품 이미지를 선택하세요'); return; }
+    const imageFiles = document.getElementById('product-image').files;
+    if (!title || !price) { showToast('상품명과 가격을 입력하세요', 'warning'); return; }
+    if (!imageFiles || imageFiles.length === 0) { showToast('상품 이미지를 선택하세요', 'warning'); return; }
+    if (imageFiles.length > 5) { showToast('이미지는 최대 5장까지 가능합니다', 'warning'); return; }
     
     try {
-        const imageData = await fileToBase64Resized(imageFile, 600);
+        // Multi-image: resize all images
+        const images = [];
+        for (let i = 0; i < Math.min(imageFiles.length, 5); i++) {
+            const resized = await fileToBase64Resized(imageFiles[i], 400);
+            images.push(resized);
+        }
         const userDoc = await db.collection('users').doc(currentUser.uid).get();
         
         await db.collection('products').add({
@@ -2818,17 +2824,21 @@ async function registerProduct() {
             category: document.getElementById('product-category').value,
             price, priceToken: 'CRGC',
             stock: parseInt(document.getElementById('product-stock').value) || 1,
-            imageData, sellerId: currentUser.uid, sellerEmail: currentUser.email,
+            images, // 다중 이미지 배열
+            imageData: images[0], // 하위 호환: 첫번째 이미지
+            sellerId: currentUser.uid, sellerEmail: currentUser.email,
             sellerNickname: userDoc.data()?.nickname || '',
             sold: 0, status: 'active', createdAt: new Date()
         });
         
-        alert(`🛒 "${title}" 등록 완료!`);
+        showToast(`🛒 "${title}" 등록 완료!`, 'success');
         document.getElementById('product-title').value = '';
         document.getElementById('product-desc').value = '';
         document.getElementById('product-image').value = '';
+        const preview = document.getElementById('product-image-preview');
+        if (preview) preview.innerHTML = '';
         loadMallProducts();
-    } catch (e) { alert('등록 실패: ' + e.message); }
+    } catch (e) { showToast('등록 실패: ' + e.message, 'error'); }
 }
 
 // ========== 오프체인/CRNY 비율 관리 (수퍼관리자) ==========

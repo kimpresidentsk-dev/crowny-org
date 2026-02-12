@@ -259,6 +259,11 @@ function handleHashRoute() {
             const id = params.get('id');
             if (id && typeof renderProductDetail === 'function') renderProductDetail(id);
         }
+        // store page with sellerId
+        if (page === 'store') {
+            const sellerId = params.get('sellerId');
+            if (sellerId && typeof renderStorePage === 'function') renderStorePage(sellerId);
+        }
     }
 }
 

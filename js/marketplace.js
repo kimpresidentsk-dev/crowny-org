@@ -14,6 +14,12 @@ function renderStars(rating, size='0.85rem') {
     return s;
 }
 
+// Helper: get product thumbnail (supports images[] array and legacy imageData)
+function getProductThumb(p) {
+    if (p.images && p.images.length > 0) return p.images[0];
+    return p.imageData || '';
+}
+
 async function loadMallProducts() {
     const container = document.getElementById('mall-products');
     if (!container) return;
@@ -42,14 +48,17 @@ async function loadMallProducts() {
         if (items.length === 0) { container.innerHTML = '<p style="text-align:center; color:var(--accent); grid-column:1/-1;">검색 결과가 없습니다</p>'; return; }
         container.innerHTML = '';
         items.forEach(p => {
+            const thumb = getProductThumb(p);
+            const imgCount = (p.images && p.images.length > 1) ? `<span style="position:absolute; top:6px; left:6px; background:rgba(0,0,0,0.6); color:white; font-size:0.6rem; padding:0.15rem 0.4rem; border-radius:4px;">📷 ${p.images.length}</span>` : '';
             const ratingHtml = p.avgRating ? `<div style="margin-top:0.2rem;">${renderStars(p.avgRating, '0.7rem')} <span style="font-size:0.65rem; color:var(--accent);">(${p.reviewCount||0})</span></div>` : '';
             container.innerHTML += `
                 <div onclick="viewProduct('${p.id}')" style="background:white; border-radius:10px; overflow:hidden; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.08); position:relative;">
                     <button onclick="event.stopPropagation(); toggleWishlist('${p.id}')" style="position:absolute; top:6px; right:6px; background:rgba(255,255,255,0.85); border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; font-size:0.9rem; z-index:1;">🤍</button>
-                    <div style="height:140px; overflow:hidden; background:#f0f0f0;">${p.imageData ? `<img src="${p.imageData}" style="width:100%; height:100%; object-fit:cover;">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:#ccc;">🛒</div>`}</div>
+                    ${imgCount}
+                    <div style="height:140px; overflow:hidden; background:#f0f0f0;">${thumb ? `<img src="${thumb}" style="width:100%; height:100%; object-fit:cover;">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:#ccc;">🛒</div>`}</div>
                     <div style="padding:0.6rem;">
                         <div style="font-weight:600; font-size:0.85rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.title}</div>
-                        <div style="font-size:0.7rem; color:var(--accent);">${MALL_CATEGORIES[p.category] || p.category || ''} · ${p.sellerNickname || p.sellerEmail || t('mall.seller','판매자')}</div>
+                        <div style="font-size:0.7rem; color:var(--accent);">${MALL_CATEGORIES[p.category] || p.category || ''} · <a onclick="event.stopPropagation(); viewStore('${p.sellerId}')" style="cursor:pointer; text-decoration:underline; color:var(--accent);">${p.sellerNickname || p.sellerEmail || t('mall.seller','판매자')}</a></div>
                         <div style="font-weight:700; color:#0066cc; margin-top:0.3rem;">${p.price} CRGC</div>
                         <div style="font-size:0.7rem; color:var(--accent);">재고: ${p.stock - (p.sold||0)}개</div>
                         ${ratingHtml}
@@ -121,17 +130,42 @@ async function renderProductDetail(id) {
 
         const ratingDisplay = p.avgRating ? `<div style="margin:0.5rem 0;">${renderStars(p.avgRating, '1rem')} <span style="font-size:0.9rem; color:var(--accent);">${p.avgRating.toFixed(1)} (${p.reviewCount||0}개)</span></div>` : '';
 
+        // Multi-image gallery
+        const images = (p.images && p.images.length > 0) ? p.images : (p.imageData ? [p.imageData] : []);
+        let galleryHtml = '';
+        if (images.length > 1) {
+            galleryHtml = `<div style="position:relative; background:#f5f5f5; border-radius:12px; overflow:hidden; margin-bottom:1rem;">
+                <div id="pd-gallery" style="display:flex; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none;">
+                    ${images.map((img, i) => `<img src="${img}" style="width:100%; max-height:50vh; object-fit:contain; flex-shrink:0; scroll-snap-align:start;" data-idx="${i}">`).join('')}
+                </div>
+                <div style="text-align:center; padding:0.4rem;">
+                    ${images.map((_, i) => `<span class="pd-dot" data-idx="${i}" style="display:inline-block; width:8px; height:8px; border-radius:50%; background:${i===0?'#0066cc':'#ccc'}; margin:0 3px; cursor:pointer;"></span>`).join('')}
+                </div>
+                <button onclick="scrollPdGallery(-1)" style="position:absolute; left:4px; top:45%; background:rgba(0,0,0,0.4); color:white; border:none; border-radius:50%; width:32px; height:32px; cursor:pointer; font-size:1rem;">‹</button>
+                <button onclick="scrollPdGallery(1)" style="position:absolute; right:4px; top:45%; background:rgba(0,0,0,0.4); color:white; border:none; border-radius:50%; width:32px; height:32px; cursor:pointer; font-size:1rem;">›</button>
+            </div>`;
+        } else if (images.length === 1) {
+            galleryHtml = `<div style="background:#f5f5f5; border-radius:12px; overflow:hidden; margin-bottom:1rem;">
+                <img src="${images[0]}" style="width:100%; max-height:50vh; object-fit:contain;">
+            </div>`;
+        } else {
+            galleryHtml = `<div style="background:#f5f5f5; border-radius:12px; overflow:hidden; margin-bottom:1rem;">
+                <div style="width:100%;height:250px;display:flex;align-items:center;justify-content:center;font-size:5rem;color:#ccc;">🛒</div>
+            </div>`;
+        }
+
+        // Seller link
+        const sellerLink = p.sellerNickname || p.sellerEmail ? `<a onclick="viewStore('${p.sellerId}')" style="cursor:pointer; text-decoration:underline; color:#0066cc;">판매자: ${p.sellerNickname||p.sellerEmail}</a>` : '';
+
         c.innerHTML = `
             <button onclick="showPage('mall')" style="background:none; border:none; font-size:1rem; cursor:pointer; margin-bottom:0.8rem; color:var(--accent);">← 목록으로</button>
-            <div style="background:#f5f5f5; border-radius:12px; overflow:hidden; margin-bottom:1rem;">
-                ${p.imageData ? `<img src="${p.imageData}" style="width:100%; max-height:50vh; object-fit:contain;">` : `<div style="width:100%;height:250px;display:flex;align-items:center;justify-content:center;font-size:5rem;color:#ccc;">🛒</div>`}
-            </div>
+            ${galleryHtml}
             <div style="background:white; padding:1.2rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
                 <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                     <h2 style="margin:0; flex:1;">${p.title}</h2>
                     <button onclick="toggleWishlist('${id}')" id="wish-btn-${id}" style="background:none; border:none; font-size:1.5rem; cursor:pointer; padding:0.2rem;">${isWished ? '❤️' : '🤍'}</button>
                 </div>
-                <p style="color:var(--accent); font-size:0.85rem; margin:0.5rem 0;">${[MALL_CATEGORIES[p.category], p.sellerNickname || p.sellerEmail ? '판매자: '+(p.sellerNickname||p.sellerEmail) : ''].filter(Boolean).join(' · ')}</p>
+                <p style="color:var(--accent); font-size:0.85rem; margin:0.5rem 0;">${[MALL_CATEGORIES[p.category], sellerLink].filter(Boolean).join(' · ')}</p>
                 ${ratingDisplay}
                 ${p.description ? `<p style="font-size:0.95rem; margin:1rem 0; line-height:1.6; color:#444;">${p.description}</p>` : ''}
                 <div style="font-size:1.4rem; font-weight:700; color:#0066cc; margin:1rem 0;">${p.price} CRGC</div>
@@ -179,6 +213,10 @@ async function buyProduct(id) {
         
         if (!await showConfirmModal(t('mall.confirm_buy','구매 확인'), `"${p.title}"\n${p.price} CRGC로 구매하시겠습니까?`)) return;
         
+        // 배송지 입력
+        const shippingInfo = await showShippingModal();
+        if (!shippingInfo) return; // 취소
+        
         if (isOffchainToken(tk)) {
             const success = await spendOffchainPoints(tk, p.price, `몰 구매: ${p.title}`);
             if (!success) return;
@@ -195,7 +233,7 @@ async function buyProduct(id) {
         }
         
         await db.collection('products').doc(id).update({ sold: (p.sold||0) + 1 });
-        await db.collection('orders').add({ productId:id, productTitle:p.title, buyerId:currentUser.uid, buyerEmail:currentUser.email, sellerId:p.sellerId, sellerEmail:p.sellerEmail||'', amount:p.price, token:'CRGC', status:'paid', createdAt:new Date() });
+        await db.collection('orders').add({ productId:id, productTitle:p.title, buyerId:currentUser.uid, buyerEmail:currentUser.email, sellerId:p.sellerId, sellerEmail:p.sellerEmail||'', amount:p.price, token:'CRGC', status:'paid', shippingInfo, createdAt:new Date() });
         if (typeof distributeReferralReward === 'function') await distributeReferralReward(currentUser.uid, p.price, 'CRGC');
         showToast(`🎉 "${p.title}" 구매 완료!`, 'success');
         document.getElementById('product-modal')?.remove();
@@ -299,9 +337,10 @@ async function loadSellerOrders() {
             const nextActions = [];
             if (x.status === 'paid') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','shipping')" style="background:#2196f3; color:white; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.process_shipping','🚚 배송처리')}</button>`);
             if (x.status === 'shipping') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','delivered')" style="background:#4CAF50; color:white; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.mark_delivered','✅ 배송완료')}</button>`);
+            const shipInfo = x.shippingInfo ? `<div style="font-size:0.7rem; color:#555; margin-top:0.2rem;">📦 ${x.shippingInfo.name} · ${x.shippingInfo.phone} · ${x.shippingInfo.address}${x.shippingInfo.memo ? ' · '+x.shippingInfo.memo : ''}</div>` : '';
             c.innerHTML += `<div style="padding:0.6rem; background:var(--bg); border-radius:6px; margin-bottom:0.4rem; font-size:0.85rem;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.3rem;">
-                    <div><strong>${x.productTitle}</strong> — ${x.amount} ${x.token}<br><span style="font-size:0.75rem; color:var(--accent);">구매자: ${x.buyerEmail}</span></div>
+                    <div><strong>${x.productTitle}</strong> — ${x.amount} ${x.token}<br><span style="font-size:0.75rem; color:var(--accent);">구매자: ${x.buyerEmail}</span>${shipInfo}</div>
                     <div style="display:flex; align-items:center; gap:0.3rem;">
                         <span style="color:${statusColor}; font-weight:600; font-size:0.8rem;">${statusLabel}</span>
                         ${nextActions.join('')}
@@ -1731,6 +1770,10 @@ async function checkoutCart() {
         
         if (!await showConfirmModal('일괄 결제', `장바구니 ${items.length}개 상품\n총 ${total} CRGC 결제하시겠습니까?`)) return;
         
+        // 배송지 입력
+        const shippingInfo = await showShippingModal();
+        if (!shippingInfo) return;
+        
         const tk = 'crgc';
         if (isOffchainToken(tk)) {
             const success = await spendOffchainPoints(tk, total, `장바구니 일괄 구매 (${items.length}건)`);
@@ -1755,7 +1798,7 @@ async function checkoutCart() {
                 productId: item.productId, productTitle: item.title,
                 buyerId: currentUser.uid, buyerEmail: currentUser.email,
                 sellerId: p.sellerId, sellerEmail: p.sellerEmail || '',
-                amount: item.price * qty, qty, token: 'CRGC', status: 'paid', createdAt: new Date()
+                amount: item.price * qty, qty, token: 'CRGC', status: 'paid', shippingInfo, createdAt: new Date()
             });
             if (typeof autoGivingPoolContribution === 'function') await autoGivingPoolContribution(item.price * qty);
             if (typeof distributeReferralReward === 'function') await distributeReferralReward(currentUser.uid, item.price * qty, 'CRGC');
@@ -1824,6 +1867,391 @@ async function loadWishlist() {
         });
     } catch(e) { c.innerHTML = `<p style="color:red;">${e.message}</p>`; }
 }
+
+// ========== IMAGE GALLERY SCROLL ==========
+
+function scrollPdGallery(dir) {
+    const g = document.getElementById('pd-gallery');
+    if (!g) return;
+    const w = g.offsetWidth;
+    g.scrollBy({ left: dir * w, behavior: 'smooth' });
+    setTimeout(() => {
+        const idx = Math.round(g.scrollLeft / w);
+        document.querySelectorAll('.pd-dot').forEach(d => d.style.background = parseInt(d.dataset.idx) === idx ? '#0066cc' : '#ccc');
+    }, 350);
+}
+
+// ========== STORE PAGE ==========
+
+function viewStore(sellerId) {
+    history.replaceState(null, '', `#page=store&sellerId=${sellerId}`);
+    showPage('store');
+    renderStorePage(sellerId);
+}
+
+async function renderStorePage(sellerId) {
+    const c = document.getElementById('store-content');
+    if (!c) return;
+    c.innerHTML = '<p style="text-align:center; color:var(--accent); padding:2rem;">로딩 중...</p>';
+    try {
+        const sellerDoc = await db.collection('users').doc(sellerId).get();
+        const seller = sellerDoc.exists ? sellerDoc.data() : {};
+        const storeName = seller.storeName || seller.nickname || seller.email?.split('@')[0] || '판매자';
+        const storeDesc = seller.storeDesc || '';
+        const storeImage = seller.storeImage || seller.profileImage || '';
+        const isOwner = currentUser?.uid === sellerId;
+
+        // Load seller products
+        const prodDocs = await db.collection('products').where('sellerId', '==', sellerId).where('status', '==', 'active').orderBy('createdAt', 'desc').limit(50).get();
+        let totalSold = 0;
+        let productsHtml = '';
+        prodDocs.forEach(d => {
+            const p = d.data();
+            totalSold += (p.sold || 0);
+            const thumb = getProductThumb(p);
+            productsHtml += `<div onclick="viewProduct('${d.id}')" style="background:white; border-radius:10px; overflow:hidden; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                <div style="height:130px; overflow:hidden; background:#f0f0f0;">${thumb ? `<img src="${thumb}" style="width:100%; height:100%; object-fit:cover;">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:#ccc;">🛒</div>`}</div>
+                <div style="padding:0.5rem;">
+                    <div style="font-weight:600; font-size:0.8rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.title}</div>
+                    <div style="font-weight:700; color:#0066cc; font-size:0.85rem;">${p.price} CRGC</div>
+                </div>
+            </div>`;
+        });
+
+        // Seller avg rating from reviews
+        const orderDocs = await db.collection('orders').where('sellerId', '==', sellerId).get();
+        let orderCount = orderDocs.size;
+
+        c.innerHTML = `
+            <button onclick="showPage('mall')" style="background:none; border:none; font-size:1rem; cursor:pointer; margin-bottom:0.8rem; color:var(--accent);">← 목록으로</button>
+            <div style="background:white; padding:1.5rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08); margin-bottom:1rem;">
+                <div style="display:flex; gap:1rem; align-items:center;">
+                    <div style="width:70px; height:70px; border-radius:50%; overflow:hidden; background:#f0f0f0; flex-shrink:0; display:flex; align-items:center; justify-content:center;">
+                        ${storeImage ? `<img src="${storeImage}" style="width:100%; height:100%; object-fit:cover;">` : `<span style="font-size:2rem;">🏪</span>`}
+                    </div>
+                    <div style="flex:1;">
+                        <h2 style="margin:0; font-size:1.3rem;">${storeName}</h2>
+                        ${storeDesc ? `<p style="color:var(--accent); font-size:0.85rem; margin-top:0.3rem;">${storeDesc}</p>` : ''}
+                        <div style="display:flex; gap:1rem; margin-top:0.5rem; font-size:0.8rem; color:var(--accent);">
+                            <span>📦 상품 ${prodDocs.size}개</span>
+                            <span>🛒 총 판매 ${totalSold}건</span>
+                            <span>📋 주문 ${orderCount}건</span>
+                        </div>
+                    </div>
+                </div>
+                ${isOwner ? `<button onclick="showStoreSettingsModal()" style="margin-top:0.8rem; background:#ff9800; color:white; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600;">⚙️ 스토어 설정</button>` : ''}
+            </div>
+            <h3 style="margin-bottom:0.8rem;">📦 상품 목록</h3>
+            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:0.8rem;">
+                ${productsHtml || '<p style="color:var(--accent); grid-column:1/-1; text-align:center;">등록된 상품이 없습니다</p>'}
+            </div>`;
+    } catch(e) { c.innerHTML = `<p style="color:red; text-align:center;">${e.message}</p>`; }
+}
+
+async function showStoreSettingsModal() {
+    if (!currentUser) return;
+    const userDoc = await db.collection('users').doc(currentUser.uid).get();
+    const data = userDoc.data() || {};
+
+    const overlay = document.createElement('div');
+    overlay.id = 'store-settings-modal';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+    overlay.innerHTML = `<div style="background:white; border-radius:12px; max-width:450px; width:100%; max-height:90vh; overflow-y:auto; padding:1.5rem;">
+        <h3 style="margin-bottom:1rem;">⚙️ 스토어 설정</h3>
+        <div style="display:grid; gap:0.8rem;">
+            <div>
+                <label style="font-size:0.8rem; color:var(--accent);">스토어명</label>
+                <input type="text" id="store-set-name" value="${data.storeName || data.nickname || ''}" style="width:100%; padding:0.7rem; border:1px solid var(--border); border-radius:6px; box-sizing:border-box;">
+            </div>
+            <div>
+                <label style="font-size:0.8rem; color:var(--accent);">스토어 소개</label>
+                <textarea id="store-set-desc" rows="3" style="width:100%; padding:0.7rem; border:1px solid var(--border); border-radius:6px; resize:vertical; box-sizing:border-box;">${data.storeDesc || ''}</textarea>
+            </div>
+            <div>
+                <label style="font-size:0.8rem; color:var(--accent);">스토어 이미지</label>
+                <input type="file" id="store-set-image" accept="image/*" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
+            </div>
+            <button onclick="saveStoreSettings()" style="background:#0066cc; color:white; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">💾 저장</button>
+            <button onclick="document.getElementById('store-settings-modal').remove()" style="background:#eee; border:none; padding:0.6rem; border-radius:8px; cursor:pointer;">닫기</button>
+        </div>
+    </div>`;
+    document.body.appendChild(overlay);
+}
+
+async function saveStoreSettings() {
+    if (!currentUser) return;
+    try {
+        const updateData = {
+            storeName: document.getElementById('store-set-name').value.trim(),
+            storeDesc: document.getElementById('store-set-desc').value.trim()
+        };
+        const imageFile = document.getElementById('store-set-image').files[0];
+        if (imageFile) {
+            updateData.storeImage = await fileToBase64Resized(imageFile, 400);
+        }
+        await db.collection('users').doc(currentUser.uid).update(updateData);
+        showToast('⚙️ 스토어 설정 저장 완료!', 'success');
+        document.getElementById('store-settings-modal')?.remove();
+        renderStorePage(currentUser.uid);
+    } catch(e) { showToast('저장 실패: ' + e.message, 'error'); }
+}
+
+// ========== MY SHOP DASHBOARD ==========
+
+async function loadMyShopDashboard() {
+    const c = document.getElementById('my-shop-content');
+    if (!c || !currentUser) { if(c) c.innerHTML = '<p style="text-align:center; color:var(--accent);">로그인이 필요합니다</p>'; return; }
+    c.innerHTML = '<p style="text-align:center; color:var(--accent);">로딩 중...</p>';
+    try {
+        // Load my products
+        const prodDocs = await db.collection('products').where('sellerId', '==', currentUser.uid).orderBy('createdAt', 'desc').limit(50).get();
+        // Load seller orders
+        const orderDocs = await db.collection('orders').where('sellerId', '==', currentUser.uid).orderBy('createdAt', 'desc').limit(50).get();
+
+        let totalRevenue = 0, monthlyRevenue = 0, totalOrders = 0;
+        const now = new Date();
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        orderDocs.forEach(d => {
+            const o = d.data();
+            totalRevenue += o.amount || 0;
+            totalOrders++;
+            const oDate = o.createdAt?.toDate ? o.createdAt.toDate() : new Date(o.createdAt);
+            if (oDate >= monthStart) monthlyRevenue += o.amount || 0;
+        });
+
+        // Products list
+        let productsHtml = '';
+        prodDocs.forEach(d => {
+            const p = d.data();
+            const remaining = p.stock - (p.sold || 0);
+            const statusBadge = p.status === 'active' ? '<span style="color:#4CAF50; font-size:0.7rem;">● 판매중</span>' : '<span style="color:#999; font-size:0.7rem;">● 비활성</span>';
+            productsHtml += `<div style="padding:0.6rem; background:var(--bg); border-radius:8px; margin-bottom:0.4rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.3rem;">
+                    <div><strong>${p.title}</strong> — ${p.price} CRGC · 판매 ${p.sold||0}/${p.stock} · 재고 ${remaining} ${statusBadge}</div>
+                    <div style="display:flex; gap:0.3rem;">
+                        <button onclick="editProductModal('${d.id}')" style="background:#2196f3; color:white; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">✏️ 수정</button>
+                        <button onclick="toggleProduct('${d.id}','${p.status}')" style="background:${p.status==='active'?'#999':'#4CAF50'}; color:white; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${p.status==='active'?'⏸':'▶'}</button>
+                        <button onclick="deleteProduct('${d.id}')" style="background:#cc0000; color:white; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">🗑️</button>
+                    </div>
+                </div>
+            </div>`;
+        });
+
+        // Orders list
+        let ordersHtml = '';
+        orderDocs.forEach(d => {
+            const o = d.data();
+            const statusLabel = ORDER_STATUS_LABELS[o.status] || o.status;
+            const statusColor = ORDER_STATUS_COLORS[o.status] || 'var(--accent)';
+            const nextActions = [];
+            if (o.status === 'paid') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','shipping')" style="background:#2196f3; color:white; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.7rem;">🚚 배송</button>`);
+            if (o.status === 'shipping') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','delivered')" style="background:#4CAF50; color:white; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.7rem;">✅ 완료</button>`);
+            const shipInfo = o.shippingInfo ? `<div style="font-size:0.65rem; color:#555;">📦 ${o.shippingInfo.name} · ${o.shippingInfo.phone} · ${o.shippingInfo.address}</div>` : '';
+            ordersHtml += `<div style="padding:0.5rem; background:var(--bg); border-radius:6px; margin-bottom:0.3rem; font-size:0.8rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.2rem;">
+                    <div><strong>${o.productTitle}</strong> — ${o.amount} ${o.token}<br><span style="font-size:0.7rem; color:var(--accent);">${o.buyerEmail}</span>${shipInfo}</div>
+                    <div style="display:flex; align-items:center; gap:0.2rem;">
+                        <span style="color:${statusColor}; font-weight:600; font-size:0.75rem;">${statusLabel}</span>
+                        ${nextActions.join('')}
+                    </div>
+                </div>
+            </div>`;
+        });
+
+        c.innerHTML = `
+            <button onclick="showPage('mall')" style="background:none; border:none; font-size:1rem; cursor:pointer; margin-bottom:0.8rem; color:var(--accent);">← 쇼핑몰</button>
+            <h2 style="margin-bottom:1rem;">🏪 내 상점</h2>
+            
+            <!-- 매출 통계 -->
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.8rem; margin-bottom:1.5rem;">
+                <div style="background:linear-gradient(135deg,#0066cc,#004d99); color:white; padding:1rem; border-radius:12px; text-align:center;">
+                    <div style="font-size:0.7rem; opacity:0.8;">총 매출</div>
+                    <div style="font-size:1.3rem; font-weight:700;">${totalRevenue} CRGC</div>
+                </div>
+                <div style="background:linear-gradient(135deg,#4CAF50,#2E7D32); color:white; padding:1rem; border-radius:12px; text-align:center;">
+                    <div style="font-size:0.7rem; opacity:0.8;">이번 달</div>
+                    <div style="font-size:1.3rem; font-weight:700;">${monthlyRevenue} CRGC</div>
+                </div>
+                <div style="background:linear-gradient(135deg,#ff9800,#e65100); color:white; padding:1rem; border-radius:12px; text-align:center;">
+                    <div style="font-size:0.7rem; opacity:0.8;">총 주문</div>
+                    <div style="font-size:1.3rem; font-weight:700;">${totalOrders}건</div>
+                </div>
+            </div>
+            
+            <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
+                <button onclick="viewStore('${currentUser.uid}')" style="background:#0066cc; color:white; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem;">🏪 내 스토어 보기</button>
+                <button onclick="showStoreSettingsModal()" style="background:#ff9800; color:white; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem;">⚙️ 스토어 설정</button>
+            </div>
+            
+            <!-- 내 상품 -->
+            <div style="background:white; padding:1.2rem; border-radius:12px; margin-bottom:1rem;">
+                <h3 style="margin-bottom:0.8rem;">📦 내 상품 (${prodDocs.size})</h3>
+                ${productsHtml || '<p style="color:var(--accent); font-size:0.85rem;">등록된 상품이 없습니다</p>'}
+            </div>
+            
+            <!-- 받은 주문 -->
+            <div style="background:white; padding:1.2rem; border-radius:12px;">
+                <h3 style="margin-bottom:0.8rem;">📬 받은 주문 (${totalOrders})</h3>
+                ${ordersHtml || '<p style="color:var(--accent); font-size:0.85rem;">받은 주문이 없습니다</p>'}
+            </div>`;
+    } catch(e) { c.innerHTML = `<p style="color:red; text-align:center;">${e.message}</p>`; }
+}
+
+// ========== PRODUCT EDIT MODAL (Enhanced) ==========
+
+async function editProductModal(id) {
+    const doc = await db.collection('products').doc(id).get();
+    if (!doc.exists) return;
+    const p = doc.data();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'edit-product-modal';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+
+    const images = (p.images && p.images.length > 0) ? p.images : (p.imageData ? [p.imageData] : []);
+    const imgPreview = images.map((img, i) => `<img src="${img}" style="width:50px; height:50px; object-fit:cover; border-radius:4px; border:${i===0?'2px solid #0066cc':'1px solid #ddd'};">`).join('');
+
+    overlay.innerHTML = `<div style="background:white; border-radius:12px; max-width:450px; width:100%; max-height:90vh; overflow-y:auto; padding:1.5rem;">
+        <h3 style="margin-bottom:1rem;">✏️ 상품 수정</h3>
+        <div style="display:grid; gap:0.8rem;">
+            <div>
+                <label style="font-size:0.8rem; color:var(--accent);">상품명</label>
+                <input type="text" id="ep-title" value="${p.title}" style="width:100%; padding:0.7rem; border:1px solid var(--border); border-radius:6px; box-sizing:border-box;">
+            </div>
+            <div>
+                <label style="font-size:0.8rem; color:var(--accent);">설명</label>
+                <textarea id="ep-desc" rows="3" style="width:100%; padding:0.7rem; border:1px solid var(--border); border-radius:6px; resize:vertical; box-sizing:border-box;">${p.description || ''}</textarea>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+                <div>
+                    <label style="font-size:0.8rem; color:var(--accent);">가격 (CRGC)</label>
+                    <input type="number" id="ep-price" value="${p.price}" style="width:100%; padding:0.7rem; border:1px solid var(--border); border-radius:6px; box-sizing:border-box;">
+                </div>
+                <div>
+                    <label style="font-size:0.8rem; color:var(--accent);">재고</label>
+                    <input type="number" id="ep-stock" value="${p.stock}" style="width:100%; padding:0.7rem; border:1px solid var(--border); border-radius:6px; box-sizing:border-box;">
+                </div>
+            </div>
+            <div>
+                <label style="font-size:0.8rem; color:var(--accent);">현재 이미지</label>
+                <div style="display:flex; gap:0.3rem; margin-top:0.3rem;">${imgPreview || '<span style="color:var(--accent); font-size:0.85rem;">없음</span>'}</div>
+            </div>
+            <div>
+                <label style="font-size:0.8rem; color:var(--accent);">새 이미지 (최대 5장, 선택 시 교체)</label>
+                <input type="file" id="ep-images" accept="image/*" multiple style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
+            </div>
+            <button onclick="saveEditProduct('${id}')" style="background:#0066cc; color:white; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">💾 저장</button>
+            <button onclick="document.getElementById('edit-product-modal').remove()" style="background:#eee; border:none; padding:0.6rem; border-radius:8px; cursor:pointer;">닫기</button>
+        </div>
+    </div>`;
+    document.body.appendChild(overlay);
+}
+
+async function saveEditProduct(id) {
+    try {
+        const updateData = {
+            title: document.getElementById('ep-title').value.trim(),
+            price: parseFloat(document.getElementById('ep-price').value),
+            stock: parseInt(document.getElementById('ep-stock').value),
+            description: document.getElementById('ep-desc').value.trim()
+        };
+        const imageFiles = document.getElementById('ep-images').files;
+        if (imageFiles && imageFiles.length > 0) {
+            const images = [];
+            for (let i = 0; i < Math.min(imageFiles.length, 5); i++) {
+                images.push(await fileToBase64Resized(imageFiles[i], 400));
+            }
+            updateData.images = images;
+            updateData.imageData = images[0];
+        }
+        await db.collection('products').doc(id).update(updateData);
+        showToast('✏️ 상품 수정 완료', 'success');
+        document.getElementById('edit-product-modal')?.remove();
+        if (typeof loadMyShopDashboard === 'function') loadMyShopDashboard();
+        loadMallProducts();
+    } catch(e) { showToast('수정 실패: ' + e.message, 'error'); }
+}
+
+// ========== SHIPPING INFO MODAL ==========
+
+async function showShippingModal() {
+    // Try to load last used address
+    let lastAddr = {};
+    if (currentUser) {
+        try {
+            const addrSnap = await db.collection('users').doc(currentUser.uid).collection('addresses').orderBy('usedAt', 'desc').limit(1).get();
+            if (!addrSnap.empty) lastAddr = addrSnap.docs[0].data();
+        } catch(e) {}
+    }
+
+    return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        overlay.innerHTML = `
+            <div style="background:white;padding:1.5rem;border-radius:12px;max-width:420px;width:100%;max-height:90vh;overflow-y:auto;">
+                <h3 style="margin-bottom:1rem;">📦 배송지 정보</h3>
+                <div style="display:grid; gap:0.7rem;">
+                    <input type="text" id="ship-name" placeholder="수령인 이름" value="${lastAddr.name||''}" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    <input type="tel" id="ship-phone" placeholder="전화번호" value="${lastAddr.phone||''}" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    <input type="text" id="ship-address" placeholder="배송 주소" value="${lastAddr.address||''}" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    <input type="text" id="ship-memo" placeholder="배송 메모 (선택)" value="${lastAddr.memo||''}" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    <label style="font-size:0.8rem; display:flex; align-items:center; gap:0.3rem; color:var(--accent);">
+                        <input type="checkbox" id="ship-save" checked> 이 주소 저장하기
+                    </label>
+                </div>
+                <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+                    <button id="ship-cancel" style="flex:1; padding:0.7rem; border:1px solid #ddd; border-radius:8px; cursor:pointer; background:white;">취소</button>
+                    <button id="ship-ok" style="flex:1; padding:0.7rem; border:none; border-radius:8px; cursor:pointer; background:#0066cc; color:white; font-weight:700;">확인</button>
+                </div>
+            </div>`;
+        document.body.appendChild(overlay);
+
+        overlay.querySelector('#ship-cancel').onclick = () => { document.body.removeChild(overlay); resolve(null); };
+        overlay.querySelector('#ship-ok').onclick = async () => {
+            const name = document.getElementById('ship-name').value.trim();
+            const phone = document.getElementById('ship-phone').value.trim();
+            const address = document.getElementById('ship-address').value.trim();
+            const memo = document.getElementById('ship-memo').value.trim();
+            if (!name || !phone || !address) { showToast('이름, 전화번호, 주소를 입력해주세요', 'warning'); return; }
+            const info = { name, phone, address, memo };
+            // Save address if checked
+            if (document.getElementById('ship-save').checked && currentUser) {
+                try {
+                    await db.collection('users').doc(currentUser.uid).collection('addresses').add({ ...info, usedAt: new Date() });
+                } catch(e) {}
+            }
+            document.body.removeChild(overlay);
+            resolve(info);
+        };
+        overlay.onclick = (e) => { if (e.target === overlay) { document.body.removeChild(overlay); resolve(null); } };
+    });
+}
+
+// ========== PRODUCT IMAGE PREVIEW (registration modal) ==========
+
+document.addEventListener('DOMContentLoaded', () => {
+    const imgInput = document.getElementById('product-image');
+    if (imgInput) {
+        imgInput.addEventListener('change', function() {
+            const preview = document.getElementById('product-image-preview');
+            if (!preview) return;
+            preview.innerHTML = '';
+            const files = this.files;
+            if (files.length > 5) { showToast('최대 5장까지 선택 가능합니다', 'warning'); this.value = ''; return; }
+            for (let i = 0; i < Math.min(files.length, 5); i++) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    preview.innerHTML += `<div style="width:50px; height:50px; border-radius:6px; overflow:hidden; border:${i===0?'2px solid #0066cc':'1px solid #ddd'};">
+                        <img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;">
+                    </div>`;
+                };
+                reader.readAsDataURL(files[i]);
+            }
+        });
+    }
+});
 
 // 공통 이미지 리사이즈 유틸
 async function fileToBase64Resized(file, maxSize) {

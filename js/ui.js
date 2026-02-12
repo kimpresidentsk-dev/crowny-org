@@ -60,6 +60,9 @@ function showPage(pageId) {
         loadMallProducts();
         updateCartBadge();
     }
+    if (pageId === 'my-shop') {
+        if (typeof loadMyShopDashboard === 'function') loadMyShopDashboard();
+    }
     if (pageId === 'cart') {
         if (typeof loadCart === 'function') loadCart();
     }

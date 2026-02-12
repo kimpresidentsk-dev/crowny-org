@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CROWNY PLATFORM</title>
-    <link rel="stylesheet" href="style.css?v=15.4">
+    <link rel="stylesheet" href="style.css?v=16.0">
     
     <!-- Firebase SDK -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-app-compat.min.js"></script>
@@ -699,6 +699,7 @@
                 <div style="display:flex; gap:0.4rem; align-items:center;">
                     <button onclick="showPage('wishlist'); loadWishlist();" style="background:none; border:1px solid #e91e63; color:#e91e63; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem;">❤️</button>
                     <button onclick="showPage('cart'); loadCart();" style="background:none; border:1px solid #0066cc; color:#0066cc; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem; position:relative;">🛒 <span id="cart-badge" style="display:none; position:absolute; top:-6px; right:-6px; background:#e53935; color:white; font-size:0.6rem; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;">0</span></button>
+                    <button onclick="showPage('my-shop'); loadMyShopDashboard();" style="background:none; border:1px solid #ff9800; color:#ff9800; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem;">🏪</button>
                     <button class="admin-register-btn" id="mall-register-btn" onclick="openRegisterModal('mall')" data-i18n="mall.register">➕ 상품 등록</button>
                 </div>
             </div>
@@ -749,6 +750,20 @@
         <!-- ========== PRODUCT DETAIL - 상품 상세 ========== -->
         <section id="product-detail" class="page">
             <div id="product-detail-content" style="max-width:600px; margin:0 auto;">
+                <p style="text-align:center; color:var(--accent);">로딩 중...</p>
+            </div>
+        </section>
+
+        <!-- ========== STORE - 판매자 스토어 ========== -->
+        <section id="store" class="page">
+            <div id="store-content" style="max-width:700px; margin:0 auto;">
+                <p style="text-align:center; color:var(--accent);">로딩 중...</p>
+            </div>
+        </section>
+
+        <!-- ========== MY SHOP - 내 상점 대시보드 ========== -->
+        <section id="my-shop" class="page">
+            <div id="my-shop-content" style="max-width:700px; margin:0 auto;">
                 <p style="text-align:center; color:var(--accent);">로딩 중...</p>
             </div>
         </section>
@@ -1454,7 +1469,11 @@
                     <input type="hidden" id="product-token" value="CRGC">
                     <span style="padding:0.7rem; background:var(--bg); border-radius:6px; font-weight:700; color:#00BFA5;">CRGC</span>
                 </div>
-                <input type="file" id="product-image" accept="image/*" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
+                <div>
+                    <label style="font-size:0.8rem; color:var(--accent); margin-bottom:0.3rem; display:block;">📷 상품 이미지 (최대 5장, 첫번째가 대표)</label>
+                    <input type="file" id="product-image" accept="image/*" multiple style="padding:0.5rem; border:1px solid var(--border); border-radius:6px; width:100%;">
+                    <div id="product-image-preview" style="display:flex; gap:0.4rem; margin-top:0.4rem; flex-wrap:wrap;"></div>
+                </div>
                 <button onclick="registerProduct(); closeRegisterModal('mall');" class="btn-primary" data-i18n="mall.product_register">📦 상품 등록</button>
             </div>
         </div>
@@ -1793,8 +1812,8 @@
     <script src="js/friends.js?v=1.0"></script>
     <script src="js/group-chat.js?v=1.0"></script>
     <script src="js/send.js?v=9.5"></script>
-    <script src="js/admin.js?v=13.1"></script>
-    <script src="js/marketplace.js?v=15.0"></script>
+    <script src="js/admin.js?v=13.2"></script>
+    <script src="js/marketplace.js?v=16.0"></script>
     <script src="js/books.js?v=1.1"></script>
     <script src="js/trading.js?v=13.5"></script>
     <script src="js/mentor-learning.js?v=1.0" defer></script>
