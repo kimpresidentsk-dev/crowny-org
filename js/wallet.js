@@ -1,4 +1,145 @@
-// ===== wallet.js - 멀티월렛 + 온체인 ERC-20 =====
+// ===== wallet.js - 멀티월렛 + 온체인 ERC-20 + AES 암호화 =====
+
+// ========== PRIVATE KEY ENCRYPTION (Web Crypto API) ==========
+
+async function deriveEncryptionKey(password, salt) {
+    const enc = new TextEncoder();
+    const keyMaterial = await crypto.subtle.importKey(
+        'raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']
+    );
+    return crypto.subtle.deriveKey(
+        { name: 'PBKDF2', salt, iterations: 600000, hash: 'SHA-256' },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt', 'decrypt']
+    );
+}
+
+async function encryptPrivateKey(privateKey, password) {
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const key = await deriveEncryptionKey(password, salt);
+    const enc = new TextEncoder();
+    const encrypted = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv }, key, enc.encode(privateKey)
+    );
+    return {
+        encryptedPrivateKey: btoa(String.fromCharCode(...new Uint8Array(encrypted))),
+        keySalt: btoa(String.fromCharCode(...salt)),
+        keyIv: btoa(String.fromCharCode(...iv))
+    };
+}
+
+async function decryptPrivateKey(encryptedData, password) {
+    const salt = Uint8Array.from(atob(encryptedData.keySalt), c => c.charCodeAt(0));
+    const iv = Uint8Array.from(atob(encryptedData.keyIv), c => c.charCodeAt(0));
+    const data = Uint8Array.from(atob(encryptedData.encryptedPrivateKey), c => c.charCodeAt(0));
+    const key = await deriveEncryptionKey(password, salt);
+    try {
+        const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
+        return new TextDecoder().decode(decrypted);
+    } catch (e) {
+        throw new Error(t('wallet.wrong_encryption_password', '암호화 비밀번호가 올바르지 않습니다'));
+    }
+}
+
+// 개인키가 필요한 작업 시 호출 — 암호화된 지갑이면 비밀번호 입력 후 복호화
+async function getDecryptedPrivateKey(wallet) {
+    // 이미 평문 개인키가 있는 경우 (마이그레이션 전)
+    if (wallet.privateKey) return wallet.privateKey;
+    // 암호화된 경우
+    if (wallet.encryptedPrivateKey) {
+        const password = await showPromptModal(
+            t('wallet.enter_encryption_pw', '🔐 지갑 비밀번호'),
+            t('wallet.enter_encryption_pw_desc', '트랜잭션 서명을 위해 지갑 비밀번호를 입력하세요:')
+        );
+        if (!password) throw new Error(t('wallet.password_required', '비밀번호가 필요합니다'));
+        return await decryptPrivateKey(wallet, password);
+    }
+    throw new Error(t('wallet.no_private_key', '개인키를 찾을 수 없습니다'));
+}
+
+// 기존 평문 개인키 지갑을 암호화로 마이그레이션
+async function migrateWalletSecurity(walletToMigrate) {
+    const wallet = walletToMigrate || allWallets.find(w => w.id === currentWalletId);
+    if (!wallet || !wallet.privateKey) return false;
+
+    const password = await showPromptModal(
+        t('wallet.set_encryption_pw', '🔐 지갑 보안 비밀번호 설정'),
+        t('wallet.set_encryption_pw_desc', '개인키를 암호화할 비밀번호를 설정하세요.\n이 비밀번호는 전송 시 필요합니다.\n\n⚠️ 비밀번호를 잊으면 복구할 수 없습니다!')
+    );
+    if (!password || password.length < 6) {
+        if (password) showToast(t('wallet.pw_too_short', '비밀번호는 최소 6자 이상이어야 합니다'), 'warning');
+        return false;
+    }
+
+    const confirmPw = await showPromptModal(
+        t('wallet.confirm_encryption_pw', '🔐 비밀번호 확인'),
+        t('wallet.confirm_encryption_pw_desc', '비밀번호를 다시 입력하세요:')
+    );
+    if (password !== confirmPw) {
+        showToast(t('wallet.pw_mismatch', '비밀번호가 일치하지 않습니다'), 'error');
+        return false;
+    }
+
+    try {
+        showLoading(t('wallet.encrypting', '개인키 암호화 중...'));
+        const encrypted = await encryptPrivateKey(wallet.privateKey, password);
+
+        // Firestore 업데이트: 암호화 데이터 저장 + 평문 삭제
+        const walletRef = db.collection('users').doc(currentUser.uid)
+            .collection('wallets').doc(wallet.id);
+        await walletRef.update({
+            encryptedPrivateKey: encrypted.encryptedPrivateKey,
+            keySalt: encrypted.keySalt,
+            keyIv: encrypted.keyIv,
+            privateKey: firebase.firestore.FieldValue.delete(),
+            encryptedAt: new Date()
+        });
+
+        // 유저 문서의 루트 privateKey도 삭제 (auth.js에서 저장한 것)
+        try {
+            await db.collection('users').doc(currentUser.uid).update({
+                privateKey: firebase.firestore.FieldValue.delete()
+            });
+        } catch (e) { /* 없을 수도 있음 */ }
+
+        // 로컬 객체 업데이트
+        wallet.encryptedPrivateKey = encrypted.encryptedPrivateKey;
+        wallet.keySalt = encrypted.keySalt;
+        wallet.keyIv = encrypted.keyIv;
+        delete wallet.privateKey;
+
+        hideLoading();
+        showToast(t('wallet.encryption_success', '🔒 개인키가 안전하게 암호화되었습니다!'), 'success');
+        displayCurrentWallet();
+        return true;
+    } catch (error) {
+        hideLoading();
+        console.error('Encryption migration error:', error);
+        showToast(t('wallet.encryption_failed', '암호화 실패') + ': ' + error.message, 'error');
+        return false;
+    }
+}
+
+// 모든 지갑 보안 상태 체크 — 평문 개인키 있으면 안내
+async function checkWalletSecurityOnLogin() {
+    const unencrypted = allWallets.filter(w => w.privateKey && !w.encryptedPrivateKey);
+    if (unencrypted.length > 0) {
+        const doMigrate = await showConfirmModal(
+            t('wallet.security_upgrade_title', '🔐 보안 업그레이드 필요'),
+            t('wallet.security_upgrade_desc', `${unencrypted.length}개의 지갑에 암호화되지 않은 개인키가 있습니다.\n지금 보안 업그레이드를 진행하시겠습니까?`)
+        );
+        if (doMigrate) {
+            for (const w of unencrypted) {
+                const ok = await migrateWalletSecurity(w);
+                if (!ok) break;
+            }
+        }
+    }
+}
+
 // ========== MULTI-WALLET SYSTEM ==========
 let currentWalletId = null;
 let allWallets = [];
@@ -41,21 +182,42 @@ async function loadUserWallet() {
     // Load first wallet or previously selected
     currentWalletId = allWallets[0].id;
     displayCurrentWallet();
+    
+    // 보안 체크 (평문 개인키 있으면 마이그레이션 안내)
+    setTimeout(() => checkWalletSecurityOnLogin(), 2000);
 }
 
 async function createFirstWallet() {
     const web3 = new Web3();
     const newAccount = web3.eth.accounts.create();
     
+    // 암호화 비밀번호 설정
+    const password = await showPromptModal(
+        t('wallet.set_encryption_pw', '🔐 지갑 보안 비밀번호 설정'),
+        t('wallet.first_wallet_pw_desc', '개인키를 보호할 비밀번호를 설정하세요.\n전송 시 이 비밀번호가 필요합니다.\n\n⚠️ 비밀번호를 잊으면 복구할 수 없습니다!\n(최소 6자)')
+    );
+    
+    let walletData = {
+        name: t('wallet.default_name', '크라우니 지갑 1'),
+        walletAddress: newAccount.address,
+        isImported: false,
+        totalGasSubsidy: 0,
+        createdAt: new Date()
+    };
+    
+    if (password && password.length >= 6) {
+        const encrypted = await encryptPrivateKey(newAccount.privateKey, password);
+        walletData.encryptedPrivateKey = encrypted.encryptedPrivateKey;
+        walletData.keySalt = encrypted.keySalt;
+        walletData.keyIv = encrypted.keyIv;
+        walletData.encryptedAt = new Date();
+    } else {
+        // 비밀번호 미설정 시 평문 저장 (추후 마이그레이션)
+        walletData.privateKey = newAccount.privateKey;
+    }
+    
     const walletRef = await db.collection('users').doc(currentUser.uid)
-        .collection('wallets').add({
-            name: t('wallet.default_name', '크라우니 지갑 1'),
-            walletAddress: newAccount.address,
-            privateKey: newAccount.privateKey,
-            isImported: false,
-            totalGasSubsidy: 0,
-            createdAt: new Date()
-        });
+        .collection('wallets').add(walletData);
     
     currentWalletId = walletRef.id;
     await loadUserWallet();
@@ -93,6 +255,16 @@ async function displayCurrentWallet() {
         document.getElementById('total-gas-subsidy').textContent = totalGas.toFixed(4);
     } else {
         document.getElementById('gas-subsidy-info').style.display = 'none';
+    }
+    
+    // Security status display
+    const securityEl = document.getElementById('wallet-security-status');
+    if (securityEl) {
+        if (wallet.encryptedPrivateKey) {
+            securityEl.innerHTML = `<span style="color:#2e7d32;">🔒 ${t('wallet.encrypted', '암호화됨')} ✅</span>`;
+        } else if (wallet.privateKey) {
+            securityEl.innerHTML = `<span style="color:#e65100;">⚠️ ${t('wallet.not_encrypted', '미암호화')}</span> <button onclick="migrateWalletSecurity()" style="margin-left:8px;padding:4px 10px;background:#1a1a2e;color:white;border:none;border-radius:6px;cursor:pointer;font-size:0.75rem;">🔐 ${t('wallet.upgrade_security', '보안 업그레이드')}</button>`;
+        }
     }
     
     // Load balances
@@ -144,15 +316,32 @@ async function showImportWallet() {
 
 async function importExternalWallet(name, privateKey, address) {
     try {
+        // 암호화 비밀번호 설정
+        const password = await showPromptModal(
+            t('wallet.set_encryption_pw', '🔐 지갑 보안 비밀번호 설정'),
+            t('wallet.import_pw_desc', '가져온 개인키를 보호할 비밀번호를 설정하세요.\n(최소 6자)')
+        );
+        
+        let walletData = {
+            name: name,
+            walletAddress: address,
+            isImported: true,
+            balances: { crny: 0, fnc: 0, crfn: 0 },
+            importedAt: new Date()
+        };
+        
+        if (password && password.length >= 6) {
+            const encrypted = await encryptPrivateKey(privateKey, password);
+            walletData.encryptedPrivateKey = encrypted.encryptedPrivateKey;
+            walletData.keySalt = encrypted.keySalt;
+            walletData.keyIv = encrypted.keyIv;
+            walletData.encryptedAt = new Date();
+        } else {
+            walletData.privateKey = privateKey;
+        }
+        
         const walletRef = await db.collection('users').doc(currentUser.uid)
-            .collection('wallets').add({
-                name: name,
-                walletAddress: address,
-                privateKey: privateKey,
-                isImported: true,
-                balances: { crny: 0, fnc: 0, crfn: 0 },
-                importedAt: new Date()
-            });
+            .collection('wallets').add(walletData);
         
         showToast(t('wallet.import_success', '외부 지갑 추가 완료!'), 'success');
         currentWalletId = walletRef.id;
@@ -170,16 +359,33 @@ async function createNewWallet() {
         const web3 = new Web3();
         const newAccount = web3.eth.accounts.create();
         
+        // 암호화 비밀번호 설정
+        const password = await showPromptModal(
+            t('wallet.set_encryption_pw', '🔐 지갑 보안 비밀번호 설정'),
+            t('wallet.new_wallet_pw_desc', '개인키를 보호할 비밀번호를 설정하세요.\n(최소 6자)')
+        );
+        
+        let walletData = {
+            name: name,
+            walletAddress: newAccount.address,
+            isImported: false,
+            totalGasSubsidy: 0,
+            balances: { crny: 0, fnc: 0, crfn: 0 },
+            createdAt: new Date()
+        };
+        
+        if (password && password.length >= 6) {
+            const encrypted = await encryptPrivateKey(newAccount.privateKey, password);
+            walletData.encryptedPrivateKey = encrypted.encryptedPrivateKey;
+            walletData.keySalt = encrypted.keySalt;
+            walletData.keyIv = encrypted.keyIv;
+            walletData.encryptedAt = new Date();
+        } else {
+            walletData.privateKey = newAccount.privateKey;
+        }
+        
         const walletRef = await db.collection('users').doc(currentUser.uid)
-            .collection('wallets').add({
-                name: name,
-                walletAddress: newAccount.address,
-                privateKey: newAccount.privateKey,
-                isImported: false,
-                totalGasSubsidy: 0,
-                balances: { crny: 0, fnc: 0, crfn: 0 },
-                createdAt: new Date()
-            });
+            .collection('wallets').add(walletData);
         
         showToast(t('wallet.create_success', '새 지갑 생성 완료!'), 'success');
         currentWalletId = walletRef.id;
@@ -465,7 +671,8 @@ async function showMaticSend() {
             gasPrice: gasPrice
         };
         
-        const signedTx = await web3.eth.accounts.signTransaction(tx, userWallet.privateKey);
+        const decryptedKey = await getDecryptedPrivateKey(userWallet);
+        const signedTx = await web3.eth.accounts.signTransaction(tx, decryptedKey);
         const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
         
         hideLoading();
