@@ -13,6 +13,10 @@ const NOTIF_TYPES = {
     BOOK_SOLD: 'book_sold',
     DONATION: 'donation',
     FRIEND_REQUEST: 'friend_request',
+    MALL_ORDER: 'mall_order',
+    MALL_RETURN: 'mall_return',
+    MALL_REVIEW: 'mall_review',
+    MALL_PRODUCT: 'mall_product',
     SYSTEM: 'system'
 };
 
