@@ -1,4 +1,4 @@
-// ===== ai-assistant.js — 크라우니 패널 5인 AI 캐릭터 채팅 v2.0 =====
+// ===== ai-assistant.js — 크라우니 패널 5인 AI 캐릭터 채팅 v2.1 =====
 
 const AI_ASSISTANT = (() => {
     const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
@@ -87,6 +87,7 @@ const AI_ASSISTANT = (() => {
         crownygirl: {
             id: 'crownygirl',
             emoji: '🦸‍♀️',
+            avatarImg: 'img/crowny-girl.jpg',
             name: t('panel.name_crownygirl', '크라우니걸'),
             nameKo: '크라우니걸 (Crowny Girl)',
             role: 'AI 도우미 · 브랜드 마스코트',
@@ -105,6 +106,12 @@ const AI_ASSISTANT = (() => {
     };
 
     const CHAR_ORDER = ['kps', 'hansun', 'michael', 'matthew', 'crownygirl'];
+
+    // ── Avatar Helper ──
+    function renderCharAvatar(c, style) {
+        if (c.avatarImg) return `<img src="${c.avatarImg}" class="panel-avatar-img" style="${style || ''}">`;
+        return c.emoji;
+    }
 
     // ── Settings Load ──
     async function loadSettings() {
@@ -225,7 +232,7 @@ const AI_ASSISTANT = (() => {
         const cards = CHAR_ORDER.map(id => {
             const c = CHARACTERS[id];
             return `<button class="panel-char-card" onclick="AI_ASSISTANT.selectCharacter('${id}')" style="--char-color:${c.color}; --char-bg:${c.bgGradient};">
-                <div class="panel-char-avatar" style="background:${c.bgGradient};">${c.emoji}</div>
+                <div class="panel-char-avatar" style="background:${c.bgGradient};">${renderCharAvatar(c)}</div>
                 <div class="panel-char-name">${c.name}</div>
                 <div class="panel-char-role">${t(c.roleI18n, c.role)}</div>
             </button>`;
@@ -259,7 +266,7 @@ const AI_ASSISTANT = (() => {
             header.innerHTML = `
                 <div class="panel-chat-header-left">
                     <button class="panel-back-btn" onclick="AI_ASSISTANT.backToSelect()" title="${t('panel.back','다른 패널 선택')}">←</button>
-                    <div class="panel-chat-avatar" style="background:${char.bgGradient};">${char.emoji}</div>
+                    <div class="panel-chat-avatar" style="background:${char.bgGradient};">${renderCharAvatar(char)}</div>
                     <div>
                         <div class="panel-chat-name">${char.name}</div>
                         <div class="panel-chat-role">${t(char.roleI18n, char.role)}</div>
@@ -275,7 +282,7 @@ const AI_ASSISTANT = (() => {
                 `<button class="ai-quick-card" onclick="AI_ASSISTANT.ask('${q.icon} ${q.text}')" style="border-color:${char.color}22; background:${char.color}08;">${q.icon} ${q.text}</button>`
             ).join('');
             container.innerHTML = `<div class="ai-welcome">
-                <div class="ai-welcome-icon" style="background:${char.bgGradient};-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:3rem;">${char.emoji}</div>
+                <div class="ai-welcome-icon" style="${char.avatarImg ? '' : `background:${char.bgGradient};-webkit-background-clip:text;-webkit-text-fill-color:transparent;`}font-size:3rem;">${char.avatarImg ? `<img src="${char.avatarImg}" class="panel-avatar-img" style="width:64px;height:64px;">` : char.emoji}</div>
                 <h3 style="color:${char.color};">${char.name}</h3>
                 <p style="font-style:italic;">"${char.greeting}"</p>
                 <div class="ai-quick-cards">${cards}</div>
@@ -286,7 +293,7 @@ const AI_ASSISTANT = (() => {
         container.innerHTML = history.map(m => {
             const isUser = m.role === 'user';
             return `<div class="ai-msg ${isUser ? 'ai-msg-user' : 'ai-msg-bot'}">
-                ${isUser ? '' : `<div class="ai-avatar" style="background:${char.bgGradient};">${char.emoji}</div>`}
+                ${isUser ? '' : `<div class="ai-avatar" style="background:${char.bgGradient};">${renderCharAvatar(char)}</div>`}
                 <div class="ai-bubble ${isUser ? 'ai-bubble-user' : 'ai-bubble-bot'}">${isUser ? escapeHtml(m.text) : renderMarkdown(m.text)}</div>
             </div>`;
         }).join('');
@@ -301,7 +308,7 @@ const AI_ASSISTANT = (() => {
         if (!container) return;
         const el = document.createElement('div');
         el.className = 'ai-msg ai-msg-bot ai-typing-wrap';
-        el.innerHTML = `<div class="ai-avatar" style="background:${char.bgGradient};">${char.emoji}</div><div class="ai-bubble ai-bubble-bot ai-typing"><span></span><span></span><span></span></div>`;
+        el.innerHTML = `<div class="ai-avatar" style="background:${char.bgGradient};">${renderCharAvatar(char)}</div><div class="ai-bubble ai-bubble-bot ai-typing"><span></span><span></span><span></span></div>`;
         container.appendChild(el);
         container.scrollTop = container.scrollHeight;
     }

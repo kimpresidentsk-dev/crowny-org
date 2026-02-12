@@ -1,4 +1,4 @@
-// ===== mentors.js v2.1 - Trading Mentor Bot System (Self-Improving) =====
+// ===== mentors.js v2.3 - Trading Mentor Bot System (Self-Improving) =====
 // 4 mentor bots with unique strategies + adaptive parameter tuning
 
 // ========== MENTOR SETTINGS ==========
@@ -11,15 +11,15 @@ function getMentorSettings() {
             comment: s?.comment !== false, 
             notif: s?.notif !== false,
             // 멘토별 알림 필터 (기본: 전체 ON)
-            mentorFilter: s?.mentorFilter || { kps: true, michael: true, matthew: true, hansun: true }
+            mentorFilter: s?.mentorFilter || { kps: true, michael: true, matthew: true, hansun: true, crownygirl: true }
         };
-    } catch { return { panel: true, comment: true, notif: true, mentorFilter: { kps: true, michael: true, matthew: true, hansun: true } }; }
+    } catch { return { panel: true, comment: true, notif: true, mentorFilter: { kps: true, michael: true, matthew: true, hansun: true, crownygirl: true } }; }
 }
 function saveMentorSettings(s) { localStorage.setItem(MENTOR_SETTINGS_KEY, JSON.stringify(s)); }
 
 function toggleMentorFilter(mentorId) {
     const s = getMentorSettings();
-    if (!s.mentorFilter) s.mentorFilter = { kps: true, michael: true, matthew: true, hansun: true };
+    if (!s.mentorFilter) s.mentorFilter = { kps: true, michael: true, matthew: true, hansun: true, crownygirl: true };
     s.mentorFilter[mentorId] = !s.mentorFilter[mentorId];
     // 최소 1명은 활성화
     const activeCount = Object.values(s.mentorFilter).filter(v => v).length;
@@ -425,6 +425,75 @@ const mentors = {
             return { signal: 'wait', confidence: 35,
                 message: `피보나치 ${nearestFib.level} 레벨(${nearestFib.price.toFixed(1)})을 주시하세요. 아직 진입 타이밍이 아닙니다.`,
                 reason: `Fib ${nearestFib.level} 근접도 ${(fibProximity * 100).toFixed(0)}%, 범위 ${low.toFixed(0)}~${high.toFixed(0)}` };
+        }
+    },
+
+    crownygirl: {
+        name: '크라우니걸', icon: '🦸‍♀️', avatar: 'img/crowny-girl-hero.jpg', style: '종합 분석', color: '#FF69B4',
+        desc: '종합 분석 · 멘토 시그널 통합 · 격려',
+        analyze(candles, livePrice) {
+            // 다른 4명의 분석을 종합하여 최종 의견 제시
+            const otherMentors = ['kps', 'michael', 'matthew', 'hansun'];
+            const results = {};
+            let buyCount = 0, sellCount = 0, holdCount = 0, waitCount = 0;
+            let totalConf = 0, validCount = 0;
+            const reasons = [];
+
+            for (const id of otherMentors) {
+                if (mentors[id]) {
+                    try {
+                        const r = mentors[id].analyze(candles, livePrice);
+                        results[id] = r;
+                        if (r.signal === 'buy') buyCount++;
+                        else if (r.signal === 'sell') sellCount++;
+                        else if (r.signal === 'hold') holdCount++;
+                        else waitCount++;
+                        totalConf += r.confidence;
+                        validCount++;
+                        reasons.push(`${mentors[id].icon}${mentors[id].name}: ${r.signal}(${r.confidence}%)`);
+                    } catch(e) { /* skip */ }
+                }
+            }
+
+            if (validCount === 0) return { signal: 'wait', confidence: 0, message: '멘토들의 분석을 기다리고 있어요! 잠시만요~ ✨', reason: '데이터 수집 중' };
+
+            const avgConf = Math.round(totalConf / validCount);
+            const summary = reasons.join(' · ');
+
+            // 다수결 + 자체 판단
+            if (buyCount >= 3) {
+                return { signal: 'buy', confidence: Math.min(95, avgConf + 10),
+                    message: `멘토 ${buyCount}명이 매수 의견이에요! 좋은 기회일 수 있어요! 화이팅! 💪✨`,
+                    reason: `종합: ${summary}` };
+            }
+            if (sellCount >= 3) {
+                return { signal: 'sell', confidence: Math.min(95, avgConf + 10),
+                    message: `멘토 ${sellCount}명이 매도 의견이에요. 리스크 관리 잘 해주세요! 여러분을 지켜드릴게요! 🛡️`,
+                    reason: `종합: ${summary}` };
+            }
+            if (buyCount >= 2 && sellCount === 0) {
+                return { signal: 'buy', confidence: Math.min(85, avgConf + 5),
+                    message: `매수 쪽 의견이 우세해요! 신중하게 진입해보세요~ ✨`,
+                    reason: `종합: ${summary}` };
+            }
+            if (sellCount >= 2 && buyCount === 0) {
+                return { signal: 'sell', confidence: Math.min(85, avgConf + 5),
+                    message: `매도 쪽 의견이 우세해요. 포지션 점검해주세요! 💫`,
+                    reason: `종합: ${summary}` };
+            }
+            if (buyCount > 0 && sellCount > 0) {
+                return { signal: 'hold', confidence: Math.round(avgConf * 0.8),
+                    message: `멘토들 의견이 엇갈리고 있어요. 조금 더 지켜보는 게 좋겠어요! 여러분의 트레이딩을 지켜드릴게요! ✨`,
+                    reason: `종합: ${summary}` };
+            }
+            if (holdCount >= 2) {
+                return { signal: 'hold', confidence: avgConf,
+                    message: `지금은 유지하면서 다음 기회를 기다려봐요! 잘하고 계세요! 👏`,
+                    reason: `종합: ${summary}` };
+            }
+            return { signal: 'wait', confidence: Math.round(avgConf * 0.7),
+                message: `아직 뚜렷한 방향이 없어요. 함께 기다려볼게요! 여러분의 트레이딩을 지켜드릴게요! ✨`,
+                reason: `종합: ${summary}` };
         }
     }
 };

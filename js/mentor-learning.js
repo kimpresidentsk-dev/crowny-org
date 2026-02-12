@@ -366,9 +366,9 @@ function renderMentorPerformanceUI(mentorId) {
 // ========== DASHBOARD (all mentors summary) ==========
 
 function renderMentorDashboard() {
-    const mentorIds = ['kps', 'michael', 'matthew', 'hansun'];
-    const icons = { kps: '👑', michael: '🎯', matthew: '📊', hansun: '🧘' };
-    const names = { kps: 'KPS', michael: '마이클', matthew: '매튜', hansun: '한선' };
+    const mentorIds = ['kps', 'michael', 'matthew', 'hansun', 'crownygirl'];
+    const icons = { kps: '👑', michael: '🎯', matthew: '📊', hansun: '🧘', crownygirl: '🦸‍♀️' };
+    const names = { kps: 'KPS', michael: '마이클', matthew: '매튜', hansun: '한선', crownygirl: '크라우니걸' };
 
     let html = '<div style="font-size:0.72rem; padding:6px;">';
     for (const mid of mentorIds) {
