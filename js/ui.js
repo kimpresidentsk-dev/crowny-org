@@ -16,7 +16,10 @@ function showPage(pageId) {
     
     // Load page-specific data
     if (pageId === 'social') {
-        loadSocialFeed();
+        if (typeof loadSocialFeed === 'function') loadSocialFeed();
+    }
+    if (pageId === 'messenger') {
+        if (typeof loadMessages === 'function') loadMessages();
     }
     if (pageId === 'prop-trading') {
         loadPropTrading();

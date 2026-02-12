@@ -8,6 +8,7 @@ function truncateWalletAddresses(text) {
 
 // ========== USER PROFILE MANAGEMENT ==========
 async function loadUserData() {
+    if (!currentUser) return;
     loadMessages();
     loadSocialFeed();
     loadReferralInfo();
@@ -292,7 +293,9 @@ async function startNewChat(otherEmail) {
 }
 
 async function loadMessages() {
+    if (!currentUser) return;
     const chatList = document.getElementById('chat-list');
+    if (!chatList) return;
     chatList.innerHTML = '';
     const chats = await db.collection('chats').where('participants', 'array-contains', currentUser.uid).get();
     if (chats.empty) { chatList.innerHTML = '<p style="padding:1rem; color:var(--accent); text-align:center;">${t('social.start_chat','채팅을 시작하세요')}</p>'; return; }
@@ -474,7 +477,9 @@ async function sendTokenWithMessage() {
 
 // ========== INSTAGRAM-STYLE SOCIAL FEED ==========
 async function loadSocialFeed() {
+    if (!currentUser) return;
     const feed = document.getElementById('social-feed');
+    if (!feed) return;
     feed.innerHTML = '<p style="text-align:center; padding:2rem; color:var(--accent);">📸 게시물 로딩 중...</p>';
 
     try {
