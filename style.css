@@ -3112,9 +3112,10 @@ a:not(.nav-item) {
 #ai-assistant { display:flex; flex-direction:column; height:100%; }
 #ai-assistant .section-header { display:flex; justify-content:space-between; align-items:center; padding:0.8rem 1rem; border-bottom:1px solid #eee; flex-shrink:0; }
 .ai-chat-messages { flex:1; overflow-y:auto; padding:1rem; display:flex; flex-direction:column; gap:0.8rem; }
-.ai-input-bar { display:flex; gap:0.5rem; padding:0.8rem 1rem; border-top:1px solid #eee; flex-shrink:0; background:#fff; }
+.ai-input-bar { display:flex; gap:0.5rem; padding:0.8rem 1rem; border-top:1px solid #eee; flex-shrink:0; background:#1a1a2e; position:sticky; bottom:0; z-index:10; }
 .ai-input-bar input { flex:1; border:1px solid #ddd; border-radius:20px; padding:0.6rem 1rem; font-size:0.9rem; outline:none; }
 .ai-input-bar input:focus { border-color:#6c5ce7; }
+.ai-input-bar button { flex-shrink:0; }
 .ai-send-btn { width:40px; height:40px; border-radius:50%; border:none; background:#6c5ce7; color:#fff; font-size:1.2rem; cursor:pointer; display:flex; align-items:center; justify-content:center; }
 .ai-send-btn:hover { background:#5a4bd1; }
 
