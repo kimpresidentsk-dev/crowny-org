@@ -2656,6 +2656,7 @@ async function requestRateChange() {
 // ═══════════════════════════════════════════════════════
 
 async function createCoupon() {
+    const name = (document.getElementById('coupon-name').value || '').trim();
     const code = (document.getElementById('coupon-code').value || '').trim().toUpperCase();
     const tokenKey = document.getElementById('coupon-token').value;
     const amount = parseInt(document.getElementById('coupon-amount').value);
@@ -2663,15 +2664,17 @@ async function createCoupon() {
     const expiryVal = document.getElementById('coupon-expiry').value;
     const description = (document.getElementById('coupon-desc').value || '').trim();
 
-    if (!code || code.length < 3) { alert('쿠폰 코드는 3자 이상 입력하세요'); return; }
-    if (!tokenKey) { alert('토큰을 선택하세요'); return; }
-    if (!amount || amount <= 0) { alert('유효한 수량을 입력하세요'); return; }
+    if (!name) { showToast('쿠폰 이름을 입력하세요', 'error'); return; }
+    if (!code || code.length < 3) { showToast('쿠폰 코드는 3자 이상 영문/숫자로 입력하세요', 'error'); return; }
+    if (!tokenKey) { showToast('토큰을 선택하세요', 'error'); return; }
+    if (!amount || amount <= 0) { showToast('유효한 수량을 입력하세요', 'error'); return; }
 
     try {
         const existing = await db.collection('coupons').where('code', '==', code).get();
-        if (!existing.empty) { alert('이미 존재하는 쿠폰 코드입니다'); return; }
+        if (!existing.empty) { showToast('이미 존재하는 쿠폰 코드입니다', 'error'); return; }
 
         await db.collection('coupons').add({
+            name: name,
             code: code,
             tokenKey: tokenKey,
             amount: amount,
@@ -2684,13 +2687,14 @@ async function createCoupon() {
             description: description
         });
 
-        alert('✅ 쿠폰 생성 완료: ' + code);
+        showToast('✅ 쿠폰 생성 완료: ' + code, 'success');
+        document.getElementById('coupon-name').value = '';
         document.getElementById('coupon-code').value = '';
         document.getElementById('coupon-amount').value = '';
         document.getElementById('coupon-desc').value = '';
         loadCouponList();
     } catch (e) {
-        alert('쿠폰 생성 실패: ' + e.message);
+        showToast('쿠폰 생성 실패: ' + e.message, 'error');
     }
 }
 
@@ -2704,7 +2708,7 @@ async function loadCouponList() {
         if (snap.empty) { listEl.innerHTML = '<p style="color:#999;">생성된 쿠폰이 없습니다</p>'; return; }
 
         const tokenNames = { crtd: 'CRTD', crac: 'CRAC', crgc: 'CRGC', creb: 'CREB' };
-        let html = '<table style="width:100%; border-collapse:collapse; font-size:0.8rem;"><tr style="background:#f5f5f5;"><th style="padding:0.5rem; text-align:left;">코드</th><th>토큰</th><th>수량</th><th>사용</th><th>상태</th><th>관리</th></tr>';
+        let html = '<table style="width:100%; border-collapse:collapse; font-size:0.8rem;"><tr style="background:#f5f5f5;"><th style="padding:0.5rem; text-align:left;">쿠폰</th><th>토큰</th><th>수량</th><th>사용</th><th>상태</th><th>관리</th></tr>';
 
         snap.forEach(doc => {
             const c = doc.data();
@@ -2712,18 +2716,26 @@ async function loadCouponList() {
             const usageText = c.maxUses > 0 ? `${c.usedCount}/${c.maxUses}` : `${c.usedCount}/∞`;
             const statusColor = c.enabled ? '#2e7d32' : '#c62828';
             const statusText = c.enabled ? '활성' : '비활성';
+            const couponName = c.name || c.code;
             html += `<tr style="border-bottom:1px solid #eee;">
-                <td style="padding:0.5rem; font-weight:700;">${c.code}</td>
+                <td style="padding:0.5rem;">
+                    <div style="font-weight:700;">${couponName}</div>
+                    <div style="font-size:0.7rem; color:#888; font-family:monospace;">코드: ${c.code}</div>
+                </td>
                 <td style="text-align:center;">${tokenNames[c.tokenKey] || c.tokenKey}</td>
                 <td style="text-align:center;">${c.amount.toLocaleString()}</td>
                 <td style="text-align:center;">${usageText}</td>
                 <td style="text-align:center; color:${statusColor}; font-weight:600;">${statusText}</td>
                 <td style="text-align:center;">
-                    <button onclick="toggleCoupon('${doc.id}', ${!c.enabled})" style="padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; font-size:0.75rem; background:${c.enabled ? '#ffcdd2' : '#c8e6c9'}; color:${c.enabled ? '#c62828' : '#2e7d32'};">${c.enabled ? '비활성화' : '활성화'}</button>
+                    <div style="display:flex; flex-direction:column; gap:3px; align-items:center;">
+                        <button onclick="toggleCoupon('${doc.id}', ${!c.enabled})" style="padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem; background:${c.enabled ? '#ffcdd2' : '#c8e6c9'}; color:${c.enabled ? '#c62828' : '#2e7d32'}; width:100%;">${c.enabled ? '비활성화' : '활성화'}</button>
+                        <button onclick="viewCouponLog('${doc.id}','${c.code}')" style="padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem; background:#e3f2fd; color:#1565c0; width:100%;">📜 로그</button>
+                        <button onclick="deleteCoupon('${doc.id}','${c.code}')" style="padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem; background:#fce4ec; color:#c62828; width:100%;">🗑️ 삭제</button>
+                    </div>
                 </td>
             </tr>`;
             if (c.description) {
-                html += `<tr><td colspan="6" style="padding:0.2rem 0.5rem; font-size:0.75rem; color:#999;">📝 ${c.description} | 만료: ${expiry}</td></tr>`;
+                html += `<tr><td colspan="6" style="padding:0.2rem 0.5rem; font-size:0.7rem; color:#999;">📝 ${c.description} | 만료: ${expiry}</td></tr>`;
             }
         });
         html += '</table>';
@@ -2738,8 +2750,78 @@ async function toggleCoupon(couponId, enabled) {
         await db.collection('coupons').doc(couponId).update({ enabled: enabled });
         loadCouponList();
     } catch (e) {
-        alert('상태 변경 실패: ' + e.message);
+        showToast('상태 변경 실패: ' + e.message, 'error');
     }
+}
+
+async function deleteCoupon(couponId, code) {
+    if (typeof showConfirmModal === 'function') {
+        showConfirmModal(`쿠폰 "${code}" 를 삭제하시겠습니까?\n사용 로그는 유지됩니다.`, async () => {
+            try {
+                await db.collection('coupons').doc(couponId).delete();
+                showToast('🗑️ 쿠폰 삭제 완료', 'success');
+                loadCouponList();
+            } catch (e) { showToast('삭제 실패: ' + e.message, 'error'); }
+        });
+    } else {
+        if (!confirm(`쿠폰 "${code}" 를 삭제하시겠습니까?`)) return;
+        try {
+            await db.collection('coupons').doc(couponId).delete();
+            showToast('🗑️ 쿠폰 삭제 완료', 'success');
+            loadCouponList();
+        } catch (e) { showToast('삭제 실패: ' + e.message, 'error'); }
+    }
+}
+
+async function viewCouponLog(couponId, code) {
+    const section = document.getElementById('coupon-log-section');
+    const listEl = document.getElementById('coupon-log-list');
+    if (!section || !listEl) return;
+    section.style.display = 'block';
+    listEl.innerHTML = '<p>로딩 중...</p>';
+    section.scrollIntoView({ behavior: 'smooth' });
+
+    try {
+        // coupon_logs 컬렉션에서 조회
+        const snap = await db.collection('coupon_logs').where('couponId', '==', couponId).orderBy('usedAt', 'desc').limit(100).get();
+        if (snap.empty) {
+            // fallback: coupons/{id}/usage 서브컬렉션
+            const snap2 = await db.collection('coupons').doc(couponId).collection('usage').orderBy('usedAt', 'desc').limit(100).get();
+            if (snap2.empty) { listEl.innerHTML = `<p style="color:#999;">📜 "${code}" 사용 내역이 없습니다.</p>`; return; }
+            renderCouponLog(snap2, listEl, code);
+            return;
+        }
+        renderCouponLog(snap, listEl, code);
+    } catch (e) {
+        // index 없을 수 있으므로 orderBy 없이 재시도
+        try {
+            const snap = await db.collection('coupon_logs').where('couponId', '==', couponId).limit(100).get();
+            if (snap.empty) { listEl.innerHTML = `<p style="color:#999;">📜 "${code}" 사용 내역이 없습니다.</p>`; return; }
+            renderCouponLog(snap, listEl, code);
+        } catch (e2) {
+            listEl.innerHTML = `<p style="color:red;">로그 조회 실패: ${e2.message}</p>`;
+        }
+    }
+}
+
+function renderCouponLog(snap, listEl, code) {
+    let html = `<p style="font-weight:700; margin-bottom:0.5rem;">📜 "${code}" 사용 로그 (${snap.size}건)</p>`;
+    html += '<table style="width:100%; border-collapse:collapse; font-size:0.75rem;"><tr style="background:#f5f5f5;"><th style="padding:0.4rem;">일시</th><th>사용자</th><th>수량</th></tr>';
+    snap.forEach(doc => {
+        const d = doc.data();
+        const date = d.usedAt ? (d.usedAt.toDate ? d.usedAt.toDate() : new Date(d.usedAt)) : null;
+        const dateStr = date ? date.toLocaleString('ko-KR') : '-';
+        const user = d.userEmail || d.userId || '-';
+        const amt = d.amount ? d.amount.toLocaleString() : '-';
+        html += `<tr style="border-bottom:1px solid #eee;"><td style="padding:0.4rem; text-align:center;">${dateStr}</td><td style="text-align:center;">${user}</td><td style="text-align:center;">${amt}</td></tr>`;
+    });
+    html += '</table>';
+    listEl.innerHTML = html;
+}
+
+function closeCouponLog() {
+    const section = document.getElementById('coupon-log-section');
+    if (section) section.style.display = 'none';
 }
 
 // ═══════════════════════════════════════════════════════

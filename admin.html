@@ -422,8 +422,9 @@
                     <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                         <h3 style="margin-bottom:1rem;">🎟️ 쿠폰 관리</h3>
                         <div style="display:grid; gap:0.8rem;">
+                            <input type="text" id="coupon-name" placeholder="쿠폰 이름 (예: 크라우니트레이딩 챌린지 기념 쿠폰 2026)" style="padding:0.6rem; border:1px solid #ddd; border-radius:6px;">
                             <div style="display:flex; gap:0.5rem;">
-                                <input type="text" id="coupon-code" placeholder="쿠폰 코드 (영문/숫자)" style="flex:1; padding:0.6rem; border:1px solid #ddd; border-radius:6px; text-transform:uppercase;">
+                                <input type="text" id="coupon-code" placeholder="쿠폰 코드 (영문/숫자)" style="flex:1; padding:0.6rem; border:1px solid #ddd; border-radius:6px; text-transform:uppercase; font-family:monospace;">
                                 <select id="coupon-token" style="padding:0.6rem; border:1px solid #ddd; border-radius:6px;">
                                     <option value="crtd">CRTD</option>
                                     <option value="crac">CRAC</option>
@@ -442,10 +443,15 @@
                             <button onclick="createCoupon()" class="btn-primary">🎟️ 쿠폰 생성</button>
                         </div>
                     </div>
-                    <div style="background:white; padding:1.5rem; border-radius:12px;">
+                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                         <h3 style="margin-bottom:1rem;">📋 쿠폰 목록</h3>
                         <button onclick="loadCouponList()" class="btn-primary" style="margin-bottom:1rem;">🔄 새로고침</button>
                         <div id="coupon-list"></div>
+                    </div>
+                    <div id="coupon-log-section" style="display:none; background:white; padding:1.5rem; border-radius:12px;">
+                        <h3 style="margin-bottom:1rem;">📜 쿠폰 사용 로그</h3>
+                        <div id="coupon-log-list"></div>
+                        <button onclick="closeCouponLog()" class="btn-primary" style="margin-top:0.5rem; background:#999;">닫기</button>
                     </div>
                 </div>
             </div>
