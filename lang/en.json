@@ -982,5 +982,10 @@
   "nav.business": "Business",
   "nav.fundraise": "Fundraise",
   "nav.admin": "Admin",
-  "nav.settings": "Settings"
+  "nav.settings": "Settings",
+  "nav.ai_assistant": "AI Assistant",
+  "ai.welcome_title": "Hello! I'm CROWNY AI Assistant",
+  "ai.welcome_sub": "How can I help you?",
+  "ai.clear_confirm": "Clear all chat history?",
+  "admin.tab.ai": "AI Settings"
 }

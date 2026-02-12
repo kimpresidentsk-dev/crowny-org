@@ -982,5 +982,10 @@
   "nav.business": "사업",
   "nav.fundraise": "모금",
   "nav.admin": "관리자",
-  "nav.settings": "설정"
+  "nav.settings": "설정",
+  "nav.ai_assistant": "AI 어시스턴트",
+  "ai.welcome_title": "안녕하세요! 크라우니 AI 도우미입니다",
+  "ai.welcome_sub": "무엇을 도와드릴까요?",
+  "ai.clear_confirm": "대화 기록을 모두 삭제할까요?",
+  "admin.tab.ai": "AI 설정"
 }

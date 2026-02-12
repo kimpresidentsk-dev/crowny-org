@@ -838,5 +838,10 @@
   "nav.business": "企业",
   "nav.fundraise": "筹款",
   "nav.admin": "管理员",
-  "nav.settings": "设置"
+  "nav.settings": "设置",
+  "nav.ai_assistant": "AI助手",
+  "ai.welcome_title": "你好！我是CROWNY AI助手",
+  "ai.welcome_sub": "有什么可以帮您的？",
+  "ai.clear_confirm": "确定要清除所有聊天记录吗？",
+  "admin.tab.ai": "AI设置"
 }

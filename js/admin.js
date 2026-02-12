@@ -891,7 +891,8 @@ const ADMIN_TAB_CONFIG = [
     { id: 'log',       icon: '📋', label: t('admin.tab.log','로그'),      minLevel: 3 },
     { id: 'coupon',    icon: '🎟️', label: t('admin.tab.coupon','쿠폰'),      minLevel: 3 },
     { id: 'products',  icon: '📦', label: t('admin.tab.products','상품승인'),  minLevel: 2 },
-    { id: 'superwall', icon: '🏦', label: t('admin.tab.superwall','계좌관리'),  minLevel: 6 }
+    { id: 'superwall', icon: '🏦', label: t('admin.tab.superwall','계좌관리'),  minLevel: 6 },
+    { id: 'ai',        icon: '🤖', label: t('admin.tab.ai','AI 설정'),     minLevel: 6 }
 ];
 
 let activeAdminTab = null;
@@ -978,6 +979,7 @@ function switchAdminTab(tabId) {
     if (tabId === 'coupon') loadCouponList();
     if (tabId === 'products') { loadAdminPendingProducts(); loadAdminReports(); }
     if (tabId === 'superwall') loadSuperAdminWallets();
+    if (tabId === 'ai' && typeof AI_ASSISTANT !== 'undefined') AI_ASSISTANT.loadAdminSettings();
 }
 
 // ═══════════════════════════════════════════════════════

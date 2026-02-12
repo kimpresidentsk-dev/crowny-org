@@ -807,5 +807,10 @@
   "nav.business": "Negocio",
   "nav.fundraise": "Recaudación",
   "nav.admin": "Admin",
-  "nav.settings": "Ajustes"
+  "nav.settings": "Ajustes",
+  "nav.ai_assistant": "Asistente IA",
+  "ai.welcome_title": "¡Hola! Soy el asistente IA de CROWNY",
+  "ai.welcome_sub": "¿En qué puedo ayudarte?",
+  "ai.clear_confirm": "¿Borrar todo el historial?",
+  "admin.tab.ai": "Ajustes IA"
 }

@@ -807,5 +807,10 @@
   "nav.business": "ビジネス",
   "nav.fundraise": "募金",
   "nav.admin": "管理者",
-  "nav.settings": "設定"
+  "nav.settings": "設定",
+  "nav.ai_assistant": "AIアシスタント",
+  "ai.welcome_title": "こんにちは！CROWNYのAIアシスタントです",
+  "ai.welcome_sub": "何かお手伝いできますか？",
+  "ai.clear_confirm": "チャット履歴をすべて削除しますか？",
+  "admin.tab.ai": "AI設定"
 }

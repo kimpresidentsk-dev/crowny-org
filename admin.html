@@ -571,6 +571,29 @@
                         <button onclick="closeCouponLog()" class="btn-primary" style="margin-top:0.5rem; background:#999;">닫기</button>
                     </div>
                 </div>
+
+                <!-- AI Settings Tab -->
+                <div id="admin-tab-ai" class="admin-tab-content" style="display:none;">
+                    <div style="background:white; padding:1.5rem; border-radius:12px;">
+                        <h3 style="margin-bottom:1rem;">🤖 AI 도우미 설정</h3>
+                        <div style="display:grid; gap:1rem;">
+                            <label style="display:flex; align-items:center; gap:0.5rem; font-weight:600;">
+                                <input type="checkbox" id="ai-admin-toggle" checked> AI 도우미 활성화
+                            </label>
+                            <div>
+                                <label style="font-weight:600; display:block; margin-bottom:0.3rem;">Gemini API 키</label>
+                                <input type="password" id="ai-admin-apikey" placeholder="Google AI Studio API Key" style="width:100%; padding:0.6rem; border:1px solid #ddd; border-radius:6px; box-sizing:border-box; font-family:monospace;">
+                                <small style="color:#888;">Google AI Studio에서 무료 API 키를 발급받으세요</small>
+                            </div>
+                            <div>
+                                <label style="font-weight:600; display:block; margin-bottom:0.3rem;">시스템 프롬프트</label>
+                                <textarea id="ai-admin-prompt" rows="8" style="width:100%; padding:0.6rem; border:1px solid #ddd; border-radius:6px; box-sizing:border-box; font-size:0.85rem; resize:vertical;"></textarea>
+                            </div>
+                            <button onclick="AI_ASSISTANT.saveAdminSettings()" class="btn-primary">💾 설정 저장</button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         
             </div>
@@ -625,7 +648,8 @@
     </script>
     <script src="js/config.js?v=12.5"></script>
     <script src="js/offchain.js?v=10.0"></script>
-    <script src="js/admin.js?v=14.1"></script>
+    <script src="js/ai-assistant.js?v=1.0"></script>
+    <script src="js/admin.js?v=14.2"></script>
     <script>
     // Admin page auth - redirect if not admin
     let web3;

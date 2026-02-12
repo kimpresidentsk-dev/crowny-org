@@ -13,7 +13,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="CROWNY">
     
-    <link rel="stylesheet" href="style.css?v=17.1">
+    <link rel="stylesheet" href="style.css?v=17.2">
     
     <!-- Firebase SDK -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-app-compat.min.js"></script>
@@ -187,6 +187,7 @@
             <a href="#" onclick="showPage('energy')" class="nav-item">🔬 CREB LABS<span class="nav-sub" data-i18n="nav.creb_labs">미래기술</span></a>
             <a href="#" onclick="showPage('business')" class="nav-item">🏢 BUSINESS<span class="nav-sub" data-i18n="nav.business">사업</span></a>
             <a href="#" onclick="showPage('fundraise')" class="nav-item">💝 FUNDRAISE<span class="nav-sub" data-i18n="nav.fundraise">모금</span></a>
+            <a href="#" onclick="showPage('ai-assistant')" class="nav-item">🤖 AI ASSISTANT<span class="nav-sub" data-i18n="nav.ai_assistant">AI 어시스턴트</span></a>
             <hr class="nav-divider">
             <a href="admin.html" class="nav-item" id="admin-nav-item" style="display:none; color:#e94560;">🔐 ADMIN<span class="nav-sub" data-i18n="nav.admin">관리자</span></a>
             <a href="#" onclick="showPage('settings')" class="nav-item" style="margin-top:auto;">⚙️ SETTINGS<span class="nav-sub" data-i18n="nav.settings">설정</span></a>
@@ -1623,6 +1624,19 @@
         </section>
 
         <!-- Admin moved to admin.html -->
+        <!-- AI ASSISTANT -->
+        <section id="ai-assistant" class="page">
+            <div class="section-header">
+                <h2>🤖 AI <span data-i18n="nav.ai_assistant">어시스턴트</span></h2>
+                <button onclick="AI_ASSISTANT.reset()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;" title="대화 초기화">🗑️</button>
+            </div>
+            <div id="ai-chat-messages" class="ai-chat-messages"></div>
+            <div class="ai-input-bar">
+                <input type="text" id="ai-input" placeholder="메시지를 입력하세요..." onkeydown="AI_ASSISTANT.handleKeydown(event)" autocomplete="off">
+                <button onclick="AI_ASSISTANT.handleSend()" class="ai-send-btn">➤</button>
+            </div>
+        </section>
+
         <section id="settings" class="page">
             <h2>⚙️ SETTINGS</h2>
             <div id="settings-content"><p style="text-align:center;padding:2rem;color:var(--accent);">Loading...</p></div>
@@ -2039,6 +2053,7 @@
     <script src="js/search.js?v=1.0" defer></script>
     <script src="js/settings.js?v=1.1" defer></script>
     <script src="js/slogans.js?v=1.0" defer></script>
+    <script src="js/ai-assistant.js?v=1.0"></script>
     <script src="js/pwa.js?v=1.1"></script>
 </body>
 </html>

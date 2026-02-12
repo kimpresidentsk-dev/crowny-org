@@ -337,6 +337,9 @@ auth.onAuthStateChanged(async (user) => {
         
         // ★ 검색 캐시 로드
         if (typeof loadSearchCache === 'function') loadSearchCache();
+        
+        // ★ AI 도우미 초기화
+        if (typeof AI_ASSISTANT !== 'undefined') AI_ASSISTANT.init();
     } else {
         document.getElementById('auth-modal').style.display = 'flex';
         document.getElementById('user-info').style.display = 'none';
