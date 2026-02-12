@@ -34,78 +34,18 @@ const ERC20_ABI = [
     { "constant": true, "inputs": [], "name": "symbol", "outputs": [{"name": "", "type": "string"}], "type": "function" }
 ];
 
-// ========== CRNY SLOT SYSTEM ==========
-const SLOT_TABLE = [
-    { min: 1,  max: 4,  slots: 1 },
-    { min: 5,  max: 6,  slots: 2 },
-    { min: 7,  max: 9,  slots: 3 },
-    { min: 10, max: 14, slots: 4 },
-    { min: 15, max: 20, slots: 5 },
-    { min: 21, max: 30, slots: 10 },
-    { min: 31, max: 50, slots: 20 },
-    { min: 51, max: 69, slots: 50 },
-    { min: 70, max: Infinity, slots: 70 }
-];
-
 const RISK_CONFIG = {
     dailyLossLimit: -100,      // 일일 손실 한도 ($)
     cumulativeLossLimit: -3000, // 누적 손실 한도 ($) - HTML 규칙과 일치
-    crnyBurnOnLiquidation: 1,  // 청산 시 소각 CRNY 개수
     tradeFeeRoundTrip: 2.00,   // 왕복 수수료 ($)
     mnqTickValue: 0.50,        // MNQ 1틱 가치 ($)
     mnqPointValue: 2,          // MNQ 1포인트 가치 ($)
     nqPointValue: 20           // NQ 1포인트 가치 ($)
 };
 
-// 슬롯 계산: CRNY 보유량 → 활성 슬롯 수
-function calculateSlots(crnyBalance) {
-    const balance = Math.floor(crnyBalance); // 정수 기준
-    if (balance <= 0) return 0;
-    
-    for (const tier of SLOT_TABLE) {
-        if (balance >= tier.min && balance <= tier.max) {
-            return tier.slots;
-        }
-    }
-    return 0;
-}
-
-// 슬롯 상태 UI 업데이트
-function updateSlotStatusUI() {
-    const crnyBalance = userWallet ? (userWallet.balances?.crny || 0) : 0;
-    const slots = calculateSlots(crnyBalance);
-    
-    // 슬롯 패널 업데이트
-    const crnyEl = document.getElementById('slot-crny-count');
-    const slotsEl = document.getElementById('slot-active-count');
-    const contractsEl = document.getElementById('slot-contract-count');
-    const messageEl = document.getElementById('slot-status-message');
-    const badgeEl = document.getElementById('slot-status-badge');
-    const displayEl = document.getElementById('slot-contracts-display');
-    
-    if (crnyEl) crnyEl.textContent = Math.floor(crnyBalance);
-    if (slotsEl) slotsEl.textContent = slots;
-    if (contractsEl) contractsEl.textContent = slots;
-    
-    // hidden input 업데이트 (기존 호환)
-    const tradeContracts = document.getElementById('trade-contracts');
-    if (tradeContracts) tradeContracts.value = Math.max(slots, 1);
-    
-    // 슬롯 계약 수 표시
-    if (displayEl) {
-        displayEl.textContent = slots > 0 ? `${slots} ${t('trading.contracts','계약')}` : `0 ${t('trading.contracts','계약')}`;
-        displayEl.style.color = slots > 0 ? '#0066cc' : '#cc0000';
-    }
-    
-    // 상태 메시지/배지
-    if (slots === 0) {
-        if (messageEl) messageEl.textContent = t('config.need_crny','🔴 CRNY를 보유해야 거래할 수 있습니다');
-        if (badgeEl) { badgeEl.textContent = t('config.inactive','비활성'); badgeEl.style.background = '#ef5350'; }
-    } else {
-        if (messageEl) messageEl.textContent = `🟢 ${slots}${t('config.slots_active','슬롯 가동 중')} / ${t('config.holding','보유')} ${Math.floor(crnyBalance)} CRNY`;
-        if (badgeEl) { badgeEl.textContent = t('config.active','활성'); badgeEl.style.background = '#00c853'; }
-    }
-}
+// (CRNY 슬롯 시스템 제거됨 — CRTD 기반으로 전환)
+function updateSlotStatusUI() { /* no-op: CRNY 슬롯 제거됨 */ }
+function calculateSlots() { return 0; /* deprecated */ }
 
 // ========== RISK MANAGEMENT ==========
 
@@ -316,7 +256,7 @@ async function checkDailyLossLimit() {
     return false;
 }
 
-// 누적 청산 체크 & CRNY 소각
+// 누적 청산 체크 (CRTD 기반 — CRNY 소각 제거됨)
 async function checkCumulativeLiquidation() {
     if (!myParticipation) return false;
     
@@ -325,41 +265,7 @@ async function checkCumulativeLiquidation() {
     const cumulativeLoss = current - initial;
     
     if (cumulativeLoss <= -Math.abs(myParticipation.maxDrawdown || RISK_CONFIG.cumulativeLossLimit)) {
-        // CRNY 소각 처리
-        const wallet = allWallets.find(w => w.id === currentWalletId);
-        if (!wallet) return false;
-        
-        const currentCrny = wallet.balances?.crny || 0;
-        const burnAmount = RISK_CONFIG.crnyBurnOnLiquidation;
-        
-        if (currentCrny < burnAmount) {
-            // CRNY가 없으면 거래 완전 차단
-            alert(t('config.no_crny','🚨 CRNY가 부족하여 더 이상 거래할 수 없습니다.\nCRNY를 추가로 획득해주세요.'));
-            return true;
-        }
-        
-        // Firestore에서 CRNY 차감
-        const newCrny = currentCrny - burnAmount;
-        await db.collection('users').doc(currentUser.uid)
-            .collection('wallets').doc(currentWalletId)
-            .update({ 'balances.crny': newCrny });
-        
-        wallet.balances.crny = newCrny;
-        userWallet.balances.crny = newCrny;
-        
-        // 청산 기록 저장
-        await db.collection('liquidation_log').add({
-            userId: currentUser.uid,
-            walletId: currentWalletId,
-            challengeId: myParticipation.challengeId,
-            participantId: myParticipation.participantId,
-            crnyBurned: burnAmount,
-            reason: 'cumulative_loss',
-            lossAmount: cumulativeLoss,
-            remainingCrny: newCrny,
-            timestamp: new Date()
-        });
-        
+        // CRTD 청산은 checkCRTDLiquidation()에서 처리
         // 누적 손실 리셋 (계좌 다시 시작)
         myParticipation.currentBalance = initial;
         myParticipation.dailyPnL = 0;
@@ -371,15 +277,11 @@ async function checkCumulativeLiquidation() {
                 dailyPnL: 0
             });
         
-        updateSlotStatusUI();
         updateRiskGaugeUI();
         updateTradingUI();
         
         alert(
             `💀 ${t('config.cumulative_loss','누적 손실')} -$${Math.abs(RISK_CONFIG.cumulativeLossLimit).toLocaleString()} ${t('config.reached','도달')}!\n\n` +
-            `🔥 CRNY ${burnAmount}${t('config.burned','개 소각됨')}\n` +
-            `👑 ${t('config.remaining','남은')} CRNY: ${newCrny}\n` +
-            `📊 ${t('config.new_slots','새 슬롯')}: ${calculateSlots(newCrny)}\n\n` +
             t('config.account_reset','계좌가 초기화되었습니다.')
         );
         
