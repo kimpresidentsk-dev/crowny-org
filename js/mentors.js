@@ -6,10 +6,41 @@ const MENTOR_SETTINGS_KEY = 'mentorSettings';
 function getMentorSettings() {
     try {
         const s = JSON.parse(localStorage.getItem(MENTOR_SETTINGS_KEY));
-        return { panel: s?.panel !== false, comment: s?.comment !== false, notif: s?.notif !== false };
-    } catch { return { panel: true, comment: true, notif: true }; }
+        return { 
+            panel: s?.panel !== false, 
+            comment: s?.comment !== false, 
+            notif: s?.notif !== false,
+            // 멘토별 알림 필터 (기본: 전체 ON)
+            mentorFilter: s?.mentorFilter || { kps: true, michael: true, matthew: true, hansun: true }
+        };
+    } catch { return { panel: true, comment: true, notif: true, mentorFilter: { kps: true, michael: true, matthew: true, hansun: true } }; }
 }
 function saveMentorSettings(s) { localStorage.setItem(MENTOR_SETTINGS_KEY, JSON.stringify(s)); }
+
+function toggleMentorFilter(mentorId) {
+    const s = getMentorSettings();
+    if (!s.mentorFilter) s.mentorFilter = { kps: true, michael: true, matthew: true, hansun: true };
+    s.mentorFilter[mentorId] = !s.mentorFilter[mentorId];
+    // 최소 1명은 활성화
+    const activeCount = Object.values(s.mentorFilter).filter(v => v).length;
+    if (activeCount === 0) {
+        s.mentorFilter[mentorId] = true;
+        if (typeof showToast === 'function') showToast('⚠️ 최소 1명의 멘토는 활성화해야 합니다', 'warning');
+        return;
+    }
+    saveMentorSettings(s);
+    applyMentorSettings();
+    renderMentorPanel();
+    const mentor = mentors[mentorId];
+    const state = s.mentorFilter[mentorId] ? 'ON 🔔' : 'OFF 🔕';
+    if (typeof showToast === 'function') showToast(`${mentor?.icon || '🤖'} ${mentor?.name || mentorId} 알림 ${state}`, 'info', 2000);
+}
+window.toggleMentorFilter = toggleMentorFilter;
+
+function isMentorEnabled(mentorId) {
+    const s = getMentorSettings();
+    return s.mentorFilter?.[mentorId] !== false;
+}
 
 function toggleMentorSetting(key) {
     const s = getMentorSettings();
@@ -427,10 +458,10 @@ function updateMentorAnalysis() {
             const result = mentor.analyze(candles, currentPrice);
             const prev = mentorResults[id];
 
-            // Detect signal change for toast (respect notif setting)
+            // Detect signal change for toast (respect notif setting + mentor filter)
             if (prev && prev.signal !== result.signal && mentorPreviousSignals[id] !== result.signal) {
                 const signalKo = { buy: '매수', sell: '매도', hold: '유지', wait: '관망' };
-                if (getMentorSettings().notif) {
+                if (getMentorSettings().notif && isMentorEnabled(id)) {
                     showToast(`${mentor.icon} ${mentor.name}: ${signalKo[prev.signal] || prev.signal} → ${signalKo[result.signal] || result.signal}으로 변경`, 'info', 4000);
                     if (typeof notifyTradingSignal === 'function') notifyTradingSignal(`${mentor.icon} ${mentor.name}`, prev.signal, result.signal);
                 }
@@ -461,16 +492,28 @@ function renderMentorPanel() {
         wait: { label: '관망', color: '#ffaa00', bg: 'rgba(255,170,0,0.15)', emoji: '🟡' },
     };
 
+    const settings = getMentorSettings();
     let html = '<div class="mentor-avatars">';
     for (const [id, mentor] of Object.entries(mentors)) {
         const result = mentorResults[id] || { signal: 'wait', confidence: 0 };
         const sc = signalConfig[result.signal] || signalConfig.wait;
         const isActive = activeMentorId === id;
+        const isEnabled = isMentorEnabled(id);
+        const dimStyle = isEnabled ? '' : 'opacity:0.35; filter:grayscale(80%);';
+        const bellIcon = isEnabled ? '🔔' : '🔕';
         html += `
-            <div class="mentor-avatar ${isActive ? 'active' : ''}" onclick="selectMentor('${id}')" style="border-color:${sc.color};">
-                <div class="mentor-avatar-icon">${mentor.avatar ? `<img src="${mentor.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : mentor.icon}</div>
-                <div class="mentor-avatar-name">${mentor.name}</div>
-                <div class="mentor-avatar-signal" style="color:${sc.color};">${sc.emoji} ${sc.label}</div>
+            <div class="mentor-avatar ${isActive ? 'active' : ''}" style="border-color:${sc.color}; ${dimStyle} position:relative;">
+                <div onclick="selectMentor('${id}')" style="cursor:pointer;">
+                    <div class="mentor-avatar-icon">${mentor.avatar ? `<img src="${mentor.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : mentor.icon}</div>
+                    <div class="mentor-avatar-name">${mentor.name}</div>
+                    <div class="mentor-avatar-signal" style="color:${sc.color};">${sc.emoji} ${sc.label}</div>
+                </div>
+                <div onclick="event.stopPropagation(); toggleMentorFilter('${id}')" 
+                     style="position:absolute; top:-4px; right:-4px; font-size:12px; cursor:pointer; 
+                            background:${isEnabled ? 'rgba(0,200,0,0.15)' : 'rgba(150,150,150,0.2)'}; 
+                            border-radius:50%; width:22px; height:22px; display:flex; align-items:center; 
+                            justify-content:center; border:1px solid ${isEnabled ? '#00cc66' : '#999'};"
+                     title="${mentor.name} 알림 ${isEnabled ? 'ON' : 'OFF'}">${bellIcon}</div>
             </div>`;
     }
     html += '</div>';
@@ -484,10 +527,14 @@ function renderMentorPanel() {
         const confBars = Math.round(confPct / 10);
         const confBar = '█'.repeat(confBars) + '░'.repeat(10 - confBars);
 
+        const mentorEnabled = isMentorEnabled(activeMentorId);
+        const filterBadge = mentorEnabled 
+            ? '<span style="font-size:0.7rem; color:#00cc66;">🔔 알림 ON</span>'
+            : '<span style="font-size:0.7rem; color:#999;">🔕 알림 OFF</span>';
         html += `
-            <div class="mentor-detail-card" style="border-left:4px solid ${mentor.color}; background:${sc.bg};">
+            <div class="mentor-detail-card" style="border-left:4px solid ${mentor.color}; background:${sc.bg}; ${mentorEnabled ? '' : 'opacity:0.7;'}">
                 <div class="mentor-detail-header">
-                    <span class="mentor-detail-title">${mentor.avatar ? `<img src="${mentor.avatar}" style="width:24px;height:24px;border-radius:50%;vertical-align:middle;margin-right:4px;">` : mentor.icon} ${mentor.name} <span style="color:${mentor.color}; font-size:0.7rem;">${mentor.style}</span></span>
+                    <span class="mentor-detail-title">${mentor.avatar ? `<img src="${mentor.avatar}" style="width:24px;height:24px;border-radius:50%;vertical-align:middle;margin-right:4px;">` : mentor.icon} ${mentor.name} <span style="color:${mentor.color}; font-size:0.7rem;">${mentor.style}</span> ${filterBadge}</span>
                     <span class="mentor-detail-signal" style="color:${sc.color}; font-weight:700;">${sc.label} ${sc.emoji}</span>
                 </div>
                 <div class="mentor-detail-message" style="${getMentorSettings().comment ? '' : 'display:none'}">"${result.message}"</div>
