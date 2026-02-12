@@ -559,39 +559,116 @@ async function applyReferralCode(newUserId, referralCode) {
             referralCount: (referrer.data().referralCount || 0) + 1
         });
         
-        // 소개자에게 보상 (CRNY 1개)
-        const referrerWallets = await db.collection('users').doc(referrerId)
-            .collection('wallets').limit(1).get();
+        // ★ 소개자 보상 자동 지급 (Firestore 설정값 기반)
+        await distributeSignupReferralReward(referrerId, newUserId, referrer.data().email);
         
-        if (!referrerWallets.empty) {
-            const walletDoc = referrerWallets.docs[0];
-            const balances = walletDoc.data().balances || {};
-            await walletDoc.ref.update({
-                'balances.crny': (balances.crny || 0) + 1
-            });
-            
-            await db.collection('transactions').add({
-                from: 'system:referral',
-                to: referrerId,
-                toEmail: referrer.data().email,
-                amount: 1,
-                token: 'CRNY',
-                type: 'referral_reward',
-                referredUser: newUserId,
-                timestamp: new Date()
-            });
-        }
-        
-        console.log(`✅ 소개 연결: ${referralCode} → 신규 사용자`);
+        console.log(`✅ 소개 연결 + 보상 지급: ${referralCode} → 신규 사용자`);
     } catch (error) {
         console.error('소개 코드 적용 실패:', error);
     }
 }
 
-// 챌린지 참가 시 소개자 수익 배분
-// - CRTD: 참가비 10% 즉시 지급 (소개자 offchainBalances.crtd)
-// - CRNY: 30일 후 자동 지급 (pendingRewards 컬렉션)
-async function distributeReferralReward(userId, amount, token) {
+// ★ 회원가입 시 소개자 보상 자동 지급 (설정값 기반)
+async function distributeSignupReferralReward(referrerId, newUserId, referrerEmail) {
+    try {
+        // Firestore에서 보상 설정 로드
+        const configDoc = await db.collection('admin_config').doc('referral_rewards').get();
+        const config = configDoc.exists ? configDoc.data() : {};
+        const rewards = config.signupRewards || { crtd: 30, crac: 20, crgc: 30, creb: 20 };
+        
+        const referrerDoc = await db.collection('users').doc(referrerId).get();
+        if (!referrerDoc.exists) return;
+        const referrerData = referrerDoc.data();
+        const off = referrerData.offchainBalances || {};
+        const earnings = referrerData.referralEarnings || {};
+        
+        const updates = {};
+        const tokenEntries = Object.entries(rewards).filter(([_, v]) => v > 0);
+        
+        for (const [token, amount] of tokenEntries) {
+            updates[`offchainBalances.${token}`] = (off[token] || 0) + amount;
+            updates[`referralEarnings.${token}`] = (earnings[token] || 0) + amount;
+        }
+        
+        if (Object.keys(updates).length > 0) {
+            await db.collection('users').doc(referrerId).update(updates);
+        }
+        
+        // 거래 로그
+        for (const [token, amount] of tokenEntries) {
+            await db.collection('transactions').add({
+                from: 'system:referral_signup',
+                to: referrerId,
+                toEmail: referrerEmail || '',
+                amount: amount,
+                token: token.toUpperCase(),
+                type: 'referral_signup_reward',
+                referredUser: newUserId,
+                rewardConfig: rewards,
+                timestamp: new Date()
+            });
+        }
+        
+        console.log(`🎁 소개 가입 보상 지급:`, rewards, `→ ${referrerId}`);
+    } catch (e) {
+        console.error('소개 가입 보상 지급 실패:', e);
+    }
+}
+
+// ★ 소개자 보상 설정 UI (수퍼관리자)
+async function loadReferralRewardConfig() {
+    try {
+        const doc = await db.collection('admin_config').doc('referral_rewards').get();
+        const config = doc.exists ? doc.data() : {};
+        const rewards = config.signupRewards || { crtd: 30, crac: 20, crgc: 30, creb: 20 };
+        ['crtd','crac','crgc','creb'].forEach(tk => {
+            const el = document.getElementById('referral-cfg-' + tk);
+            if (el) el.value = rewards[tk] || 0;
+        });
+    } catch (e) {
+        console.error('소개자 보상 설정 로드 실패:', e);
+    }
+}
+
+async function saveReferralRewardConfig() {
+    if (!isSuperAdmin()) { showToast('수퍼관리자만 변경 가능합니다', 'warning'); return; }
+    const tokens = ['crtd','crac','crgc','creb'];
+    const signupRewards = {};
+    for (const tk of tokens) {
+        const val = parseInt(document.getElementById('referral-cfg-' + tk)?.value);
+        if (isNaN(val) || val < 0 || val > 10000) {
+            showToast(`${tk.toUpperCase()} 수치가 유효하지 않습니다 (0~10,000)`, 'error');
+            return;
+        }
+        signupRewards[tk] = val;
+    }
+    const confirmed = await showConfirmModal(
+        '소개자 보상 수치 변경',
+        `회원가입 시 소개자 보상을 다음과 같이 변경합니다:\n\nCRTD: ${signupRewards.crtd}\nCRAC: ${signupRewards.crac}\nCRGC: ${signupRewards.crgc}\nCREB: ${signupRewards.creb}\n\n변경하시겠습니까?`
+    );
+    if (!confirmed) return;
+    try {
+        await db.collection('admin_config').doc('referral_rewards').set({
+            signupRewards,
+            updatedAt: new Date(),
+            updatedBy: currentUser.email
+        }, { merge: true });
+        await db.collection('admin_logs').add({
+            action: 'referral_reward_config_change',
+            newConfig: signupRewards,
+            adminEmail: currentUser.email,
+            adminUid: currentUser.uid,
+            timestamp: new Date()
+        });
+        showToast('✅ 소개자 보상 수치 저장 완료', 'success');
+    } catch (e) {
+        showToast('저장 실패: ' + e.message, 'error');
+    }
+}
+
+// [v13] 챌린지 참가 시 소개자 수익 배분 — 비활성화 (회원가입 보상으로 통합)
+// async function distributeReferralReward — deprecated
+async function distributeReferralReward_DISABLED(userId, amount, token) {
     try {
         const userDoc = await db.collection('users').doc(userId).get();
         if (!userDoc.exists) return;
@@ -808,6 +885,7 @@ const ADMIN_TAB_CONFIG = [
     { id: 'challenge', icon: '📊', label: t('admin.tab.challenge','챌린지'),    minLevel: 3 },
     { id: 'users',     icon: '👥', label: t('admin.tab.users','관리자'),    minLevel: 3 },
     { id: 'giving',    icon: '🎁', label: t('admin.tab.giving','기부풀'),    minLevel: 3 },
+    { id: 'referral',  icon: '⭐', label: t('admin.tab.referral','소개자'),    minLevel: 6 },
     { id: 'rate',      icon: '⚖️', label: t('admin.tab.rate','비율'),      minLevel: 6 },
     { id: 'log',       icon: '📋', label: t('admin.tab.log','로그'),      minLevel: 3 },
     { id: 'coupon',    icon: '🎟️', label: t('admin.tab.coupon','쿠폰'),      minLevel: 3 },
@@ -892,6 +970,7 @@ function switchAdminTab(tabId) {
     if (tabId === 'users') loadAdminUserList();
     if (tabId === 'challenge') loadAdminParticipants();
     if (tabId === 'giving') adminLoadGivingPool();
+    if (tabId === 'referral') loadReferralRewardConfig();
     if (tabId === 'rate') loadExchangeRate();
     if (tabId === 'coupon') loadCouponList();
     if (tabId === 'superwall') loadSuperAdminWallets();
@@ -2699,8 +2778,8 @@ async function joinChallenge(challengeId, tierKey) {
             `💰 ${tier.withdrawUnit.toLocaleString()} CRTD 단위 인출`
         );
         
-        // 소개자 수수료: 참가비 10% → CRTD 즉시 지급
-        await distributeReferralReward(currentUser.uid, Math.floor(tier.deposit * 0.1), 'CRTD');
+        // [v13] 챌린지 참가 시 소개자 수수료 제거 — 회원가입 보상으로 통합
+        // await distributeReferralReward(currentUser.uid, Math.floor(tier.deposit * 0.1), 'CRTD');
         
         loadUserWallet();
         loadPropTrading();

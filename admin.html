@@ -338,6 +338,35 @@
                 </div>
 
                 <!-- ═══════════════════════════════════════════ -->
+                <!-- TAB: ⭐ 소개자 보상 설정 (수퍼관리자)      -->
+                <!-- ═══════════════════════════════════════════ -->
+                <div id="admin-tab-referral" class="admin-tab-content" style="display:none;">
+                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                        <h3 style="margin-bottom:1rem;">⭐ 소개자 보상 설정</h3>
+                        <p style="font-size:0.85rem; color:var(--accent); margin-bottom:1rem;">회원가입 시 소개자에게 지급되는 오프체인 토큰 수치를 설정합니다.</p>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin-bottom:1rem;">
+                            <div>
+                                <label style="font-size:0.8rem; font-weight:600;">📈 CRTD</label>
+                                <input type="number" id="referral-cfg-crtd" value="30" min="0" max="10000" style="width:100%; padding:0.5rem; border:1px solid #ddd; border-radius:6px;">
+                            </div>
+                            <div>
+                                <label style="font-size:0.8rem; font-weight:600;">🎭 CRAC</label>
+                                <input type="number" id="referral-cfg-crac" value="20" min="0" max="10000" style="width:100%; padding:0.5rem; border:1px solid #ddd; border-radius:6px;">
+                            </div>
+                            <div>
+                                <label style="font-size:0.8rem; font-weight:600;">🛒 CRGC</label>
+                                <input type="number" id="referral-cfg-crgc" value="30" min="0" max="10000" style="width:100%; padding:0.5rem; border:1px solid #ddd; border-radius:6px;">
+                            </div>
+                            <div>
+                                <label style="font-size:0.8rem; font-weight:600;">🌱 CREB</label>
+                                <input type="number" id="referral-cfg-creb" value="20" min="0" max="10000" style="width:100%; padding:0.5rem; border:1px solid #ddd; border-radius:6px;">
+                            </div>
+                        </div>
+                        <button onclick="saveReferralRewardConfig()" class="btn-primary" style="width:100%; padding:0.7rem;">💾 보상 수치 저장</button>
+                    </div>
+                </div>
+
+                <!-- ═══════════════════════════════════════════ -->
                 <!-- TAB 6.5: ⚖️ 비율 관리 (수퍼관리자)         -->
                 <!-- ═══════════════════════════════════════════ -->
                 <div id="admin-tab-rate" class="admin-tab-content" style="display:none;">
@@ -516,7 +545,7 @@
     </script>
     <script src="js/config.js?v=10.0"></script>
     <script src="js/offchain.js?v=10.0"></script>
-    <script src="js/admin.js?v=11.0"></script>
+    <script src="js/admin.js?v=13.0"></script>
     <script>
     // Admin page auth - redirect if not admin
     let web3;

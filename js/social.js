@@ -133,9 +133,30 @@ async function saveProfile() {
     }
 }
 
+// 소개자 보상 안내문구 동적 로드
+async function loadReferralRewardDesc() {
+    try {
+        const doc = await db.collection('admin_config').doc('referral_rewards').get();
+        const config = doc.exists ? doc.data() : {};
+        const r = config.signupRewards || { crtd: 30, crac: 20, crgc: 30, creb: 20 };
+        const parts = [];
+        if (r.crtd) parts.push(`${r.crtd} CRTD`);
+        if (r.crac) parts.push(`${r.crac} CRAC`);
+        if (r.crgc) parts.push(`${r.crgc} CRGC`);
+        if (r.creb) parts.push(`${r.creb} CREB`);
+        const descEl = document.getElementById('referral-reward-desc');
+        if (descEl && parts.length > 0) {
+            descEl.textContent = `친구 초대 시 ${parts.join(' + ')} 즉시 지급!`;
+        }
+    } catch (e) {
+        console.warn('소개자 보상 안내 로드 실패:', e);
+    }
+}
+
 // 소개자 정보 로드
 async function loadReferralInfo() {
     if (!currentUser) return;
+    loadReferralRewardDesc();
     try {
         const userDoc = await db.collection('users').doc(currentUser.uid).get();
         if (!userDoc.exists) return;
