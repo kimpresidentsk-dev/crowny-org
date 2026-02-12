@@ -253,7 +253,7 @@ function toggleNFTOptions() {
 }
 
 async function uploadArtwork() {
-    if (!currentUser) { alert('로그인이 필요합니다'); return; }
+    if (!currentUser) { showToast('로그인이 필요합니다', 'warning'); return; }
 
     const title       = document.getElementById('art-title')?.value.trim();
     const description = document.getElementById('art-description')?.value.trim();
@@ -262,8 +262,8 @@ async function uploadArtwork() {
     const imageFile   = document.getElementById('art-image')?.files?.[0];
     const mintNFT     = document.getElementById('art-mint-nft')?.checked || false;
 
-    if (!title)     { alert('작품 제목을 입력하세요'); return; }
-    if (!imageFile) { alert('작품 이미지를 선택하세요'); return; }
+    if (!title)     { showToast('작품 제목을 입력하세요', 'warning'); return; }
+    if (!imageFile) { showToast('작품 이미지를 선택하세요', 'warning'); return; }
 
     const nftType       = document.getElementById('art-nft-type')?.value || 'erc721';
     const editionCount  = parseInt(document.getElementById('art-edition-count')?.value) || 1;
@@ -354,14 +354,14 @@ async function uploadArtwork() {
             lastUpload: new Date()
         });
 
-        alert(`🎨 "${title}" 등록 완료!${mintNFT ? ' (NFT ✅)' : ''}`);
+        showToast(`🎨 "${title}" 등록 완료!${mintNFT ? ' (NFT ✅)' : ''}`, 'success');
         _resetArtForm();
         loadArtGallery();
 
     } catch (error) {
         console.error('🎨 [Upload] Error:', error);
         setStatus('❌ 등록 실패: ' + error.message);
-        alert('등록 실패: ' + error.message);
+        showToast('등록 실패: ' + error.message, 'error');
     }
 }
 
@@ -454,21 +454,22 @@ async function mintArtworkNFT(artworkId, artwork, imageFile, nftType, editionCou
  * 기존 작품 → 사후 NFT 민팅
  */
 async function mintExistingArtwork(artworkId) {
-    if (!currentUser) { alert('로그인 필요'); return; }
+    if (!currentUser) { showToast('로그인 필요', 'warning'); return; }
 
     try {
         const artDoc = await db.collection('artworks').doc(artworkId).get();
-        if (!artDoc.exists) { alert('작품을 찾을 수 없습니다'); return; }
+        if (!artDoc.exists) { showToast('작품을 찾을 수 없습니다', 'warning'); return; }
 
         const art = artDoc.data();
-        if (art.artistId !== currentUser.uid) { alert('본인 작품만 NFT로 민팅 가능'); return; }
-        if (art.isNFT) { alert('이미 NFT로 민팅된 작품'); return; }
+        if (art.artistId !== currentUser.uid) { showToast('본인 작품만 NFT로 민팅 가능', 'warning'); return; }
+        if (art.isNFT) { showToast('이미 NFT로 민팅된 작품', 'info'); return; }
 
-        const choice = prompt('NFT 타입:\n1) ERC-721 (유니크 1/1)\n2) ERC-1155 (에디션)', '1');
+        const choice = await showPromptModal('NFT 타입', 'NFT 타입:\n1) ERC-721 (유니크 1/1)\n2) ERC-1155 (에디션)', '1');
         const type = choice === '2' ? 'erc1155' : 'erc721';
         let editionCount = 1;
         if (type === 'erc1155') {
-            editionCount = parseInt(prompt('에디션 수량:', '10')) || 10;
+            const edInput = await showPromptModal('에디션 수량', '에디션 수량을 입력하세요:', '10');
+            editionCount = parseInt(edInput) || 10;
         }
 
         // 이미지 Blob 확보
@@ -478,11 +479,11 @@ async function mintExistingArtwork(artworkId) {
         } else if (art.imageData) {
             imageBlob = await (await fetch(art.imageData)).blob();
         } else {
-            alert('이미지를 찾을 수 없습니다'); return;
+            showToast('이미지를 찾을 수 없습니다', 'error'); return;
         }
 
         const imageFile = new File([imageBlob], `${artworkId}.jpg`, { type: 'image/jpeg' });
-        alert('MetaMask에서 트랜잭션을 승인해주세요.');
+        showToast('MetaMask에서 트랜잭션을 승인해주세요.', 'info');
 
         const result = await mintArtworkNFT(
             artworkId, art, imageFile, type, editionCount,
@@ -497,13 +498,13 @@ async function mintExistingArtwork(artworkId) {
             mintTxHash: result.txHash
         });
 
-        alert(`🎉 NFT 민팅 완료! Token #${result.tokenId}`);
+        showToast(`🎉 NFT 민팅 완료! Token #${result.tokenId}`, 'success');
         const modal = document.getElementById('art-modal');
         if (modal) modal.remove();
         viewArtwork(artworkId);
 
     } catch (error) {
-        alert('NFT 민팅 실패: ' + error.message);
+        showToast('NFT 민팅 실패: ' + error.message, 'error');
         console.error('🎨 [NFT] Mint existing failed:', error);
     }
 }
@@ -529,7 +530,14 @@ async function loadArtGallery() {
         if (filterSort === 'popular') query = query.orderBy('likes', 'desc');
         else query = query.orderBy('createdAt', 'desc');
 
-        const snapshot = await query.limit(40).get();
+        let snapshot;
+        try {
+            snapshot = await query.limit(40).get();
+        } catch (indexError) {
+            console.warn('Composite index missing, falling back to simple query:', indexError.message);
+            query = db.collection('artworks').where('status', '==', 'active').orderBy('createdAt', 'desc');
+            snapshot = await query.limit(40).get();
+        }
 
         if (snapshot.empty) {
             container.innerHTML = '<p style="text-align:center; color:var(--accent); grid-column:1/-1;">아직 등록된 작품이 없습니다. 첫 작품을 등록해보세요! 🎨</p>';
@@ -601,7 +609,7 @@ function _renderArtCard(art) {
 async function viewArtwork(artId) {
     try {
         const doc = await db.collection('artworks').doc(artId).get();
-        if (!doc.exists) { alert('작품을 찾을 수 없습니다'); return; }
+        if (!doc.exists) { showToast('작품을 찾을 수 없습니다', 'warning'); return; }
         const art = doc.data();
 
         // 조회수 (fire-and-forget)
@@ -683,7 +691,7 @@ async function viewArtwork(artId) {
 
         document.body.appendChild(modal);
     } catch (error) {
-        alert('작품 로드 실패: ' + error.message);
+        showToast('작품 로드 실패: ' + error.message, 'error');
     }
 }
 
@@ -693,16 +701,16 @@ async function viewArtwork(artId) {
 // ============================================================
 
 async function likeArtwork(artId) {
-    if (!currentUser) { alert('로그인이 필요합니다'); return; }
+    if (!currentUser) { showToast('로그인이 필요합니다', 'warning'); return; }
     try {
         const likeRef = db.collection('artworks').doc(artId).collection('likes').doc(currentUser.uid);
-        if ((await likeRef.get()).exists) { alert('이미 좋아요 한 작품입니다'); return; }
+        if ((await likeRef.get()).exists) { showToast('이미 좋아요 한 작품입니다', 'info'); return; }
 
         await likeRef.set({ userId: currentUser.uid, timestamp: new Date() });
         await db.collection('artworks').doc(artId).update({
             likes: firebase.firestore.FieldValue.increment(1)
         });
-        alert('❤️ 좋아요!');
+        showToast('❤️ 좋아요!', 'success');
     } catch (e) { console.error('🎨 [Like]', e); }
 }
 
@@ -711,19 +719,20 @@ function shareArtwork(artId, title) {
     if (navigator.share) {
         navigator.share({ title: `CROWNY ART: ${title}`, url });
     } else {
-        navigator.clipboard.writeText(url).then(() => alert('🔗 링크 복사됨!')).catch(() => {});
+        navigator.clipboard.writeText(url).then(() => showToast('🔗 링크 복사됨!', 'success')).catch(() => {});
     }
 }
 
 async function deleteArtwork(artId) {
-    if (!window.confirm('작품을 삭제하시겠습니까?\n(NFT는 온체인에 남아있습니다)')) return;
+    const confirmed = await showConfirmModal('작품 삭제', '작품을 삭제하시겠습니까?\n(NFT는 온체인에 남아있습니다)');
+    if (!confirmed) return;
     try {
         await db.collection('artworks').doc(artId).update({ status: 'deleted' });
-        alert('🗑️ 삭제 완료');
+        showToast('🗑️ 삭제 완료', 'success');
         const modal = document.getElementById('art-modal');
         if (modal) modal.remove();
         loadArtGallery();
-    } catch (e) { alert('삭제 실패: ' + e.message); }
+    } catch (e) { showToast('삭제 실패: ' + e.message, 'error'); }
 }
 
 
@@ -732,44 +741,66 @@ async function deleteArtwork(artId) {
 // ============================================================
 
 async function buyArtwork(artId) {
-    if (!currentUser) { alert('로그인 필요'); return; }
+    if (!currentUser) { showToast('로그인 필요', 'warning'); return; }
 
     try {
         const artDoc = await db.collection('artworks').doc(artId).get();
         const art = artDoc.data();
-        if (art.status !== 'active') { alert('이미 판매된 작품'); return; }
+        if (art.status !== 'active') { showToast('이미 판매된 작품', 'warning'); return; }
 
         const tokenKey = art.priceToken.toLowerCase();
+        const isOffchain = typeof isOffchainToken === 'function' && isOffchainToken(tokenKey);
 
-        // 구매자 지갑 (wallet.js → loadUserWallet에서 로드된 상태)
-        const wallets = await db.collection('users').doc(currentUser.uid)
-            .collection('wallets').limit(1).get();
-        if (wallets.empty) { alert('지갑이 없습니다'); return; }
-
-        const walletDoc = wallets.docs[0];
-        const balances = walletDoc.data().balances || {};
-
-        if ((balances[tokenKey] || 0) < art.price) {
-            alert(`${art.priceToken} 잔액 부족. 보유: ${balances[tokenKey]||0}, 필요: ${art.price}`);
-            return;
+        // 잔액 확인
+        let walletDoc; // used for on-chain path
+        if (isOffchain) {
+            const userDoc = await db.collection('users').doc(currentUser.uid).get();
+            const offBal = userDoc.data()?.offchainBalances?.[tokenKey] || 0;
+            if (offBal < art.price) {
+                showToast(`${art.priceToken} 잔액 부족. 보유: ${offBal}, 필요: ${art.price}`, 'warning');
+                return;
+            }
+        } else {
+            const wallets = await db.collection('users').doc(currentUser.uid)
+                .collection('wallets').limit(1).get();
+            if (wallets.empty) { showToast('지갑이 없습니다', 'warning'); return; }
+            walletDoc = wallets.docs[0];
+            const balances = walletDoc.data().balances || {};
+            if ((balances[tokenKey] || 0) < art.price) {
+                showToast(`${art.priceToken} 잔액 부족. 보유: ${balances[tokenKey]||0}, 필요: ${art.price}`, 'warning');
+                return;
+            }
         }
 
-        if (!window.confirm(`"${art.title}"\n\n${art.price} ${art.priceToken}로 구매하시겠습니까?${art.isNFT ? '\n\n🔗 NFT 소유권이 이전됩니다' : ''}`)) return;
+        const confirmBuy = await showConfirmModal('작품 구매', `"${art.title}"\n\n${art.price} ${art.priceToken}로 구매하시겠습니까?${art.isNFT ? '\n\n🔗 NFT 소유권이 이전됩니다' : ''}`);
+        if (!confirmBuy) return;
 
         // 수수료
         const platformFee   = art.price * (ART_CONFIG.platformFeePercent / 100);
         const artistReceive = art.price - platformFee;
 
-        // 구매자 차감
-        await walletDoc.ref.update({ [`balances.${tokenKey}`]: balances[tokenKey] - art.price });
-
-        // 판매자 입금
-        const sellerWallets = await db.collection('users').doc(art.artistId)
-            .collection('wallets').limit(1).get();
-        if (!sellerWallets.empty) {
-            const sw = sellerWallets.docs[0];
-            const sb = sw.data().balances || {};
-            await sw.ref.update({ [`balances.${tokenKey}`]: (sb[tokenKey] || 0) + artistReceive });
+        if (isOffchain) {
+            // 구매자 차감
+            const spent = await spendOffchainPoints(tokenKey, art.price, `아트 구매: ${art.title}`);
+            if (!spent) return;
+            // 판매자 입금 (direct Firestore)
+            const sellerDoc = await db.collection('users').doc(art.artistId).get();
+            const sellerOff = sellerDoc.data()?.offchainBalances || {};
+            await db.collection('users').doc(art.artistId).update({
+                [`offchainBalances.${tokenKey}`]: (sellerOff[tokenKey] || 0) + artistReceive
+            });
+        } else {
+            // 구매자 차감
+            const balances = walletDoc.data().balances || {};
+            await walletDoc.ref.update({ [`balances.${tokenKey}`]: balances[tokenKey] - art.price });
+            // 판매자 입금
+            const sellerWallets = await db.collection('users').doc(art.artistId)
+                .collection('wallets').limit(1).get();
+            if (!sellerWallets.empty) {
+                const sw = sellerWallets.docs[0];
+                const sb = sw.data().balances || {};
+                await sw.ref.update({ [`balances.${tokenKey}`]: (sb[tokenKey] || 0) + artistReceive });
+            }
         }
 
         // 상태 변경
@@ -803,7 +834,7 @@ async function buyArtwork(artId) {
             totalRevenue: firebase.firestore.FieldValue.increment(artistReceive)
         });
 
-        alert(`🎉 "${art.title}" 구매 완료!${art.isNFT ? '\n🔗 NFT 소유권 이전됨' : ''}`);
+        showToast(`🎉 "${art.title}" 구매 완료!${art.isNFT ? ' 🔗 NFT 소유권 이전됨' : ''}`, 'success');
 
         const modal = document.getElementById('art-modal');
         if (modal) modal.remove();
@@ -812,12 +843,12 @@ async function buyArtwork(artId) {
         if (typeof loadUserWallet === 'function') loadUserWallet();
 
     } catch (error) {
-        alert('구매 실패: ' + error.message);
+        showToast('구매 실패: ' + error.message, 'error');
     }
 }
 
 async function placeBid(artId) {
-    if (!currentUser) { alert('로그인 필요'); return; }
+    if (!currentUser) { showToast('로그인 필요', 'warning'); return; }
 
     const bidInput = document.getElementById(`bid-amount-${artId}`);
     const bidAmount = parseFloat(bidInput?.value);
@@ -827,13 +858,13 @@ async function placeBid(artId) {
         const art = artDoc.data();
 
         const minBid = (art.currentBid || art.startPrice || 1) + 1;
-        if (bidAmount < minBid) { alert(`최소 입찰가: ${minBid} CRNY`); return; }
+        if (bidAmount < minBid) { showToast(`최소 입찰가: ${minBid} CRNY`, 'warning'); return; }
 
         const wallets = await db.collection('users').doc(currentUser.uid)
             .collection('wallets').limit(1).get();
         const balances = wallets.docs[0]?.data()?.balances || {};
         if ((balances.crny || 0) < bidAmount) {
-            alert(`CRNY 잔액 부족. 보유: ${balances.crny || 0}`); return;
+            showToast(`CRNY 잔액 부족. 보유: ${balances.crny || 0}`, 'warning'); return;
         }
 
         const userDoc = await db.collection('users').doc(currentUser.uid).get();
@@ -849,11 +880,11 @@ async function placeBid(artId) {
             bidderNickname: nickname, amount: bidAmount, timestamp: new Date()
         });
 
-        alert(`🔨 ${bidAmount} CRNY 입찰 완료!`);
+        showToast(`🔨 ${bidAmount} CRNY 입찰 완료!`, 'success');
         const modal = document.getElementById('art-modal');
         if (modal) modal.remove();
         loadArtGallery();
-    } catch (error) { alert('입찰 실패: ' + error.message); }
+    } catch (error) { showToast('입찰 실패: ' + error.message, 'error'); }
 }
 
 
