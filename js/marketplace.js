@@ -2,6 +2,20 @@
 
 const ORDER_STATUS_LABELS = { paid:t('mall.status_paid','💰 결제완료'), shipping:t('mall.status_shipping','🚚 배송중'), delivered:t('mall.status_delivered','✅ 배송완료'), cancelled:t('mall.status_cancelled','❌ 취소') };
 const ORDER_STATUS_COLORS = { paid:'#ff9800', shipping:'#2196f3', delivered:'#4CAF50', cancelled:'#cc0000' };
+const BRAND_SLOGANS = {
+    present: '아름다움을 선물하다', doctor: '건강한 삶의 시작', medical: '신뢰할 수 있는 의료',
+    avls: '감각을 깨우다', solution: '안전을 디자인하다', architect: '공간을 창조하다',
+    mall: '일상의 가치', designers: '스타일을 입다'
+};
+const BRAND_COLORS = {
+    present:'#FDEBD0', doctor:'#D5F5E3', medical:'#D6EAF8', avls:'#E8DAEF',
+    solution:'#F2F3F4', architect:'#FADBD8', mall:'#FCF3CF', designers:'#EBDEF0'
+};
+const BRAND_ICONS = {
+    present:'💄', doctor:'💊', medical:'🏥', avls:'🎬', solution:'🔐', architect:'🏗️', mall:'🛒', designers:'👗'
+};
+const RETURN_REASONS = ['불량','오배송','단순변심','기타'];
+
 const MALL_CATEGORIES = {
     'present':'💄 프레즌트','doctor':'💊 포닥터','medical':'🏥 메디컬','avls':'🎬 AVLs',
     'solution':'🔐 프라이빗','architect':'🏗️ 아키텍트','mall':'🛒 크라우니몰','designers':'👗 디자이너스',
@@ -94,20 +108,51 @@ async function renderProductDetail(id) {
             isWished = !wSnap.empty;
         }
 
-        // Reviews
+        // Reviews - enhanced with photos, verified badge, helpful, rating distribution
         let reviewsHtml = '';
         try {
-            const revSnap = await db.collection('product_reviews').where('productId','==',id).orderBy('createdAt','desc').limit(20).get();
+            const revSnap = await db.collection('product_reviews').where('productId','==',id).orderBy('createdAt','desc').limit(30).get();
             if (!revSnap.empty) {
-                reviewsHtml = '<div style="margin-top:1.5rem;"><h4 style="margin-bottom:0.8rem;">📝 리뷰</h4>';
+                // Rating distribution
+                const dist = [0,0,0,0,0];
+                let totalR = 0;
+                revSnap.forEach(r => { const rt = r.data().rating||5; dist[rt-1]++; totalR += rt; });
+                const avgR = (totalR / revSnap.size).toFixed(1);
+                let distHtml = '';
+                for (let i = 5; i >= 1; i--) {
+                    const pct = revSnap.size > 0 ? Math.round(dist[i-1] / revSnap.size * 100) : 0;
+                    distHtml += `<div style="display:flex;align-items:center;gap:0.3rem;font-size:0.75rem;">
+                        <span>${i}★</span>
+                        <div style="flex:1;background:#e0e0e0;height:6px;border-radius:3px;"><div style="background:#FFD700;height:100%;border-radius:3px;width:${pct}%;"></div></div>
+                        <span style="color:var(--accent);min-width:28px;text-align:right;">${dist[i-1]}</span>
+                    </div>`;
+                }
+
+                reviewsHtml = `<div style="margin-top:1.5rem; background:white; padding:1.2rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                    <h4 style="margin-bottom:0.8rem;">📝 리뷰 (${revSnap.size})</h4>
+                    <div style="display:flex;gap:1.5rem;align-items:center;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid #eee;">
+                        <div style="text-align:center;">
+                            <div style="font-size:2rem;font-weight:800;color:#FFD700;">${avgR}</div>
+                            <div>${renderStars(parseFloat(avgR),'1rem')}</div>
+                            <div style="font-size:0.75rem;color:var(--accent);">${revSnap.size}개 리뷰</div>
+                        </div>
+                        <div style="flex:1;">${distHtml}</div>
+                    </div>`;
                 revSnap.forEach(r => {
                     const rv = r.data();
+                    const verifiedBadge = rv.verified ? '<span style="background:#e8f5e9;color:#2e7d32;font-size:0.7rem;padding:0.1rem 0.4rem;border-radius:4px;margin-left:0.3rem;">✅ 구매인증</span>' : '';
+                    const dateStr = rv.createdAt?.toDate ? rv.createdAt.toDate().toLocaleDateString('ko-KR') : '';
                     reviewsHtml += `<div style="background:var(--bg); padding:0.8rem; border-radius:8px; margin-bottom:0.5rem;">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <span style="font-size:0.85rem; font-weight:600;">${rv.buyerEmail?.split('@')[0] || '구매자'}</span>
+                            <span style="font-size:0.85rem; font-weight:600;">${rv.buyerEmail?.split('@')[0] || '구매자'}${verifiedBadge}</span>
                             <span>${renderStars(rv.rating, '0.8rem')}</span>
                         </div>
+                        <div style="font-size:0.7rem; color:var(--accent); margin-top:0.1rem;">${dateStr}</div>
                         ${rv.comment ? `<p style="font-size:0.85rem; margin-top:0.3rem; color:#555;">${rv.comment}</p>` : ''}
+                        ${rv.imageData ? `<img src="${rv.imageData}" style="width:100px;height:100px;object-fit:cover;border-radius:8px;margin-top:0.4rem;cursor:pointer;" onclick="window.open(this.src)">` : ''}
+                        <div style="margin-top:0.4rem;">
+                            <button onclick="helpfulReview('${r.id}')" style="background:none;border:1px solid #ddd;border-radius:12px;padding:0.2rem 0.6rem;cursor:pointer;font-size:0.75rem;color:var(--accent);">👍 도움이 돼요 ${rv.helpful||0}</button>
+                        </div>
                     </div>`;
                 });
                 reviewsHtml += '</div>';
@@ -183,24 +228,84 @@ async function renderProductDetail(id) {
 }
 
 async function writeReview(productId) {
-    const ratingStr = await showPromptModal(t('mall.rating','별점'), t('mall.enter_rating','1~5점을 입력하세요'), '5');
-    const rating = parseInt(ratingStr);
-    if (!rating || rating < 1 || rating > 5) { showToast(t('mall.rating_range','1~5 사이 점수를 입력하세요'), 'warning'); return; }
-    const comment = await showPromptModal(t('mall.review','리뷰'), t('mall.write_short_review','한줄 리뷰를 작성하세요 (선택)'), '');
-    try {
-        await db.collection('product_reviews').add({
-            productId, buyerId: currentUser.uid, buyerEmail: currentUser.email,
-            rating, comment: comment || '', createdAt: new Date()
+    // Enhanced review modal with star picker + photo
+    return new Promise((resolve) => {
+        let selectedRating = 5;
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99998;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); resolve(); } };
+        overlay.innerHTML = `<div style="background:white;padding:1.5rem;border-radius:12px;max-width:420px;width:100%;max-height:90vh;overflow-y:auto;">
+            <h3 style="margin-bottom:1rem;">⭐ 리뷰 작성</h3>
+            <div style="text-align:center; margin-bottom:1rem;">
+                <div id="review-stars" style="font-size:2rem; cursor:pointer;">
+                    ${[1,2,3,4,5].map(i => `<span data-star="${i}" style="color:#FFD700;">★</span>`).join('')}
+                </div>
+                <div id="review-rating-label" style="font-size:0.85rem; color:var(--accent);">5점</div>
+            </div>
+            <textarea id="review-comment" placeholder="리뷰를 작성해주세요..." rows="3" style="width:100%;padding:0.7rem;border:1px solid var(--border);border-radius:6px;resize:vertical;box-sizing:border-box;margin-bottom:0.8rem;"></textarea>
+            <div style="margin-bottom:1rem;">
+                <label style="font-size:0.85rem; color:var(--accent);">📷 사진 첨부 (선택)</label>
+                <input type="file" id="review-photo" accept="image/*" style="width:100%;padding:0.5rem;border:1px solid var(--border);border-radius:6px;margin-top:0.3rem;">
+                <div id="review-photo-preview" style="margin-top:0.3rem;"></div>
+            </div>
+            <div style="display:flex; gap:0.5rem;">
+                <button id="review-cancel" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">취소</button>
+                <button id="review-submit" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#ff9800;color:white;font-weight:700;">등록</button>
+            </div>
+        </div>`;
+        document.body.appendChild(overlay);
+
+        // Star click handler
+        overlay.querySelectorAll('#review-stars span').forEach(span => {
+            span.onclick = () => {
+                selectedRating = parseInt(span.dataset.star);
+                overlay.querySelectorAll('#review-stars span').forEach((s, i) => {
+                    s.style.color = i < selectedRating ? '#FFD700' : '#ddd';
+                });
+                overlay.querySelector('#review-rating-label').textContent = selectedRating + '점';
+            };
         });
-        // 상품 평균 평점 업데이트
-        const allRevs = await db.collection('product_reviews').where('productId','==',productId).get();
-        let total = 0; allRevs.forEach(r => total += r.data().rating);
-        const avg = total / allRevs.size;
-        await db.collection('products').doc(productId).update({ avgRating: Math.round(avg * 10) / 10, reviewCount: allRevs.size });
-        showToast(t('mall.review_done','⭐ 리뷰 등록 완료!'), 'success');
-        document.getElementById('product-modal')?.remove();
-        viewProduct(productId);
-    } catch (e) { showToast('리뷰 실패: ' + e.message, 'error'); }
+
+        // Photo preview
+        overlay.querySelector('#review-photo').onchange = function() {
+            const file = this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                overlay.querySelector('#review-photo-preview').innerHTML = `<img src="${e.target.result}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;margin-top:0.3rem;">`;
+            };
+            reader.readAsDataURL(file);
+        };
+
+        overlay.querySelector('#review-cancel').onclick = () => { overlay.remove(); resolve(); };
+        overlay.querySelector('#review-submit').onclick = async () => {
+            const comment = overlay.querySelector('#review-comment').value.trim();
+            const photoFile = overlay.querySelector('#review-photo').files[0];
+            try {
+                let imageData = '';
+                if (photoFile) imageData = await fileToBase64Resized(photoFile, 400);
+
+                // Check verified purchase
+                const myOrders = await db.collection('orders').where('buyerId','==',currentUser.uid).where('productId','==',productId).where('status','==','delivered').limit(1).get();
+                const verified = !myOrders.empty;
+
+                await db.collection('product_reviews').add({
+                    productId, buyerId: currentUser.uid, buyerEmail: currentUser.email,
+                    rating: selectedRating, comment: comment || '', imageData, verified, helpful: 0,
+                    createdAt: new Date()
+                });
+                // Update product avg rating
+                const allRevs = await db.collection('product_reviews').where('productId','==',productId).get();
+                let total = 0; allRevs.forEach(r => total += r.data().rating);
+                const avg = total / allRevs.size;
+                await db.collection('products').doc(productId).update({ avgRating: Math.round(avg * 10) / 10, reviewCount: allRevs.size });
+                showToast('⭐ 리뷰 등록 완료!', 'success');
+                overlay.remove();
+                viewProduct(productId);
+                resolve();
+            } catch (e) { showToast('리뷰 실패: ' + e.message, 'error'); }
+        };
+    });
 }
 
 async function buyProduct(id) {
@@ -233,7 +338,7 @@ async function buyProduct(id) {
         }
         
         await db.collection('products').doc(id).update({ sold: (p.sold||0) + 1 });
-        await db.collection('orders').add({ productId:id, productTitle:p.title, buyerId:currentUser.uid, buyerEmail:currentUser.email, sellerId:p.sellerId, sellerEmail:p.sellerEmail||'', amount:p.price, token:'CRGC', status:'paid', shippingInfo, createdAt:new Date() });
+        await db.collection('orders').add({ productId:id, productTitle:p.title, productImage: getProductThumb(p), buyerId:currentUser.uid, buyerEmail:currentUser.email, sellerId:p.sellerId, sellerEmail:p.sellerEmail||'', amount:p.price, qty:1, token:'CRGC', status:'paid', shippingInfo, statusHistory:[{status:'paid', at:new Date().toISOString()}], createdAt:new Date() });
         if (typeof distributeReferralReward === 'function') await distributeReferralReward(currentUser.uid, p.price, 'CRGC');
         showToast(`🎉 "${p.title}" 구매 완료!`, 'success');
         document.getElementById('product-modal')?.remove();
@@ -327,9 +432,11 @@ async function deleteProduct(id) {
 async function loadSellerOrders() {
     const c = document.getElementById('mall-my-list'); if (!c||!currentUser) return; c.innerHTML='로딩...';
     try {
+        // Load return requests first
+        const returnsHtml = await loadSellerReturns() || '';
         const o = await db.collection('orders').where('sellerId','==',currentUser.uid).orderBy('createdAt','desc').limit(30).get();
-        if (o.empty) { c.innerHTML='<p style="color:var(--accent);">받은 주문 없음</p>'; return; }
-        c.innerHTML='';
+        if (o.empty && !returnsHtml) { c.innerHTML='<p style="color:var(--accent);">받은 주문 없음</p>'; return; }
+        c.innerHTML = returnsHtml;
         o.forEach(d => {
             const x = d.data();
             const statusLabel = ORDER_STATUS_LABELS[x.status] || x.status;
@@ -353,12 +460,29 @@ async function loadSellerOrders() {
 
 async function updateOrderStatus(orderId, newStatus) {
     const label = ORDER_STATUS_LABELS[newStatus] || newStatus;
-    if (!await showConfirmModal(t('mall.change_status','주문 상태 변경'), `${label}(으)로 변경하시겠습니까?`)) return;
-    try {
-        await db.collection('orders').doc(orderId).update({ status: newStatus, [`${newStatus}At`]: new Date() });
-        showToast(`${label} 처리 완료`, 'success');
-        loadSellerOrders();
-    } catch (e) { showToast('실패: ' + e.message, 'error'); }
+    if (newStatus === 'shipping') {
+        // 배송 처리 시 추적번호 입력
+        const trackingNo = await showPromptModal('배송 추적번호', '추적번호를 입력하세요 (선택)', '');
+        if (!await showConfirmModal(t('mall.change_status','주문 상태 변경'), `${label}(으)로 변경하시겠습니까?`)) return;
+        try {
+            const updateData = { status: newStatus, [`${newStatus}At`]: new Date(),
+                statusHistory: firebase.firestore.FieldValue.arrayUnion({ status: newStatus, at: new Date().toISOString() })
+            };
+            if (trackingNo) updateData.trackingNumber = trackingNo;
+            await db.collection('orders').doc(orderId).update(updateData);
+            showToast(`${label} 처리 완료`, 'success');
+            loadSellerOrders();
+        } catch (e) { showToast('실패: ' + e.message, 'error'); }
+    } else {
+        if (!await showConfirmModal(t('mall.change_status','주문 상태 변경'), `${label}(으)로 변경하시겠습니까?`)) return;
+        try {
+            await db.collection('orders').doc(orderId).update({ status: newStatus, [`${newStatus}At`]: new Date(),
+                statusHistory: firebase.firestore.FieldValue.arrayUnion({ status: newStatus, at: new Date().toISOString() })
+            });
+            showToast(`${label} 처리 완료`, 'success');
+            loadSellerOrders();
+        } catch (e) { showToast('실패: ' + e.message, 'error'); }
+    }
 }
 
 // ========== FUNDRAISE - 모금/기부 ==========
@@ -1435,12 +1559,13 @@ async function joinGye(gyeId) {
 
 // 몰 브랜드 필터
 function filterMallBrand(brand) {
-    // product-category 셀렉트를 해당 브랜드로 설정하고 로드
-    const sel = document.getElementById('product-category');
-    if (sel && brand) sel.value = brand;
-    
-    // mall-filter용 별도 처리
-    window._mallBrandFilter = brand;
+    if (brand) {
+        // Navigate to brand landing page
+        filterMallBrandLanding(brand);
+        return;
+    }
+    // "전체" clicked — stay on mall page
+    window._mallBrandFilter = null;
     
     // 활성 카드 하이라이트
     document.querySelectorAll('.mall-brand-card').forEach(c => {
@@ -1448,12 +1573,11 @@ function filterMallBrand(brand) {
         c.style.outline = 'none';
         c.style.opacity = '1';
     });
-    const activeCard = document.querySelector(`.mall-brand-card[data-brand="${brand || 'all'}"]`);
+    const activeCard = document.querySelector(`.mall-brand-card[data-brand="all"]`);
     if (activeCard) {
         activeCard.classList.add('active');
         activeCard.style.outline = '2px solid var(--gold, #D4AF37)';
     }
-    // 비활성 카드 살짝 투명
     document.querySelectorAll('.mall-brand-card:not(.active)').forEach(c => c.style.opacity = '0.6');
     
     loadMallProducts();
@@ -1795,10 +1919,11 @@ async function checkoutCart() {
             }
             await db.collection('products').doc(item.productId).update({ sold: (p.sold||0) + qty });
             await db.collection('orders').add({
-                productId: item.productId, productTitle: item.title,
+                productId: item.productId, productTitle: item.title, productImage: getProductThumb(p),
                 buyerId: currentUser.uid, buyerEmail: currentUser.email,
                 sellerId: p.sellerId, sellerEmail: p.sellerEmail || '',
-                amount: item.price * qty, qty, token: 'CRGC', status: 'paid', shippingInfo, createdAt: new Date()
+                amount: item.price * qty, qty, token: 'CRGC', status: 'paid', shippingInfo,
+                statusHistory:[{status:'paid', at:new Date().toISOString()}], createdAt: new Date()
             });
             if (typeof autoGivingPoolContribution === 'function') await autoGivingPoolContribution(item.price * qty);
             if (typeof distributeReferralReward === 'function') await distributeReferralReward(currentUser.uid, item.price * qty, 'CRGC');
@@ -2252,6 +2377,354 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// ========== HELPFUL REVIEW ==========
+
+async function helpfulReview(reviewId) {
+    if (!currentUser) { showToast('로그인이 필요합니다','warning'); return; }
+    try {
+        await db.collection('product_reviews').doc(reviewId).update({
+            helpful: firebase.firestore.FieldValue.increment(1)
+        });
+        showToast('👍 감사합니다!','success');
+    } catch(e) { showToast('실패: '+e.message,'error'); }
+}
+
+// ========== BUYER ORDERS PAGE ==========
+
+async function loadBuyerOrders() {
+    const c = document.getElementById('buyer-orders-content');
+    if (!c || !currentUser) return;
+    c.innerHTML = '<p style="text-align:center; color:var(--accent); padding:2rem;">로딩 중...</p>';
+    try {
+        const snap = await db.collection('orders').where('buyerId','==',currentUser.uid).orderBy('createdAt','desc').limit(30).get();
+        if (snap.empty) {
+            c.innerHTML = `<button onclick="showPage('mall')" style="background:none;border:none;font-size:1rem;cursor:pointer;margin-bottom:0.8rem;color:var(--accent);">← 쇼핑몰</button>
+                <div style="text-align:center;padding:3rem;color:var(--accent);"><div style="font-size:3rem;margin-bottom:1rem;">📋</div><p>주문 내역이 없습니다</p></div>`;
+            return;
+        }
+        let listHtml = '';
+        snap.forEach(d => {
+            const o = d.data();
+            const statusLabel = ORDER_STATUS_LABELS[o.status] || o.status;
+            const statusColor = ORDER_STATUS_COLORS[o.status] || 'var(--accent)';
+            const thumb = o.productImage || '';
+            const dateStr = o.createdAt?.toDate ? o.createdAt.toDate().toLocaleDateString('ko-KR') : '';
+            listHtml += `<div onclick="showOrderDetail('${d.id}')" style="background:white;padding:0.8rem;border-radius:10px;margin-bottom:0.6rem;display:flex;gap:0.8rem;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,0.06);cursor:pointer;">
+                <div style="width:60px;height:60px;border-radius:8px;overflow:hidden;flex-shrink:0;background:#f0f0f0;display:flex;align-items:center;justify-content:center;">
+                    ${thumb ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover;">` : '<span style="font-size:1.5rem;color:#ccc;">🛒</span>'}
+                </div>
+                <div style="flex:1;min-width:0;">
+                    <div style="font-weight:600;font-size:0.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${o.productTitle}</div>
+                    <div style="font-size:0.75rem;color:var(--accent);">${dateStr} · ${o.qty||1}개</div>
+                    <div style="font-weight:700;color:#0066cc;font-size:0.85rem;">${o.amount} CRGC</div>
+                </div>
+                <span style="background:${statusColor}15;color:${statusColor};font-size:0.75rem;font-weight:700;padding:0.3rem 0.6rem;border-radius:12px;white-space:nowrap;">${statusLabel}</span>
+            </div>`;
+        });
+        c.innerHTML = `
+            <button onclick="showPage('mall')" style="background:none;border:none;font-size:1rem;cursor:pointer;margin-bottom:0.8rem;color:var(--accent);">← 쇼핑몰</button>
+            <h2 style="margin-bottom:1rem;">📋 내 주문</h2>
+            ${listHtml}`;
+    } catch(e) { c.innerHTML = `<p style="color:red;">${e.message}</p>`; }
+}
+
+async function showOrderDetail(orderId) {
+    try {
+        const doc = await db.collection('orders').doc(orderId).get();
+        if (!doc.exists) return;
+        const o = doc.data();
+        const statusLabel = ORDER_STATUS_LABELS[o.status] || o.status;
+        const statusColor = ORDER_STATUS_COLORS[o.status] || 'var(--accent)';
+
+        // Timeline
+        const steps = ['paid','shipping','delivered'];
+        const stepLabels = {paid:'💰 결제완료', shipping:'🚚 배송중', delivered:'✅ 배송완료'};
+        const history = o.statusHistory || [{status:'paid', at: o.createdAt?.toDate ? o.createdAt.toDate().toISOString() : new Date().toISOString()}];
+        const historyMap = {};
+        history.forEach(h => { historyMap[h.status] = h.at; });
+        const currentIdx = steps.indexOf(o.status);
+
+        let timelineHtml = '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin:1.5rem 0;position:relative;">';
+        // Connector line
+        timelineHtml += `<div style="position:absolute;top:14px;left:16%;right:16%;height:3px;background:#e0e0e0;z-index:0;">
+            <div style="width:${currentIdx >= 2 ? 100 : currentIdx === 1 ? 50 : 0}%;height:100%;background:#4CAF50;transition:width 0.3s;"></div>
+        </div>`;
+        steps.forEach((step, i) => {
+            const done = i <= currentIdx;
+            const ts = historyMap[step];
+            const dateStr = ts ? new Date(ts).toLocaleString('ko-KR', {month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
+            timelineHtml += `<div style="text-align:center;flex:1;z-index:1;">
+                <div style="width:28px;height:28px;border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:0.8rem;
+                    background:${done ? '#4CAF50' : '#e0e0e0'};color:${done ? 'white' : '#999'};">${done ? '✓' : i+1}</div>
+                <div style="font-size:0.7rem;font-weight:600;margin-top:0.3rem;color:${done ? '#333' : '#999'};">${stepLabels[step]}</div>
+                <div style="font-size:0.6rem;color:var(--accent);">${dateStr}</div>
+            </div>`;
+        });
+        timelineHtml += '</div>';
+
+        // Tracking number
+        const trackingHtml = o.trackingNumber ? `<div style="background:#e3f2fd;padding:0.6rem;border-radius:8px;margin-bottom:1rem;font-size:0.85rem;">📦 추적번호: <strong>${o.trackingNumber}</strong></div>` : '';
+
+        // Return status check
+        let returnHtml = '';
+        const returnSnap = await db.collection('returns').where('orderId','==',orderId).limit(1).get();
+        if (!returnSnap.empty) {
+            const ret = returnSnap.docs[0].data();
+            const retStatus = {requested:'⏳ 반품 요청중',approved:'✅ 반품 승인',rejected:'❌ 반품 거절',completed:'🔄 환불 완료'};
+            const retColor = {requested:'#ff9800',approved:'#4CAF50',rejected:'#f44336',completed:'#2196f3'};
+            returnHtml = `<div style="background:${retColor[ret.status]}15;border-left:4px solid ${retColor[ret.status]};padding:0.8rem;border-radius:0 8px 8px 0;margin-bottom:1rem;">
+                <div style="font-weight:700;color:${retColor[ret.status]};">${retStatus[ret.status] || ret.status}</div>
+                <div style="font-size:0.8rem;color:#555;margin-top:0.2rem;">사유: ${ret.reasonCategory} — ${ret.reasonDetail||''}</div>
+            </div>`;
+        }
+
+        // Return button (delivered within 7 days, no existing return)
+        let returnBtnHtml = '';
+        if (o.status === 'delivered' && returnSnap.empty) {
+            const deliveredAt = o.deliveredAt?.toDate ? o.deliveredAt.toDate() : (historyMap.delivered ? new Date(historyMap.delivered) : null);
+            if (deliveredAt && (Date.now() - deliveredAt.getTime()) < 7 * 86400000) {
+                returnBtnHtml = `<button onclick="requestReturn('${orderId}')" style="background:#f44336;color:white;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;font-weight:600;width:100%;margin-bottom:0.5rem;">🔄 반품/환불 요청</button>`;
+            }
+        }
+
+        // Review button
+        let reviewBtnHtml = '';
+        if (o.status === 'delivered') {
+            const existingReview = await db.collection('product_reviews').where('productId','==',o.productId).where('buyerId','==',currentUser.uid).limit(1).get();
+            if (existingReview.empty) {
+                reviewBtnHtml = `<button onclick="writeReview('${o.productId}')" style="background:#ff9800;color:white;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;font-weight:600;width:100%;margin-bottom:0.5rem;">⭐ 리뷰 작성</button>`;
+            }
+        }
+
+        const overlay = document.createElement('div');
+        overlay.id = 'order-detail-modal';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+        overlay.innerHTML = `<div style="background:white;border-radius:12px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;padding:1.5rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <h3 style="margin:0;">주문 상세</h3>
+                <button onclick="document.getElementById('order-detail-modal').remove()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">✕</button>
+            </div>
+            <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid #eee;">
+                <div style="width:70px;height:70px;border-radius:8px;overflow:hidden;background:#f0f0f0;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+                    ${o.productImage ? `<img src="${o.productImage}" style="width:100%;height:100%;object-fit:cover;">` : '<span style="font-size:2rem;color:#ccc;">🛒</span>'}
+                </div>
+                <div>
+                    <div style="font-weight:700;font-size:1rem;">${o.productTitle}</div>
+                    <div style="font-size:0.85rem;color:var(--accent);">${o.qty||1}개 · ${o.amount} CRGC</div>
+                    <span style="background:${statusColor}15;color:${statusColor};font-size:0.75rem;font-weight:700;padding:0.2rem 0.5rem;border-radius:8px;">${statusLabel}</span>
+                </div>
+            </div>
+            ${timelineHtml}
+            ${trackingHtml}
+            ${returnHtml}
+            ${o.shippingInfo ? `<div style="background:var(--bg);padding:0.8rem;border-radius:8px;margin-bottom:1rem;font-size:0.85rem;">
+                <div style="font-weight:600;margin-bottom:0.3rem;">📦 배송지</div>
+                <div>${o.shippingInfo.name} · ${o.shippingInfo.phone}</div>
+                <div>${o.shippingInfo.address}</div>
+                ${o.shippingInfo.memo ? `<div style="color:var(--accent);">메모: ${o.shippingInfo.memo}</div>` : ''}
+            </div>` : ''}
+            ${returnBtnHtml}
+            ${reviewBtnHtml}
+            <button onclick="viewProduct('${o.productId}'); document.getElementById('order-detail-modal').remove();" style="background:#0066cc;color:white;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;width:100%;font-weight:600;">🛒 상품 보기</button>
+        </div>`;
+        document.body.appendChild(overlay);
+    } catch(e) { showToast('주문 상세 로드 실패: '+e.message, 'error'); }
+}
+
+// ========== RETURN / REFUND SYSTEM ==========
+
+async function requestReturn(orderId) {
+    return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99999;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); resolve(); } };
+        overlay.innerHTML = `<div style="background:white;padding:1.5rem;border-radius:12px;max-width:420px;width:100%;">
+            <h3 style="margin-bottom:1rem;">🔄 반품/환불 요청</h3>
+            <div style="display:grid;gap:0.8rem;">
+                <div>
+                    <label style="font-size:0.8rem;color:var(--accent);">반품 사유</label>
+                    <select id="return-reason" style="width:100%;padding:0.7rem;border:1px solid var(--border);border-radius:6px;">
+                        ${RETURN_REASONS.map(r => `<option value="${r}">${r}</option>`).join('')}
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size:0.8rem;color:var(--accent);">상세 사유</label>
+                    <textarea id="return-detail" rows="3" placeholder="상세 사유를 입력하세요..." style="width:100%;padding:0.7rem;border:1px solid var(--border);border-radius:6px;resize:vertical;box-sizing:border-box;"></textarea>
+                </div>
+                <div style="display:flex;gap:0.5rem;">
+                    <button onclick="this.closest('div[style]').parentElement.parentElement.remove()" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">취소</button>
+                    <button id="return-submit" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#f44336;color:white;font-weight:700;">요청</button>
+                </div>
+            </div>
+        </div>`;
+        document.body.appendChild(overlay);
+
+        overlay.querySelector('#return-submit').onclick = async () => {
+            const reasonCategory = overlay.querySelector('#return-reason').value;
+            const reasonDetail = overlay.querySelector('#return-detail').value.trim();
+            if (!reasonDetail) { showToast('상세 사유를 입력하세요','warning'); return; }
+            try {
+                const orderDoc = await db.collection('orders').doc(orderId).get();
+                const order = orderDoc.data();
+                await db.collection('returns').add({
+                    orderId, productId: order.productId, productTitle: order.productTitle,
+                    buyerId: currentUser.uid, buyerEmail: currentUser.email,
+                    sellerId: order.sellerId, sellerEmail: order.sellerEmail,
+                    amount: order.amount, token: order.token || 'CRGC',
+                    reasonCategory, reasonDetail, status: 'requested', createdAt: new Date()
+                });
+                showToast('🔄 반품 요청이 접수되었습니다','success');
+                overlay.remove();
+                document.getElementById('order-detail-modal')?.remove();
+                loadBuyerOrders();
+                resolve();
+            } catch(e) { showToast('실패: '+e.message,'error'); }
+        };
+    });
+}
+
+// Seller: handle returns in loadSellerOrders and loadMyShopDashboard
+async function loadSellerReturns() {
+    if (!currentUser) return;
+    try {
+        const snap = await db.collection('returns').where('sellerId','==',currentUser.uid).where('status','==','requested').orderBy('createdAt','desc').limit(20).get();
+        if (snap.empty) return '';
+        let html = '<div style="margin-top:1rem;"><h4 style="color:#f44336;margin-bottom:0.5rem;">🔄 반품 요청 ('+snap.size+')</h4>';
+        snap.forEach(d => {
+            const r = d.data();
+            const dateStr = r.createdAt?.toDate ? r.createdAt.toDate().toLocaleDateString('ko-KR') : '';
+            html += `<div style="background:#fff3e0;padding:0.8rem;border-radius:8px;margin-bottom:0.5rem;border-left:4px solid #ff9800;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div><strong>${r.productTitle}</strong> — ${r.amount} ${r.token}</div>
+                    <span style="font-size:0.75rem;color:var(--accent);">${dateStr}</span>
+                </div>
+                <div style="font-size:0.8rem;color:#555;margin:0.3rem 0;">${r.buyerEmail} · ${r.reasonCategory}: ${r.reasonDetail||''}</div>
+                <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+                    <button onclick="approveReturn('${d.id}')" style="flex:1;background:#4CAF50;color:white;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.8rem;">✅ 승인 (환불)</button>
+                    <button onclick="rejectReturn('${d.id}')" style="flex:1;background:#f44336;color:white;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.8rem;">❌ 거절</button>
+                </div>
+            </div>`;
+        });
+        html += '</div>';
+        return html;
+    } catch(e) { return ''; }
+}
+
+async function approveReturn(returnId) {
+    if (!await showConfirmModal('반품 승인','반품을 승인하고 환불하시겠습니까?')) return;
+    try {
+        const retDoc = await db.collection('returns').doc(returnId).get();
+        const ret = retDoc.data();
+        // Refund buyer (restore offchain balance)
+        const tk = (ret.token || 'CRGC').toLowerCase();
+        if (isOffchainToken(tk)) {
+            // Add back to buyer
+            const buyerDoc = await db.collection('users').doc(ret.buyerId).get();
+            const buyerBal = buyerDoc.data()?.offchainBalances || {};
+            await db.collection('users').doc(ret.buyerId).update({
+                [`offchainBalances.${tk}`]: (buyerBal[tk]||0) + ret.amount
+            });
+            // Deduct from seller
+            const sellerDoc = await db.collection('users').doc(ret.sellerId).get();
+            const sellerBal = sellerDoc.data()?.offchainBalances || {};
+            await db.collection('users').doc(ret.sellerId).update({
+                [`offchainBalances.${tk}`]: Math.max(0, (sellerBal[tk]||0) - ret.amount)
+            });
+        }
+        await db.collection('returns').doc(returnId).update({ status:'completed', completedAt: new Date() });
+        await db.collection('orders').doc(ret.orderId).update({ status:'cancelled', cancelledAt: new Date(),
+            statusHistory: firebase.firestore.FieldValue.arrayUnion({status:'cancelled', at: new Date().toISOString(), reason:'반품환불'})
+        });
+        showToast('✅ 반품 승인 및 환불 완료','success');
+        loadSellerOrders();
+    } catch(e) { showToast('실패: '+e.message,'error'); }
+}
+
+async function rejectReturn(returnId) {
+    const reason = await showPromptModal('거절 사유','거절 사유를 입력하세요','');
+    if (!reason) return;
+    try {
+        await db.collection('returns').doc(returnId).update({ status:'rejected', rejectReason: reason, rejectedAt: new Date() });
+        showToast('반품 요청이 거절되었습니다','info');
+        loadSellerOrders();
+    } catch(e) { showToast('실패: '+e.message,'error'); }
+}
+
+// ========== BRAND LANDING PAGE ==========
+
+function filterMallBrandLanding(brand) {
+    if (!brand) { showPage('mall'); filterMallBrand(null); return; }
+    history.replaceState(null, '', `#page=brand-landing&brand=${brand}`);
+    showPage('brand-landing');
+    renderBrandLanding(brand);
+}
+
+async function renderBrandLanding(brand) {
+    const c = document.getElementById('brand-landing-content');
+    if (!c) return;
+    c.innerHTML = '<p style="text-align:center;color:var(--accent);padding:2rem;">로딩 중...</p>';
+    try {
+        const brandName = MALL_CATEGORIES[brand] || brand;
+        const slogan = BRAND_SLOGANS[brand] || '';
+        const bgColor = BRAND_COLORS[brand] || '#f5f5f5';
+        const icon = BRAND_ICONS[brand] || '🛒';
+
+        // Fetch all products in this category
+        const snap = await db.collection('products').where('status','==','active').where('category','==',brand).orderBy('createdAt','desc').limit(50).get();
+        let items = [];
+        snap.forEach(d => items.push({id:d.id, ...d.data()}));
+
+        // Popular (top 4 by sold)
+        const popular = [...items].sort((a,b) => (b.sold||0)-(a.sold||0)).slice(0,4);
+        // New (latest 4)
+        const newest = items.slice(0,4);
+
+        const renderCard = (p) => {
+            const thumb = getProductThumb(p);
+            return `<div onclick="viewProduct('${p.id}')" style="background:white;border-radius:10px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.08);min-width:150px;flex-shrink:0;width:160px;">
+                <div style="height:130px;overflow:hidden;background:#f0f0f0;">${thumb ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover;">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:#ccc;">🛒</div>`}</div>
+                <div style="padding:0.5rem;">
+                    <div style="font-weight:600;font-size:0.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.title}</div>
+                    <div style="font-weight:700;color:#0066cc;font-size:0.85rem;">${p.price} CRGC</div>
+                    ${p.avgRating ? `<div>${renderStars(p.avgRating,'0.65rem')}</div>` : ''}
+                </div>
+            </div>`;
+        };
+
+        const horizontalScroll = (items) => items.length > 0
+            ? `<div style="display:flex;gap:0.8rem;overflow-x:auto;padding-bottom:0.5rem;scrollbar-width:none;">${items.map(renderCard).join('')}</div>`
+            : '<p style="color:var(--accent);font-size:0.85rem;">상품 없음</p>';
+
+        const gridHtml = items.length > 0
+            ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:0.8rem;">${items.map(renderCard).join('')}</div>`
+            : '<p style="color:var(--accent);text-align:center;">등록된 상품이 없습니다</p>';
+
+        c.innerHTML = `
+            <button onclick="showPage('mall')" style="background:none;border:none;font-size:1rem;cursor:pointer;margin-bottom:0.8rem;color:var(--accent);">← 전체 몰</button>
+            <!-- Banner -->
+            <div style="background:${bgColor};padding:2rem 1.5rem;border-radius:16px;text-align:center;margin-bottom:1.5rem;position:relative;overflow:hidden;">
+                <div style="font-size:3rem;margin-bottom:0.5rem;">${icon}</div>
+                <h2 style="margin:0;font-size:1.5rem;">${brandName}</h2>
+                <p style="color:#555;font-size:0.95rem;margin-top:0.3rem;font-style:italic;">"${slogan}"</p>
+                <div style="font-size:0.8rem;color:var(--accent);margin-top:0.5rem;">${items.length}개 상품</div>
+            </div>
+            <!-- Popular -->
+            ${popular.length > 0 ? `<div style="margin-bottom:1.5rem;">
+                <h3 style="margin-bottom:0.8rem;">🔥 인기 상품</h3>
+                ${horizontalScroll(popular)}
+            </div>` : ''}
+            <!-- New -->
+            ${newest.length > 0 ? `<div style="margin-bottom:1.5rem;">
+                <h3 style="margin-bottom:0.8rem;">🆕 신상품</h3>
+                ${horizontalScroll(newest)}
+            </div>` : ''}
+            <!-- All -->
+            <h3 style="margin-bottom:0.8rem;">📦 전체 상품</h3>
+            ${gridHtml}`;
+    } catch(e) { c.innerHTML = `<p style="color:red;">${e.message}</p>`; }
+}
 
 // 공통 이미지 리사이즈 유틸
 async function fileToBase64Resized(file, maxSize) {

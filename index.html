@@ -697,6 +697,7 @@
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                 <h2 style="margin:0;" data-i18n="mall.title">🛒 MALL</h2>
                 <div style="display:flex; gap:0.4rem; align-items:center;">
+                    <button onclick="showPage('buyer-orders'); loadBuyerOrders();" style="background:none; border:1px solid #4CAF50; color:#4CAF50; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem;">📋</button>
                     <button onclick="showPage('wishlist'); loadWishlist();" style="background:none; border:1px solid #e91e63; color:#e91e63; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem;">❤️</button>
                     <button onclick="showPage('cart'); loadCart();" style="background:none; border:1px solid #0066cc; color:#0066cc; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem; position:relative;">🛒 <span id="cart-badge" style="display:none; position:absolute; top:-6px; right:-6px; background:#e53935; color:white; font-size:0.6rem; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;">0</span></button>
                     <button onclick="showPage('my-shop'); loadMyShopDashboard();" style="background:none; border:1px solid #ff9800; color:#ff9800; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem;">🏪</button>
@@ -750,6 +751,20 @@
         <!-- ========== PRODUCT DETAIL - 상품 상세 ========== -->
         <section id="product-detail" class="page">
             <div id="product-detail-content" style="max-width:600px; margin:0 auto;">
+                <p style="text-align:center; color:var(--accent);">로딩 중...</p>
+            </div>
+        </section>
+
+        <!-- ========== BUYER ORDERS - 내 주문 ========== -->
+        <section id="buyer-orders" class="page">
+            <div id="buyer-orders-content" style="max-width:600px; margin:0 auto;">
+                <p style="text-align:center; color:var(--accent);">로딩 중...</p>
+            </div>
+        </section>
+
+        <!-- ========== BRAND LANDING - 브랜드별 랜딩 ========== -->
+        <section id="brand-landing" class="page">
+            <div id="brand-landing-content" style="max-width:700px; margin:0 auto;">
                 <p style="text-align:center; color:var(--accent);">로딩 중...</p>
             </div>
         </section>
@@ -1813,7 +1828,7 @@
     <script src="js/group-chat.js?v=1.0"></script>
     <script src="js/send.js?v=9.5"></script>
     <script src="js/admin.js?v=13.2"></script>
-    <script src="js/marketplace.js?v=16.0"></script>
+    <script src="js/marketplace.js?v=17.0"></script>
     <script src="js/books.js?v=1.1"></script>
     <script src="js/trading.js?v=13.5"></script>
     <script src="js/mentor-learning.js?v=1.0" defer></script>

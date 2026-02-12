@@ -264,6 +264,13 @@ function handleHashRoute() {
             const sellerId = params.get('sellerId');
             if (sellerId && typeof renderStorePage === 'function') renderStorePage(sellerId);
         }
+        // buyer orders
+        if (page === 'buyer-orders' && typeof loadBuyerOrders === 'function') loadBuyerOrders();
+        // brand landing
+        if (page === 'brand-landing') {
+            const brand = params.get('brand');
+            if (brand && typeof renderBrandLanding === 'function') renderBrandLanding(brand);
+        }
     }
 }
 
