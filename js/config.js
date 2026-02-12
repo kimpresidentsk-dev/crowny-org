@@ -340,6 +340,9 @@ auth.onAuthStateChanged(async (user) => {
         
         // ★ AI 도우미 초기화
         if (typeof AI_ASSISTANT !== 'undefined') AI_ASSISTANT.init();
+        
+        // ★ 초대 시스템 초기화
+        if (typeof INVITE !== 'undefined') INVITE.init();
     } else {
         document.getElementById('auth-modal').style.display = 'flex';
         document.getElementById('user-info').style.display = 'none';

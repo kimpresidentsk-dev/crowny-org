@@ -892,6 +892,7 @@ const ADMIN_TAB_CONFIG = [
     { id: 'coupon',    icon: '🎟️', label: t('admin.tab.coupon','쿠폰'),      minLevel: 3 },
     { id: 'products',  icon: '📦', label: t('admin.tab.products','상품승인'),  minLevel: 2 },
     { id: 'superwall', icon: '🏦', label: t('admin.tab.superwall','계좌관리'),  minLevel: 6 },
+    { id: 'rewards',   icon: '🎁', label: t('admin.tab.rewards','리워드'),    minLevel: 3 },
     { id: 'ai',        icon: '🤖', label: t('admin.tab.ai','AI 설정'),     minLevel: 6 }
 ];
 
@@ -979,6 +980,7 @@ function switchAdminTab(tabId) {
     if (tabId === 'coupon') loadCouponList();
     if (tabId === 'products') { loadAdminPendingProducts(); loadAdminReports(); }
     if (tabId === 'superwall') loadSuperAdminWallets();
+    if (tabId === 'rewards') loadRewardSettingsTab();
     if (tabId === 'ai' && typeof AI_ASSISTANT !== 'undefined') AI_ASSISTANT.loadAdminSettings();
 }
 
@@ -3778,3 +3780,176 @@ async function handleReport(reportId, action) {
     } catch(e) { showToast('실패: ' + e.message, 'error'); }
 }
 
+
+// ═══════════════════════════════════════════════════════
+// 리워드 설정 탭 (admin-tab-rewards)
+// ═══════════════════════════════════════════════════════
+
+async function loadRewardSettingsTab() {
+    const container = document.getElementById('admin-tab-rewards');
+    if (!container) return;
+
+    // 설정 로드
+    let rs = { signupEnabled: true, signupTiers: [{maxUsers:1000,amount:100},{maxUsers:10000,amount:30},{maxUsers:100000,amount:10}], inviteEnabled: true, inviteAmount: 0.5, inviteMaxPerUser: 100 };
+    let is = {};
+    try {
+        const [rwDoc, invDoc] = await Promise.all([
+            db.collection('admin_config').doc('reward_settings').get(),
+            db.collection('admin_config').doc('invite_settings').get()
+        ]);
+        if (rwDoc.exists) rs = { ...rs, ...rwDoc.data() };
+        if (invDoc.exists) is = invDoc.data();
+    } catch(e) {}
+
+    // 최근 로그
+    let logs = [];
+    try {
+        const logSnap = await db.collection('reward_logs').orderBy('createdAt','desc').limit(50).get();
+        logs = logSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch(e) {}
+
+    const tiersHTML = (rs.signupTiers || []).map((tier, i) => `
+        <div style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.4rem;" data-tier-idx="${i}">
+            <span style="font-size:0.8rem;white-space:nowrap;">~</span>
+            <input type="number" class="rw-tier-max" value="${tier.maxUsers}" min="1" style="width:100px;padding:0.4rem;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;" placeholder="${t('admin.rw_max_users','최대 가입자 수')}">
+            <span style="font-size:0.8rem;">${t('admin.rw_users','명')}</span>
+            <input type="number" class="rw-tier-amt" value="${tier.amount}" min="0" step="0.1" style="width:80px;padding:0.4rem;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;" placeholder="CRTD">
+            <span style="font-size:0.8rem;">CRTD</span>
+            <button onclick="this.parentElement.remove()" style="background:#f44336;color:white;border:none;border-radius:4px;padding:0.2rem 0.5rem;cursor:pointer;font-size:0.75rem;">✕</button>
+        </div>
+    `).join('');
+
+    const logsHTML = logs.length === 0 ? `<p style="color:#888;font-size:0.85rem;">${t('admin.rw_no_logs','지급 내역 없음')}</p>` :
+        `<div style="max-height:300px;overflow-y:auto;">
+        <table style="width:100%;font-size:0.8rem;border-collapse:collapse;">
+            <tr style="background:#f0f0f0;"><th style="padding:0.4rem;text-align:left;">UID</th><th>유형</th><th>금액</th><th>날짜</th></tr>
+            ${logs.map(l => `<tr style="border-bottom:1px solid #eee;">
+                <td style="padding:0.4rem;font-family:monospace;font-size:0.7rem;">${(l.uid||'').slice(0,12)}…</td>
+                <td style="text-align:center;">${l.type === 'signup' ? '🆕 가입' : '🤝 초대'}</td>
+                <td style="text-align:center;font-weight:600;">${l.amount} CRTD</td>
+                <td style="text-align:center;font-size:0.7rem;">${l.createdAt?.toDate ? l.createdAt.toDate().toLocaleDateString() : '—'}</td>
+            </tr>`).join('')}
+        </table></div>`;
+
+    container.innerHTML = `
+    <div style="background:white;padding:1.5rem;border-radius:12px;margin-bottom:1rem;">
+        <h3 style="margin-bottom:1rem;">🎁 ${t('admin.rw_title','리워드 설정')}</h3>
+
+        <!-- 가입 리워드 -->
+        <div style="margin-bottom:1.5rem;">
+            <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+                <label style="font-weight:700;">🆕 ${t('admin.rw_signup','가입 리워드')}</label>
+                <label class="toggle-switch" style="margin-left:auto;">
+                    <input type="checkbox" id="rw-signup-enabled" ${rs.signupEnabled ? 'checked' : ''}>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <p style="font-size:0.75rem;color:#888;margin-bottom:0.5rem;">${t('admin.rw_signup_desc','가입 순번에 따라 CRTD를 지급합니다.')}</p>
+            <div id="rw-tiers-container">${tiersHTML}</div>
+            <button onclick="addRewardTier()" style="background:#eee;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.8rem;margin-top:0.3rem;">+ ${t('admin.rw_add_tier','구간 추가')}</button>
+        </div>
+
+        <!-- 초대 리워드 -->
+        <div style="margin-bottom:1.5rem;">
+            <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+                <label style="font-weight:700;">🤝 ${t('admin.rw_invite','초대 리워드')}</label>
+                <label class="toggle-switch" style="margin-left:auto;">
+                    <input type="checkbox" id="rw-invite-enabled" ${rs.inviteEnabled ? 'checked' : ''}>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+                <div>
+                    <label style="font-size:0.8rem;">${t('admin.rw_invite_amount','초대 1건당 (CRTD)')}</label>
+                    <input type="number" id="rw-invite-amount" value="${rs.inviteAmount}" min="0" step="0.1" style="width:100%;padding:0.4rem;border:1px solid #ddd;border-radius:6px;">
+                </div>
+                <div>
+                    <label style="font-size:0.8rem;">${t('admin.rw_invite_max','1인 한도 (CRTD)')}</label>
+                    <input type="number" id="rw-invite-max" value="${rs.inviteMaxPerUser}" min="0" style="width:100%;padding:0.4rem;border:1px solid #ddd;border-radius:6px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- 소셜 공유 키 -->
+        <div style="margin-bottom:1.5rem;">
+            <h4 style="margin-bottom:0.5rem;">🔑 ${t('admin.rw_social_keys','소셜 공유 설정')}</h4>
+            <div style="margin-bottom:0.5rem;">
+                <label style="font-size:0.8rem;">💛 ${t('admin.rw_kakao_key','카카오 앱 키 (JavaScript)')}</label>
+                <input type="text" id="rw-kakao-key" value="${is.kakaoAppKey || ''}" placeholder="카카오 JavaScript 앱 키" style="width:100%;padding:0.4rem;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;">
+            </div>
+            <div>
+                <label style="font-size:0.8rem;">📘 ${t('admin.rw_fb_id','페이스북 앱 ID')}</label>
+                <input type="text" id="rw-fb-id" value="${is.facebookAppId || ''}" placeholder="Facebook App ID" style="width:100%;padding:0.4rem;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;">
+            </div>
+        </div>
+
+        <button onclick="saveRewardSettings()" class="btn-primary" style="width:100%;padding:0.7rem;">💾 ${t('admin.rw_save','리워드 설정 저장')}</button>
+    </div>
+
+    <!-- 지급 내역 -->
+    <div style="background:white;padding:1.5rem;border-radius:12px;">
+        <h3 style="margin-bottom:1rem;">📋 ${t('admin.rw_logs','최근 리워드 지급 내역')}</h3>
+        ${logsHTML}
+    </div>`;
+}
+
+function addRewardTier() {
+    const container = document.getElementById('rw-tiers-container');
+    if (!container) return;
+    const div = document.createElement('div');
+    div.style.cssText = 'display:flex;gap:0.5rem;align-items:center;margin-bottom:0.4rem;';
+    div.innerHTML = `
+        <span style="font-size:0.8rem;white-space:nowrap;">~</span>
+        <input type="number" class="rw-tier-max" value="" min="1" style="width:100px;padding:0.4rem;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;" placeholder="최대 가입자">
+        <span style="font-size:0.8rem;">명</span>
+        <input type="number" class="rw-tier-amt" value="" min="0" step="0.1" style="width:80px;padding:0.4rem;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;" placeholder="CRTD">
+        <span style="font-size:0.8rem;">CRTD</span>
+        <button onclick="this.parentElement.remove()" style="background:#f44336;color:white;border:none;border-radius:4px;padding:0.2rem 0.5rem;cursor:pointer;font-size:0.75rem;">✕</button>
+    `;
+    container.appendChild(div);
+}
+
+async function saveRewardSettings() {
+    if (!hasLevel(3)) { showToast('권한 없음', 'warning'); return; }
+
+    const signupEnabled = document.getElementById('rw-signup-enabled')?.checked || false;
+    const inviteEnabled = document.getElementById('rw-invite-enabled')?.checked || false;
+    const inviteAmount = parseFloat(document.getElementById('rw-invite-amount')?.value) || 0.5;
+    const inviteMaxPerUser = parseFloat(document.getElementById('rw-invite-max')?.value) || 100;
+
+    // tiers
+    const tierEls = document.querySelectorAll('#rw-tiers-container > div');
+    const signupTiers = [];
+    tierEls.forEach(el => {
+        const max = parseInt(el.querySelector('.rw-tier-max')?.value);
+        const amt = parseFloat(el.querySelector('.rw-tier-amt')?.value);
+        if (max > 0 && amt >= 0) signupTiers.push({ maxUsers: max, amount: amt });
+    });
+    signupTiers.sort((a, b) => a.maxUsers - b.maxUsers);
+
+    const kakaoAppKey = document.getElementById('rw-kakao-key')?.value.trim() || '';
+    const facebookAppId = document.getElementById('rw-fb-id')?.value.trim() || '';
+
+    try {
+        await db.collection('admin_config').doc('reward_settings').set({
+            signupEnabled, signupTiers, inviteEnabled, inviteAmount, inviteMaxPerUser,
+            updatedAt: new Date(), updatedBy: currentUser.email
+        }, { merge: true });
+
+        await db.collection('admin_config').doc('invite_settings').set({
+            kakaoAppKey, facebookAppId,
+            updatedAt: new Date(), updatedBy: currentUser.email
+        }, { merge: true });
+
+        await db.collection('admin_logs').add({
+            action: 'reward_settings_change',
+            adminEmail: currentUser.email,
+            adminUid: currentUser.uid,
+            timestamp: new Date()
+        });
+
+        showToast('✅ 리워드 설정 저장 완료', 'success');
+    } catch (e) {
+        showToast('저장 실패: ' + e.message, 'error');
+    }
+}

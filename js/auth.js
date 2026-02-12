@@ -56,7 +56,8 @@ async function signup() {
         return;
     }
     
-    const referralCode = await showPromptModal(t('auth.referral_title','소개 코드'), t('auth.enter_referral','소개 코드가 있으면 입력하세요 (없으면 빈칸)'), '') || '';
+    const savedInviteCode = localStorage.getItem('crowny_invite_code') || '';
+    const referralCode = await showPromptModal(t('auth.referral_title','소개 코드'), t('auth.enter_referral','소개 코드가 있으면 입력하세요 (없으면 빈칸)'), savedInviteCode) || '';
     
     try {
         const result = await auth.createUserWithEmailAndPassword(email, password);
@@ -92,8 +93,10 @@ async function signup() {
                 createdAt: new Date()
             });
         
-        // 소개 코드 적용
-        if (referralCode.trim() && typeof applyReferralCode === 'function') {
+        // 소개 코드 적용 + 초대/가입 리워드
+        if (typeof INVITE !== 'undefined') {
+            await INVITE.processSignupReferral(result.user.uid, referralCode.trim());
+        } else if (referralCode.trim() && typeof applyReferralCode === 'function') {
             await applyReferralCode(result.user.uid, referralCode.trim());
         }
         
@@ -190,6 +193,11 @@ async function loginWithGoogle() {
                     balances: { crny: 0, fnc: 0, crfn: 0 },
                     createdAt: new Date()
                 });
+            
+            // 소개 코드 적용 + 초대/가입 리워드 (Google 가입)
+            if (typeof INVITE !== 'undefined') {
+                await INVITE.processSignupReferral(user.uid, '');
+            }
             
             console.log('✅ Google 신규 가입:', user.email);
         } else {

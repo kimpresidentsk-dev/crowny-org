@@ -155,6 +155,15 @@ async function loadDashboard() {
             </div>
             
             ${positionSummary}
+            
+            <!-- Invite Friends Card -->
+            <div class="dash-card" style="background:linear-gradient(135deg,#1a1a2e,#16213e);color:white;">
+                <h4 style="color:#D4AF37;">🎉 ${t('invite.title', '친구 초대')}</h4>
+                <p style="font-size:0.85rem;opacity:0.9;margin-bottom:0.8rem;">${t('invite.card_desc', '친구를 초대하고 CRTD 리워드를 받으세요!')}</p>
+                <button onclick="if(typeof INVITE!=='undefined')INVITE.showInviteModal()" style="width:100%;padding:0.7rem;background:#D4AF37;color:#1a1a2e;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:0.9rem;">
+                    📨 ${t('invite.invite_friends', '친구 초대하기')}
+                </button>
+            </div>
         </div>
     `;
 }
@@ -250,6 +259,11 @@ function saveShortcutEdit() {
 function handleHashRoute() {
     const hash = location.hash;
     if (!hash) return;
+    // invite hash 처리
+    if (hash.includes('invite=') && typeof INVITE !== 'undefined') {
+        INVITE.handleInviteHash();
+        return;
+    }
     const params = new URLSearchParams(hash.slice(1));
     const page = params.get('page');
     if (page && typeof showPage === 'function') {
