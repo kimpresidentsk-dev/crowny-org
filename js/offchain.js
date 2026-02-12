@@ -3,10 +3,10 @@
 
 // 기본 토큰 (Firestore 로드 실패 시 폴백)
 const DEFAULT_OFFCHAIN_TOKENS = {
-    crtd: { name: 'CRTD', fullName: '트레이딩 달러', icon: '📈', color: '#FF6D00', isDefault: true },
-    crac: { name: 'CRAC', fullName: '아트 크레딧', icon: '🎭', color: '#9C27B0', isDefault: true },
-    crgc: { name: 'CRGC', fullName: '굿즈 & 기빙', icon: '🛒', color: '#4CAF50', isDefault: true },
-    creb: { name: 'CREB', fullName: '에코 바이오', icon: '🌱', color: '#2196F3', isDefault: true }
+    crtd: { name: 'CRTD', get fullName() { return t('offchain.token.crtd', '트레이딩 달러'); }, icon: '📈', color: '#FF6D00', isDefault: true },
+    crac: { name: 'CRAC', get fullName() { return t('offchain.token.crac', '아트 크레딧'); }, icon: '🎭', color: '#9C27B0', isDefault: true },
+    crgc: { name: 'CRGC', get fullName() { return t('offchain.token.crgc', '굿즈 & 기빙'); }, icon: '🛒', color: '#4CAF50', isDefault: true },
+    creb: { name: 'CREB', get fullName() { return t('offchain.token.creb', '에코 바이오'); }, icon: '🌱', color: '#2196F3', isDefault: true }
 };
 
 // 토큰별 교환 비율 헬퍼
@@ -80,35 +80,35 @@ async function loadOffchainBalances() {
 
 // 오프체인 전송 모달
 function showOffchainSendModal() {
-    if (!userWallet) { alert('지갑을 먼저 연결하세요'); return; }
+    if (!userWallet) { alert(t('wallet.connect_wallet_first', '지갑을 먼저 연결하세요')); return; }
     const offchain = userWallet.offchainBalances || {};
 
     let tokenKey = (selectedToken && isOffchainToken(selectedToken)) ? selectedToken : null;
 
     if (!tokenKey) {
         const activeTokens = OFFCHAIN_TOKENS_LIST.filter(t => (offchain[t] || 0) > 0);
-        if (activeTokens.length === 0) { alert('보유한 오프체인 토큰이 없습니다'); return; }
+        if (activeTokens.length === 0) { alert(t('offchain.no_tokens', '보유한 오프체인 토큰이 없습니다')); return; }
         
         const info = activeTokens.map((t, i) => {
             const ti = getTokenInfo(t);
             return `${i+1}. ${ti.icon} ${ti.name} — ${(offchain[t]||0).toLocaleString()} pt`;
         }).join('\n');
-        const choice = prompt(`⚡ 오프체인 포인트 전송\n\n${info}\n\n번호:`);
+        const choice = prompt(`${t('offchain.send_title', '⚡ 오프체인 포인트 전송')}\n\n${info}\n\n${t('offchain.select_number', '번호:')}`);
         if (!choice) return;
         const idx = parseInt(choice) - 1;
-        if (idx < 0 || idx >= activeTokens.length) { alert('잘못된 선택'); return; }
+        if (idx < 0 || idx >= activeTokens.length) { alert(t('offchain.invalid_choice', '잘못된 선택')); return; }
         tokenKey = activeTokens[idx];
     }
 
     const tokenName = tokenKey.toUpperCase();
     const balance = offchain[tokenKey] || 0;
-    const email = prompt(`받는 사람 이메일:`);
+    const email = prompt(t('offchain.recipient_email', '받는 사람 이메일:'));
     if (!email) return;
-    const amount = prompt(`${email}에게 전송할 ${tokenName} 수량:\n잔액: ${balance.toLocaleString()} pt`);
+    const amount = prompt(`${email} ${t('offchain.send_amount_to', '에게 전송할')} ${tokenName} ${t('offchain.amount_label', '수량')}:\n${t('wallet.balance_label', '잔액')}: ${balance.toLocaleString()} pt`);
     if (!amount) return;
     const amountNum = parseInt(amount);
     if (isNaN(amountNum) || amountNum <= 0 || amountNum > balance) {
-        alert(`잘못된 수량\n잔액: ${balance.toLocaleString()} ${tokenName}`); return;
+        alert(`${t('offchain.invalid_amount', '잘못된 수량')}\n${t('wallet.balance_label', '잔액')}: ${balance.toLocaleString()} ${tokenName}`); return;
     }
     sendOffchainPoints(email, amountNum, tokenKey);
 }
@@ -119,13 +119,13 @@ async function sendOffchainPoints(recipientEmail, amount, tokenKey) {
     const tokenName = tokenKey.toUpperCase();
     try {
         const users = await db.collection('users').where('email', '==', recipientEmail).get();
-        if (users.empty) { alert('❌ 사용자를 찾을 수 없습니다'); return; }
+        if (users.empty) { alert(t('offchain.user_not_found', '❌ 사용자를 찾을 수 없습니다')); return; }
         const recipientDoc = users.docs[0];
         const recipientData = recipientDoc.data();
         const recipientOff = recipientData.offchainBalances || {};
 
         const senderBal = userWallet.offchainBalances[tokenKey] || 0;
-        if (amount > senderBal) { alert(`❌ 잔액 부족 (${senderBal} ${tokenName})`); return; }
+        if (amount > senderBal) { alert(`${t('offchain.insufficient_balance', '❌ 잔액 부족')} (${senderBal} ${tokenName})`); return; }
 
         // 발신자 차감
         await db.collection('users').doc(currentUser.uid).update({
@@ -147,10 +147,10 @@ async function sendOffchainPoints(recipientEmail, amount, tokenKey) {
         });
 
         updateBalances();
-        alert(`✅ ${amount.toLocaleString()} ${tokenName} 전송 완료!\n→ ${recipientEmail}\n⚡ 가스비 0원 (오프체인)`);
+        alert(`✅ ${amount.toLocaleString()} ${tokenName} ${t('offchain.send_success', '전송 완료!')}\n→ ${recipientEmail}\n${t('offchain.zero_gas', '⚡ 가스비 0원 (오프체인)')}`);
     } catch (error) {
         console.error('❌ Off-chain transfer error:', error);
-        alert('전송 실패: ' + error.message);
+        alert(t('offchain.send_failed', '전송 실패') + ': ' + error.message);
     }
 }
 
@@ -176,28 +176,28 @@ function updateBridgePreview() {
     const rate = getTokenRate(tokenKey);
 
     if (from === 'crny') {
-        previewEl.textContent = `${amount} CRNY → ${(amount * rate).toLocaleString()} ${(toSelect?.value || 'CRTD').toUpperCase()} 포인트 (비율: ${rate})`;
+        previewEl.textContent = `${amount} CRNY → ${(amount * rate).toLocaleString()} ${(toSelect?.value || 'CRTD').toUpperCase()} ${t('offchain.points', '포인트')} (${t('offchain.rate', '비율')}: ${rate})`;
     } else {
         const result = amount / rate;
-        previewEl.textContent = `${amount.toLocaleString()} ${from.toUpperCase()} → ${result.toFixed(2)} CRNY (비율: ${rate})` + (amount < rate ? ` (최소 ${rate} pt)` : '');
+        previewEl.textContent = `${amount.toLocaleString()} ${from.toUpperCase()} → ${result.toFixed(2)} CRNY (${t('offchain.rate', '비율')}: ${rate})` + (amount < rate ? ` (${t('offchain.minimum', '최소')} ${rate} pt)` : '');
     }
 }
 
 // 브릿지 실행 (온체인 ↔ 오프체인)
 async function executeBridge() {
-    if (!userWallet || !currentUser) { alert('지갑을 먼저 연결하세요'); return; }
+    if (!userWallet || !currentUser) { alert(t('wallet.connect_wallet_first', '지갑을 먼저 연결하세요')); return; }
     const from = document.getElementById('bridge-from').value;
     const to = document.getElementById('bridge-to')?.value || (from === 'crny' ? 'crtd' : 'crny');
     const amount = parseFloat(document.getElementById('bridge-amount').value) || 0;
     const tokenKey = from === 'crny' ? to : from;
     const rate = getTokenRate(tokenKey);
-    if (amount <= 0) { alert('수량을 입력하세요'); return; }
+    if (amount <= 0) { alert(t('offchain.enter_amount', '수량을 입력하세요')); return; }
 
     try {
         if (from === 'crny') {
-            if (amount > (userWallet.balances.crny || 0)) { alert('CRNY 잔액 부족'); return; }
+            if (amount > (userWallet.balances.crny || 0)) { alert(t('bridge.crny_insufficient', 'CRNY 잔액 부족')); return; }
             const pts = amount * rate;
-            if (!confirm(`🔄 ${amount} CRNY → ${pts.toLocaleString()} ${to.toUpperCase()}\n실행?`)) return;
+            if (!confirm(`🔄 ${amount} CRNY → ${pts.toLocaleString()} ${to.toUpperCase()}\n${t('bridge.execute_confirm', '실행?')}`)) return;
 
             const newCrny = userWallet.balances.crny - amount;
             await db.collection('users').doc(currentUser.uid)
@@ -219,11 +219,11 @@ async function executeBridge() {
             alert(`✅ ${amount} CRNY → ${pts.toLocaleString()} ${to.toUpperCase()}`);
         } else {
             const bal = userWallet.offchainBalances[from] || 0;
-            if (amount > bal) { alert(`${from.toUpperCase()} 잔액 부족 (${bal})`); return; }
-            if (amount < rate) { alert(`최소 ${rate} pt 필요`); return; }
+            if (amount > bal) { alert(`${from.toUpperCase()} ${t('offchain.insufficient_balance', '잔액 부족')} (${bal})`); return; }
+            if (amount < rate) { alert(`${t('bridge.min_required', '최소')} ${rate} pt ${t('bridge.min_required_suffix', '필요')}`); return; }
             const crnyOut = Math.floor(amount / rate);
             const ptsUsed = crnyOut * rate;
-            if (!confirm(`🔄 ${ptsUsed.toLocaleString()} ${from.toUpperCase()} → ${crnyOut} CRNY\n실행?`)) return;
+            if (!confirm(`🔄 ${ptsUsed.toLocaleString()} ${from.toUpperCase()} → ${crnyOut} CRNY\n${t('bridge.execute_confirm', '실행?')}`)) return;
 
             await db.collection('users').doc(currentUser.uid)
                 .update({ [`offchainBalances.${from}`]: bal - ptsUsed });
@@ -248,7 +248,7 @@ async function executeBridge() {
         document.getElementById('bridge-preview').textContent = '';
     } catch (error) {
         console.error('❌ Bridge error:', error);
-        alert('브릿지 실패: ' + error.message);
+        alert(t('bridge.failed', '브릿지 실패') + ': ' + error.message);
     }
 }
 
@@ -276,7 +276,7 @@ async function earnOffchainPoints(tokenKey, amount, reason) {
 async function spendOffchainPoints(tokenKey, amount, reason) {
     if (!currentUser || !userWallet) return false;
     const bal = userWallet.offchainBalances[tokenKey] || 0;
-    if (amount > bal) { alert(`${tokenKey.toUpperCase()} 잔액 부족 (${bal} pt)`); return false; }
+    if (amount > bal) { alert(`${tokenKey.toUpperCase()} ${t('offchain.insufficient_balance', '잔액 부족')} (${bal} pt)`); return false; }
     try {
         await db.collection('users').doc(currentUser.uid)
             .update({ [`offchainBalances.${tokenKey}`]: bal - amount });
@@ -325,15 +325,15 @@ async function swapTokens() {
     const from = document.getElementById('swap-from').value;
     const to = document.getElementById('swap-to').value;
     const amount = parseFloat(document.getElementById('swap-amount').value);
-    if (!amount || amount <= 0) { alert('수량을 입력하세요'); return; }
-    if (from === to) { alert('같은 토큰은 환전할 수 없습니다'); return; }
+    if (!amount || amount <= 0) { alert(t('offchain.enter_amount', '수량을 입력하세요')); return; }
+    if (from === to) { alert(t('offchain.same_token', '같은 토큰은 환전할 수 없습니다')); return; }
 
     const fromIsOff = isOffchainToken(from);
     const toIsOff = isOffchainToken(to);
 
     // 온↔오프는 브릿지로 안내
     if (fromIsOff !== toIsOff) {
-        alert('온체인 ↔ 오프체인 교환은 "브릿지" 기능을 이용해주세요!');
+        alert(t('offchain.use_bridge', '온체인 ↔ 오프체인 교환은 "브릿지" 기능을 이용해주세요!'));
         return;
     }
 
@@ -343,7 +343,7 @@ async function swapTokens() {
         if (fromIsOff) {
             // 오프체인 ↔ 오프체인 (1:1)
             const offBal = userWallet.offchainBalances || {};
-            if ((offBal[from] || 0) < amount) { alert(`${from.toUpperCase()} 잔액 부족`); return; }
+            if ((offBal[from] || 0) < amount) { alert(`${from.toUpperCase()} ${t('offchain.insufficient_balance', '잔액 부족')}`); return; }
             await db.collection('users').doc(currentUser.uid).update({
                 [`offchainBalances.${from}`]: (offBal[from] || 0) - amount,
                 [`offchainBalances.${to}`]: (offBal[to] || 0) + amount
@@ -354,7 +354,7 @@ async function swapTokens() {
         } else {
             // 온체인 ↔ 온체인 (1:1, CRFN→FNC는 7:1)
             let fromBal = userWallet.balances[from] || 0;
-            if (fromBal < amount) { alert(`${from.toUpperCase()} 잔액 부족`); return; }
+            if (fromBal < amount) { alert(`${from.toUpperCase()} ${t('offchain.insufficient_balance', '잔액 부족')}`); return; }
 
             let rate = 1;
             let actualOut = amount;
@@ -367,7 +367,7 @@ async function swapTokens() {
             userWallet.balances[from] = fromBal - (rate > 1 ? actualOut * rate : amount);
             userWallet.balances[to] = (userWallet.balances[to] || 0) + actualOut;
 
-            if (rate > 1) alert(`✅ ${actualOut * rate} CRFN → ${actualOut} FNC (7:1 스왓)`);
+            if (rate > 1) alert(`✅ ${actualOut * rate} CRFN → ${actualOut} FNC (7:1 ${t('offchain.swap', '스왑')})`);
             else alert(`✅ ${amount} ${from.toUpperCase()} → ${amount} ${to.toUpperCase()}`);
         }
 
@@ -377,41 +377,41 @@ async function swapTokens() {
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
         updateBalances();
-    } catch (e) { alert('환전 실패: ' + e.message); }
+    } catch (e) { alert(t('offchain.swap_failed', '환전 실패') + ': ' + e.message); }
 }
 
 // 쿠폰 사용
 async function redeemCoupon() {
-    if (!currentUser || !userWallet) { showToast('지갑을 먼저 연결하세요', 'error'); return; }
+    if (!currentUser || !userWallet) { showToast(t('wallet.connect_wallet_first', '지갑을 먼저 연결하세요'), 'error'); return; }
     const codeInput = document.getElementById('coupon-code-input');
     const resultEl = document.getElementById('coupon-result');
     const code = (codeInput.value || '').trim().toUpperCase();
-    if (!code) { resultEl.textContent = '쿠폰 코드를 입력하세요'; return; }
+    if (!code) { resultEl.textContent = t('offchain.coupon_enter', '쿠폰 코드를 입력하세요'); return; }
     
     try {
-        showLoading('쿠폰 확인 중...');
+        showLoading(t('offchain.coupon_checking', '쿠폰 확인 중...'));
         const coupons = await db.collection('coupons').where('code', '==', code).where('enabled', '==', true).get();
-        if (coupons.empty) { hideLoading(); resultEl.textContent = '❌ 유효하지 않은 쿠폰 코드입니다'; return; }
+        if (coupons.empty) { hideLoading(); resultEl.textContent = t('offchain.coupon_invalid', '❌ 유효하지 않은 쿠폰 코드입니다'); return; }
         const couponDoc = coupons.docs[0];
         const coupon = couponDoc.data();
-        if (coupon.expiresAt && coupon.expiresAt.toDate() < new Date()) { hideLoading(); resultEl.textContent = '❌ 만료된 쿠폰입니다'; return; }
-        if (coupon.maxUses > 0 && coupon.usedCount >= coupon.maxUses) { hideLoading(); resultEl.textContent = '❌ 쿠폰 사용 한도 초과'; return; }
+        if (coupon.expiresAt && coupon.expiresAt.toDate() < new Date()) { hideLoading(); resultEl.textContent = t('offchain.coupon_expired', '❌ 만료된 쿠폰입니다'); return; }
+        if (coupon.maxUses > 0 && coupon.usedCount >= coupon.maxUses) { hideLoading(); resultEl.textContent = t('offchain.coupon_maxed', '❌ 쿠폰 사용 한도 초과'); return; }
         const existing = await db.collection('coupon_redemptions').where('couponCode', '==', code).where('userId', '==', currentUser.uid).get();
-        if (!existing.empty) { hideLoading(); resultEl.textContent = '❌ 이미 사용한 쿠폰입니다'; return; }
+        if (!existing.empty) { hideLoading(); resultEl.textContent = t('offchain.coupon_used', '❌ 이미 사용한 쿠폰입니다'); return; }
         const success = await earnOffchainPoints(coupon.tokenKey, coupon.amount, '쿠폰 사용: ' + code);
-        if (!success) { hideLoading(); resultEl.textContent = '❌ 포인트 적립 실패'; return; }
+        if (!success) { hideLoading(); resultEl.textContent = t('offchain.coupon_earn_fail', '❌ 포인트 적립 실패'); return; }
         await db.collection('coupons').doc(couponDoc.id).update({ usedCount: firebase.firestore.FieldValue.increment(1) });
         await db.collection('coupon_redemptions').add({ couponId: couponDoc.id, couponCode: code, userId: currentUser.uid, userEmail: currentUser.email, tokenKey: coupon.tokenKey, amount: coupon.amount, redeemedAt: firebase.firestore.FieldValue.serverTimestamp() });
         hideLoading();
         const tokenInfo = getTokenInfo(coupon.tokenKey);
-        resultEl.innerHTML = '✅ <strong>' + coupon.amount.toLocaleString() + ' ' + tokenInfo.name + '</strong> 적립 완료!';
+        resultEl.innerHTML = '✅ <strong>' + coupon.amount.toLocaleString() + ' ' + tokenInfo.name + '</strong> ' + t('offchain.coupon_earned', '적립 완료!');
         resultEl.style.color = '#2e7d32';
         codeInput.value = '';
-        showToast('🎟️ ' + coupon.amount.toLocaleString() + ' ' + tokenInfo.name + ' 쿠폰 적립!', 'success');
+        showToast('🎟️ ' + coupon.amount.toLocaleString() + ' ' + tokenInfo.name + ' ' + t('offchain.coupon_redeemed', '쿠폰 적립!'), 'success');
     } catch (e) {
         hideLoading();
         console.error('Coupon redeem error:', e);
-        resultEl.textContent = '❌ 오류: ' + e.message;
+        resultEl.textContent = t('common.error', '❌ 오류') + ': ' + e.message;
     }
 }
 

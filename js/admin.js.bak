@@ -18,7 +18,7 @@ async function loadTransferRequests() {
 
 async function adminMintTokens() {
     if (currentUser.email !== 'kim.president.sk@gmail.com') {
-        alert(t('admin.admin_only','관리자만 사용 가능합니다'));
+        alert('관리자만 사용 가능합니다');
         return;
     }
     
@@ -27,14 +27,14 @@ async function adminMintTokens() {
     const amount = parseFloat(document.getElementById('admin-amount')?.value || 0);
     
     if (!email || amount <= 0) {
-        alert(t('admin.enter_email_amount','이메일과 수량을 입력하세요'));
+        alert('이메일과 수량을 입력하세요');
         return;
     }
     
     const users = await db.collection('users').where('email', '==', email).get();
     
     if (users.empty) {
-        alert(t('social.user_not_found','사용자를 찾을 수 없습니다'));
+        alert('사용자를 찾을 수 없습니다');
         return;
     }
     
@@ -78,14 +78,14 @@ const SUPER_ADMIN_EMAIL = 'kim.president.sk@gmail.com';
 const ADMIN_EMAIL = SUPER_ADMIN_EMAIL; // 하위 호환
 
 const ADMIN_LEVELS = {
-    6: { name: t('admin.level.super','수퍼관리자'), icon: '👑', color: '#FFD700' },
-    5: { name: t('admin.level.country','국가관리자'), icon: '🌍', color: '#9C27B0' },
-    4: { name: t('admin.level.business','사업관리자'), icon: '💼', color: '#2196F3' },
-    3: { name: t('admin.level.service','서비스관리자'), icon: '🔧', color: '#FF9800' },
-    2: { name: t('admin.level.ops','운영관리자'), icon: '📝', color: '#4CAF50' },
-    1: { name: t('admin.level.cs','CS관리자'), icon: '💬', color: '#607D8B' },
-    0: { name: t('admin.level.member','정회원'), icon: '⭐', color: '#795548' },
-    '-1': { name: t('admin.level.basic','일반회원'), icon: '👤', color: '#9E9E9E' }
+    6: { name: '수퍼관리자', icon: '👑', color: '#FFD700' },
+    5: { name: '국가관리자', icon: '🌍', color: '#9C27B0' },
+    4: { name: '사업관리자', icon: '💼', color: '#2196F3' },
+    3: { name: '서비스관리자', icon: '🔧', color: '#FF9800' },
+    2: { name: '운영관리자', icon: '📝', color: '#4CAF50' },
+    1: { name: 'CS관리자', icon: '💬', color: '#607D8B' },
+    0: { name: '정회원', icon: '⭐', color: '#795548' },
+    '-1': { name: '일반회원', icon: '👤', color: '#9E9E9E' }
 };
 
 // 현재 사용자 레벨 캐시
@@ -136,12 +136,12 @@ function getLevelInfo(level) {
 // Lv3: Lv2 임명 (쿼터 내)
 async function setUserAdminLevel(targetEmail, level) {
     if (targetEmail === SUPER_ADMIN_EMAIL) {
-        showToast(t('admin.cant_change_super','수퍼관리자는 변경할 수 없습니다'), 'warning');
+        showToast('수퍼관리자는 변경할 수 없습니다', 'warning');
         return;
     }
     
     if (level < -1 || level > 5) {
-        showToast(t('admin.level_range','레벨 범위: -1 ~ 5'), 'warning');
+        showToast('레벨 범위: -1 ~ 5', 'warning');
         return;
     }
     
@@ -244,7 +244,7 @@ async function showAdminEditModal(userId, userData) {
     const maxAppointLevel = isSuperAdmin() ? 5 : currentUserLevel - 1;
     const canEdit = (level < currentUserLevel || isSuperAdmin()) && userData.email !== SUPER_ADMIN_EMAIL;
     
-    if (!canEdit) { showToast(t('admin.cant_edit','이 사용자를 편집할 수 없습니다'), 'warning'); return; }
+    if (!canEdit) { showToast('이 사용자를 편집할 수 없습니다', 'warning'); return; }
     
     let levelOptions = '';
     for (let lv = -1; lv <= maxAppointLevel; lv++) {
@@ -275,11 +275,11 @@ async function showAdminEditModal(userId, userData) {
     overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;overflow-y:auto;';
     overlay.innerHTML = `
         <div style="background:white;padding:1.5rem;border-radius:16px;max-width:540px;width:100%;max-height:90vh;overflow-y:auto;">
-            <h3 style="margin-bottom:0.3rem;">${t('admin.settings','🔑 관리자 설정')}</h3>
-            <p style="font-size:0.85rem;color:#666;margin-bottom:1rem;">${userData.nickname || t('admin.unnamed','이름없음')} · ${userData.email}</p>
+            <h3 style="margin-bottom:0.3rem;">🔑 관리자 설정</h3>
+            <p style="font-size:0.85rem;color:#666;margin-bottom:1rem;">${userData.nickname || '이름없음'} · ${userData.email}</p>
             
             <div style="margin-bottom:1rem;">
-                <label style="font-size:0.8rem;color:#666;display:block;margin-bottom:0.3rem;">${t('admin.admin_level','관리자 레벨')}</label>
+                <label style="font-size:0.8rem;color:#666;display:block;margin-bottom:0.3rem;">관리자 레벨</label>
                 <select id="edit-admin-level" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;">${levelOptions}</select>
             </div>
             
@@ -316,8 +316,8 @@ async function showAdminEditModal(userId, userData) {
             </div>
             
             <div style="display:flex;gap:0.5rem;">
-                <button id="edit-admin-save" style="flex:1;padding:0.7rem;background:#9C27B0;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:700;">${t('common.save','저장')}</button>
-                <button id="edit-admin-cancel" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">${t('common.cancel','취소')}</button>
+                <button id="edit-admin-save" style="flex:1;padding:0.7rem;background:#9C27B0;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:700;">💾 저장</button>
+                <button id="edit-admin-cancel" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">취소</button>
             </div>
         </div>`;
     
@@ -383,13 +383,13 @@ async function showAdminEditModal(userId, userData) {
             });
             
             overlay.remove();
-            const cLabel = countryArr.length ? countryArr.join(',') : t('common.all','전체');
-            const bLabel = businessArr.length ? businessArr.join(',') : t('common.all','전체');
-            const sLabel = serviceArr.length ? serviceArr.join(',') : t('common.all','전체');
+            const cLabel = countryArr.length ? countryArr.join(',') : '전체';
+            const bLabel = businessArr.length ? businessArr.join(',') : '전체';
+            const sLabel = serviceArr.length ? serviceArr.join(',') : '전체';
             showToast(`✅ ${userData.email} → ${info.icon} Lv${newLevel} (${cLabel}/${bLabel}/${sLabel})`, 'success');
             loadAdminUserList();
         } catch (e) {
-            showToast(t('admin.settings_fail','설정 실패: ') + e.message, 'error');
+            showToast('설정 실패: ' + e.message, 'error');
         }
     };
 }
@@ -622,7 +622,7 @@ async function distributeReferralReward(userId, amount, token) {
 // 관리자: 특정 사용자 전체 포지션 강제 청산
 async function adminForceCloseAll(targetUserId, targetParticipantId, challengeId) {
     if (!isAdmin()) {
-        alert(t('admin.admin_only','관리자만 사용 가능합니다'));
+        alert('관리자만 사용 가능합니다');
         return;
     }
     
@@ -683,11 +683,11 @@ async function adminForceCloseAll(targetUserId, targetParticipantId, challengeId
 // 관리자: 사용자 거래 중단 (dailyLocked 설정)
 async function adminSuspendTrading(targetParticipantId, challengeId, reason) {
     if (!isAdmin()) {
-        alert(t('admin.admin_only','관리자만 사용 가능합니다'));
+        alert('관리자만 사용 가능합니다');
         return;
     }
     
-    const suspendReason = reason || prompt(t('admin.enter_suspend_reason','중단 사유를 입력하세요:'));
+    const suspendReason = reason || prompt('중단 사유를 입력하세요:');
     if (!suspendReason) return;
     
     try {
@@ -710,7 +710,7 @@ async function adminSuspendTrading(targetParticipantId, challengeId, reason) {
             timestamp: new Date()
         });
         
-        alert(`✅ ${t('admin.suspended','거래 중단 처리 완료')}\n${t('admin.reason','사유')}: ${suspendReason}`);
+        alert(`✅ 거래 중단 처리 완료\n사유: ${suspendReason}`);
     } catch (error) {
         alert('중단 처리 실패: ' + error.message);
     }
@@ -719,7 +719,7 @@ async function adminSuspendTrading(targetParticipantId, challengeId, reason) {
 // 관리자: 거래 중단 해제
 async function adminResumeTrading(targetParticipantId, challengeId) {
     if (!isAdmin()) {
-        alert(t('admin.admin_only','관리자만 사용 가능합니다'));
+        alert('관리자만 사용 가능합니다');
         return;
     }
     
@@ -742,7 +742,7 @@ async function adminResumeTrading(targetParticipantId, challengeId) {
             timestamp: new Date()
         });
         
-        alert(t('admin.resumed','✅ 거래 중단 해제 완료'));
+        alert('✅ 거래 중단 해제 완료');
         loadAdminParticipants(); // 새로고침
     } catch (error) {
         alert('해제 실패: ' + error.message);
@@ -754,15 +754,15 @@ async function adminResumeTrading(targetParticipantId, challengeId) {
 // 관리자 탭 메뉴 시스템 — 권한 매트릭스
 // ═══════════════════════════════════════════════════════
 const ADMIN_TAB_CONFIG = [
-    { id: 'offchain',  icon: '🔥', label: t('admin.tab.offchain','오프체인'),  minLevel: 2 },
-    { id: 'wallet',    icon: '💰', label: t('admin.tab.onchain','온체인'),    minLevel: 4 },
-    { id: 'challenge', icon: '📊', label: t('admin.tab.challenge','챌린지'),    minLevel: 3 },
-    { id: 'users',     icon: '👥', label: t('admin.tab.users','관리자'),    minLevel: 3 },
-    { id: 'giving',    icon: '🎁', label: t('admin.tab.giving','기부풀'),    minLevel: 3 },
-    { id: 'rate',      icon: '⚖️', label: t('admin.tab.rate','비율'),      minLevel: 6 },
-    { id: 'log',       icon: '📋', label: t('admin.tab.log','로그'),      minLevel: 3 },
-    { id: 'coupon',    icon: '🎟️', label: t('admin.tab.coupon','쿠폰'),      minLevel: 3 },
-    { id: 'superwall', icon: '🏦', label: t('admin.tab.superwall','계좌관리'),  minLevel: 6 }
+    { id: 'offchain',  icon: '🔥', label: '오프체인',  minLevel: 2 },
+    { id: 'wallet',    icon: '💰', label: '온체인',    minLevel: 4 },
+    { id: 'challenge', icon: '📊', label: '챌린지',    minLevel: 3 },
+    { id: 'users',     icon: '👥', label: '관리자',    minLevel: 3 },
+    { id: 'giving',    icon: '🎁', label: '기부풀',    minLevel: 3 },
+    { id: 'rate',      icon: '⚖️', label: '비율',      minLevel: 6 },
+    { id: 'log',       icon: '📋', label: '로그',      minLevel: 3 },
+    { id: 'coupon',    icon: '🎟️', label: '쿠폰',      minLevel: 3 },
+    { id: 'superwall', icon: '🏦', label: '계좌관리',  minLevel: 6 }
 ];
 
 let activeAdminTab = null;
@@ -856,15 +856,15 @@ function switchAdminTab(tabId) {
 async function adminLookupOffchain() {
     const email = document.getElementById('admin-off-lookup-email').value.trim();
     const resultEl = document.getElementById('admin-off-lookup-result');
-    if (!email) { resultEl.innerHTML = `<span style="color:red;">${t('admin.enter_email','이메일 입력')}</span>`; return; }
+    if (!email) { resultEl.innerHTML = '<span style="color:red;">이메일 입력</span>'; return; }
     
     try {
         const users = await db.collection('users').where('email', '==', email).get();
-        if (users.empty) { resultEl.innerHTML = `<span style="color:red;">${t('admin.user_not_found','사용자 없음')}</span>`; return; }
+        if (users.empty) { resultEl.innerHTML = '<span style="color:red;">사용자 없음</span>'; return; }
         
         const data = users.docs[0].data();
         const off = data.offchainBalances || {};
-        const nick = data.nickname || data.displayName || t('admin.unnamed','이름없음');
+        const nick = data.nickname || data.displayName || '이름없음';
         
         let total = 0;
         let balHTML = '';
@@ -899,14 +899,14 @@ async function adminLookupOffchain() {
 
 // 포인트 발행 (민팅) — ★ 수퍼관리자(레벨 6) 전용
 async function adminMintOffchain() {
-    if (!hasLevel(6)) { alert(t('admin.super_only_mint','⛔ 수퍼관리자만 토큰을 발행할 수 있습니다')); return; }
+    if (!hasLevel(6)) { alert('⛔ 수퍼관리자만 토큰을 발행할 수 있습니다'); return; }
     
     const email = document.getElementById('admin-off-mint-email').value.trim();
     const tokenKey = document.getElementById('admin-off-mint-token').value;
     const amount = parseInt(document.getElementById('admin-off-mint-amount').value);
-    const reason = document.getElementById('admin-off-mint-reason').value.trim() || t('admin.admin_mint','관리자 발행');
+    const reason = document.getElementById('admin-off-mint-reason').value.trim() || '관리자 발행';
     
-    if (!email || !amount || amount <= 0) { alert(t('admin.enter_email_amount','이메일과 수량을 입력하세요')); return; }
+    if (!email || !amount || amount <= 0) { alert('이메일과 수량 입력'); return; }
     
     try {
         const users = await db.collection('users').where('email', '==', email).get();
@@ -952,14 +952,14 @@ async function adminMintOffchain() {
 
 // 포인트 차감 (소각) — ★ 수퍼관리자(레벨 6) 전용
 async function adminBurnOffchain() {
-    if (!hasLevel(6)) { alert(t('admin.super_only_burn','⛔ 수퍼관리자만 토큰을 차감할 수 있습니다')); return; }
+    if (!hasLevel(6)) { alert('⛔ 수퍼관리자만 토큰을 차감할 수 있습니다'); return; }
     
     const email = document.getElementById('admin-off-burn-email').value.trim();
     const tokenKey = document.getElementById('admin-off-burn-token').value;
     const amount = parseInt(document.getElementById('admin-off-burn-amount').value);
-    const reason = document.getElementById('admin-off-burn-reason').value.trim() || t('admin.admin_burn_reason','관리자 차감');
+    const reason = document.getElementById('admin-off-burn-reason').value.trim() || '관리자 차감';
     
-    if (!email || !amount || amount <= 0) { alert(t('admin.enter_email_amount','이메일과 수량을 입력하세요')); return; }
+    if (!email || !amount || amount <= 0) { alert('이메일과 수량 입력'); return; }
     
     try {
         const users = await db.collection('users').where('email', '==', email).get();
@@ -1336,7 +1336,7 @@ async function adminDistributeGivingPool() {
     
     const email = document.getElementById('admin-giving-email').value.trim();
     const amount = parseInt(document.getElementById('admin-giving-amount').value);
-    if (!email || !amount || amount <= 0) { alert(t('admin.enter_email_amount','이메일과 수량을 입력하세요')); return; }
+    if (!email || !amount || amount <= 0) { alert('이메일과 수량 입력'); return; }
     
     try {
         // 기부풀 잔액 확인
@@ -1507,7 +1507,7 @@ async function loadAdminUserList() {
                 <div style="padding:0.6rem; background:var(--bg); border-radius:6px; margin-bottom:0.4rem; border-left:4px solid ${info.color};">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.3rem;">
                         <div style="flex:1; min-width:150px;">
-                            <strong style="font-size:0.85rem;">${u.nickname || t('admin.unnamed','이름없음')}</strong>
+                            <strong style="font-size:0.85rem;">${u.nickname || '이름없음'}</strong>
                             <span style="font-size:0.7rem; color:var(--accent); margin-left:0.3rem;">${u.email}</span>
                             <div style="display:flex;gap:0.3rem;margin-top:0.2rem;flex-wrap:wrap;">
                                 ${countryBadge}${businessBadge}${serviceBadge}${periodText}
@@ -1859,7 +1859,7 @@ async function adminSendToken() {
     const amount = parseFloat(document.getElementById('admin-send-amount').value);
     
     if (!email || !amount || amount <= 0) {
-        alert(t('admin.enter_email_amount','이메일과 수량을 입력하세요'));
+        alert('이메일과 수량을 입력하세요');
         return;
     }
     
@@ -2800,7 +2800,7 @@ async function createCoupon() {
         document.getElementById('coupon-desc').value = '';
         loadCouponList();
     } catch (e) {
-        showToast(t('admin.coupon_fail','쿠폰 생성 실패: ') + e.message, 'error');
+        showToast('쿠폰 생성 실패: ' + e.message, 'error');
     }
 }
 

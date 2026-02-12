@@ -46,19 +46,19 @@ const ART_CONFIG = {
 
 // ─── CATEGORIES (확장) ───
 const ART_CATEGORIES = {
-    painting:     t('art.cat.painting','🖌️ 회화'),
-    digital:      t('art.cat.digital','💻 디지털 아트'),
-    photo:        t('art.cat.photo','📷 사진'),
-    sculpture:    t('art.cat.sculpture','🗿 조각/설치'),
-    illustration: t('art.cat.illustration','✏️ 일러스트'),
-    calligraphy:  t('art.cat.calligraphy','🖋️ 서예/캘리'),
-    mixed:        t('art.cat.mixed','🎭 혼합 매체'),
-    ai:           t('art.cat.ai','🤖 AI 아트'),
-    music:        t('art.cat.music','🎵 뮤직/사운드'),
-    video:        t('art.cat.video','🎬 비디오 아트'),
-    generative:   t('art.cat.generative','🌀 제너러티브'),
-    kpop:         t('art.cat.kpop','💜 K-팝 굿즈'),
-    other:        t('art.cat.other','🎨 기타')
+    painting:     '🖌️ 회화',
+    digital:      '💻 디지털 아트',
+    photo:        '📷 사진',
+    sculpture:    '🗿 조각/설치',
+    illustration: '✏️ 일러스트',
+    calligraphy:  '🖋️ 서예/캘리',
+    mixed:        '🎭 혼합 매체',
+    ai:           '🤖 AI 아트',
+    music:        '🎵 뮤직/사운드',
+    video:        '🎬 비디오 아트',
+    generative:   '🌀 제너러티브',
+    kpop:         '💜 K-팝 굿즈',
+    other:        '🎨 기타'
 };
 
 // ─── MODULE STATE ───
@@ -253,7 +253,7 @@ function toggleNFTOptions() {
 }
 
 async function uploadArtwork() {
-    if (!currentUser) { showToast(t('common.login_required','로그인이 필요합니다'), 'warning'); return; }
+    if (!currentUser) { showToast('로그인이 필요합니다', 'warning'); return; }
 
     const title       = document.getElementById('art-title')?.value.trim();
     const description = document.getElementById('art-description')?.value.trim();
@@ -262,8 +262,8 @@ async function uploadArtwork() {
     const imageFile   = document.getElementById('art-image')?.files?.[0];
     const mintNFT     = document.getElementById('art-mint-nft')?.checked || false;
 
-    if (!title)     { showToast(t('art.enter_title','작품 제목을 입력하세요'), 'warning'); return; }
-    if (!imageFile) { showToast(t('art.select_image','작품 이미지를 선택하세요'), 'warning'); return; }
+    if (!title)     { showToast('작품 제목을 입력하세요', 'warning'); return; }
+    if (!imageFile) { showToast('작품 이미지를 선택하세요', 'warning'); return; }
 
     const nftType       = document.getElementById('art-nft-type')?.value || 'erc721';
     const editionCount  = parseInt(document.getElementById('art-edition-count')?.value) || 1;
@@ -273,12 +273,12 @@ async function uploadArtwork() {
     const setStatus = (msg) => { if (statusEl) statusEl.textContent = msg; };
 
     try {
-        setStatus(t('art.uploading','⏳ 이미지 업로드 중...'));
+        setStatus('⏳ 이미지 업로드 중...');
         const tempId = `art_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
 
         // Firebase Storage 업로드
         const { firebaseUrl, thumbnailUrl, isBase64 } = await uploadToFirebaseStorage(imageFile, tempId);
-        setStatus(t('art.upload_done','✅ 이미지 업로드 완료'));
+        setStatus('✅ 이미지 업로드 완료');
 
         // 유저 정보 (config.js의 currentUser 사용)
         const userDoc = await db.collection('users').doc(currentUser.uid).get();
@@ -322,13 +322,13 @@ async function uploadArtwork() {
         }
 
         // Firestore 저장
-        setStatus(t('art.saving','💾 작품 정보 저장 중...'));
+        setStatus('💾 작품 정보 저장 중...');
         const artDocRef = await db.collection('artworks').add(artwork);
         const artworkId = artDocRef.id;
 
         // NFT 민팅 (선택 시)
         if (mintNFT) {
-            setStatus(t('art.minting','🔗 NFT 민팅 준비 중...'));
+            setStatus('🔗 NFT 민팅 준비 중...');
             try {
                 const nftResult = await mintArtworkNFT(artworkId, artwork, imageFile, nftType, editionCount, royaltyPercent);
                 await artDocRef.update({
@@ -341,7 +341,7 @@ async function uploadArtwork() {
                     editionCount: nftType === 'erc1155' ? editionCount : 1,
                     mintTxHash: nftResult.txHash || null
                 });
-                setStatus(t('art.mint_done','🎉 NFT 민팅 완료!'));
+                setStatus('🎉 NFT 민팅 완료!');
             } catch (nftErr) {
                 console.error('🎨 [NFT] Mint failed:', nftErr);
                 setStatus('⚠️ 작품 등록됨 (NFT 민팅 실패: ' + nftErr.message + ')');
@@ -458,17 +458,17 @@ async function mintExistingArtwork(artworkId) {
 
     try {
         const artDoc = await db.collection('artworks').doc(artworkId).get();
-        if (!artDoc.exists) { showToast(t('art.not_found','작품을 찾을 수 없습니다'), 'warning'); return; }
+        if (!artDoc.exists) { showToast('작품을 찾을 수 없습니다', 'warning'); return; }
 
         const art = artDoc.data();
-        if (art.artistId !== currentUser.uid) { showToast(t('art.own_only','본인 작품만 NFT로 민팅 가능'), 'warning'); return; }
-        if (art.isNFT) { showToast(t('art.already_nft','이미 NFT로 민팅된 작품'), 'info'); return; }
+        if (art.artistId !== currentUser.uid) { showToast('본인 작품만 NFT로 민팅 가능', 'warning'); return; }
+        if (art.isNFT) { showToast('이미 NFT로 민팅된 작품', 'info'); return; }
 
-        const choice = await showPromptModal(t('art.nft_type','NFT 타입'), 'NFT:\n1) ERC-721 (1/1)\n2) ERC-1155 (Edition)', '1');
+        const choice = await showPromptModal('NFT 타입', 'NFT 타입:\n1) ERC-721 (유니크 1/1)\n2) ERC-1155 (에디션)', '1');
         const type = choice === '2' ? 'erc1155' : 'erc721';
         let editionCount = 1;
         if (type === 'erc1155') {
-            const edInput = await showPromptModal(t('art.edition_count','에디션 수량'), t('art.enter_edition','에디션 수량을 입력하세요:'), '10');
+            const edInput = await showPromptModal('에디션 수량', '에디션 수량을 입력하세요:', '10');
             editionCount = parseInt(edInput) || 10;
         }
 
@@ -479,11 +479,11 @@ async function mintExistingArtwork(artworkId) {
         } else if (art.imageData) {
             imageBlob = await (await fetch(art.imageData)).blob();
         } else {
-            showToast(t('art.no_image','이미지를 찾을 수 없습니다'), 'error'); return;
+            showToast('이미지를 찾을 수 없습니다', 'error'); return;
         }
 
         const imageFile = new File([imageBlob], `${artworkId}.jpg`, { type: 'image/jpeg' });
-        showToast(t('art.approve_metamask','MetaMask에서 트랜잭션을 승인해주세요.'), 'info');
+        showToast('MetaMask에서 트랜잭션을 승인해주세요.', 'info');
 
         const result = await mintArtworkNFT(
             artworkId, art, imageFile, type, editionCount,
@@ -592,7 +592,7 @@ function _renderArtCard(art) {
             </div>
             <div style="padding:.6rem">
                 <div style="font-weight:600;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${art.title}</div>
-                <div style="font-size:.7rem;color:var(--accent);margin:.2rem 0">${catLabel} · ${art.artistNickname || t('art.anonymous','익명')}</div>
+                <div style="font-size:.7rem;color:var(--accent);margin:.2rem 0">${catLabel} · ${art.artistNickname || '익명'}</div>
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-top:.3rem">
                     ${priceLabel}
                     <span style="font-size:.7rem;color:var(--accent)">❤️ ${art.likes || 0}</span>
@@ -609,7 +609,7 @@ function _renderArtCard(art) {
 async function viewArtwork(artId) {
     try {
         const doc = await db.collection('artworks').doc(artId).get();
-        if (!doc.exists) { showToast(t('art.not_found','작품을 찾을 수 없습니다'), 'warning'); return; }
+        if (!doc.exists) { showToast('작품을 찾을 수 없습니다', 'warning'); return; }
         const art = doc.data();
 
         // 조회수 (fire-and-forget)
@@ -629,13 +629,13 @@ async function viewArtwork(artId) {
 
             nftInfoHtml = `
                 <div style="background:linear-gradient(135deg,#667eea,#764ba2);padding:.8rem;border-radius:8px;margin-bottom:1rem;color:#fff">
-                    <div style="font-weight:700;margin-bottom:.4rem">${t('art.nft_cert','🔗 NFT 인증')}</div>
+                    <div style="font-weight:700;margin-bottom:.4rem">🔗 NFT 인증</div>
                     <div style="font-size:.78rem;display:grid;gap:.2rem">
                         <div>타입: ${typeLabel}</div>
                         <div>Token ID: #${art.nftTokenId}</div>
                         <div>컨트랙트: <a href="${scanUrl}" target="_blank" style="color:#fff;text-decoration:underline">${cShort}</a></div>
                         <div>로열티: ${art.royaltyPercent || 10}%</div>
-                        ${ipfsUrl ? `<div>IPFS: <a href="${ipfsUrl}" target="_blank" style="color:#fff;text-decoration:underline">${t('art.view_original','원본 보기')}</a></div>` : ''}
+                        ${ipfsUrl ? `<div>IPFS: <a href="${ipfsUrl}" target="_blank" style="color:#fff;text-decoration:underline">원본 보기</a></div>` : ''}
                         ${art.mintTxHash ? `<div>TX: <a href="https://polygonscan.com/tx/${art.mintTxHash}" target="_blank" style="color:#fff;text-decoration:underline">${art.mintTxHash.slice(0,10)}…</a></div>` : ''}
                     </div>
                 </div>`;
@@ -659,9 +659,9 @@ async function viewArtwork(artId) {
         if (isOwner) {
             actionHtml = '<div style="display:flex;gap:.5rem;flex-wrap:wrap">';
             if (!art.isNFT) {
-                actionHtml += `<button onclick="mintExistingArtwork('${artId}')" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;padding:.6rem 1.2rem;border-radius:6px;cursor:pointer;font-size:.85rem;flex:1">${t('art.mint_nft_btn','🔗 NFT 민팅')}</button>`;
+                actionHtml += `<button onclick="mintExistingArtwork('${artId}')" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;padding:.6rem 1.2rem;border-radius:6px;cursor:pointer;font-size:.85rem;flex:1">🔗 NFT 민팅</button>`;
             }
-            actionHtml += `<button onclick="deleteArtwork('${artId}')" style="background:#cc0000;color:#fff;border:none;padding:.6rem 1.2rem;border-radius:6px;cursor:pointer;font-size:.85rem">${t('common.delete','삭제')}</button></div>`;
+            actionHtml += `<button onclick="deleteArtwork('${artId}')" style="background:#cc0000;color:#fff;border:none;padding:.6rem 1.2rem;border-radius:6px;cursor:pointer;font-size:.85rem">🗑️ 삭제</button></div>`;
         }
 
         // ── 모달 ──
@@ -677,13 +677,13 @@ async function viewArtwork(artId) {
                 <div style="padding:1.2rem">
                     <h3 style="margin-bottom:.5rem">${art.title}</h3>
                     <div style="font-size:.85rem;color:var(--accent);margin-bottom:.8rem">
-                        ${catLabel} · 🎨 <span onclick="viewArtistProfile('${art.artistId}')" style="cursor:pointer;text-decoration:underline">${art.artistNickname || t('art.anonymous','익명')}</span> · 👁️ ${(art.views||0)+1} · ❤️ ${art.likes||0}
+                        ${catLabel} · 🎨 <span onclick="viewArtistProfile('${art.artistId}')" style="cursor:pointer;text-decoration:underline">${art.artistNickname || '익명'}</span> · 👁️ ${(art.views||0)+1} · ❤️ ${art.likes||0}
                     </div>
                     ${art.description ? `<p style="font-size:.9rem;line-height:1.6;margin-bottom:1rem;color:#333">${art.description}</p>` : ''}
                     ${nftInfoHtml}
                     <div style="display:flex;gap:.5rem;margin-bottom:1rem">
-                        <button onclick="likeArtwork('${artId}')" style="background:var(--bg);border:1px solid var(--border);padding:.5rem 1rem;border-radius:6px;cursor:pointer">${t('social.likes','좋아요')}</button>
-                        <button onclick="shareArtwork('${artId}','${art.title.replace(/'/g, "\\'")}')" style="background:var(--bg);border:1px solid var(--border);padding:.5rem 1rem;border-radius:6px;cursor:pointer">${t('art.share','🔗 공유')}</button>
+                        <button onclick="likeArtwork('${artId}')" style="background:var(--bg);border:1px solid var(--border);padding:.5rem 1rem;border-radius:6px;cursor:pointer">❤️ 좋아요</button>
+                        <button onclick="shareArtwork('${artId}','${art.title.replace(/'/g, "\\'")}')" style="background:var(--bg);border:1px solid var(--border);padding:.5rem 1rem;border-radius:6px;cursor:pointer">🔗 공유</button>
                     </div>
                     ${actionHtml}
                 </div>
@@ -724,11 +724,11 @@ function shareArtwork(artId, title) {
 }
 
 async function deleteArtwork(artId) {
-    const confirmed = await showConfirmModal(t('art.delete_artwork','작품 삭제'), t('art.confirm_delete','작품을 삭제하시겠습니까?\n(NFT는 온체인에 남아있습니다)'));
+    const confirmed = await showConfirmModal('작품 삭제', '작품을 삭제하시겠습니까?\n(NFT는 온체인에 남아있습니다)');
     if (!confirmed) return;
     try {
         await db.collection('artworks').doc(artId).update({ status: 'deleted' });
-        showToast(t('art.deleted','🗑️ 삭제 완료'), 'success');
+        showToast('🗑️ 삭제 완료', 'success');
         const modal = document.getElementById('art-modal');
         if (modal) modal.remove();
         loadArtGallery();

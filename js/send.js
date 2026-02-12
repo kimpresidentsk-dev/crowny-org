@@ -19,7 +19,7 @@ function selectToken(tokenType) {
 
 async function showSendModal() {
     if (!selectedToken) {
-        showToast('전송할 토큰을 먼저 선택하세요', 'warning');
+        showToast(t('send.select_token', '전송할 토큰을 먼저 선택하세요'), 'warning');
         return;
     }
     
@@ -36,16 +36,16 @@ async function showSendModal() {
         .collection('contacts').get();
     
     if (contacts.empty) {
-        const email = await showPromptModal('받는 사람', '받는 사람 이메일', '');
+        const email = await showPromptModal(t('send.recipient', '받는 사람'), t('send.recipient_email', '받는 사람 이메일'), '');
         if (!email) return;
         
-        const amount = await showPromptModal('전송 수량', `${email}에게 전송할 ${tokenType} 수량 (잔액: ${balance})`, '');
+        const amount = await showPromptModal(t('send.send_amount', '전송 수량'), `${email} ${t('send.send_to', '에게 전송할')} ${tokenType} ${t('offchain.amount_label', '수량')} (${t('wallet.balance_label', '잔액')}: ${balance})`, '');
         if (!amount) return;
         
         await sendTokensByEmail(email, parseFloat(amount), tokenType);
     } else {
         // Get wallet addresses for contacts
-        let contactList = `${tokenType} 전송 - 받는 사람 선택:\n\n`;
+        let contactList = `${tokenType} ${t('send.transfer_select', '전송 - 받는 사람 선택')}:\n\n`;
         const contactsArray = [];
         
         for (const doc of contacts.docs) {
@@ -66,31 +66,31 @@ async function showSendModal() {
             contactList += `${contactsArray.length}. ${contact.name}\n`;
             contactList += `   ${contact.email}\n`;
             if (walletAddr) {
-                contactList += `   지갑: ${walletAddr}\n`;
+                contactList += `   ${t('wallet.wallet_label', '지갑')}: ${walletAddr}\n`;
             }
             contactList += `\n`;
         }
         
-        contactList += `0. 직접 입력`;
+        contactList += `0. ${t('send.enter_directly', '직접 입력')}`;
         
-        const choice = await showPromptModal('받는 사람 선택', contactList, '1');
+        const choice = await showPromptModal(t('send.select_recipient', '받는 사람 선택'), contactList, '1');
         if (!choice) return;
         
         const choiceNum = parseInt(choice);
         let recipientEmail;
         
         if (choiceNum === 0) {
-            recipientEmail = await showPromptModal('받는 사람', '받는 사람 이메일', '');
+            recipientEmail = await showPromptModal(t('send.recipient', '받는 사람'), t('send.recipient_email', '받는 사람 이메일'), '');
         } else if (choiceNum > 0 && choiceNum <= contactsArray.length) {
             recipientEmail = contactsArray[choiceNum - 1].email;
         } else {
-            showToast('잘못된 선택입니다', 'error');
+            showToast(t('send.invalid_choice', '잘못된 선택입니다'), 'error');
             return;
         }
         
         if (!recipientEmail) return;
         
-        const amount = await showPromptModal('전송 수량', `${recipientEmail}에게 전송할 ${tokenType} 수량 (잔액: ${balance})`, '');
+        const amount = await showPromptModal(t('send.send_amount', '전송 수량'), `${recipientEmail} ${t('send.send_to', '에게 전송할')} ${tokenType} ${t('offchain.amount_label', '수량')} (${t('wallet.balance_label', '잔액')}: ${balance})`, '');
         if (!amount) return;
         
         await sendTokensByEmail(recipientEmail, parseFloat(amount), tokenType);
@@ -104,14 +104,14 @@ async function sendTokensByEmail(recipientEmail, amount, tokenType = 'CRNY') {
     const balance = userWallet.balances[tokenKey];
     
     if (amount <= 0 || amount > balance) {
-        showToast(`잔액이 부족하거나 잘못된 수량입니다 (잔액: ${balance} ${tokenType})`, 'error');
+        showToast(`${t('send.insufficient_or_invalid', '잔액이 부족하거나 잘못된 수량입니다')} (${t('wallet.balance_label', '잔액')}: ${balance} ${tokenType})`, 'error');
         return;
     }
     
     const users = await db.collection('users').where('email', '==', recipientEmail).get();
     
     if (users.empty) {
-        showToast('사용자를 찾을 수 없습니다', 'error');
+        showToast(t('send.user_not_found', '사용자를 찾을 수 없습니다'), 'error');
         return;
     }
     
@@ -121,16 +121,16 @@ async function sendTokensByEmail(recipientEmail, amount, tokenType = 'CRNY') {
     try {
         // Check if Crowny wallet (gas subsidy) or external wallet
         if (userWallet.isImported) {
-            showToast('⚠️ 외부 지갑은 가스비가 차감됩니다. MATIC이 충분한지 확인하세요.', 'warning');
+            showToast(t('send.external_gas_warning', '⚠️ 외부 지갑은 가스비가 차감됩니다. MATIC이 충분한지 확인하세요.'), 'warning');
             // TODO: Implement actual blockchain transfer with user's gas
-            showToast('외부 지갑 전송은 곧 지원됩니다.', 'info');
+            showToast(t('send.external_coming', '외부 지갑 전송은 곧 지원됩니다.'), 'info');
             return;
         }
         
         // Crowny wallet - Admin gas subsidy
         const gasEstimate = 0.001; // Estimated MATIC for transfer
         
-        showToast(`⏳ 전송 요청 중... 가스비 ${gasEstimate} MATIC은 관리자가 대납합니다.`, 'info');
+        showToast(`⏳ ${t('send.requesting', '전송 요청 중...')} ${t('send.gas_subsidy', '가스비')} ${gasEstimate} MATIC ${t('send.gas_subsidy_admin', '관리자가 대납합니다.')}`, 'info');
         
         // Request admin-sponsored transfer
         await db.collection('transfer_requests').add({
@@ -147,7 +147,7 @@ async function sendTokensByEmail(recipientEmail, amount, tokenType = 'CRNY') {
             requestedAt: new Date()
         });
         
-        showToast(`✅ 전송 요청 완료! ${amount} ${tokenType} 전송 (가스비 ${gasEstimate} MATIC 대납)`, 'success');
+        showToast(`✅ ${t('send.request_success', '전송 요청 완료!')} ${amount} ${tokenType} ${t('send.transfer_label', '전송')} (${t('send.gas_subsidy', '가스비')} ${gasEstimate} MATIC ${t('send.gas_subsidy_short', '대납')})`, 'success');
         
         console.log('Transfer requested:', {
             from: currentUser.email,
@@ -159,7 +159,7 @@ async function sendTokensByEmail(recipientEmail, amount, tokenType = 'CRNY') {
         
     } catch (error) {
         console.error('❌ Transfer request error:', error);
-        showToast('전송 요청 실패: ' + error.message, 'error');
+        showToast(t('send.request_failed', '전송 요청 실패') + ': ' + error.message, 'error');
     }
 }
 

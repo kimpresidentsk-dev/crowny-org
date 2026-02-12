@@ -58,7 +58,7 @@ function showPage(pageId) {
 async function connectMetaMask() {
     try {
         if (typeof window.ethereum === 'undefined') {
-            alert('MetaMask를 설치해주세요: https://metamask.io');
+            alert(t('wallet.install_metamask', 'MetaMask를 설치해주세요: https://metamask.io'));
             return;
         }
         
@@ -90,11 +90,11 @@ async function connectMetaMask() {
         await loadBalances();
         updateWalletUI();
         
-        alert('✅ MetaMask 연결 성공!\nPolygon 네트워크에 연결되었습니다.');
+        alert(t('wallet.metamask_success', '✅ MetaMask 연결 성공!\nPolygon 네트워크에 연결되었습니다.'));
         
     } catch (error) {
         console.error(error);
-        alert('연결 실패. 다시 시도해주세요.');
+        alert(t('wallet.connect_failed', '연결 실패. 다시 시도해주세요.'));
     }
 }
 
@@ -147,11 +147,11 @@ function updateBalanceUI() {
 }
 
 async function connectCoinbase() {
-    alert('Coinbase Wallet 연동 준비 중입니다.\n현재는 MetaMask를 사용해주세요.');
+    alert(t('wallet.coinbase_coming', 'Coinbase Wallet 연동 준비 중입니다.\n현재는 MetaMask를 사용해주세요.'));
 }
 
 async function connectWalletConnect() {
-    alert('WalletConnect 연동 준비 중입니다.\n현재는 MetaMask를 사용해주세요.');
+    alert(t('wallet.walletconnect_coming', 'WalletConnect 연동 준비 중입니다.\n현재는 MetaMask를 사용해주세요.'));
 }
 
 function disconnectWallet() {
@@ -162,20 +162,20 @@ function disconnectWallet() {
     document.getElementById('wallet-connected').style.display = 'none';
     document.getElementById('wallet-disconnected').style.display = 'block';
     
-    alert('지갑 연결이 해제되었습니다.');
+    alert(t('wallet.disconnected', '지갑 연결이 해제되었습니다.'));
 }
 
 function showSendForm() {
-    alert('전송 기능 준비 중입니다.');
+    alert(t('wallet.send_coming', '전송 기능 준비 중입니다.'));
 }
 
 function showSwapForm() {
-    alert('스왑 기능 준비 중입니다.\nCRNY ↔ FNC ↔ CRFN 교환 가능');
+    alert(t('wallet.swap_coming', '스왑 기능 준비 중입니다.\nCRNY ↔ FNC ↔ CRFN 교환 가능'));
 }
 
 function showReceiveForm() {
     if (!state.wallet) return;
-    alert('받기 주소:\n\n' + state.wallet + '\n\n위 주소로 토큰을 전송받을 수 있습니다.');
+    alert(t('wallet.receive_address', '받기 주소:') + '\n\n' + state.wallet + '\n\n' + t('wallet.receive_desc', '위 주소로 토큰을 전송받을 수 있습니다.'));
 }
 
 function updateWalletUI() {
@@ -343,7 +343,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Credit
 function buyProduct(credits, price) {
     if (!state.wallet) {
-        alert('먼저 지갑을 연결해주세요!');
+        alert(t('wallet.connect_first', '먼저 지갑을 연결해주세요!'));
         showPage('wallet');
         return;
     }
@@ -354,7 +354,7 @@ function buyProduct(credits, price) {
     document.getElementById('user-credits').textContent = state.credits;
     updateBalanceUI();
     
-    alert(`구매 성공!\n+${credits} CRNY 크레딧 적립\n가격: ₩${price.toLocaleString()}`);
+    alert(`${t('trade.purchase_success', '구매 성공!')}\n+${credits} ${t('trade.crny_credit_earned', 'CRNY 크레딧 적립')}\n${t('common.price', '가격')}: ₩${price.toLocaleString()}`);
 }
 
 // Trading
@@ -366,13 +366,13 @@ function setTradeType(type) {
 
 function executeTrade() {
     if (!state.wallet) {
-        alert('지갑을 먼저 연결해주세요!');
+        alert(t('wallet.connect_first', '지갑을 먼저 연결해주세요!'));
         return;
     }
     
     const amount = parseFloat(document.getElementById('trade-amount').value);
     if (!amount || amount <= 0) {
-        alert('올바른 수량을 입력하세요');
+        alert(t('trade.enter_valid_amount', '올바른 수량을 입력하세요'));
         return;
     }
     
@@ -381,20 +381,20 @@ function executeTrade() {
     
     if (state.tradeType === 'buy') {
         if (cost > state.balances.matic) {
-            alert('MATIC 잔액이 부족합니다!');
+            alert(t('trade.insufficient_matic', 'MATIC 잔액이 부족합니다!'));
             return;
         }
         state.balances.matic -= cost;
         state.balances.crny += amount;
-        alert(`${amount} CRNY 구매 완료!`);
+        alert(`${amount} ${t('trade.buy_complete', 'CRNY 구매 완료!')}`);
     } else {
         if (amount > state.balances.crny) {
-            alert('CRNY 잔액이 부족합니다!');
+            alert(t('trade.insufficient_crny', 'CRNY 잔액이 부족합니다!'));
             return;
         }
         state.balances.crny -= amount;
         state.balances.matic += cost;
-        alert(`${amount} CRNY 판매 완료!`);
+        alert(`${amount} ${t('trade.sell_complete', 'CRNY 판매 완료!')}`);
     }
     
     updateBalanceUI();

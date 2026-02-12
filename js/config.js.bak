@@ -93,17 +93,17 @@ function updateSlotStatusUI() {
     
     // 슬롯 계약 수 표시
     if (displayEl) {
-        displayEl.textContent = slots > 0 ? `${slots} ${t('trading.contracts','계약')}` : `0 ${t('trading.contracts','계약')}`;
+        displayEl.textContent = slots > 0 ? `${slots} 계약` : '0 계약';
         displayEl.style.color = slots > 0 ? '#0066cc' : '#cc0000';
     }
     
     // 상태 메시지/배지
     if (slots === 0) {
-        if (messageEl) messageEl.textContent = t('config.need_crny','🔴 CRNY를 보유해야 거래할 수 있습니다');
-        if (badgeEl) { badgeEl.textContent = t('config.inactive','비활성'); badgeEl.style.background = '#ef5350'; }
+        if (messageEl) messageEl.textContent = '🔴 CRNY를 보유해야 거래할 수 있습니다';
+        if (badgeEl) { badgeEl.textContent = '비활성'; badgeEl.style.background = '#ef5350'; }
     } else {
-        if (messageEl) messageEl.textContent = `🟢 ${slots}${t('config.slots_active','슬롯 가동 중')} / ${t('config.holding','보유')} ${Math.floor(crnyBalance)} CRNY`;
-        if (badgeEl) { badgeEl.textContent = t('config.active','활성'); badgeEl.style.background = '#00c853'; }
+        if (messageEl) messageEl.textContent = `🟢 ${slots}슬롯 가동 중 / 보유 ${Math.floor(crnyBalance)} CRNY`;
+        if (badgeEl) { badgeEl.textContent = '활성'; badgeEl.style.background = '#00c853'; }
     }
 }
 
@@ -207,8 +207,8 @@ function updateTradeButtonState() {
     });
     
     if (locked && btnBuy) {
-        btnBuy.textContent = t('config.trading_stopped','⚠️ 거래 정지');
-        btnSell.textContent = t('config.trading_stopped','⚠️ 거래 정지');
+        btnBuy.textContent = '⚠️ 거래 정지';
+        btnSell.textContent = '⚠️ 거래 정지';
     } else if (btnBuy) {
         btnBuy.textContent = '📈 BUY';
         btnSell.textContent = '📉 SELL';
@@ -303,7 +303,7 @@ async function checkDailyLossLimit() {
             });
         
         updateRiskGaugeUI();
-        alert(`🚨 ${t('config.daily_limit_reached','일일 손실 한도 도달!')} (-$${limitValue})\n\n${t('config.trading_ended','오늘의 거래가 종료됩니다.')}\n${t('config.auto_reset','관리자가 해제하거나 내일 자정(UTC)에 자동 해제됩니다.')}`);
+        alert(`🚨 일일 손실 한도 도달! (-$${limitValue})\n\n오늘의 거래가 종료됩니다.\n관리자가 해제하거나 내일 자정(UTC)에 자동 해제됩니다.`);
         return true; // locked
     }
     
@@ -334,7 +334,7 @@ async function checkCumulativeLiquidation() {
         
         if (currentCrny < burnAmount) {
             // CRNY가 없으면 거래 완전 차단
-            alert(t('config.no_crny','🚨 CRNY가 부족하여 더 이상 거래할 수 없습니다.\nCRNY를 추가로 획득해주세요.'));
+            alert('🚨 CRNY가 부족하여 더 이상 거래할 수 없습니다.\nCRNY를 추가로 획득해주세요.');
             return true;
         }
         
@@ -376,11 +376,11 @@ async function checkCumulativeLiquidation() {
         updateTradingUI();
         
         alert(
-            `💀 ${t('config.cumulative_loss','누적 손실')} -$${Math.abs(RISK_CONFIG.cumulativeLossLimit).toLocaleString()} ${t('config.reached','도달')}!\n\n` +
-            `🔥 CRNY ${burnAmount}${t('config.burned','개 소각됨')}\n` +
-            `👑 ${t('config.remaining','남은')} CRNY: ${newCrny}\n` +
-            `📊 ${t('config.new_slots','새 슬롯')}: ${calculateSlots(newCrny)}\n\n` +
-            t('config.account_reset','계좌가 초기화되었습니다.')
+            `💀 누적 손실 -$${Math.abs(RISK_CONFIG.cumulativeLossLimit).toLocaleString()} 도달!\n\n` +
+            `🔥 CRNY ${burnAmount}개 소각됨\n` +
+            `👑 남은 CRNY: ${newCrny}개\n` +
+            `📊 새 슬롯: ${calculateSlots(newCrny)}개\n\n` +
+            `계좌가 초기화되었습니다.`
         );
         
         return true;
@@ -420,12 +420,6 @@ auth.onAuthStateChanged(async (user) => {
         
         // ★ 알림 시스템 초기화
         if (typeof initNotifications === 'function') initNotifications();
-        
-        // ★ 현재 보이는 섹션이 prop-trading이면 자동 로드
-        const activePage = document.querySelector('.page.active');
-        if (activePage && activePage.id === 'prop-trading') {
-            if (typeof loadTradingDashboard === 'function') loadTradingDashboard();
-        }
     } else {
         document.getElementById('auth-modal').style.display = 'flex';
         document.getElementById('user-info').style.display = 'none';

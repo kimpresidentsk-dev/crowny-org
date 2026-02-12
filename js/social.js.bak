@@ -17,16 +17,16 @@ async function loadUserData() {
 async function getUserDisplayInfo(uid) {
     try {
         const doc = await db.collection('users').doc(uid).get();
-        if (!doc.exists) return { nickname: t('social.unknown','알 수 없음'), photoURL: '', email: '' };
+        if (!doc.exists) return { nickname: '알 수 없음', photoURL: '', email: '' };
         const data = doc.data();
         return {
-            nickname: data.nickname || data.displayName || data.email?.split('@')[0] || t('social.user','사용자'),
+            nickname: data.nickname || data.displayName || data.email?.split('@')[0] || '사용자',
             photoURL: data.photoURL || '',
             email: data.email || '',
             statusMessage: data.statusMessage || ''
         };
     } catch (e) {
-        return { nickname: t('social.unknown','알 수 없음'), photoURL: '', email: '' };
+        return { nickname: '알 수 없음', photoURL: '', email: '' };
     }
 }
 
@@ -53,40 +53,40 @@ async function showProfileEdit() {
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     overlay.innerHTML = `
     <div style="background:white;padding:1.5rem;border-radius:16px;max-width:420px;width:100%;">
-        <h3 style="margin-bottom:1rem;">${t('social.edit_profile','✏️ 프로필 편집')}</h3>
+        <h3 style="margin-bottom:1rem;">✏️ 프로필 편집</h3>
         <div style="text-align:center; margin-bottom:1rem;">
             <div id="profile-preview-avatar" style="display:inline-block;">${avatarHTML(data.photoURL, data.nickname, 80)}</div>
             <div style="margin-top:0.5rem;">
-                <label for="profile-photo-input" style="color:#0066cc; cursor:pointer; font-size:0.85rem; font-weight:600;">${t('social.change_photo','📷 사진 변경')}</label>
+                <label for="profile-photo-input" style="color:#0066cc; cursor:pointer; font-size:0.85rem; font-weight:600;">📷 사진 변경</label>
                 <input type="file" id="profile-photo-input" accept="image/*" style="display:none;" onchange="previewProfilePhoto(this)">
             </div>
         </div>
         <div style="display:grid; gap:0.8rem;">
             <div>
-                <label style="font-size:0.8rem; color:#666;">${t('auth.nickname_title','닉네임')}</label>
-                <input type="text" id="profile-edit-nickname" value="${data.nickname || ''}" placeholder="${t('auth.nickname_title','닉네임')}" style="width:100%;padding:0.7rem;border:1px solid #ddd;border-radius:8px;font-size:0.95rem;box-sizing:border-box;">
+                <label style="font-size:0.8rem; color:#666;">닉네임</label>
+                <input type="text" id="profile-edit-nickname" value="${data.nickname || ''}" placeholder="닉네임" style="width:100%;padding:0.7rem;border:1px solid #ddd;border-radius:8px;font-size:0.95rem;box-sizing:border-box;">
             </div>
             <div>
-                <label style="font-size:0.8rem; color:#666;">${t('social.status_msg','상태 메시지')}</label>
-                <input type="text" id="profile-edit-status" value="${data.statusMessage || ''}" placeholder="${t('social.status_msg','상태 메시지')}" maxlength="50" style="width:100%;padding:0.7rem;border:1px solid #ddd;border-radius:8px;font-size:0.95rem;box-sizing:border-box;">
+                <label style="font-size:0.8rem; color:#666;">상태 메시지</label>
+                <input type="text" id="profile-edit-status" value="${data.statusMessage || ''}" placeholder="상태 메시지" maxlength="50" style="width:100%;padding:0.7rem;border:1px solid #ddd;border-radius:8px;font-size:0.95rem;box-sizing:border-box;">
             </div>
-            <p style="font-size:0.75rem; color:#999;">${t('auth.email','이메일')}: ${data.email}</p>
+            <p style="font-size:0.75rem; color:#999;">이메일: ${data.email}</p>
             <div style="margin-top:0.8rem; padding-top:0.8rem; border-top:1px solid #eee; display:grid; gap:0.5rem;">
-                <p style="font-size:0.8rem; font-weight:600; color:#333; margin-bottom:0.2rem;">${t('social.login_method','🔐 로그인 방법')}</p>
+                <p style="font-size:0.8rem; font-weight:600; color:#333; margin-bottom:0.2rem;">🔐 로그인 방법</p>
                 ${currentUser && currentUser.providerData.some(p => p.providerId === 'google.com') ? `
-                <p style="font-size:0.75rem; color:#4CAF50;">${t('social.google_linked','✅ Google 계정 연동됨')}</p>` : `
+                <p style="font-size:0.75rem; color:#4CAF50;">✅ Google 계정 연동됨</p>` : `
                 <button onclick="linkGoogleAccount(); document.getElementById('profile-edit-modal').remove();" style="width:100%;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#fff;font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:0.5rem;">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width:16px;height:16px;"> ${t('social.link_google','Google 계정 연동')}
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width:16px;height:16px;"> Google 계정 연동
                 </button>`}
                 ${currentUser && currentUser.providerData.some(p => p.providerId === 'password') ? `
-                <p style="font-size:0.75rem; color:#4CAF50;">${t('social.pw_login_set','✅ 이메일/비밀번호 로그인 설정됨')}</p>
-                <button onclick="changePasswordFromProfile()" style="width:100%;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#fff;font-size:0.85rem;">${t('auth.change_pw','🔑 비밀번호 변경')}</button>` : `
-                <button onclick="setupPasswordFromProfile()" style="width:100%;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#fff;font-size:0.85rem;">${t('social.setup_pw','🔑 비밀번호 설정 (이메일 로그인 추가)')}</button>`}
+                <p style="font-size:0.75rem; color:#4CAF50;">✅ 이메일/비밀번호 로그인 설정됨</p>
+                <button onclick="changePasswordFromProfile()" style="width:100%;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#fff;font-size:0.85rem;">🔑 비밀번호 변경</button>` : `
+                <button onclick="setupPasswordFromProfile()" style="width:100%;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#fff;font-size:0.85rem;">🔑 비밀번호 설정 (이메일 로그인 추가)</button>`}
             </div>
         </div>
         <div style="display:flex;gap:0.5rem;margin-top:1rem;">
-            <button onclick="document.getElementById('profile-edit-modal').remove()" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">${t('common.cancel','취소')}</button>
-            <button onclick="saveProfile()" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#1a1a2e;color:white;font-weight:700;">${t('common.save','저장')}</button>
+            <button onclick="document.getElementById('profile-edit-modal').remove()" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">취소</button>
+            <button onclick="saveProfile()" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#1a1a2e;color:white;font-weight:700;">저장</button>
         </div>
     </div>`;
     document.body.appendChild(overlay);
@@ -106,10 +106,10 @@ async function saveProfile() {
     const statusMessage = document.getElementById('profile-edit-status').value.trim();
     const photoInput = document.getElementById('profile-photo-input');
 
-    if (!nickname) { showToast(t('social.enter_nickname','닉네임을 입력하세요'), 'warning'); return; }
+    if (!nickname) { showToast('닉네임을 입력하세요', 'warning'); return; }
 
     try {
-        showLoading(t('social.saving_profile','프로필 저장 중...'));
+        showLoading('프로필 저장 중...');
         const updates = { nickname, statusMessage };
 
         if (photoInput.files[0]) {
@@ -120,7 +120,7 @@ async function saveProfile() {
 
         await db.collection('users').doc(currentUser.uid).update(updates);
         hideLoading();
-        showToast(t('social.profile_saved','✅ 프로필 저장 완료!'), 'success');
+        showToast('✅ 프로필 저장 완료!', 'success');
         document.getElementById('profile-edit-modal')?.remove();
 
         // Update sidebar user info
@@ -128,7 +128,7 @@ async function saveProfile() {
         if (userInfoEl) userInfoEl.textContent = nickname;
     } catch (e) {
         hideLoading();
-        showToast(t('social.save_fail','저장 실패: ') + e.message, 'error');
+        showToast('저장 실패: ' + e.message, 'error');
     }
 }
 
@@ -140,7 +140,7 @@ async function loadReferralInfo() {
         if (!userDoc.exists) return;
         const data = userDoc.data();
         const codeEl = document.getElementById('my-referral-code');
-        if (codeEl) codeEl.textContent = data.referralCode || t('social.not_generated','미생성');
+        if (codeEl) codeEl.textContent = data.referralCode || '미생성';
         const countEl = document.getElementById('my-referral-count');
         if (countEl) countEl.textContent = `${data.referralCount || 0}명`;
         const earnings = data.referralEarnings || {};
@@ -162,12 +162,12 @@ async function loadReferralInfo() {
 async function copyReferralCode() {
     const codeEl = document.getElementById('my-referral-code');
     const code = codeEl?.textContent;
-    if (!code || code === t('social.not_generated','미생성')) { showToast(t('social.generate_first','먼저 소개 코드를 생성하세요'), 'warning'); return; }
+    if (!code || code === '미생성') { showToast('먼저 소개 코드를 생성하세요', 'warning'); return; }
     try {
         await navigator.clipboard.writeText(code);
-        showToast(`📋 ${t('social.code_copied','소개 코드 복사됨')}: ${code}`, 'success');
+        showToast(`📋 소개 코드 복사됨: ${code}`, 'success');
     } catch (e) {
-        await showPromptModal(t('auth.referral_title','소개 코드'), t('social.copy_code','소개 코드를 복사하세요'), code);
+        await showPromptModal('소개 코드', '소개 코드를 복사하세요', code);
     }
 }
 
@@ -192,10 +192,10 @@ function showContacts() {
 }
 
 async function showAddContactModal() {
-    const email = await showPromptModal(t('social.add_contact','연락처 추가'), t('social.contact_email','추가할 연락처 이메일'), '');
+    const email = await showPromptModal('연락처 추가', '추가할 연락처 이메일', '');
     if (!email) return;
     const users = await db.collection('users').where('email', '==', email).get();
-    if (users.empty) { showToast(t('social.user_not_found','사용자를 찾을 수 없습니다'), 'error'); return; }
+    if (users.empty) { showToast('사용자를 찾을 수 없습니다', 'error'); return; }
     const userId = users.docs[0].id;
     const userData = users.docs[0].data();
     const name = userData.nickname || userData.displayName || email;
@@ -205,7 +205,7 @@ async function showAddContactModal() {
             name: name,
             addedAt: new Date()
         });
-    showToast(t('social.contact_added','✅ 연락처에 추가되었습니다'), 'success');
+    showToast('✅ 연락처에 추가되었습니다', 'success');
     loadContacts();
 }
 
@@ -219,8 +219,8 @@ async function loadContacts() {
         contactList.innerHTML = `
             <div style="text-align:center; padding:2rem; color:var(--accent);">
                 <p style="font-size:2.5rem; margin-bottom:0.8rem;">👥</p>
-                <p style="font-size:0.95rem; margin-bottom:0.5rem;">${t('social.no_contacts','연락처가 없습니다')}</p>
-                <button onclick="showAddContactModal()" class="btn-primary" style="padding:0.5rem 1rem; font-size:0.85rem;">${t('social.add_contact_btn','➕ 연락처 추가')}</button>
+                <p style="font-size:0.95rem; margin-bottom:0.5rem;">연락처가 없습니다</p>
+                <button onclick="showAddContactModal()" class="btn-primary" style="padding:0.5rem 1rem; font-size:0.85rem;">➕ 연락처 추가</button>
             </div>`;
         return;
     }
@@ -237,7 +237,7 @@ async function loadContacts() {
                 <p style="font-size:0.7rem; margin:0.1rem 0; color:var(--accent); opacity:0.7; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${info.statusMessage || ''}</p>
             </div>
             <div style="display:flex; gap:0.3rem; flex-direction:column;">
-                <button onclick='startChatWithContact("${contact.email}")' class="btn-chat" style="font-size:0.8rem; padding:0.4rem 0.6rem;">${t('social.chat','채팅')}</button>
+                <button onclick='startChatWithContact("${contact.email}")' class="btn-chat" style="font-size:0.8rem; padding:0.4rem 0.6rem;">채팅</button>
                 <button onclick='deleteContact("${doc.id}", "${info.nickname}")' style="background:none; border:1px solid #fcc; border-radius:4px; padding:0.2rem 0.5rem; font-size:0.7rem; cursor:pointer; color:#c00;">🗑️</button>
             </div>`;
         contactList.appendChild(contactItem);
@@ -254,21 +254,21 @@ async function startChatWithContact(email) {
         showPage('messenger');
     } catch (error) {
         console.error('Chat start error:', error);
-        showToast(t('social.chat_fail','채팅 시작 실패'), 'error');
+        showToast('채팅 시작 실패', 'error');
     }
 }
 
 async function showNewChatModal() {
-    const email = await showPromptModal(t('social.new_chat','새 채팅'), t('social.chat_email','채팅할 사용자 이메일'), '');
+    const email = await showPromptModal('새 채팅', '채팅할 사용자 이메일', '');
     if (!email) return;
     startNewChat(email);
 }
 
 async function startNewChat(otherEmail) {
     try {
-        if (otherEmail === currentUser.email) { showToast(t('social.no_self_chat','자기 자신과는 채팅할 수 없습니다'), 'warning'); return; }
+        if (otherEmail === currentUser.email) { showToast('자기 자신과는 채팅할 수 없습니다', 'warning'); return; }
         const users = await db.collection('users').where('email', '==', otherEmail).get();
-        if (users.empty) { showToast(t('social.user_not_found','사용자를 찾을 수 없습니다'), 'error'); return; }
+        if (users.empty) { showToast('사용자를 찾을 수 없습니다', 'error'); return; }
         const otherUser = users.docs[0];
         const otherId = otherUser.id;
         const existingChat = await db.collection('chats').where('participants', 'array-contains', currentUser.uid).get();
@@ -287,7 +287,7 @@ async function startNewChat(otherEmail) {
         await openChat(chatId, otherId);
     } catch (error) {
         console.error('Start chat error:', error);
-        showToast(t('social.chat_fail','채팅 시작 실패') + ': ' + error.message, 'error');
+        showToast('채팅 시작 실패: ' + error.message, 'error');
     }
 }
 
@@ -295,7 +295,7 @@ async function loadMessages() {
     const chatList = document.getElementById('chat-list');
     chatList.innerHTML = '';
     const chats = await db.collection('chats').where('participants', 'array-contains', currentUser.uid).get();
-    if (chats.empty) { chatList.innerHTML = '<p style="padding:1rem; color:var(--accent); text-align:center;">${t('social.start_chat','채팅을 시작하세요')}</p>'; return; }
+    if (chats.empty) { chatList.innerHTML = '<p style="padding:1rem; color:var(--accent); text-align:center;">채팅을 시작하세요</p>'; return; }
 
     const chatDocs = chats.docs.sort((a, b) => {
         const aTime = a.data().lastMessageTime?.toMillis?.() || 0;
@@ -314,7 +314,7 @@ async function loadMessages() {
             ${avatarHTML(info.photoURL, info.nickname, 44)}
             <div class="chat-preview">
                 <strong>${info.nickname}</strong>
-                <p>${chat.lastMessage || t('social.no_messages','메시지 없음')}</p>
+                <p>${chat.lastMessage || '메시지 없음'}</p>
             </div>`;
         chatList.appendChild(chatItem);
     }
@@ -338,7 +338,7 @@ async function openChat(chatId, otherId) {
             const messagesDiv = document.getElementById('chat-messages');
             messagesDiv.innerHTML = '';
             if (snapshot.empty) {
-                messagesDiv.innerHTML = '<p style="text-align:center; color:var(--accent); padding:2rem;">${t('social.send_first','메시지를 보내보세요!')}</p>';
+                messagesDiv.innerHTML = '<p style="text-align:center; color:var(--accent); padding:2rem;">메시지를 보내보세요!</p>';
             }
             // Cache sender info
             const senderCache = {};
@@ -373,7 +373,7 @@ async function openChat(chatId, otherId) {
 }
 
 async function sendMessage() {
-    if (!currentChat) { showToast(t('social.select_chat','채팅을 선택하세요'), 'warning'); return; }
+    if (!currentChat) { showToast('채팅을 선택하세요', 'warning'); return; }
     const input = document.getElementById('message-input');
     const text = input.value.trim();
     if (!text) return;
@@ -386,14 +386,14 @@ async function sendMessage() {
 
 // Send image in chat
 async function sendChatImage() {
-    if (!currentChat) { showToast(t('social.select_chat','채팅을 선택하세요'), 'warning'); return; }
+    if (!currentChat) { showToast('채팅을 선택하세요', 'warning'); return; }
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
     input.onchange = async () => {
         if (!input.files[0]) return;
         try {
-            showLoading(t('social.sending_image','이미지 전송 중...'));
+            showLoading('이미지 전송 중...');
             const file = input.files[0];
             const dataUrl = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file); });
             const resized = await resizeImage(dataUrl, 800);
@@ -403,20 +403,20 @@ async function sendChatImage() {
             });
             await db.collection('chats').doc(currentChat).update({ lastMessage: '📷 사진', lastMessageTime: new Date() });
             hideLoading();
-            showToast(t('social.image_sent','📷 이미지 전송 완료'), 'success');
+            showToast('📷 이미지 전송 완료', 'success');
         } catch (e) {
             hideLoading();
-            showToast(t('social.image_fail','이미지 전송 실패: ') + e.message, 'error');
+            showToast('이미지 전송 실패: ' + e.message, 'error');
         }
     };
     input.click();
 }
 
 async function sendTokenWithMessage() {
-    if (!currentChat || !currentChatOtherId) { showToast(t('social.select_chat','채팅을 선택하세요'), 'warning'); return; }
-    if (!userWallet || !currentWalletId) { showToast(t('social.connect_wallet','지갑을 먼저 연결하세요'), 'warning'); return; }
+    if (!currentChat || !currentChatOtherId) { showToast('채팅을 선택하세요', 'warning'); return; }
+    if (!userWallet || !currentWalletId) { showToast('지갑을 먼저 연결하세요', 'warning'); return; }
 
-    const tokenChoice = await showPromptModal(t('social.select_token','토큰 선택'),
+    const tokenChoice = await showPromptModal('토큰 선택',
         '온체인:\n1. CRNY (' + (userWallet.balances?.crny || 0).toFixed(2) + ')\n' +
         '2. FNC (' + (userWallet.balances?.fnc || 0).toFixed(2) + ')\n' +
         '3. CRFN (' + (userWallet.balances?.crfn || 0).toFixed(2) + ')\n\n' +
@@ -428,19 +428,19 @@ async function sendTokenWithMessage() {
 
     const tokenMap = { '1':'crny', '2':'fnc', '3':'crfn', '4':'crtd', '5':'crac', '6':'crgc', '7':'creb' };
     const tokenKey = tokenMap[tokenChoice];
-    if (!tokenKey) { showToast(t('social.invalid_choice','잘못된 선택'), 'error'); return; }
+    if (!tokenKey) { showToast('잘못된 선택', 'error'); return; }
 
     const isOffchain = isOffchainToken(tokenKey);
     const tokenName = tokenKey.toUpperCase();
     const balance = isOffchain ? (userWallet.offchainBalances?.[tokenKey] || 0) : (userWallet.balances?.[tokenKey] || 0);
 
-    const amount = await showPromptModal(t('social.send_amount','전송 수량'), `${t('social.amount_to_send','전송할')} ${tokenName} (${t('social.balance','잔액')}: ${balance})`, '');
+    const amount = await showPromptModal('전송 수량', `전송할 ${tokenName} 수량 (잔액: ${balance})`, '');
     if (!amount) return;
     const amountNum = parseFloat(amount);
     if (isNaN(amountNum) || amountNum <= 0 || amountNum > balance) {
-        showToast(t('social.insufficient','잔액이 부족하거나 잘못된 수량입니다'), 'error'); return;
+        showToast(`잔액이 부족하거나 잘못된 수량입니다`, 'error'); return;
     }
-    const message = await showPromptModal(t('social.message','메시지'), t('social.msg_optional','메시지 (선택)'), '') || '';
+    const message = await showPromptModal('메시지', '메시지 (선택)', '') || '';
 
     try {
         if (isOffchain) {
@@ -465,10 +465,10 @@ async function sendTokenWithMessage() {
         await db.collection('chats').doc(currentChat).update({ lastMessage: `💰 ${amountNum} ${tokenName} 전송`, lastMessageTime: new Date() });
         await db.collection('transactions').add({ from: currentUser.uid, to: currentChatOtherId, amount: amountNum, token: tokenName, type: isOffchain ? 'messenger_offchain' : 'messenger_onchain', message, timestamp: new Date() });
         updateBalances();
-        showToast(`✅ ${amountNum} ${tokenName} ${t('social.sent','전송 완료!')}`, 'success');
+        showToast(`✅ ${amountNum} ${tokenName} 전송 완료!`, 'success');
     } catch (error) {
         console.error('메신저 토큰 전송 실패:', error);
-        showToast(t('social.send_fail','전송 실패: ') + error.message, 'error');
+        showToast('전송 실패: ' + error.message, 'error');
     }
 }
 
@@ -485,8 +485,8 @@ async function loadSocialFeed() {
         if (sortedPosts.length === 0) {
             feed.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--accent);">
                 <p style="font-size:3rem; margin-bottom:1rem;">📝</p>
-                <p style="font-size:1.1rem;">${t('social.no_posts','아직 게시물이 없습니다')}</p>
-                <p style="font-size:0.85rem;">${t('social.write_first','첫 게시물을 작성해보세요!')}</p></div>`;
+                <p style="font-size:1.1rem;">아직 게시물이 없습니다</p>
+                <p style="font-size:0.85rem;">첫 게시물을 작성해보세요!</p></div>`;
             return;
         }
 
@@ -516,15 +516,15 @@ async function loadSocialFeed() {
                     <button onclick="toggleComments('${doc.id}')" class="post-action-btn" style="background:none;border:none;cursor:pointer;font-size:1.2rem;padding:0;line-height:1;display:flex;align-items:center;gap:0.3rem;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span style="font-size:0.85rem;color:var(--text);font-weight:600;">${commentCount || ''}</span></button>
                 </div>
                 <div style="font-size:0.85rem;">
-                    ${likeCount > 0 ? `<div style="font-weight:700;margin-bottom:0.2rem;cursor:pointer;" onclick="showLikedUsers('${doc.id}')">${t('social.likes','좋아요')} ${likeCount}${t('social.count','개')}</div>` : ''}
+                    ${likeCount > 0 ? `<div style="font-weight:700;margin-bottom:0.2rem;cursor:pointer;" onclick="showLikedUsers('${doc.id}')">좋아요 ${likeCount}개</div>` : ''}
                     ${post.text ? `<div><strong style="margin-right:0.3rem;">${userInfo.nickname}</strong>${truncateWalletAddresses(post.text)}</div>` : ''}
-                    ${commentCount > 0 ? `<div style="color:var(--accent);margin-top:0.2rem;cursor:pointer;" onclick="toggleComments('${doc.id}')">${t('social.view_comments','댓글')} ${commentCount}${t('social.count','개')} ${t('social.view_all','모두 보기')}</div>` : ''}
+                    ${commentCount > 0 ? `<div style="color:var(--accent);margin-top:0.2rem;cursor:pointer;" onclick="toggleComments('${doc.id}')">댓글 ${commentCount}개 모두 보기</div>` : ''}
                 </div>
                 <div id="comments-${doc.id}" style="display:none; margin-top:0.8rem; border-top:1px solid var(--border); padding-top:0.6rem;">
                     <div id="comment-list-${doc.id}"></div>
                     <div style="display:flex; gap:0.5rem; margin-top:0.5rem; align-items:center;">
-                        <input type="text" id="comment-input-${doc.id}" placeholder="${t('social.add_comment','댓글 달기...')}" style="flex:1; padding:0.5rem; border:none; border-bottom:1px solid var(--border); font-size:0.85rem; outline:none;" onkeypress="if(event.key==='Enter')addComment('${doc.id}')">
-                        <button onclick="addComment('${doc.id}')" style="background:none;border:none;color:#0066cc;font-weight:700;cursor:pointer;font-size:0.85rem;">${t('social.post','게시')}</button>
+                        <input type="text" id="comment-input-${doc.id}" placeholder="댓글 달기..." style="flex:1; padding:0.5rem; border:none; border-bottom:1px solid var(--border); font-size:0.85rem; outline:none;" onkeypress="if(event.key==='Enter')addComment('${doc.id}')">
+                        <button onclick="addComment('${doc.id}')" style="background:none;border:none;color:#0066cc;font-weight:700;cursor:pointer;font-size:0.85rem;">게시</button>
                     </div>
                 </div>`;
             feed.appendChild(postEl);
@@ -534,7 +534,7 @@ async function loadSocialFeed() {
         feed.innerHTML = `<div style="text-align:center; padding:3rem;">
             <p style="font-size:2rem; margin-bottom:1rem;">⚠️</p>
             <p style="color:red;">${error.message}</p>
-            <button onclick="loadSocialFeed()" class="btn-primary" style="margin-top:1rem;">${t('common.refresh','새로고침')}</button></div>`;
+            <button onclick="loadSocialFeed()" class="btn-primary" style="margin-top:1rem;">다시 시도</button></div>`;
     }
 }
 
@@ -558,13 +558,13 @@ async function toggleLike(postId, isLiked) {
 async function showLikedUsers(postId) {
     const post = await db.collection('posts').doc(postId).get();
     const likedBy = post.data().likedBy || [];
-    if (likedBy.length === 0) { showToast(t('social.no_likes','아직 좋아요가 없습니다'), 'info'); return; }
+    if (likedBy.length === 0) { showToast('아직 좋아요가 없습니다', 'info'); return; }
     let message = '';
     for (const uid of likedBy) {
         const info = await getUserDisplayInfo(uid);
         message += `${info.nickname}\n`;
     }
-    await showConfirmModal(t('social.likes','좋아요'), message);
+    await showConfirmModal('좋아요', message);
 }
 
 async function toggleComments(postId) {
@@ -577,7 +577,7 @@ async function loadComments(postId) {
     const list = document.getElementById(`comment-list-${postId}`);
     list.innerHTML = '';
     const comments = await db.collection('posts').doc(postId).collection('comments').orderBy('timestamp', 'asc').get();
-    if (comments.empty) { list.innerHTML = '<p style="text-align:center; color:var(--accent); font-size:0.8rem;">${t('social.first_comment','첫 댓글을 남겨보세요!')}</p>'; return; }
+    if (comments.empty) { list.innerHTML = '<p style="text-align:center; color:var(--accent); font-size:0.8rem;">첫 댓글을 남겨보세요!</p>'; return; }
     for (const doc of comments.docs) {
         const c = doc.data();
         const info = await getUserDisplayInfo(c.userId);
@@ -602,31 +602,31 @@ async function addComment(postId) {
 }
 
 async function deletePost(postId) {
-    if (!await showConfirmModal(t('social.delete_post','게시물 삭제'), t('social.confirm_delete','이 게시물을 삭제하시겠습니까?'))) return;
+    if (!await showConfirmModal('게시물 삭제', '이 게시물을 삭제하시겠습니까?')) return;
     try {
         await db.collection('posts').doc(postId).delete();
-        showToast(t('social.post_deleted','게시물 삭제됨'), 'info');
+        showToast('게시물 삭제됨', 'info');
         loadSocialFeed();
-    } catch (e) { showToast(t('social.delete_fail','삭제 실패'), 'error'); }
+    } catch (e) { showToast('삭제 실패', 'error'); }
 }
 
 function getTimeAgo(date) {
     const seconds = Math.floor((new Date() - date) / 1000);
-    if (seconds < 60) return t('social.just_now','방금 전');
-    if (seconds < 3600) return `${Math.floor(seconds / 60)}${t('social.min_ago','분 전')}`;
-    if (seconds < 86400) return `${Math.floor(seconds / 3600)}${t('social.hour_ago','시간 전')}`;
-    if (seconds < 604800) return `${Math.floor(seconds / 86400)}${t('social.day_ago','일 전')}`;
-    return `${Math.floor(seconds / 604800)}${t('social.week_ago','주 전')}`;
+    if (seconds < 60) return '방금 전';
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}분 전`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)}시간 전`;
+    if (seconds < 604800) return `${Math.floor(seconds / 86400)}일 전`;
+    return `${Math.floor(seconds / 604800)}주 전`;
 }
 
 async function createPost() {
     const textarea = document.getElementById('post-text');
     const fileInput = document.getElementById('post-image');
     const text = textarea.value.trim();
-    if (!text && !fileInput.files[0]) { showToast(t('social.enter_content','내용 또는 이미지를 입력하세요'), 'warning'); return; }
+    if (!text && !fileInput.files[0]) { showToast('내용 또는 이미지를 입력하세요', 'warning'); return; }
 
     try {
-        showLoading(t('social.posting','게시 중...'));
+        showLoading('게시 중...');
         let imageUrl = null;
         if (fileInput.files[0]) {
             const dataUrl = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(fileInput.files[0]); });
@@ -640,11 +640,11 @@ async function createPost() {
         document.getElementById('post-image-name').textContent = '';
         hideLoading();
         await loadSocialFeed();
-        showToast(t('social.post_done','✅ 게시 완료!'), 'success');
+        showToast('✅ 게시 완료!', 'success');
     } catch (error) {
         hideLoading();
         console.error('Post error:', error);
-        showToast(t('social.post_fail','게시 실패'), 'error');
+        showToast('게시 실패', 'error');
     }
 }
 
@@ -660,10 +660,10 @@ async function editContact(contactDocId, currentName) {
 }
 
 async function deleteContact(contactDocId, contactName) {
-    if (!await showConfirmModal(t('social.delete_contact','연락처 삭제'), `"${contactName}" ${t('social.confirm_delete_contact','연락처를 삭제하시겠습니까?')}`)) return;
+    if (!await showConfirmModal('연락처 삭제', `"${contactName}" 연락처를 삭제하시겠습니까?`)) return;
     try {
         await db.collection('users').doc(currentUser.uid).collection('contacts').doc(contactDocId).delete();
-        showToast(t('social.contact_deleted','✅ 연락처가 삭제되었습니다'), 'success');
+        showToast('✅ 연락처가 삭제되었습니다', 'success');
         loadContacts();
-    } catch (error) { showToast(t('social.delete_fail','삭제 실패') + ': ' + error.message, 'error'); }
+    } catch (error) { showToast('삭제 실패: ' + error.message, 'error'); }
 }
