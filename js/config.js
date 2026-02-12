@@ -35,7 +35,7 @@ const ERC20_ABI = [
 ];
 
 const RISK_CONFIG = {
-    dailyLossLimit: -100,      // 일일 손실 한도 ($)
+    dailyLossLimit: -500,      // 일일 손실 한도 ($)
     cumulativeLossLimit: -3000, // 누적 손실 한도 ($) - HTML 규칙과 일치
     tradeFeeRoundTrip: 2.00,   // 왕복 수수료 ($)
     mnqTickValue: 0.50,        // MNQ 1틱 가치 ($)

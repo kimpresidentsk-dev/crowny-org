@@ -424,7 +424,7 @@ async function loadTradingDashboard() {
                 <p><strong>💎 ${cfg.tier}${t('trading.tier_label','등급')}:</strong> ${cfg.deposit} CRTD ${t('trading.entry_fee','참가비')}</p>
                 <p><strong>💰 ${t('trading.virtual_account','가상 계좌')}:</strong> $${(p.initialBalance || 100000).toLocaleString()} USD</p>
                 <p><strong>📊 ${t('trading.tradable','거래 가능')}:</strong> ${productText}</p>
-                <p><strong>🔴 ${t('trading.daily_limit','일일 한도')}:</strong> -$${p.dailyLossLimit || 100} ${t('trading.daily_limit_desc','손실 시 당일 중단')}</p>
+                <p><strong>🔴 ${t('trading.daily_limit','일일 한도')}:</strong> -$${p.dailyLossLimit || 500} ${t('trading.daily_limit_desc','손실 시 당일 중단')}</p>
                 <p><strong>💀 ${t('trading.liquidation','청산')}:</strong> -$${cfg.liquidation.toLocaleString()} ${t('trading.liquidation_desc','손실 시 계좌 종료')} (${cfg.deposit} CRTD ${t('trading.forfeited','소멸')})</p>
                 <p><strong>📈 ${t('trading.profit_convert','수익 변환')}:</strong> +$${cfg.profitThreshold.toLocaleString()} ${t('trading.profit_convert_desc','초과분 → 1:1 CRTD')}</p>
                 <p><strong>💰 ${t('trading.withdraw_btn','인출')}:</strong> ${cfg.withdrawUnit.toLocaleString()} CRTD ${t('trading.unit','단위')}</p>
