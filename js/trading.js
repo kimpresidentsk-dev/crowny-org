@@ -448,6 +448,9 @@ async function loadTradingDashboard() {
             console.log('✅ BUY/SELL 버튼 강제 활성화');
         }
         
+        // 차트 내 규칙 오버레이
+        updateChartRulesOverlay();
+        
         // display:block 후 DOM이 레이아웃을 잡도록 딜레이
         setTimeout(() => {
             initTradingViewChart();
@@ -2531,6 +2534,54 @@ async function quickChartTrade(side, contractOverride) {
 }
 
 // Lightweight Charts용 포지션 라인 그리기 (NQ + MNQ 양쪽)
+// ─── 차트 내 규칙 오버레이 ───
+function updateChartRulesOverlay() {
+    const container = document.getElementById('live-candle-chart');
+    if (!container || !myParticipation) return;
+    
+    // 기존 오버레이 제거
+    const old = container.querySelector('.chart-rules-overlay');
+    if (old) old.remove();
+    
+    const p = myParticipation;
+    const cfg = getCRTDConfig();
+    const tier = getTradingTier();
+    const products = [];
+    if (tier.MNQ > 0) products.push(`MNQ×${tier.MNQ}`);
+    if (tier.NQ > 0) products.push(`NQ×${tier.NQ}`);
+    
+    const overlay = document.createElement('div');
+    overlay.className = 'chart-rules-overlay';
+    Object.assign(overlay.style, {
+        position: 'absolute',
+        top: '8px',
+        left: '8px',
+        zIndex: '50',
+        background: 'rgba(10,10,30,0.75)',
+        backdropFilter: 'blur(4px)',
+        WebkitBackdropFilter: 'blur(4px)',
+        borderRadius: '8px',
+        padding: '8px 12px',
+        fontSize: '0.72rem',
+        lineHeight: '1.6',
+        color: '#ccc',
+        pointerEvents: 'none',
+        maxWidth: '220px',
+        border: '1px solid rgba(255,255,255,0.08)',
+    });
+    
+    overlay.innerHTML = `
+        <div style="font-weight:700; color:#FFD700; margin-bottom:3px; font-size:0.76rem;">💎 ${cfg.tier}군 · ${cfg.deposit} CRTD</div>
+        <div>📊 ${products.join(' + ') || '미설정'}</div>
+        <div style="color:#ff4444;">🔴 일일 -$${p.dailyLossLimit || 500}</div>
+        <div style="color:#ff6666;">💀 청산 -$${cfg.liquidation.toLocaleString()}</div>
+        <div style="color:#00cc66;">📈 수익 +$${cfg.profitThreshold.toLocaleString()}</div>
+    `;
+    
+    container.style.position = 'relative';
+    container.appendChild(overlay);
+}
+
 function drawPositionLinesLW() {
     // 항상 먼저 기존 라인 제거
     if (window.positionLines && window.candleSeries) {
