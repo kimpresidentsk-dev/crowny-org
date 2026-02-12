@@ -2601,3 +2601,112 @@ input:checked + .notif-toggle-slider::before {
 .post-dropdown-menu div:hover {
     background: #f5f5f5;
 }
+
+/* ========== ART v2.0 STYLES ========== */
+
+/* Collection tabs */
+.collection-tab-btn {
+    transition: all 0.2s;
+}
+.collection-tab-btn.active {
+    background: var(--text) !important;
+    color: var(--white) !important;
+    border-color: var(--text) !important;
+}
+.collection-tab-btn:not(.active):hover {
+    background: var(--border) !important;
+}
+
+/* Collection horizontal scroll */
+.collection-scroll {
+    display: flex;
+    gap: 0.6rem;
+    overflow-x: auto;
+    padding: 0.3rem 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.collection-scroll::-webkit-scrollbar { display: none; }
+
+.collection-card {
+    flex-shrink: 0;
+    width: 130px;
+    background: var(--bg);
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s;
+}
+.collection-card:hover {
+    transform: translateY(-2px);
+}
+.collection-card img {
+    width: 100%;
+    height: 95px;
+    object-fit: cover;
+    display: block;
+}
+.collection-card-info {
+    padding: 0.4rem;
+}
+.collection-card-title {
+    font-weight: 600;
+    font-size: 0.75rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.collection-card-meta {
+    font-size: 0.65rem;
+    color: var(--accent);
+    margin-top: 0.1rem;
+}
+.collection-nft-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: rgba(138,43,226,0.85);
+    color: #fff;
+    padding: 1px 6px;
+    border-radius: 8px;
+    font-size: 0.6rem;
+    font-weight: 700;
+}
+
+/* Art empty state */
+.art-empty-state {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--accent);
+}
+.art-empty-state .icon {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+.art-empty-state p {
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+.art-empty-state small {
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+/* Art gallery card hover */
+.art-gallery-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12) !important;
+}
+
+@media (max-width: 768px) {
+    .collection-card {
+        width: 110px;
+    }
+    .collection-card img {
+        height: 80px;
+    }
+    #my-collection-section {
+        padding: 0.8rem !important;
+    }
+}
