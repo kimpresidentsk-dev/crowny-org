@@ -2028,8 +2028,9 @@ async function closeAllPositions(contractFilter) {
 
 // Modify executeFuturesTrade to support advanced order types + SLOT SYSTEM + RISK CHECK
 async function executeFuturesTrade(side) {
+    console.log('🔍 executeFuturesTrade 호출:', side, 'myParticipation:', !!myParticipation, 'currentPrice:', currentPrice);
     // 더블클릭 방지 (1초)
-    if (window._tradeLoading) return;
+    if (window._tradeLoading) { console.log('⚠️ _tradeLoading 중복 차단'); return; }
     window._tradeLoading = true;
     setTimeout(() => { window._tradeLoading = false; }, 1000);
     
@@ -2215,8 +2216,9 @@ async function executeFuturesTrade(side) {
 
 // Quick chart trade (SLOT-based market order with default SL/TP)
 async function quickChartTrade(side, contractOverride) {
+    console.log('🔍 quickChartTrade 호출:', side, 'myParticipation:', !!myParticipation, 'currentPrice:', currentPrice);
     // 더블클릭 방지 (1초)
-    if (window._quickTradeLoading) return;
+    if (window._quickTradeLoading) { console.log('⚠️ _quickTradeLoading 중복 차단'); return; }
     window._quickTradeLoading = true;
     setTimeout(() => { window._quickTradeLoading = false; }, 1000);
     
