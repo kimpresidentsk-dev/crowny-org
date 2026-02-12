@@ -29,22 +29,22 @@ async function signup() {
     const password = document.getElementById('signup-password').value;
     
     if (!email || !password) {
-        alert('이메일과 비밀번호를 입력하세요');
+        showToast('이메일과 비밀번호를 입력하세요', 'warning');
         return;
     }
     
     if (password.length < 6) {
-        alert('비밀번호는 최소 6자 이상이어야 합니다');
+        showToast('비밀번호는 최소 6자 이상이어야 합니다', 'warning');
         return;
     }
     
-    const nickname = prompt('닉네임을 입력하세요 (SNS에 표시됨):');
+    const nickname = await showPromptModal('닉네임', '닉네임을 입력하세요 (SNS에 표시됨)', '');
     if (!nickname || !nickname.trim()) {
-        alert('닉네임은 필수입니다');
+        showToast('닉네임은 필수입니다', 'warning');
         return;
     }
     
-    const referralCode = prompt('소개 코드가 있으면 입력하세요 (없으면 빈칸):') || '';
+    const referralCode = await showPromptModal('소개 코드', '소개 코드가 있으면 입력하세요 (없으면 빈칸)', '') || '';
     
     try {
         const result = await auth.createUserWithEmailAndPassword(email, password);
@@ -85,7 +85,7 @@ async function signup() {
             await applyReferralCode(result.user.uid, referralCode.trim());
         }
         
-        alert(`✅ 가입 완료!\n닉네임: ${nickname}\n지갑 생성 완료!\n\n📧 이메일 인증 링크를 보냈습니다.\n${email}을 확인해주세요.`);
+        showToast(`✅ 가입 완료! 닉네임: ${nickname} · 📧 ${email}에서 인증 링크를 확인해주세요.`, 'success');
         
     } catch (error) {
         console.error(error);
@@ -94,7 +94,7 @@ async function signup() {
             'auth/invalid-email': '유효하지 않은 이메일 형식입니다',
             'auth/weak-password': '비밀번호가 너무 약합니다 (최소 6자)'
         }[error.code] || error.message;
-        alert('가입 실패: ' + msg);
+        showToast('가입 실패: ' + msg, 'error');
     }
 }
 
@@ -104,7 +104,7 @@ async function login() {
     const password = document.getElementById('login-password').value;
     
     if (!email || !password) {
-        alert('이메일과 비밀번호를 입력하세요');
+        showToast('이메일과 비밀번호를 입력하세요', 'warning');
         return;
     }
     
@@ -117,7 +117,7 @@ async function login() {
             'auth/invalid-credential': '이메일 또는 비밀번호가 올바르지 않습니다',
             'auth/too-many-requests': '너무 많은 시도. 잠시 후 다시 시도해주세요'
         }[error.code] || error.message;
-        alert('로그인 실패: ' + msg);
+        showToast('로그인 실패: ' + msg, 'error');
     }
 }
 
@@ -168,28 +168,28 @@ async function loginWithGoogle() {
     } catch (error) {
         if (error.code === 'auth/popup-closed-by-user') return;
         if (error.code === 'auth/popup-blocked') {
-            alert('팝업이 차단되었습니다. 팝업 차단을 해제해주세요.');
+            showToast('팝업이 차단되었습니다. 팝업 차단을 해제해주세요.', 'warning');
             return;
         }
         console.error('Google 로그인 실패:', error);
-        alert('Google 로그인 실패: ' + error.message);
+        showToast('Google 로그인 실패: ' + error.message, 'error');
     }
 }
 
 // 비밀번호 재설정
 async function resetPassword() {
-    const email = document.getElementById('login-email').value.trim() || prompt('비밀번호를 재설정할 이메일:');
+    const email = document.getElementById('login-email').value.trim() || await showPromptModal('비밀번호 재설정', '비밀번호를 재설정할 이메일', '');
     if (!email) return;
     
     try {
         await auth.sendPasswordResetEmail(email);
-        alert(`📧 비밀번호 재설정 링크를 보냈습니다.\n${email}을 확인해주세요.`);
+        showToast(`📧 비밀번호 재설정 링크를 보냈습니다. ${email}을 확인해주세요.`, 'success');
     } catch (error) {
         const msg = {
             'auth/user-not-found': '등록되지 않은 이메일입니다',
             'auth/invalid-email': '유효하지 않은 이메일입니다'
         }[error.code] || error.message;
-        alert('실패: ' + msg);
+        showToast('실패: ' + msg, 'error');
     }
 }
 
@@ -200,11 +200,11 @@ async function checkEmailVerified() {
     
     await user.reload();
     if (user.emailVerified) {
-        alert('✅ 이메일 인증 완료!');
+        showToast('✅ 이메일 인증 완료!', 'success');
         document.getElementById('verify-email-form').style.display = 'none';
         location.reload();
     } else {
-        alert('아직 인증되지 않았습니다.\n이메일의 인증 링크를 클릭해주세요.');
+        showToast('아직 인증되지 않았습니다. 이메일의 인증 링크를 클릭해주세요.', 'warning');
     }
 }
 
@@ -215,9 +215,9 @@ async function resendVerification() {
     
     try {
         await user.sendEmailVerification();
-        alert(`📧 인증 메일을 다시 보냈습니다.\n${user.email}을 확인해주세요.`);
+        showToast(`📧 인증 메일을 다시 보냈습니다. ${user.email}을 확인해주세요.`, 'success');
     } catch (error) {
-        alert('재발송 실패: ' + error.message);
+        showToast('재발송 실패: ' + error.message, 'error');
     }
 }
 

@@ -93,14 +93,14 @@ body {
 .menu-toggle {
     display: block;
     position: fixed;
-    top: 1rem;
-    left: 1rem;
+    top: 0.5rem;
+    left: 0.5rem;
     z-index: 1001;
     background: var(--white);
-    border: 2px solid var(--text);
-    padding: 0.8rem 1rem;
+    border: 1px solid var(--border);
+    padding: 0.5rem 0.7rem;
     border-radius: 8px;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
@@ -372,10 +372,10 @@ body {
 
 /* Sidebar */
 .sidebar {
-    width: 240px;
+    width: 220px;
     background: var(--white);
     border-right: 1px solid var(--border);
-    padding: 2rem 0;
+    padding: 1rem 0;
     position: fixed;
     left: 0;
     top: 0;
@@ -391,9 +391,10 @@ body {
 }
 
 .logo {
-    padding: 0 2rem 2rem;
+    padding: 0 1rem 1rem;
     border-bottom: 1px solid var(--border);
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
 }
 
 .logo h1 {
@@ -414,10 +415,10 @@ body {
 }
 
 .nav-item {
-    padding: 0.8rem 2rem;
+    padding: 0.5rem 1rem;
     text-decoration: none;
     color: var(--text);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     letter-spacing: 0.5px;
     transition: all 0.2s;
 }

@@ -12,9 +12,7 @@ function showPage(pageId) {
     const navItem = document.querySelector(`[onclick="showPage('${pageId}')"]`);
     if (navItem) navItem.classList.add('active');
     
-    if (window.innerWidth <= 768) {
-        document.getElementById('sidebar').classList.remove('active');
-    }
+    document.getElementById('sidebar').classList.remove('active');
     
     // Load page-specific data
     if (pageId === 'social') {

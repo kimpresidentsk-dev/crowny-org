@@ -137,7 +137,7 @@
     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
     
     <aside class="sidebar" id="sidebar">
-        <div class="logo">
+        <div class="logo" onclick="showPage('today')">
             <h1>CROWNY</h1>
             <p>PRESENT</p>
         </div>
@@ -802,7 +802,11 @@
                         </select>
                     </div>
                     <input type="file" id="fund-image" accept="image/*" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
-                    <p style="font-size:0.75rem; color:var(--accent);">💡 모금액의 20%가 재단 운영비로 차감됩니다</p>
+                    <div style="display:grid; grid-template-columns:auto 1fr; gap:0.5rem; align-items:center;">
+                        <label style="font-size:0.8rem; color:var(--accent);">플랫폼 수수료 (%)</label>
+                        <input type="number" id="fund-fee" value="2.5" min="0" max="50" step="0.5" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    </div>
+                    <p style="font-size:0.75rem; color:var(--accent);">💡 수수료는 재단 운영비로 투명하게 사용됩니다</p>
                     <button onclick="createCampaign()" class="btn-primary">💝 캠페인 시작</button>
                 </div>
             </div>
@@ -849,6 +853,21 @@
                 <h3 style="margin-bottom:1rem;">⚡ 발전소 프로젝트</h3>
                 <button onclick="loadEnergyProjects()" class="btn-primary" style="margin-bottom:1rem;">🔄 프로젝트 새로고침</button>
                 <div id="energy-projects"></div>
+            </div>
+            
+            <!-- 관리자 프로젝트 등록 -->
+            <div id="energy-admin-form" style="background:white; padding:1.5rem; border-radius:12px; margin-top:1rem; display:none;">
+                <h3 style="margin-bottom:1rem;">🔧 프로젝트 등록 (관리자)</h3>
+                <div style="display:grid; gap:0.8rem;">
+                    <input type="text" id="energy-title" placeholder="프로젝트명" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    <input type="text" id="energy-location" placeholder="위치" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+                        <input type="number" id="energy-capacity" placeholder="용량 (kW)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                        <input type="number" id="energy-return" placeholder="수익률 (%)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    </div>
+                    <input type="number" id="energy-goal" placeholder="목표 금액 (CRNY)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    <button onclick="createEnergyProject()" class="btn-primary">⚡ 프로젝트 등록</button>
+                </div>
             </div>
         </section>
 
@@ -979,11 +998,12 @@
             </div>
             
             <!-- 4개 서비스 탭 -->
-            <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:0.3rem; margin-bottom:1rem;">
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1fr; gap:0.3rem; margin-bottom:1rem;">
                 <button onclick="showCreditTab('exchange')" class="credit-tab active" id="tab-exchange" style="padding:0.6rem; border:2px solid var(--primary); background:var(--primary); color:white; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight:700;">💱 환전</button>
                 <button onclick="showCreditTab('pumasi')" class="credit-tab" id="tab-pumasi" style="padding:0.6rem; border:2px solid var(--border); background:white; border-radius:6px; cursor:pointer; font-size:0.8rem;">🤝 품앗이</button>
                 <button onclick="showCreditTab('insurance')" class="credit-tab" id="tab-insurance" style="padding:0.6rem; border:2px solid var(--border); background:white; border-radius:6px; cursor:pointer; font-size:0.8rem;">🛡️ 보험</button>
                 <button onclick="showCreditTab('donate')" class="credit-tab" id="tab-donate" style="padding:0.6rem; border:2px solid var(--border); background:white; border-radius:6px; cursor:pointer; font-size:0.8rem;">💝 기부</button>
+                <button onclick="showCreditTab('gye')" class="credit-tab" id="tab-gye" style="padding:0.6rem; border:2px solid var(--border); background:white; border-radius:6px; cursor:pointer; font-size:0.8rem;">🔄 계</button>
             </div>
             
             <!-- 환전 -->
@@ -1068,9 +1088,8 @@
                             <div>
                                 <label style="font-size:0.8rem; color:var(--accent);">토큰</label>
                                 <select id="donate-token-type" style="width:100%; padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                                    <option value="CRFN">CRFN</option>
-                                    <option value="CRNY">CRNY</option>
-                                    <option value="FNC">FNC</option>
+                                    <optgroup label="⛓ 온체인"><option value="CRFN">CRFN</option><option value="CRNY">CRNY</option><option value="FNC">FNC</option></optgroup>
+                                    <optgroup label="🔥 오프체인"><option value="CRTD">CRTD</option><option value="CRAC">CRAC</option><option value="CRGC">CRGC</option><option value="CREB">CREB</option></optgroup>
                                 </select>
                             </div>
                         </div>
@@ -1083,6 +1102,23 @@
                     </div>
                 </div>
                 <div id="donation-history"></div>
+            </div>
+            
+            <!-- 계모임 -->
+            <div id="credit-gye" class="credit-panel" style="display:none;">
+                <div style="background:white; padding:1.5rem; border-radius:12px;">
+                    <h3>🔄 계모임 (Gye)</h3>
+                    <p style="font-size:0.85rem; color:var(--accent); margin-bottom:1rem;">무이자 순환 저축 · 매월 한 명씩 수령</p>
+                    <div style="display:grid; gap:0.5rem; margin-bottom:1rem;">
+                        <input type="text" id="gye-name" placeholder="계모임 이름" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+                            <input type="number" id="gye-amount" placeholder="월 납입금 (CRNY)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                            <input type="number" id="gye-members" value="10" placeholder="최대 인원" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                        </div>
+                        <button onclick="createGye()" class="btn-primary">🔄 계모임 만들기</button>
+                    </div>
+                    <div id="gye-list"></div>
+                </div>
             </div>
             
             <!-- 내 크레딧 현황 -->

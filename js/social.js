@@ -42,15 +42,15 @@ async function copyReferralCode() {
     const code = codeEl?.textContent;
     
     if (!code || code === '미생성') {
-        alert('먼저 소개 코드를 생성하세요');
+        showToast('먼저 소개 코드를 생성하세요', 'warning');
         return;
     }
     
     try {
         await navigator.clipboard.writeText(code);
-        alert(`📋 소개 코드 복사됨: ${code}`);
+        showToast(`📋 소개 코드 복사됨: ${code}`, 'success');
     } catch (e) {
-        prompt('소개 코드를 복사하세요:', code);
+        await showPromptModal('소개 코드', '소개 코드를 복사하세요', code);
     }
 }
 
@@ -74,15 +74,15 @@ function showContacts() {
 }
 
 async function showAddContactModal() {
-    const email = prompt('추가할 연락처 이메일:');
+    const email = await showPromptModal('연락처 추가', '추가할 연락처 이메일', '');
     if (!email) return;
     
-    const name = prompt('표시 이름 (선택):') || email;
+    const name = await showPromptModal('표시 이름', '표시 이름 (선택)', email) || email;
     
     // Check if user exists
     const users = await db.collection('users').where('email', '==', email).get();
     if (users.empty) {
-        alert('사용자를 찾을 수 없습니다');
+        showToast('사용자를 찾을 수 없습니다', 'error');
         return;
     }
     
@@ -96,7 +96,7 @@ async function showAddContactModal() {
             addedAt: new Date()
         });
     
-    alert('✅ 연락처에 추가되었습니다');
+    showToast('✅ 연락처에 추가되었습니다', 'success');
     loadContacts();
 }
 
@@ -168,12 +168,12 @@ async function startChatWithContact(email) {
         showPage('messenger');
     } catch (error) {
         console.error('Chat start error:', error);
-        alert('채팅 시작 실패');
+        showToast('채팅 시작 실패', 'error');
     }
 }
 
-function showNewChatModal() {
-    const email = prompt('채팅할 사용자 이메일:');
+async function showNewChatModal() {
+    const email = await showPromptModal('새 채팅', '채팅할 사용자 이메일', '');
     if (!email) return;
     startNewChat(email);
 }
@@ -183,7 +183,7 @@ async function startNewChat(otherEmail) {
         console.log('Starting chat with:', otherEmail);
         
         if (otherEmail === currentUser.email) {
-            alert('자기 자신과는 채팅할 수 없습니다');
+            showToast('자기 자신과는 채팅할 수 없습니다', 'warning');
             return;
         }
         
@@ -191,7 +191,7 @@ async function startNewChat(otherEmail) {
         console.log('Found users:', users.size);
         
         if (users.empty) {
-            alert('사용자를 찾을 수 없습니다');
+            showToast('사용자를 찾을 수 없습니다', 'error');
             return;
         }
         
@@ -237,7 +237,7 @@ async function startNewChat(otherEmail) {
         console.log('Chat opened successfully');
     } catch (error) {
         console.error('Start chat error:', error);
-        alert('채팅 시작 실패: ' + error.message);
+        showToast('채팅 시작 실패: ' + error.message, 'error');
     }
 }
 
@@ -338,7 +338,7 @@ async function openChat(chatId, otherId) {
 
 async function sendMessage() {
     if (!currentChat) {
-        alert('채팅을 선택하세요');
+        showToast('채팅을 선택하세요', 'warning');
         return;
     }
     
@@ -364,29 +364,28 @@ async function sendMessage() {
 
 async function sendTokenWithMessage() {
     if (!currentChat || !currentChatOtherId) {
-        alert('채팅을 선택하세요');
+        showToast('채팅을 선택하세요', 'warning');
         return;
     }
     if (!userWallet || !currentWalletId) {
-        alert('지갑을 먼저 연결하세요');
+        showToast('지갑을 먼저 연결하세요', 'warning');
         return;
     }
     
     // 토큰 선택 (온체인 + 오프체인)
-    const tokenChoice = prompt(
-        '전송할 토큰을 선택하세요:\n\n' +
+    const tokenChoice = await showPromptModal('토큰 선택',
         '온체인:\n1. CRNY (' + (userWallet.balances?.crny || 0).toFixed(2) + ')\n' +
         '2. FNC (' + (userWallet.balances?.fnc || 0).toFixed(2) + ')\n' +
         '3. CRFN (' + (userWallet.balances?.crfn || 0).toFixed(2) + ')\n\n' +
         '오프체인:\n4. CRTD (' + (userWallet.offchainBalances?.crtd || 0) + ' pt)\n' +
         '5. CRAC (' + (userWallet.offchainBalances?.crac || 0) + ' pt)\n' +
         '6. CRGC (' + (userWallet.offchainBalances?.crgc || 0) + ' pt)\n' +
-        '7. CREB (' + (userWallet.offchainBalances?.creb || 0) + ' pt)\n\n번호:', '1');
+        '7. CREB (' + (userWallet.offchainBalances?.creb || 0) + ' pt)', '1');
     if (!tokenChoice) return;
     
     const tokenMap = { '1':'crny', '2':'fnc', '3':'crfn', '4':'crtd', '5':'crac', '6':'crgc', '7':'creb' };
     const tokenKey = tokenMap[tokenChoice];
-    if (!tokenKey) { alert('잘못된 선택'); return; }
+    if (!tokenKey) { showToast('잘못된 선택', 'error'); return; }
     
     const isOffchain = isOffchainToken(tokenKey);
     const tokenName = tokenKey.toUpperCase();
@@ -394,16 +393,16 @@ async function sendTokenWithMessage() {
         ? (userWallet.offchainBalances?.[tokenKey] || 0) 
         : (userWallet.balances?.[tokenKey] || 0);
     
-    const amount = prompt(`전송할 ${tokenName} 수량:\n잔액: ${balance}`);
+    const amount = await showPromptModal('전송 수량', `전송할 ${tokenName} 수량 (잔액: ${balance})`, '');
     if (!amount) return;
     
     const amountNum = parseFloat(amount);
     if (isNaN(amountNum) || amountNum <= 0 || amountNum > balance) {
-        alert(`잔액이 부족하거나 잘못된 수량입니다\n잔액: ${balance} ${tokenName}`);
+        showToast(`잔액이 부족하거나 잘못된 수량입니다 (잔액: ${balance} ${tokenName})`, 'error');
         return;
     }
     
-    const message = prompt('메시지 (선택):') || '';
+    const message = await showPromptModal('메시지', '메시지 (선택)', '') || '';
     
     try {
         if (isOffchain) {
@@ -466,10 +465,10 @@ async function sendTokenWithMessage() {
         });
         
         updateBalances();
-        alert(`✅ ${amountNum} ${tokenName} 전송 완료!`);
+        showToast(`✅ ${amountNum} ${tokenName} 전송 완료!`, 'success');
     } catch (error) {
         console.error('메신저 토큰 전송 실패:', error);
-        alert('전송 실패: ' + error.message);
+        showToast('전송 실패: ' + error.message, 'error');
     }
 }
 
@@ -586,11 +585,11 @@ async function showLikedUsers(postId) {
     const likedBy = data.likedBy || [];
     
     if (likedBy.length === 0) {
-        alert('아직 좋아요가 없습니다');
+        showToast('아직 좋아요가 없습니다', 'info');
         return;
     }
     
-    let message = '좋아요 한 사람:\n\n';
+    let message = '';
     for (const uid of likedBy) {
         const userDoc = await db.collection('users').doc(uid).get();
         const userData = userDoc.data();
@@ -598,7 +597,7 @@ async function showLikedUsers(postId) {
         message += `👤 ${userName}\n`;
     }
     
-    alert(message);
+    await showConfirmModal('좋아요 한 사람', message);
 }
 
 async function toggleComments(postId) {
@@ -683,7 +682,7 @@ async function createPost() {
     const text = textarea.value.trim();
     
     if (!text && !fileInput.files[0]) {
-        alert('내용 또는 이미지를 입력하세요');
+        showToast('내용 또는 이미지를 입력하세요', 'warning');
         return;
     }
     
@@ -715,10 +714,10 @@ async function createPost() {
         textarea.value = '';
         fileInput.value = '';
         await loadSocialFeed();
-        alert('✅ 게시 완료!');
+        showToast('✅ 게시 완료!', 'success');
     } catch (error) {
         console.error('Post error:', error);
-        alert('게시 실패');
+        showToast('게시 실패', 'error');
     }
 }
 
@@ -736,30 +735,30 @@ async function likePost(postId, currentLikes) {
 
 // ========== 연락처 편집/삭제 ==========
 async function editContact(contactDocId, currentName) {
-    const newName = prompt('연락처 이름 변경:', currentName);
+    const newName = await showPromptModal('연락처 이름 변경', '새 이름을 입력하세요', currentName);
     if (!newName || newName.trim() === currentName) return;
     
     try {
         await db.collection('users').doc(currentUser.uid)
             .collection('contacts').doc(contactDocId)
             .update({ name: newName.trim() });
-        alert('✅ 연락처 이름이 변경되었습니다');
+        showToast('✅ 연락처 이름이 변경되었습니다', 'success');
         loadContacts();
     } catch (error) {
-        alert('변경 실패: ' + error.message);
+        showToast('변경 실패: ' + error.message, 'error');
     }
 }
 
 async function deleteContact(contactDocId, contactName) {
-    if (!confirm(`"${contactName}" 연락처를 삭제하시겠습니까?`)) return;
+    if (!await showConfirmModal('연락처 삭제', `"${contactName}" 연락처를 삭제하시겠습니까?`)) return;
     
     try {
         await db.collection('users').doc(currentUser.uid)
             .collection('contacts').doc(contactDocId).delete();
-        alert('✅ 연락처가 삭제되었습니다');
+        showToast('✅ 연락처가 삭제되었습니다', 'success');
         loadContacts();
     } catch (error) {
-        alert('삭제 실패: ' + error.message);
+        showToast('삭제 실패: ' + error.message, 'error');
     }
 }
 
