@@ -1232,7 +1232,406 @@ h2 {
 @media (max-width: 768px) {
     .services {
         justify-content: center !important;
-        grid-template-columns: repeat(1, 1fr) !important;
+        grid-template-columns: repeat(2, 1fr) !important;
         max-width: 100% !important;
+        gap: 0.6rem !important;
+    }
+
+    /* ===== TASK 1: Mobile Button UI ===== */
+    .service-card {
+        min-height: 80px !important;
+        padding: 1rem 0.6rem !important;
+        border: 2px solid var(--border) !important;
+        border-radius: 12px !important;
+        background: var(--white) !important;
+        box-shadow: 0 2px 8px rgba(92, 64, 51, 0.08) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        -webkit-tap-highlight-color: rgba(0,0,0,0.05);
+        touch-action: manipulation;
+        user-select: none;
+        transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s !important;
+    }
+
+    .service-card:active {
+        transform: scale(0.96) !important;
+        border-color: var(--accent) !important;
+        box-shadow: 0 1px 4px rgba(92, 64, 51, 0.15) !important;
+        background: var(--bg) !important;
+    }
+
+    .service-card .icon {
+        font-size: 2rem !important;
+        margin-bottom: 0.4rem !important;
+    }
+
+    .service-card h3 {
+        font-size: 0.75rem !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.5px !important;
+    }
+
+    /* Nav items as buttons on mobile */
+    .nav-item {
+        min-height: 44px !important;
+        display: flex !important;
+        align-items: center !important;
+        padding: 0.8rem 1.2rem !important;
+        font-size: 0.9rem !important;
+        font-weight: 600 !important;
+        border-bottom: 1px solid var(--border) !important;
+        transition: background 0.15s !important;
+    }
+
+    .nav-item:active {
+        background: var(--bg) !important;
+    }
+
+    /* All tappable buttons minimum size */
+    .btn-primary, .btn-secondary, .btn-action, .btn-chat, .btn-logout,
+    .chat-input button, .post-actions button, .tab-btn, .credit-tab {
+        min-height: 44px !important;
+        min-width: 44px !important;
+    }
+}
+
+/* ===== TASK 2: Social/Messenger Design Improvements ===== */
+
+/* Social Feed - Modern Card Design */
+.post-create {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+}
+
+.post-create textarea {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 80px;
+    transition: border-color 0.2s;
+    width: 100%;
+    margin-bottom: 0.8rem;
+}
+
+.post-create textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.feed {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.post {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 1.2rem;
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+    transition: box-shadow 0.2s;
+}
+
+.post:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+.post-header {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    margin-bottom: 0.8rem;
+}
+
+.post-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--text));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.post-info strong {
+    font-size: 0.95rem;
+    display: block;
+    line-height: 1.3;
+}
+
+.post-info span {
+    font-size: 0.78rem;
+    color: var(--accent);
+}
+
+.post-content p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 0.6rem;
+    word-break: break-word;
+}
+
+.post-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--border);
+}
+
+.post-actions button {
+    flex: 1;
+    padding: 0.5rem 0.6rem;
+    border: none;
+    background: var(--bg);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 600;
+    transition: background 0.15s;
+    min-height: 36px;
+}
+
+.post-actions button:hover {
+    background: var(--border);
+}
+
+/* Messenger - Modern Design */
+.messenger-container {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 0;
+    height: 75vh;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.chat-sidebar {
+    background: var(--white);
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+    overflow: hidden;
+}
+
+.sidebar-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+}
+
+.sidebar-tabs .tab-btn {
+    flex: 1;
+    padding: 0.9rem 0.5rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--accent);
+    transition: all 0.2s;
+    position: relative;
+}
+
+.sidebar-tabs .tab-btn.active {
+    color: var(--text);
+    background: var(--white);
+}
+
+.sidebar-tabs .tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    right: 20%;
+    height: 2px;
+    background: var(--text);
+    border-radius: 1px;
+}
+
+.sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.chat-item {
+    display: flex;
+    gap: 0.8rem;
+    padding: 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    transition: background 0.15s;
+    align-items: center;
+}
+
+.chat-item:hover {
+    background: var(--bg);
+}
+
+.chat-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--text));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.chat-preview {
+    flex: 1;
+    min-width: 0;
+}
+
+.chat-preview strong {
+    display: block;
+    font-size: 0.92rem;
+    margin-bottom: 0.15rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chat-preview p {
+    font-size: 0.8rem;
+    color: var(--accent);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    transition: background 0.15s;
+}
+
+.contact-item:hover {
+    background: var(--bg);
+}
+
+.chat-window {
+    background: #faf8f5;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-header {
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--white);
+}
+
+.chat-header strong {
+    font-size: 1rem;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 1rem 1.2rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.chat-input {
+    padding: 0.8rem 1rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 0.5rem;
+    background: var(--white);
+    align-items: center;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 0.7rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    font-size: 0.9rem;
+    background: var(--bg);
+    transition: border-color 0.2s;
+}
+
+.chat-input input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--white);
+}
+
+.chat-input button {
+    padding: 0.6rem 1.2rem;
+    background: var(--text);
+    color: var(--white);
+    border: none;
+    border-radius: 24px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.88rem;
+    min-height: 40px;
+    transition: opacity 0.15s;
+}
+
+.chat-input button:hover {
+    opacity: 0.85;
+}
+
+.btn-send-token {
+    padding: 0.6rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.1rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+}
+
+.btn-send-token:hover {
+    background: var(--bg);
+}
+
+@media (max-width: 768px) {
+    .messenger-container {
+        grid-template-columns: 1fr !important;
+        height: auto !important;
+        border-radius: 12px !important;
+    }
+
+    .chat-sidebar {
+        height: auto !important;
+        max-height: 45vh !important;
+        border-right: none !important;
+        border-bottom: 1px solid var(--border) !important;
+    }
+
+    .chat-window {
+        height: 50vh !important;
+        min-height: 350px !important;
     }
 }

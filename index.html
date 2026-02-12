@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CROWNY PLATFORM</title>
-    <link rel="stylesheet" href="style.css?v=5.1">
+    <link rel="stylesheet" href="style.css?v=6.0">
     
     <!-- Firebase SDK -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-app-compat.min.js"></script>
@@ -466,10 +466,12 @@
         </section>
 
         <section id="messenger" class="page">
-            <h2>💬 MESSENGER</h2>
-            <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
-                <button onclick="showNewChatModal()" class="btn-primary">새 채팅</button>
-                <button onclick="showAddContactModal()" class="btn-secondary">연락처 추가</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+                <h2 style="margin:0;">💬 MESSENGER</h2>
+                <div style="display:flex; gap:0.5rem;">
+                    <button onclick="showNewChatModal()" class="btn-primary" style="padding:0.6rem 1rem; border-radius:10px; font-size:0.85rem;">✏️ 새 채팅</button>
+                    <button onclick="showAddContactModal()" class="btn-secondary" style="padding:0.6rem 1rem; border-radius:10px; font-size:0.85rem;">👥 연락처</button>
+                </div>
             </div>
             
             <div class="messenger-container">
@@ -505,11 +507,25 @@
         <section id="social" class="page">
             <h2>📸 SOCIAL</h2>
             <div class="post-create">
-                <textarea id="post-text" placeholder="무슨 생각을 하고 계신가요?"></textarea>
-                <input type="file" id="post-image" accept="image/*" style="margin:0.5rem 0; padding:0.5rem; border:1px solid var(--border); border-radius:6px; width:100%;">
-                <button onclick="createPost()" class="btn-primary">📤 게시</button>
+                <div style="display:flex; align-items:center; gap:0.8rem; margin-bottom:0.8rem;">
+                    <div style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, var(--accent), var(--text)); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0;">👤</div>
+                    <span style="color:var(--accent); font-size:0.9rem;">무슨 생각을 하고 계신가요?</span>
+                </div>
+                <textarea id="post-text" placeholder="게시물을 작성하세요..." style="border:1px solid var(--border); border-radius:12px; padding:1rem; font-size:0.95rem; line-height:1.5; resize:vertical; min-height:80px; width:100%; margin-bottom:0.6rem;"></textarea>
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <label for="post-image" style="display:flex; align-items:center; gap:0.3rem; padding:0.5rem 1rem; background:var(--bg); border-radius:8px; cursor:pointer; font-size:0.85rem; border:1px solid var(--border);">📷 사진</label>
+                    <input type="file" id="post-image" accept="image/*" style="display:none;">
+                    <span id="post-image-name" style="font-size:0.8rem; color:var(--accent); flex:1;"></span>
+                    <button onclick="createPost()" class="btn-primary" style="padding:0.6rem 1.5rem; border-radius:24px;">게시</button>
+                </div>
             </div>
             <div class="feed" id="social-feed"></div>
+            <script>
+                document.getElementById('post-image').addEventListener('change', function() {
+                    const nameEl = document.getElementById('post-image-name');
+                    nameEl.textContent = this.files[0] ? this.files[0].name : '';
+                });
+            </script>
         </section>
 
         <!-- ========== ART - 디지털 아트 거래소 + NFT ========== -->
@@ -1939,14 +1955,14 @@
     
     <!-- ===== CROWNY v9.5 모듈화 JS (로드 순서 중요!) ===== -->
     <script src="js/config.js?v=10.0"></script>
-    <script src="js/ui.js?v=9.5"></script>
+    <script src="js/ui.js?v=10.0"></script>
     <script src="js/auth.js?v=9.5"></script>
     <script src="js/wallet.js?v=9.5"></script>
     <script src="js/offchain.js?v=10.0"></script>
     <script src="js/social.js?v=9.5"></script>
     <script src="js/send.js?v=9.5"></script>
     <script src="js/admin.js?v=10.0"></script>
-    <script src="js/marketplace.js?v=9.5"></script>
+    <script src="js/marketplace.js?v=10.0"></script>
     <script src="js/trading.js?v=9.8"></script>
     <script src="js/app-art.js?v=1.0"></script>
 </body>
