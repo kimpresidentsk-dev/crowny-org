@@ -428,6 +428,7 @@ async function loadTradingDashboard() {
                 <p><strong>💀 ${t('trading.liquidation','청산')}:</strong> -$${cfg.liquidation.toLocaleString()} ${t('trading.liquidation_desc','손실 시 계좌 종료')} (${cfg.deposit} CRTD ${t('trading.forfeited','소멸')})</p>
                 <p><strong>📈 ${t('trading.profit_convert','수익 변환')}:</strong> +$${cfg.profitThreshold.toLocaleString()} ${t('trading.profit_convert_desc','초과분 → 1:1 CRTD')}</p>
                 <p><strong>💰 ${t('trading.withdraw_btn','인출')}:</strong> ${cfg.withdrawUnit.toLocaleString()} CRTD ${t('trading.unit','단위')}</p>
+                <p style="margin-top:0.5rem; padding:0.5rem; background:rgba(255,165,0,0.1); border-radius:6px; border-left:3px solid #ff9800; font-size:0.82rem; color:#ff9800;">⚠️ SL/TP 자동 청산은 브라우저가 열려 있을 때만 작동합니다. 브라우저를 닫으면 포지션은 유지되지만 자동 청산이 실행되지 않으니, 재접속 후 확인해 주세요.</p>
             `;
         }
         
