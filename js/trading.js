@@ -84,7 +84,7 @@ function applyTradingPermissions() {
             📋 거래 권한: 
             <span style="color:${mnqColor}; font-weight:600;">${mnqText}</span> · 
             <span style="color:${nqColor}; font-weight:600;">${nqText}</span>
-            <span style="margin-left:8px; color:#888;">| 슬롯: ${calculateSlots(userWallet?.balances?.crny || 0)}개</span>
+            <span style="margin-left:8px; color:#888;">| 🪙 CRTD: ${(userWallet?.offchainBalances?.crtd || 0).toLocaleString()}</span>
         `;
     }
 }
@@ -248,6 +248,7 @@ function updateCRTDDisplay() {
                 <span>💎 ${cfg.tier}등급 · ${cfg.deposit} CRTD</span>
                 <strong style="color:${pnlColor}; font-size:1.05rem;">${pnlSign}$${pnl.toFixed(0)}</strong>
             </div>
+            <div style="font-size:0.7rem; color:#aaa; margin-bottom:0.3rem;">🪙 CRTD 잔고: <strong style="color:#FF6D00;">${(userWallet?.offchainBalances?.crtd || 0).toLocaleString()} pt</strong></div>
         </div>
         
         <!-- 생존 게이지 -->
@@ -439,9 +440,10 @@ function renderChartTabs() {
         btn.style.cssText = `background:${active?'#0066cc':'#16213e'}; color:${active?'#fff':'#888'}; border:1px solid ${active?'#0066cc':'#333'}; border-radius:4px; padding:5px 10px; font-size:0.72rem; cursor:pointer; white-space:nowrap; font-weight:${active?'700':'400'};`;
         const icon = tab.chartType === 'tick' ? '📊' : '⏱';
         const label = tab.chartType === 'tick' ? `${tab.tickCount}T` : `${(tab.interval||60)/60}분`;
-        btn.textContent = `${tab.symbol} ${icon}${label}`;
-        btn.onclick = () => switchChartTab(tab.id);
-        btn.ondblclick = async (e) => { e.stopPropagation(); if (chartTabs.length>1 && await showConfirmModal('탭 삭제', `"${btn.textContent}" 삭제?`)) removeChartTab(tab.id); };
+        btn.innerHTML = `${tab.symbol} ${icon}${label}${chartTabs.length > 1 ? ` <span class="tab-close" style="margin-left:4px;color:${active?'#ffaaaa':'#666'};font-size:0.65rem;cursor:pointer;">✕</span>` : ''}`;
+        btn.onclick = (e) => { if (e.target.classList.contains('tab-close')) return; switchChartTab(tab.id); };
+        const closeBtn = btn.querySelector('.tab-close');
+        if (closeBtn) closeBtn.onclick = async (e) => { e.stopPropagation(); if (await showConfirmModal('탭 삭제', `"${tab.symbol} ${label}" 삭제?`)) removeChartTab(tab.id); };
         bar.appendChild(btn);
     });
     const addBtn = document.createElement('button');
@@ -2045,14 +2047,8 @@ async function executeFuturesTrade(side) {
         return;
     }
     
-    // ===== SLOT SYSTEM: CRNY 기반 계약 수 자동 계산 =====
-    const crnyBalance = userWallet?.balances?.crny || 0;
-    const slots = calculateSlots(crnyBalance);
-    
-    if (slots === 0) {
-        showToast('🔴 CRNY를 보유해야 거래할 수 있습니다', 'warning');
-        return;
-    }
+    // ===== CRTD 참가비 기반 (CRNY 불필요) =====
+    const slots = myParticipation ? Math.max(1, calculateSlots(userWallet?.balances?.crny || 0)) : 1;
     
     const contract = document.getElementById('futures-contract').value;
     
@@ -2144,7 +2140,7 @@ async function executeFuturesTrade(side) {
     
     let confirmMsg = `${side} 포지션 진입\n\n` +
         `상품: ${contract}\n` +
-        `👑 슬롯: ${slots}개 (CRNY ${Math.floor(crnyBalance)}개 기준)\n` +
+        `👑 슬롯: ${slots}개\n` +
         `계약: ${contracts}개\n` +
         `주문: ${orderTypeText}\n` +
         `증거금: $${requiredMargin.toLocaleString()}\n` +
@@ -2238,14 +2234,8 @@ async function quickChartTrade(side, contractOverride) {
         return;
     }
     
-    // ===== SLOT SYSTEM =====
-    const crnyBalance = userWallet?.balances?.crny || 0;
-    const slots = calculateSlots(crnyBalance);
-    
-    if (slots === 0) {
-        showToast('🔴 CRNY를 보유해야 거래할 수 있습니다', 'warning');
-        return;
-    }
+    // ===== CRTD 참가비 기반 (CRNY 불필요) =====
+    const slots = myParticipation ? Math.max(1, calculateSlots(userWallet?.balances?.crny || 0)) : 1;
     
     // ★ 탭 심볼을 직접 사용
     const contract = getActiveTabSymbol() || document.getElementById('futures-contract')?.value || 'MNQ';
