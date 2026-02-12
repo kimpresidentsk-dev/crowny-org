@@ -151,7 +151,7 @@
         </div>
         
         <div style="padding:0.5rem 1rem;">
-            <button onclick="openGlobalSearch()" style="background:none;border:1px solid var(--border);padding:0.5rem 0.8rem;border-radius:8px;cursor:pointer;width:100%;text-align:left;color:var(--accent);font-size:0.85rem;">🔍 ${t ? t('search.placeholder','검색...') : '검색...'}</button>
+            <button onclick="openGlobalSearch()" style="background:none;border:1px solid var(--border);padding:0.5rem 0.8rem;border-radius:8px;cursor:pointer;width:100%;text-align:left;color:var(--accent);font-size:0.85rem;">🔍 검색...</button>
         </div>
         
         <nav class="nav">
@@ -203,6 +203,10 @@
         <section id="today" class="page active">
             <div class="hero">
                 <h2 data-i18n="today.hero_title">GLOBAL BEAUTIE</h2>
+                <div id="slogan-rotator" class="slogan-rotator">
+                    <p class="slogan-text"></p>
+                    <span class="slogan-lang"></span>
+                </div>
                 <h1 data-i18n-html="today.hero_subtitle">전 세계를 하나로 연결하는<br>비즈니스 플랫폼</h1>
             </div>
 
@@ -1367,7 +1371,7 @@
 
         <!-- Admin moved to admin.html -->
         <section id="settings" class="page">
-            <h2>⚙️ ${t ? t('section.settings','SETTINGS') : 'SETTINGS'}</h2>
+            <h2>⚙️ SETTINGS</h2>
             <div id="settings-content"><p style="text-align:center;padding:2rem;color:var(--accent);">Loading...</p></div>
         </section>
 
@@ -1755,5 +1759,6 @@
     <script src="js/dashboard.js?v=1.0" defer></script>
     <script src="js/search.js?v=1.0" defer></script>
     <script src="js/settings.js?v=1.0" defer></script>
+    <script src="js/slogans.js?v=1.0" defer></script>
 </body>
 </html>

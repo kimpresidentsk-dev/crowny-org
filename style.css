@@ -505,6 +505,48 @@ h2 {
     letter-spacing: 1px;
 }
 
+/* Slogan Rotator */
+.slogan-rotator {
+    min-height: 4.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 1rem 0;
+    padding: 0 1rem;
+}
+
+.slogan-text {
+    font-family: -apple-system, 'Noto Sans', 'Noto Sans CJK KR', 'Noto Sans CJK SC', 'Noto Sans Arabic', 'Noto Sans Devanagari', 'Noto Sans Thai', 'Noto Sans Bengali', 'Noto Sans Hebrew', system-ui, sans-serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--text);
+    text-align: center;
+    transition: opacity 0.6s ease;
+    opacity: 0;
+    max-width: 700px;
+}
+
+.slogan-lang {
+    display: inline-block;
+    font-size: 0.75rem;
+    color: var(--accent);
+    margin-top: 0.4rem;
+    letter-spacing: 0.5px;
+    transition: opacity 0.6s ease;
+    opacity: 0;
+}
+
+@media (max-width: 768px) {
+    .slogan-text {
+        font-size: 1.1rem;
+    }
+    .slogan-rotator {
+        min-height: 4rem;
+    }
+}
+
 /* Hero Section */
 .hero {
     text-align: center;
