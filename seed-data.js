@@ -88,9 +88,10 @@ async function seed() {
   for (const c of campaigns) {
     const ref = db.collection('campaigns').doc();
     getBatch().set(ref, {
-      ...c, token: 'CRNY', creatorId: `sample_user_${Math.floor(Math.random()*9)+1}`,
+      ...c, token: 'CRGC', creatorId: `sample_user_${Math.floor(Math.random()*9)+1}`,
+      creatorEmail: `user${Math.floor(Math.random()*9)+1}@crowny.org`,
       status: 'active', createdAt: ts(Math.floor(Math.random()*45)),
-      platformFee: 2.5, backerCount: Math.floor(Math.random()*100)+5, image: ''
+      platformFee: 2.5, backers: Math.floor(Math.random()*100)+5, backerCount: Math.floor(Math.random()*100)+5, image: ''
     });
     count++;
   }
@@ -111,9 +112,13 @@ async function seed() {
   for (const b of businesses) {
     const ref = db.collection('businesses').doc();
     getBatch().set(ref, {
-      ...b, token: 'CRNY', creatorId: `sample_user_${Math.floor(Math.random()*9)+1}`,
+      ...b, token: 'CRGC', creatorId: `sample_user_${Math.floor(Math.random()*9)+1}`,
+      ownerId: `sample_user_${Math.floor(Math.random()*9)+1}`,
+      ownerEmail: `user${Math.floor(Math.random()*9)+1}@crowny.org`,
+      ownerNickname: b.name + ' 대표',
+      country: '한국',
       status: 'active', createdAt: ts(Math.floor(Math.random()*90)),
-      rating: (3 + Math.random()*2).toFixed(1) * 1,
+      rating: (3 + Math.random()*2).toFixed(1) * 1, reviews: Math.floor(Math.random()*20),
       investorCount: Math.floor(Math.random()*50),
       totalInvested: Math.floor(Math.random()*50000)
     });
@@ -161,9 +166,10 @@ async function seed() {
   for (const b of books) {
     const ref = db.collection('books').doc();
     getBatch().set(ref, {
-      ...b, token: 'CRNY', sellerId: `sample_seller_${Math.floor(Math.random()*5)+1}`,
+      ...b, token: 'CRGC', sellerId: `sample_seller_${Math.floor(Math.random()*5)+1}`,
+      publisherId: `sample_seller_${Math.floor(Math.random()*5)+1}`,
       status: 'active', createdAt: ts(Math.floor(Math.random()*60)),
-      coverImage: '', salesCount: Math.floor(Math.random()*200)
+      coverImage: '', sold: Math.floor(Math.random()*200), salesCount: Math.floor(Math.random()*200)
     });
     count++;
   }
@@ -185,6 +191,8 @@ async function seed() {
     const ref = db.collection('energy_projects').doc();
     getBatch().set(ref, {
       ...e, token: 'CREB', creatorId: `sample_user_${Math.floor(Math.random()*5)+1}`,
+      title: e.name, goal: e.targetAmount, invested: e.currentAmount,
+      investors: Math.floor(Math.random()*100)+5,
       status: 'active', createdAt: ts(Math.floor(Math.random()*90)),
       investorCount: Math.floor(Math.random()*100)+5
     });

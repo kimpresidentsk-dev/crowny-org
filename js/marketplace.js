@@ -340,7 +340,7 @@ async function loadCampaigns() {
                     ${x.imageData ? `<img src="${x.imageData}" style="width:100%; height:180px; object-fit:cover;">` : ''}
                     <div style="padding:1rem;">
                         <h4 style="margin-bottom:0.3rem;">${x.title}</h4>
-                        <p style="font-size:0.85rem; color:var(--accent); margin-bottom:0.5rem;">${x.creatorNickname || x.creatorEmail} · ${x.backers}명 참여</p>
+                        <p style="font-size:0.85rem; color:var(--accent); margin-bottom:0.5rem;">${x.creatorNickname || x.creatorEmail} · ${x.backerCount || x.backers || 0}명 참여</p>
                         <p style="font-size:0.75rem; color:#2e7d32; margin-bottom:0.5rem;">💰 수수료 ${x.platformFee||2.5}% · 수령 ${100-(x.platformFee||2.5)}%</p>
                         <div style="background:#e0e0e0; height:8px; border-radius:4px; margin-bottom:0.5rem;">
                             <div style="background:#4CAF50; height:100%; border-radius:4px; width:${pct}%;"></div>
@@ -404,16 +404,21 @@ async function loadEnergyProjects() {
         const docs = await db.collection('energy_projects').where('status','==','active').orderBy('createdAt','desc').limit(10).get();
         if (docs.empty) { c.innerHTML = '<p style="color:var(--accent);">등록된 프로젝트가 없습니다. 관리자가 프로젝트를 등록할 수 있습니다.</p>'; return; }
         c.innerHTML = '';
-        docs.forEach(d => { const x = d.data(); const pct = Math.min(100, Math.round((x.invested / x.goal)*100));
+        docs.forEach(d => { const x = d.data();
+            const xTitle = x.name || x.title || '';
+            const xGoal = x.goal || x.targetAmount || 0;
+            const xInvested = x.invested || x.currentAmount || 0;
+            const xInvestors = x.investors || x.investorCount || 0;
+            const pct = Math.min(100, Math.round((xInvested / xGoal)*100));
             const rate = x.returnRate || 0;
             const exMonthly = (100 * rate / 100 / 12).toFixed(2);
             const isAdmin = currentUser && (currentUser.email === 'admin@crowny.org' || currentUser.uid === x.creatorId);
             c.innerHTML += `<div style="background:var(--bg); padding:1rem; border-radius:8px; margin-bottom:0.8rem;">
-                <h4>⚡ ${x.title}</h4><p style="font-size:0.85rem; color:var(--accent); margin:0.3rem 0;">${x.location || ''} · ${x.capacity || ''}kW · 예상 수익률 ${rate}%</p>
+                <h4>⚡ ${xTitle}</h4><p style="font-size:0.85rem; color:var(--accent); margin:0.3rem 0;">${x.location || ''} · ${x.capacity || ''}kW · 예상 수익률 ${rate}%</p>
                 <div style="font-size:0.8rem; color:#2e7d32; margin-top:0.3rem;">💰 100 CREB 투자 시 → 월 ${exMonthly} CREB (연 ${rate}%)</div>
-                <div style="font-size:0.75rem; color:var(--accent);">👥 투자자 ${x.investors||0}명</div>
+                <div style="font-size:0.75rem; color:var(--accent);">👥 투자자 ${xInvestors}명</div>
                 <div style="background:#e0e0e0; height:6px; border-radius:3px; margin:0.5rem 0;"><div style="background:#ff9800; height:100%; border-radius:3px; width:${pct}%;"></div></div>
-                <div style="display:flex; justify-content:space-between; font-size:0.85rem;"><span>${x.invested||0}/${x.goal} CREB</span><span>${pct}%</span></div>
+                <div style="display:flex; justify-content:space-between; font-size:0.85rem;"><span>${xInvested}/${xGoal} CREB</span><span>${pct}%</span></div>
                 <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
                     <button onclick="investEnergy('${d.id}')" style="background:#ff9800; color:white; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; flex:1;">${t('energy.invest_btn','☀️ 투자하기')}</button>
                     ${isAdmin ? `<button onclick="distributeEnergyReturns('${d.id}')" style="background:#1976D2; color:white; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; flex:1; font-size:0.8rem;">${t('energy.distribute','📊 수익 배분')}</button>` : ''}
@@ -439,7 +444,8 @@ async function investEnergy(id) {
             await wallets.docs[0].ref.update({ [`balances.${tk}`]: bal[tk] - amount });
         }
         const doc = await db.collection('energy_projects').doc(id).get();
-        await db.collection('energy_projects').doc(id).update({ invested: (doc.data().invested||0) + amount, investors: (doc.data().investors||0) + 1 });
+        const epData = doc.data();
+        await db.collection('energy_projects').doc(id).update({ invested: (epData.invested || epData.currentAmount || 0) + amount, investors: (epData.investors || epData.investorCount || 0) + 1 });
         await db.collection('energy_investments').add({ projectId:id, userId:currentUser.uid, amount, token:tkName, timestamp:new Date() });
         showToast(`☀️ ${amount} ${tkName} 투자 완료!`, 'success'); loadEnergyProjects(); loadUserWallet();
     } catch (e) { showToast('실패: ' + e.message, 'error'); }
@@ -482,7 +488,7 @@ async function loadBusinessList() {
         docs.forEach(d => { const x = d.data();
             c.innerHTML += `<div onclick="viewBusinessDetail('${d.id}')" style="background:white; padding:1rem; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.08); display:flex; gap:1rem; align-items:center; cursor:pointer;">
                 ${x.imageData ? `<img src="${x.imageData}" style="width:70px; height:70px; border-radius:8px; object-fit:cover;">` : `<div style="width:70px; height:70px; background:var(--bg); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.5rem;">${BIZ_CATS[x.category]||'🏢'}</div>`}
-                <div style="flex:1;"><h4>${x.name}</h4><p style="font-size:0.8rem; color:var(--accent);">${BIZ_CATS[x.category]||''} · ${x.country||''} · ${x.ownerNickname||x.ownerEmail}</p>
+                <div style="flex:1;"><h4>${x.name}</h4><p style="font-size:0.8rem; color:var(--accent);">${[BIZ_CATS[x.category], x.country, x.ownerNickname || x.ownerEmail].filter(Boolean).join(' · ')}</p>
                 ${x.description ? `<p style="font-size:0.85rem; margin-top:0.3rem;">${x.description.slice(0,80)}${x.description.length>80?'...':''}</p>` : ''}
                 <div style="font-size:0.75rem; color:var(--accent); margin-top:0.3rem;">⭐ ${x.reviews > 0 ? (x.rating/x.reviews).toFixed(1) : '-'} · ${x.reviews||0}개 리뷰</div></div></div>`; });
     } catch (e) { c.innerHTML = e.message; }
@@ -850,7 +856,7 @@ async function viewBusinessDetail(id) {
         ${b.imageData ? `<img src="${b.imageData}" style="width:100%; border-radius:12px 12px 0 0; max-height:200px; object-fit:cover;">` : ''}
         <div style="padding:1.2rem;">
             <h3>${b.name}</h3>
-            <p style="color:var(--accent); font-size:0.85rem; margin:0.3rem 0;">${BIZ_CATS[b.category] || ''} · ${b.country || ''} · ${b.ownerNickname || b.ownerEmail}</p>
+            <p style="color:var(--accent); font-size:0.85rem; margin:0.3rem 0;">${[BIZ_CATS[b.category], b.country, b.ownerNickname || b.ownerEmail].filter(Boolean).join(' · ')}</p>
             ${b.description ? `<p style="font-size:0.9rem; margin:0.8rem 0;">${b.description}</p>` : ''}
             ${b.website ? `<a href="${b.website}" target="_blank" style="font-size:0.85rem;">🔗 웹사이트</a>` : ''}
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.5rem; margin:1rem 0;">
@@ -1363,7 +1369,9 @@ async function loadMyEnergyInvestments() {
             const inv = d.data();
             if (!projCache[inv.projectId]) {
                 const pDoc = await db.collection('energy_projects').doc(inv.projectId).get();
-                projCache[inv.projectId] = pDoc.exists ? pDoc.data() : { title: '삭제된 프로젝트', returnRate: 0 };
+                const pData = pDoc.exists ? pDoc.data() : { title: '삭제된 프로젝트', returnRate: 0 };
+                if (!pData.title) pData.title = pData.name || '프로젝트';
+                projCache[inv.projectId] = pData;
             }
             const proj = projCache[inv.projectId];
             const rate = proj.returnRate || 0;
@@ -1418,7 +1426,7 @@ async function distributeEnergyReturns(projectId) {
         let totalInvested = 0;
         investments.forEach(d => totalInvested += d.data().amount);
         
-        const confirmed = await showConfirmModal('수익 배분 확인', `프로젝트: ${proj.title}\n총 투자: ${totalInvested}\n수익률: ${rate}%\n월 배분 총액: ${(totalInvested * rate / 100 / 12).toFixed(2)} CREB\n\n${investments.size}명에게 배분하시겠습니까?`);
+        const confirmed = await showConfirmModal('수익 배분 확인', `프로젝트: ${proj.name || proj.title}\n총 투자: ${totalInvested}\n수익률: ${rate}%\n월 배분 총액: ${(totalInvested * rate / 100 / 12).toFixed(2)} CREB\n\n${investments.size}명에게 배분하시겠습니까?`);
         if (!confirmed) return;
         
         let distributed = 0;
@@ -1525,7 +1533,7 @@ async function showCampaignDetail(id) {
                 </div>
                 <div style="display:flex; justify-content:space-between; font-size:0.9rem;">
                     <span style="font-weight:700;">${camp.raised} / ${camp.goal} ${camp.token}</span>
-                    <span>${pct}% · ${camp.backers}명</span>
+                    <span>${pct}% · ${camp.backerCount || camp.backers || 0}명</span>
                 </div>
                 <div style="font-size:0.8rem; color:#2e7d32; margin-top:0.5rem;">💰 수수료 ${fee}% · 창작자 수령 ${(100 - fee).toFixed(1)}%</div>
             </div>
