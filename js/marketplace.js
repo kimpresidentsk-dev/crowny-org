@@ -40,7 +40,7 @@ async function loadMallProducts() {
             const ratingHtml = p.avgRating ? `<div style="margin-top:0.2rem;">${renderStars(p.avgRating, '0.7rem')} <span style="font-size:0.65rem; color:var(--accent);">(${p.reviewCount||0})</span></div>` : '';
             container.innerHTML += `
                 <div onclick="viewProduct('${p.id}')" style="background:white; border-radius:10px; overflow:hidden; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-                    <div style="height:140px; overflow:hidden; background:#f0f0f0;"><img src="${p.imageData}" style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div style="height:140px; overflow:hidden; background:#f0f0f0;">${p.imageData ? `<img src="${p.imageData}" style="width:100%; height:100%; object-fit:cover;">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:#ccc;">🛒</div>`}</div>
                     <div style="padding:0.6rem;">
                         <div style="font-weight:600; font-size:0.85rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.title}</div>
                         <div style="font-size:0.7rem; color:var(--accent);">${MALL_CATEGORIES[p.category] || ''} · ${p.sellerNickname || t('mall.seller','판매자')}</div>
@@ -100,7 +100,7 @@ async function viewProduct(id) {
     modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     modal.innerHTML = `<div style="background:white; border-radius:12px; max-width:500px; width:100%; max-height:90vh; overflow-y:auto;">
-        <img src="${p.imageData}" style="width:100%; border-radius:12px 12px 0 0; max-height:40vh; object-fit:contain; background:#f0f0f0;">
+        ${p.imageData ? `<img src="${p.imageData}" style="width:100%; border-radius:12px 12px 0 0; max-height:40vh; object-fit:contain; background:#f0f0f0;">` : `<div style="width:100%;height:200px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:4rem;color:#ccc;border-radius:12px 12px 0 0;">🛒</div>`}
         <div style="padding:1.2rem;">
             <h3>${p.title}</h3>
             <p style="color:var(--accent); font-size:0.85rem; margin:0.5rem 0;">${MALL_CATEGORIES[p.category]} · 판매자: ${p.sellerNickname || p.sellerEmail}</p>
