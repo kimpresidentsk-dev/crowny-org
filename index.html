@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CROWNY PLATFORM</title>
-    <link rel="stylesheet" href="style.css?v=14.0">
+    <link rel="stylesheet" href="style.css?v=15.0">
     
     <!-- Firebase SDK -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-app-compat.min.js"></script>
@@ -156,19 +156,28 @@
         
         <nav class="nav">
             <a href="#" onclick="showPage('dashboard')" class="nav-item" data-i18n="section.dashboard">📊 DASHBOARD</a>
-            <a href="#" onclick="showPage('today')" class="nav-item active" data-i18n="section.today">TODAY</a>
-            <a href="#" onclick="showPage('wallet')" class="nav-item" data-i18n="section.wallet">WALLET</a>
-            <a href="#" onclick="showPage('messenger')" class="nav-item" data-i18n="section.messenger">MESSENGER</a>
-            <a href="#" onclick="showPage('social')" class="nav-item" data-i18n="section.social">SOCIAL</a>
-            <a href="#" onclick="showPage('art')" class="nav-item" data-i18n="section.art">ART</a>
-            <a href="#" onclick="showPage('mall')" class="nav-item" data-i18n="section.mall">MALL</a>
-            <a href="#" onclick="showPage('fundraise')" class="nav-item" data-i18n="section.fundraise">FUNDRAISE</a>
-            <a href="#" onclick="showPage('energy')" class="nav-item" data-i18n="section.energy">ENERGY</a>
-            <a href="#" onclick="showPage('business')" class="nav-item" data-i18n="section.business">BUSINESS</a>
-            <a href="#" onclick="showPage('artist')" class="nav-item" data-i18n="section.artist">ARTIST</a>
-            <a href="#" onclick="showPage('books')" class="nav-item" data-i18n="section.books">BOOKS</a>
-            <a href="#" onclick="showPage('credit')" class="nav-item" data-i18n="section.credit">CREDIT</a>
-            <a href="#" onclick="showPage('prop-trading')" class="nav-item" data-i18n="section.prop_trading">PROP TRADING</a>
+            <a href="#" onclick="showPage('today')" class="nav-item active" data-i18n="section.today">🏠 TODAY</a>
+            <hr class="nav-divider">
+            <div class="nav-group-label">SOCIAL</div>
+            <a href="#" onclick="showPage('messenger')" class="nav-item" data-i18n="section.messenger">💬 MESSENGER</a>
+            <a href="#" onclick="showPage('social')" class="nav-item" data-i18n="section.social">📸 SOCIAL</a>
+            <hr class="nav-divider">
+            <div class="nav-group-label">FINANCE</div>
+            <a href="#" onclick="showPage('wallet')" class="nav-item" data-i18n="section.wallet">💰 WALLET</a>
+            <a href="#" onclick="showPage('prop-trading')" class="nav-item" data-i18n="section.prop_trading">📈 TRADING</a>
+            <a href="#" onclick="showPage('credit')" class="nav-item" data-i18n="section.credit">💳 CREDIT</a>
+            <hr class="nav-divider">
+            <div class="nav-group-label">MARKETPLACE</div>
+            <a href="#" onclick="showPage('mall')" class="nav-item" data-i18n="section.mall">🛒 MALL</a>
+            <a href="#" onclick="showPage('art')" class="nav-item" data-i18n="section.art">🎨 ART</a>
+            <a href="#" onclick="showPage('books')" class="nav-item" data-i18n="section.books">📚 BOOKS</a>
+            <a href="#" onclick="showPage('artist')" class="nav-item" data-i18n="section.artist">🌟 ARTIST</a>
+            <hr class="nav-divider">
+            <div class="nav-group-label">ECOSYSTEM</div>
+            <a href="#" onclick="showPage('energy')" class="nav-item" data-i18n="section.energy">⚡ ENERGY</a>
+            <a href="#" onclick="showPage('business')" class="nav-item" data-i18n="section.business">🏢 BUSINESS</a>
+            <a href="#" onclick="showPage('fundraise')" class="nav-item" data-i18n="section.fundraise">💝 FUNDRAISE</a>
+            <hr class="nav-divider">
             <a href="admin.html" class="nav-item" id="admin-nav-item" style="display:none; color:#e94560;" data-i18n="section.admin">🔐 ADMIN</a>
             <a href="#" onclick="showPage('settings')" class="nav-item" style="margin-top:auto;" data-i18n="section.settings">⚙️ SETTINGS</a>
         </nav>
