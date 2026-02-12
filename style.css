@@ -3048,3 +3048,29 @@ a:not(.nav-item) {
     border-color: rgba(255,255,255,0.15) !important;
     background: rgba(255,255,255,0.05) !important;
 }
+
+/* ===== Messenger Phase 1 - New styles ===== */
+.reply-preview-bar {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.4rem 0.8rem; background: #f0f8ff; border-left: 3px solid #0066cc;
+    margin: 0 0.5rem; border-radius: 0 8px 8px 0;
+}
+.reply-preview-content { flex: 1; min-width: 0; overflow: hidden; }
+.pinned-message-banner {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.4rem 0.8rem; background: #fff8e1; border-left: 3px solid #ffa000;
+    margin: 0 0.5rem; border-radius: 0 8px 8px 0;
+}
+.voice-recording-ui {
+    display: flex; align-items: center; gap: 0.8rem;
+    padding: 0.6rem 1rem; background: #fff5f5; border-top: 1px solid #eee;
+}
+.voice-rec-dot {
+    width: 12px; height: 12px; border-radius: 50%; background: #ff4444;
+    animation: voicePulse 1s infinite;
+}
+@keyframes voicePulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+.voice-rec-waveform {
+    flex: 1; height: 20px; display: flex; align-items: center; gap: 2px;
+}
+.msg-actions-bar button.msg-action-btn { font-size: 0.75rem !important; padding: 2px 4px !important; }

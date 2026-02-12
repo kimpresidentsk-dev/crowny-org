@@ -281,6 +281,8 @@ let chatDocUnsubscribe = null;
 let typingTimeout = null;
 let cachedChatDocs = [];
 let msgLongPressTimer = null;
+let currentChannel = null;
+let channelMsgUnsubscribe = null;
 
 function showChats() {
     document.querySelectorAll('.sidebar-tabs .tab-btn').forEach(b => b.classList.remove('active'));
@@ -544,8 +546,12 @@ async function loadMessages() {
 async function openChat(chatId, otherId) {
     if (chatUnsubscribe) chatUnsubscribe();
     if (chatDocUnsubscribe) chatDocUnsubscribe();
+    if (channelMsgUnsubscribe) { channelMsgUnsubscribe(); channelMsgUnsubscribe = null; }
+    currentChannel = null;
     currentChat = chatId;
     currentChatOtherId = otherId;
+    const msgInput = document.getElementById('message-input');
+    if (msgInput) delete msgInput.dataset.channelMode;
 
     // Mobile: show chat window
     const container = document.getElementById('messenger-container');
@@ -574,7 +580,7 @@ async function openChat(chatId, otherId) {
     const chatItemEl = document.querySelector(`.chat-item[data-chat-id="${chatId}"] .unread-badge`);
     if (chatItemEl) chatItemEl.remove();
 
-    // Listen for typing indicator from chat doc
+    // Listen for typing indicator + pinned message from chat doc
     chatDocUnsubscribe = db.collection('chats').doc(chatId).onSnapshot((snap) => {
         const data = snap.data();
         if (!data) return;
@@ -582,6 +588,14 @@ async function openChat(chatId, otherId) {
         const otherTyping = typing[otherId];
         const indicator = document.getElementById('typing-indicator');
         if (indicator) indicator.style.display = otherTyping ? 'flex' : 'none';
+        // Pinned message
+        const pinnedBanner = document.getElementById('pinned-message-banner');
+        if (data.pinnedMessage && pinnedBanner) {
+            pinnedBanner.style.display = 'flex';
+            document.getElementById('pinned-message-text').textContent = data.pinnedMessage.text || '고정된 메시지';
+        } else if (pinnedBanner) {
+            pinnedBanner.style.display = 'none';
+        }
     });
 
     // Listen for messages
@@ -641,13 +655,64 @@ async function openChat(chatId, otherId) {
                 if (msg.deleted) {
                     content = `<span class="msg-deleted">🚫 ${t('social.msg_deleted','이 메시지는 삭제되었습니다')}</span>`;
                 } else {
-                    if (msg.imageUrl) {
-                        content += `<img src="${msg.imageUrl}" style="max-width:200px;border-radius:8px;cursor:pointer;display:block;margin-bottom:0.3rem;" onclick="window.open('${msg.imageUrl}','_blank')">`;
+                    // Reply quote
+                    if (msg.replyTo) {
+                        content += `<div class="msg-reply-quote" style="border-left:3px solid #0066cc;padding:0.2rem 0.5rem;margin-bottom:0.3rem;background:rgba(0,102,204,0.05);border-radius:0 6px 6px 0;font-size:0.75rem;color:#666;cursor:pointer;" onclick="document.querySelector('[data-msg-id=\\'${msg.replyTo.messageId}\\']')?.scrollIntoView({behavior:'smooth',block:'center'})">
+                            <div style="font-weight:600;color:#0066cc;font-size:0.7rem;">답장</div>
+                            ${(msg.replyTo.text || '미디어').substring(0, 60)}</div>`;
                     }
-                    if (msg.tokenAmount) {
+                    // Forwarded label
+                    if (msg.forwarded) {
+                        content += `<div style="font-size:0.7rem;color:#999;margin-bottom:0.2rem;font-style:italic;">↗️ 전달된 메시지</div>`;
+                    }
+                    // Media types
+                    const msgType = msg.type || 'text';
+                    if (msgType === 'image' || msg.imageUrl) {
+                        const imgUrl = msg.mediaUrl || msg.imageUrl;
+                        content += `<img src="${imgUrl}" style="max-width:200px;border-radius:8px;cursor:pointer;display:block;margin-bottom:0.3rem;" onclick="window.open('${imgUrl}','_blank')">`;
+                    }
+                    if (msgType === 'video') {
+                        content += `<video src="${msg.mediaUrl}" controls style="max-width:240px;border-radius:8px;display:block;margin-bottom:0.3rem;" preload="metadata"></video>`;
+                    }
+                    if (msgType === 'file') {
+                        const sizeStr = msg.fileSize ? ` (${(msg.fileSize/1024).toFixed(0)} KB)` : '';
+                        content += `<a href="${msg.mediaUrl}" target="_blank" download="${msg.fileName||'file'}" style="display:flex;align-items:center;gap:0.4rem;padding:0.4rem 0.6rem;background:rgba(0,0,0,0.05);border-radius:8px;text-decoration:none;color:inherit;margin-bottom:0.3rem;">
+                            <span style="font-size:1.2rem;">📄</span><div><div style="font-size:0.8rem;font-weight:600;">${msg.fileName||'파일'}</div><div style="font-size:0.7rem;color:#999;">${sizeStr}</div></div></a>`;
+                    }
+                    if (msgType === 'voice') {
+                        content += `<div class="voice-msg-player" style="display:flex;align-items:center;gap:0.5rem;padding:0.3rem;">
+                            <button onclick="toggleVoicePlay(this,'${msg.mediaUrl}')" style="background:none;border:none;cursor:pointer;font-size:1.2rem;">▶️</button>
+                            <div style="flex:1;height:4px;background:#ddd;border-radius:2px;"><div class="voice-progress" style="width:0%;height:100%;background:#0066cc;border-radius:2px;transition:width 0.1s;"></div></div>
+                            <span style="font-size:0.7rem;color:#999;">${msg.duration ? msg.duration + 's' : ''}</span>
+                        </div>`;
+                    }
+                    if (msgType === 'sticker') {
+                        content += `<span style="font-size:3rem;line-height:1;">${msg.text}</span>`;
+                    } else if (msgType === 'gif') {
+                        content += `<img src="${msg.mediaUrl}" style="max-width:200px;border-radius:8px;display:block;margin-bottom:0.3rem;" loading="lazy">`;
+                    } else if (msgType === 'share_card' && msg.shareCard) {
+                        const sc = msg.shareCard;
+                        const pageMap = { product: 'mall', artist: 'artist', campaign: 'fundraise', art: 'art' };
+                        content += `<div onclick="showPage('${pageMap[sc.itemType]||sc.itemType}')" style="border:1px solid #eee;border-radius:10px;overflow:hidden;cursor:pointer;margin-bottom:0.3rem;max-width:220px;">
+                            ${sc.imageUrl ? `<img src="${sc.imageUrl}" style="width:100%;height:100px;object-fit:cover;">` : ''}
+                            <div style="padding:0.4rem 0.6rem;"><div style="font-size:0.8rem;font-weight:600;">${sc.name}</div>${sc.price ? `<div style="font-size:0.75rem;color:#e65100;">${sc.price}</div>` : ''}<div style="font-size:0.7rem;color:#0066cc;margin-top:0.2rem;">🛒 보기</div></div></div>`;
+                    } else if (msgType === 'transfer') {
                         content += `<div style="background:linear-gradient(135deg,#FFD700,#FFA000);color:#333;padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
                     }
-                    if (msg.text) content += `<span>${msg.text}</span>`;
+                    if (msg.tokenAmount && msg.type !== 'transfer') {
+                        content += `<div style="background:linear-gradient(135deg,#FFD700,#FFA000);color:#333;padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
+                    }
+                    // Text (skip for sticker/gif)
+                    if (msg.text && msgType !== 'sticker' && msgType !== 'gif') {
+                        // Link preview
+                        if (typeof parseLinkPreviews === 'function') {
+                            const parsed = parseLinkPreviews(msg.text);
+                            content += `<span>${parsed.html}</span>`;
+                            if (parsed.previews) content += parsed.previews;
+                        } else {
+                            content += `<span>${msg.text}</span>`;
+                        }
+                    }
                 }
 
                 // Read receipt for my messages
@@ -673,12 +738,17 @@ async function openChat(chatId, otherId) {
                     }
                 }
 
-                // Action buttons (reaction + delete)
+                // Action buttons (reaction + reply + forward + pin + delete)
                 let actionsHTML = '';
                 if (!msg.deleted) {
                     const side = isMine ? 'left' : 'right';
+                    const sName = senderInfo.nickname.replace(/'/g, "\\'");
+                    const mText = (msg.text || '').replace(/'/g, "\\'").substring(0, 80);
                     actionsHTML = `<div class="msg-actions-bar ${side}" id="actions-${msgId}">`;
                     actionsHTML += `<button class="msg-action-btn" onclick="showReactionPicker('${msgId}')">😊</button>`;
+                    actionsHTML += `<button class="msg-action-btn" onclick="setReplyTo('${msgId}','${mText}','${msg.senderId}','${sName}')">↩️</button>`;
+                    actionsHTML += `<button class="msg-action-btn" onclick="forwardMessage('${msgId}')">↗️</button>`;
+                    actionsHTML += `<button class="msg-action-btn" onclick="pinMessage('${msgId}','${mText}')">📌</button>`;
                     if (isMine) actionsHTML += `<button class="msg-action-btn" onclick="deleteMessage('${msgId}')">🗑️</button>`;
                     actionsHTML += '</div>';
                 }
@@ -754,8 +824,35 @@ document.addEventListener('input', (e) => {
     }
 });
 
+// ===== Reply state =====
+let replyToMessage = null; // { messageId, text, senderId, senderName }
+
+function setReplyTo(msgId, text, senderId, senderName) {
+    replyToMessage = { messageId: msgId, text: (text || '').substring(0, 100), senderId, senderName };
+    document.getElementById('reply-preview-bar').style.display = 'flex';
+    document.getElementById('reply-preview-name').textContent = senderName;
+    document.getElementById('reply-preview-text').textContent = text || '미디어';
+    document.getElementById('message-input').focus();
+}
+
+function cancelReply() {
+    replyToMessage = null;
+    document.getElementById('reply-preview-bar').style.display = 'none';
+}
+
 // ===== Send message =====
 async function sendMessage() {
+    // Channel mode
+    if (currentChannel) {
+        const input = document.getElementById('message-input');
+        const text = input?.value.trim();
+        if (!text) return;
+        await db.collection('channels').doc(currentChannel).collection('messages').add({
+            senderId: currentUser.uid, text, type: 'text', timestamp: new Date()
+        });
+        input.value = ''; input.style.height = 'auto';
+        return;
+    }
     if (!currentChat) { showToast(t('social.select_chat','채팅을 선택하세요'), 'warning'); return; }
     const input = document.getElementById('message-input');
     const text = input.value.trim();
@@ -764,63 +861,414 @@ async function sendMessage() {
     setTyping(false);
     clearTimeout(typingTimeout);
 
-    await db.collection('chats').doc(currentChat).collection('messages').add({
-        senderId: currentUser.uid, text: text, timestamp: new Date(), readBy: [currentUser.uid]
-    });
+    const msgData = {
+        senderId: currentUser.uid, text: text, type: 'text', timestamp: new Date(), readBy: [currentUser.uid]
+    };
 
-    // Update chat doc
-    await db.collection('chats').doc(currentChat).update({
-        lastMessage: text,
-        lastMessageTime: new Date(),
-        [`unreadCount.${currentChatOtherId}`]: firebase.firestore.FieldValue.increment(1)
-    });
+    // Reply
+    if (replyToMessage) {
+        msgData.replyTo = { messageId: replyToMessage.messageId, text: replyToMessage.text, senderId: replyToMessage.senderId };
+    }
 
-    // Notification for recipient
-    try {
-        const myInfo = await getUserDisplayInfo(currentUser.uid);
-        await db.collection('users').doc(currentChatOtherId).collection('notifications').add({
-            type: 'messenger',
-            message: `💬 ${myInfo.nickname}: ${text.substring(0, 50)}`,
-            data: { chatId: currentChat, otherId: currentUser.uid },
-            read: false,
-            createdAt: new Date()
-        });
-    } catch (e) { /* notification is best-effort */ }
+    // Link preview detection for internal links
+    const internalMatch = text.match(/#page=(\w+)&id=([\w-]+)/);
+    if (internalMatch) {
+        msgData.internalLink = { page: internalMatch[1], id: internalMatch[2] };
+    }
 
+    await db.collection('chats').doc(currentChat).collection('messages').add(msgData);
+
+    // Update chat doc - handle both 1:1 and group
+    const updateData = { lastMessage: text, lastMessageTime: new Date() };
+    if (currentChatOtherId) {
+        updateData[`unreadCount.${currentChatOtherId}`] = firebase.firestore.FieldValue.increment(1);
+    }
+    await db.collection('chats').doc(currentChat).update(updateData);
+
+    // Notification for recipient (1:1 only)
+    if (currentChatOtherId) {
+        try {
+            const myInfo = await getUserDisplayInfo(currentUser.uid);
+            await db.collection('users').doc(currentChatOtherId).collection('notifications').add({
+                type: 'messenger', message: `💬 ${myInfo.nickname}: ${text.substring(0, 50)}`,
+                data: { chatId: currentChat, otherId: currentUser.uid }, read: false, createdAt: new Date()
+            });
+        } catch (e) { /* best-effort */ }
+    }
+
+    cancelReply();
     input.value = '';
     input.style.height = 'auto';
 }
 
-// ===== Send image =====
-async function sendChatImage() {
+// ===== Attach menu (📎) =====
+function showAttachMenu() {
+    document.querySelectorAll('.attach-menu-popup').forEach(el => el.remove());
+    const menu = document.createElement('div');
+    menu.className = 'attach-menu-popup';
+    menu.style.cssText = 'position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:white;border:1px solid #ddd;border-radius:12px;padding:0.5rem;box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:9999;display:flex;gap:0.3rem;';
+    const items = [
+        { icon: '📷', label: '사진', fn: () => sendMediaFile('image') },
+        { icon: '🎬', label: '영상', fn: () => sendMediaFile('video') },
+        { icon: '📄', label: '파일', fn: () => sendMediaFile('file') },
+    ];
+    items.forEach(item => {
+        const btn = document.createElement('button');
+        btn.innerHTML = `<div style="font-size:1.3rem;">${item.icon}</div><div style="font-size:0.65rem;">${item.label}</div>`;
+        btn.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:2px;padding:0.5rem 0.8rem;border:none;background:none;cursor:pointer;border-radius:8px;';
+        btn.onmouseenter = () => btn.style.background = '#f0f0f0';
+        btn.onmouseleave = () => btn.style.background = 'none';
+        btn.onclick = () => { menu.remove(); item.fn(); };
+        menu.appendChild(btn);
+    });
+    document.body.appendChild(menu);
+    setTimeout(() => {
+        const dismiss = (e) => { if (!menu.contains(e.target)) { menu.remove(); document.removeEventListener('click', dismiss); } };
+        document.addEventListener('click', dismiss);
+    }, 10);
+}
+
+// ===== Send media file =====
+async function sendMediaFile(mediaType) {
     if (!currentChat) { showToast(t('social.select_chat','채팅을 선택하세요'), 'warning'); return; }
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = 'image/*';
+    if (mediaType === 'image') input.accept = 'image/*';
+    else if (mediaType === 'video') input.accept = 'video/*';
+    // file = any
     input.onchange = async () => {
         if (!input.files[0]) return;
+        const file = input.files[0];
         try {
-            showLoading(t('social.sending_image','이미지 전송 중...'));
-            const file = input.files[0];
-            const dataUrl = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file); });
-            const resized = await resizeImage(dataUrl, 800);
+            showLoading(`${mediaType === 'image' ? '📷' : mediaType === 'video' ? '🎬' : '📄'} 전송 중...`);
 
-            await db.collection('chats').doc(currentChat).collection('messages').add({
-                senderId: currentUser.uid, text: '', imageUrl: resized, timestamp: new Date(), readBy: [currentUser.uid]
-            });
-            await db.collection('chats').doc(currentChat).update({
-                lastMessage: '📷 사진',
-                lastMessageTime: new Date(),
-                [`unreadCount.${currentChatOtherId}`]: firebase.firestore.FieldValue.increment(1)
-            });
+            if (mediaType === 'image') {
+                // base64 resize inline
+                const dataUrl = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file); });
+                const resized = await resizeImage(dataUrl, 800);
+                await sendMediaMessage({ type: 'image', mediaUrl: resized, text: '' }, '📷 사진');
+            } else if (mediaType === 'video') {
+                const url = await uploadToStorage(`media/${currentChat}/${Date.now()}_${file.name}`, file);
+                await sendMediaMessage({ type: 'video', mediaUrl: url, text: '', fileName: file.name, fileSize: file.size }, '🎬 영상');
+            } else {
+                const url = await uploadToStorage(`files/${currentChat}/${Date.now()}_${file.name}`, file);
+                await sendMediaMessage({ type: 'file', mediaUrl: url, text: '', fileName: file.name, fileSize: file.size }, `📄 ${file.name}`);
+            }
             hideLoading();
-            showToast(t('social.image_sent','📷 이미지 전송 완료'), 'success');
         } catch (e) {
             hideLoading();
-            showToast(t('social.image_fail','이미지 전송 실패: ') + e.message, 'error');
+            showToast('전송 실패: ' + e.message, 'error');
         }
     };
     input.click();
+}
+
+async function uploadToStorage(path, file) {
+    const ref = firebase.storage().ref().child(path);
+    const task = ref.put(file);
+    return new Promise((resolve, reject) => {
+        task.on('state_changed',
+            (snap) => { const p = Math.round((snap.bytesTransferred / snap.totalBytes) * 100); showLoading(`📤 업로드 ${p}%`); },
+            reject,
+            async () => { resolve(await task.snapshot.ref.getDownloadURL()); }
+        );
+    });
+}
+
+async function sendMediaMessage(msgFields, lastMsgText) {
+    const msgData = {
+        senderId: currentUser.uid, timestamp: new Date(), readBy: [currentUser.uid], ...msgFields
+    };
+    if (replyToMessage) {
+        msgData.replyTo = { messageId: replyToMessage.messageId, text: replyToMessage.text, senderId: replyToMessage.senderId };
+        cancelReply();
+    }
+    await db.collection('chats').doc(currentChat).collection('messages').add(msgData);
+    const updateData = { lastMessage: lastMsgText, lastMessageTime: new Date() };
+    if (currentChatOtherId) updateData[`unreadCount.${currentChatOtherId}`] = firebase.firestore.FieldValue.increment(1);
+    await db.collection('chats').doc(currentChat).update(updateData);
+}
+
+// ===== Voice recording =====
+let voiceRecorder = null;
+let voiceChunks = [];
+let voiceRecordStart = 0;
+let voiceRecordInterval = null;
+let voiceStream = null;
+
+function startVoiceRecord() {
+    if (voiceRecorder) return;
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        voiceStream = stream;
+        voiceRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+        voiceChunks = [];
+        voiceRecorder.ondataavailable = (e) => { if (e.data.size > 0) voiceChunks.push(e.data); };
+        voiceRecorder.onstop = async () => {
+            voiceStream.getTracks().forEach(t => t.stop());
+            voiceStream = null;
+            if (voiceChunks.length === 0) return;
+            const blob = new Blob(voiceChunks, { type: 'audio/webm' });
+            const duration = Math.round((Date.now() - voiceRecordStart) / 1000);
+            try {
+                showLoading('🎤 음성 전송 중...');
+                const url = await uploadToStorage(`voice/${currentChat}/${Date.now()}.webm`, blob);
+                await sendMediaMessage({ type: 'voice', mediaUrl: url, duration, text: '' }, `🎤 음성 ${duration}초`);
+                hideLoading();
+            } catch (e) { hideLoading(); showToast('음성 전송 실패', 'error'); }
+        };
+        voiceRecorder.start();
+        voiceRecordStart = Date.now();
+        document.getElementById('voice-recording-ui').style.display = 'flex';
+        document.getElementById('chat-input-area').style.display = 'none';
+        voiceRecordInterval = setInterval(() => {
+            const s = Math.floor((Date.now() - voiceRecordStart) / 1000);
+            document.getElementById('voice-rec-timer').textContent = `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;
+        }, 200);
+    }).catch(() => showToast('마이크 접근 실패', 'error'));
+}
+
+function stopVoiceRecord() {
+    if (!voiceRecorder || voiceRecorder.state !== 'recording') return;
+    clearInterval(voiceRecordInterval);
+    document.getElementById('voice-recording-ui').style.display = 'none';
+    document.getElementById('chat-input-area').style.display = 'flex';
+    voiceRecorder.stop();
+    voiceRecorder = null;
+}
+
+function cancelVoiceRecord() {
+    if (!voiceRecorder) return;
+    clearInterval(voiceRecordInterval);
+    voiceChunks = [];
+    if (voiceRecorder.state === 'recording') voiceRecorder.stop();
+    voiceRecorder = null;
+    if (voiceStream) { voiceStream.getTracks().forEach(t => t.stop()); voiceStream = null; }
+    document.getElementById('voice-recording-ui').style.display = 'none';
+    document.getElementById('chat-input-area').style.display = 'flex';
+}
+
+// ===== Forward message =====
+async function forwardMessage(msgId) {
+    if (!currentChat) return;
+    const msgDoc = await db.collection('chats').doc(currentChat).collection('messages').doc(msgId).get();
+    if (!msgDoc.exists) return;
+    const msg = msgDoc.data();
+
+    // Show chat selection modal
+    const chats = await db.collection('chats').where('participants', 'array-contains', currentUser.uid).get();
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+    let listHTML = '';
+    for (const doc of chats.docs) {
+        const c = doc.data();
+        if (doc.id === currentChat || c.deleted) continue;
+        let name = c.groupName || '';
+        if (!name) {
+            const otherId = c.participants.find(id => id !== currentUser.uid);
+            if (otherId) { const info = await getUserDisplayInfo(otherId); name = info.nickname; }
+        }
+        if (!name) continue;
+        listHTML += `<div style="padding:0.6rem;border-bottom:1px solid #eee;cursor:pointer;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background=''" onclick="executeForward('${doc.id}',${JSON.stringify(JSON.stringify(msg.text||''))},${JSON.stringify(JSON.stringify(msg.senderId||''))});this.closest('[style*=position]').remove();">${name}</div>`;
+    }
+    overlay.innerHTML = `<div style="background:white;padding:1.5rem;border-radius:16px;max-width:400px;width:100%;max-height:60vh;overflow-y:auto;">
+        <h3 style="margin-bottom:1rem;">↗️ 전달할 채팅방 선택</h3>
+        ${listHTML || '<p style="color:#999;text-align:center;">전달 가능한 채팅방이 없습니다</p>'}
+        <button onclick="this.closest('[style*=position]').remove()" style="width:100%;margin-top:1rem;padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">취소</button>
+    </div>`;
+    document.body.appendChild(overlay);
+}
+
+async function executeForward(targetChatId, text, originalSenderId) {
+    try {
+        await db.collection('chats').doc(targetChatId).collection('messages').add({
+            senderId: currentUser.uid, text: text || '', type: 'text',
+            forwarded: true, originalSenderId: originalSenderId,
+            timestamp: new Date(), readBy: [currentUser.uid]
+        });
+        await db.collection('chats').doc(targetChatId).update({
+            lastMessage: '↗️ 전달된 메시지', lastMessageTime: new Date()
+        });
+        showToast('✅ 메시지 전달 완료', 'success');
+    } catch (e) { showToast('전달 실패', 'error'); }
+}
+
+// ===== Pin message =====
+async function pinMessage(msgId, text) {
+    if (!currentChat) return;
+    try {
+        await db.collection('chats').doc(currentChat).update({
+            pinnedMessage: { messageId: msgId, text: (text || '').substring(0, 100), pinnedAt: new Date() }
+        });
+        showToast('📌 메시지 고정 완료', 'success');
+    } catch (e) { showToast('고정 실패', 'error'); }
+}
+
+async function unpinMessage() {
+    if (!currentChat) return;
+    await db.collection('chats').doc(currentChat).update({ pinnedMessage: null });
+    document.getElementById('pinned-message-banner').style.display = 'none';
+}
+
+function scrollToPinnedMessage() {
+    // find pinned msg element
+    const chatDoc = db.collection('chats').doc(currentChat);
+    chatDoc.get().then(snap => {
+        const pm = snap.data()?.pinnedMessage;
+        if (!pm) return;
+        const el = document.querySelector(`[data-msg-id="${pm.messageId}"]`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+}
+
+// ===== Sticker / GIF panel =====
+function showStickerGifPanel() {
+    document.querySelectorAll('.sticker-gif-panel').forEach(el => el.remove());
+    const panel = document.createElement('div');
+    panel.className = 'sticker-gif-panel';
+    panel.style.cssText = 'position:fixed;bottom:60px;left:50%;transform:translateX(-50%);width:340px;max-width:90vw;background:white;border:1px solid #ddd;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:9999;overflow:hidden;';
+    panel.innerHTML = `
+        <div style="display:flex;border-bottom:1px solid #eee;">
+            <button onclick="showStickerTab()" class="sticker-tab-btn active" style="flex:1;padding:0.6rem;border:none;background:white;cursor:pointer;font-weight:600;border-bottom:2px solid #333;">😊 스티커</button>
+            <button onclick="showGifTab()" class="sticker-tab-btn" style="flex:1;padding:0.6rem;border:none;background:white;cursor:pointer;font-weight:600;border-bottom:2px solid transparent;">GIF</button>
+        </div>
+        <div id="sticker-gif-content" style="height:250px;overflow-y:auto;padding:0.5rem;"></div>
+    `;
+    document.body.appendChild(panel);
+    showStickerTab();
+    setTimeout(() => {
+        const dismiss = (e) => { if (!panel.contains(e.target) && !e.target.closest('.btn-send-token')) { panel.remove(); document.removeEventListener('click', dismiss); } };
+        document.addEventListener('click', dismiss);
+    }, 10);
+}
+
+function showStickerTab() {
+    document.querySelectorAll('.sticker-tab-btn').forEach(b => { b.classList.remove('active'); b.style.borderBottomColor = 'transparent'; });
+    document.querySelectorAll('.sticker-tab-btn')[0].classList.add('active');
+    document.querySelectorAll('.sticker-tab-btn')[0].style.borderBottomColor = '#333';
+    const stickers = ['😀','😂','🥰','😎','🤔','😱','🥺','👍','❤️','🔥','🎉','💯','🙏','✨','💪','🎵'];
+    const content = document.getElementById('sticker-gif-content');
+    content.innerHTML = `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;">${stickers.map(s =>
+        `<button onclick="sendStickerMessage('${s}')" style="font-size:2.5rem;padding:0.8rem;border:none;background:none;cursor:pointer;border-radius:8px;transition:background 0.15s;" onmouseenter="this.style.background='#f0f0f0'" onmouseleave="this.style.background='none'">${s}</button>`
+    ).join('')}</div>`;
+}
+
+function showGifTab() {
+    document.querySelectorAll('.sticker-tab-btn').forEach(b => { b.classList.remove('active'); b.style.borderBottomColor = 'transparent'; });
+    document.querySelectorAll('.sticker-tab-btn')[1].classList.add('active');
+    document.querySelectorAll('.sticker-tab-btn')[1].style.borderBottomColor = '#333';
+    const content = document.getElementById('sticker-gif-content');
+    content.innerHTML = `
+        <div style="display:flex;gap:0.3rem;margin-bottom:0.5rem;">
+            <input type="text" id="gif-search-input" placeholder="GIF 검색..." style="flex:1;padding:0.5rem;border:1px solid #ddd;border-radius:8px;font-size:0.85rem;" onkeypress="if(event.key==='Enter')searchGifs()">
+            <button onclick="searchGifs()" style="padding:0.5rem 0.8rem;border:none;border-radius:8px;background:#333;color:white;cursor:pointer;">검색</button>
+        </div>
+        <div id="gif-results" style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.3rem;"></div>
+    `;
+    loadTrendingGifs();
+}
+
+async function loadTrendingGifs() {
+    try {
+        const res = await fetch('https://api.giphy.com/v1/gifs/trending?api_key=dc6zaTOxFJmzC&limit=20&rating=g');
+        const data = await res.json();
+        renderGifs(data.data);
+    } catch (e) { document.getElementById('gif-results').innerHTML = '<p style="color:#999;text-align:center;grid-column:1/-1;">GIF 로드 실패</p>'; }
+}
+
+async function searchGifs() {
+    const q = document.getElementById('gif-search-input').value.trim();
+    if (!q) { loadTrendingGifs(); return; }
+    try {
+        const res = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=dc6zaTOxFJmzC&q=${encodeURIComponent(q)}&limit=20&rating=g`);
+        const data = await res.json();
+        renderGifs(data.data);
+    } catch (e) { document.getElementById('gif-results').innerHTML = '<p style="color:#999;text-align:center;grid-column:1/-1;">검색 실패</p>'; }
+}
+
+function renderGifs(gifs) {
+    const container = document.getElementById('gif-results');
+    container.innerHTML = gifs.map(g => {
+        const url = g.images.fixed_height_small.url;
+        const fullUrl = g.images.original.url;
+        return `<img src="${url}" data-full="${fullUrl}" style="width:100%;border-radius:6px;cursor:pointer;object-fit:cover;height:80px;" onclick="sendGifMessage('${fullUrl}')" loading="lazy">`;
+    }).join('');
+}
+
+async function sendStickerMessage(emoji) {
+    if (!currentChat) return;
+    document.querySelectorAll('.sticker-gif-panel').forEach(el => el.remove());
+    await sendMediaMessage({ type: 'sticker', text: emoji }, emoji);
+}
+
+async function sendGifMessage(gifUrl) {
+    if (!currentChat) return;
+    document.querySelectorAll('.sticker-gif-panel').forEach(el => el.remove());
+    await sendMediaMessage({ type: 'gif', mediaUrl: gifUrl, text: '' }, 'GIF');
+}
+
+// ===== Share item from services =====
+async function showShareItemModal() {
+    if (!currentChat) { showToast('채팅을 선택하세요', 'warning'); return; }
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+    overlay.innerHTML = `
+    <div style="background:white;padding:1.5rem;border-radius:16px;max-width:420px;width:100%;">
+        <h3 style="margin-bottom:1rem;">🔗 공유하기</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+            <button onclick="this.closest('[style*=position]').remove();shareServiceItem('product')" style="padding:0.8rem;border:2px solid #eee;border-radius:12px;cursor:pointer;background:white;font-size:0.85rem;">🛒 상품</button>
+            <button onclick="this.closest('[style*=position]').remove();shareServiceItem('artist')" style="padding:0.8rem;border:2px solid #eee;border-radius:12px;cursor:pointer;background:white;font-size:0.85rem;">💖 아티스트</button>
+            <button onclick="this.closest('[style*=position]').remove();shareServiceItem('campaign')" style="padding:0.8rem;border:2px solid #eee;border-radius:12px;cursor:pointer;background:white;font-size:0.85rem;">💝 캠페인</button>
+            <button onclick="this.closest('[style*=position]').remove();shareServiceItem('art')" style="padding:0.8rem;border:2px solid #eee;border-radius:12px;cursor:pointer;background:white;font-size:0.85rem;">🎨 작품</button>
+        </div>
+        <button onclick="this.closest('[style*=position]').remove()" style="width:100%;margin-top:1rem;padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">취소</button>
+    </div>`;
+    document.body.appendChild(overlay);
+}
+
+async function shareServiceItem(type) {
+    const cfgMap = { product: { col: 'products', name: 'name' }, artist: { col: 'artists', name: 'name' }, campaign: { col: 'campaigns', name: 'title' }, art: { col: 'artworks', name: 'title' } };
+    const cfg = cfgMap[type];
+    if (!cfg) return;
+    try {
+        const snap = await db.collection(cfg.col).limit(20).get();
+        if (snap.empty) { showToast('항목이 없습니다', 'info'); return; }
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+        let listHTML = '';
+        snap.forEach(doc => {
+            const d = doc.data();
+            const name = d[cfg.name] || doc.id;
+            const price = d.price ? ` — ${d.price}` : '';
+            const img = d.imageUrl || d.imageData || d.thumbnailUrl || '';
+            listHTML += `<div style="display:flex;align-items:center;gap:0.6rem;padding:0.6rem;border-bottom:1px solid #eee;cursor:pointer;" onclick="sendShareCard('${type}','${doc.id}',${JSON.stringify(name)},${JSON.stringify(img)},${JSON.stringify(d.price||'')});this.closest('[style*=position]').remove();">
+                ${img ? `<img src="${img}" style="width:40px;height:40px;border-radius:6px;object-fit:cover;">` : '<div style="width:40px;height:40px;border-radius:6px;background:#eee;display:flex;align-items:center;justify-content:center;">📦</div>'}
+                <div style="flex:1;min-width:0;"><div style="font-size:0.85rem;font-weight:600;">${name}</div><div style="font-size:0.75rem;color:#999;">${price}</div></div>
+            </div>`;
+        });
+        overlay.innerHTML = `<div style="background:white;padding:1.5rem;border-radius:16px;max-width:420px;width:100%;max-height:60vh;overflow-y:auto;">
+            <h3 style="margin-bottom:1rem;">선택하세요</h3>${listHTML}
+            <button onclick="this.closest('[style*=position]').remove()" style="width:100%;margin-top:1rem;padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">취소</button>
+        </div>`;
+        document.body.appendChild(overlay);
+    } catch (e) { showToast('로드 실패', 'error'); }
+}
+
+async function sendShareCard(type, id, name, imageUrl, price) {
+    if (!currentChat) return;
+    await sendMediaMessage({
+        type: 'share_card', text: '',
+        shareCard: { itemType: type, itemId: id, name, imageUrl: imageUrl || '', price: price || '' }
+    }, `🔗 ${name}`);
+}
+
+// ===== Token transfer in chat (improved with offchain) =====
+
+// ===== Send image (legacy, now uses sendMediaFile) =====
+async function sendChatImage() {
+    sendMediaFile('image');
 }
 
 // ===== Token send =====
@@ -1754,6 +2202,142 @@ function handlePostDeepLink() {
 }
 window.addEventListener('hashchange', handlePostDeepLink);
 window.addEventListener('load', () => setTimeout(handlePostDeepLink, 2000));
+
+// ===== Voice message player =====
+let currentVoiceAudio = null;
+function toggleVoicePlay(btn, url) {
+    if (currentVoiceAudio && !currentVoiceAudio.paused) {
+        currentVoiceAudio.pause();
+        currentVoiceAudio = null;
+        btn.textContent = '▶️';
+        return;
+    }
+    const audio = new Audio(url);
+    currentVoiceAudio = audio;
+    btn.textContent = '⏸️';
+    const progress = btn.parentElement.querySelector('.voice-progress');
+    audio.ontimeupdate = () => { if (progress && audio.duration) progress.style.width = (audio.currentTime / audio.duration * 100) + '%'; };
+    audio.onended = () => { btn.textContent = '▶️'; if (progress) progress.style.width = '0%'; currentVoiceAudio = null; };
+    audio.play().catch(() => { btn.textContent = '▶️'; });
+}
+
+// ========== CHANNELS (BROADCAST) ==========
+function showChannels() {
+    document.querySelectorAll('.sidebar-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('chats-view').style.display = 'none';
+    document.getElementById('contacts-view').style.display = 'none';
+    document.getElementById('channels-view').style.display = 'block';
+    loadChannelList();
+}
+
+async function loadChannelList() {
+    const list = document.getElementById('channel-list');
+    list.innerHTML = '<p style="padding:1rem;text-align:center;color:var(--accent);">로딩...</p>';
+    try {
+        const snap = await db.collection('channels').orderBy('createdAt', 'desc').limit(50).get();
+        list.innerHTML = '';
+        if (snap.empty) { list.innerHTML = '<p style="padding:1rem;text-align:center;color:var(--accent);">채널이 없습니다</p>'; return; }
+        snap.forEach(doc => {
+            const ch = doc.data();
+            const isSub = (ch.subscribers || []).includes(currentUser?.uid);
+            const el = document.createElement('div');
+            el.className = 'chat-item';
+            el.onclick = () => openChannel(doc.id);
+            el.innerHTML = `
+                <div style="width:44px;height:44px;border-radius:50%;background:#e3f2fd;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">📢</div>
+                <div class="chat-preview" style="flex:1;min-width:0;">
+                    <strong>${ch.name}</strong>
+                    <p style="font-size:0.75rem;color:var(--accent);">${ch.subscribers?.length || 0} 구독자${isSub ? ' · ✅ 구독중' : ''}</p>
+                </div>`;
+            list.appendChild(el);
+        });
+    } catch (e) { list.innerHTML = `<p style="color:red;text-align:center;">${e.message}</p>`; }
+}
+
+async function showCreateChannelModal() {
+    const name = await showPromptModal('📢 채널 만들기', '채널 이름을 입력하세요', '');
+    if (!name?.trim()) return;
+    const desc = await showPromptModal('📢 채널 설명', '채널 설명 (선택)', '');
+    try {
+        showLoading('채널 생성 중...');
+        await db.collection('channels').add({
+            name: name.trim(), description: desc || '', ownerId: currentUser.uid,
+            subscribers: [currentUser.uid], createdAt: new Date()
+        });
+        hideLoading();
+        showToast('✅ 채널 생성 완료', 'success');
+        loadChannelList();
+    } catch (e) { hideLoading(); showToast('생성 실패: ' + e.message, 'error'); }
+}
+
+async function openChannel(channelId) {
+    if (chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
+    if (chatDocUnsubscribe) { chatDocUnsubscribe(); chatDocUnsubscribe = null; }
+    if (channelMsgUnsubscribe) { channelMsgUnsubscribe(); channelMsgUnsubscribe = null; }
+    currentChat = null; currentChatOtherId = null;
+    currentChannel = channelId;
+
+    const container = document.getElementById('messenger-container');
+    if (container) container.classList.add('chat-open');
+
+    const chDoc = await db.collection('channels').doc(channelId).get();
+    const ch = chDoc.data();
+    const isOwner = ch.ownerId === currentUser.uid;
+    const isSub = (ch.subscribers || []).includes(currentUser.uid);
+
+    document.getElementById('chat-username').innerHTML = `
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+            <div style="width:32px;height:32px;border-radius:50%;background:#e3f2fd;display:flex;align-items:center;justify-content:center;">📢</div>
+            <div><strong>${ch.name}</strong><div style="font-size:0.7rem;color:var(--accent);">${ch.subscribers?.length || 0} 구독자</div></div>
+            ${!isSub ? `<button onclick="subscribeChannel('${channelId}')" style="margin-left:0.5rem;padding:0.3rem 0.6rem;border:none;border-radius:6px;background:#0066cc;color:white;font-size:0.75rem;cursor:pointer;">구독</button>` :
+                `<button onclick="unsubscribeChannel('${channelId}')" style="margin-left:0.5rem;padding:0.3rem 0.6rem;border:1px solid #ddd;border-radius:6px;background:white;font-size:0.75rem;cursor:pointer;">구독취소</button>`}
+        </div>`;
+    document.getElementById('chat-header-actions').style.display = 'flex';
+    document.getElementById('chat-input-area').style.display = isOwner ? 'flex' : 'none';
+
+    // Listen for channel messages
+    channelMsgUnsubscribe = db.collection('channels').doc(channelId)
+        .collection('messages').orderBy('timestamp')
+        .onSnapshot(async (snapshot) => {
+            const messagesDiv = document.getElementById('chat-messages');
+            messagesDiv.innerHTML = '';
+            if (snapshot.empty) {
+                messagesDiv.innerHTML = `<p style="text-align:center;color:var(--accent);padding:2rem;">아직 메시지가 없습니다</p>`;
+            }
+            for (const doc of snapshot.docs) {
+                const msg = doc.data();
+                const timestamp = msg.timestamp?.toDate?.() || new Date();
+                const el = document.createElement('div');
+                el.style.cssText = 'margin-bottom:0.5rem;';
+                let content = '';
+                if (msg.mediaUrl && msg.type === 'image') content += `<img src="${msg.mediaUrl}" style="max-width:300px;border-radius:8px;display:block;margin-bottom:0.3rem;">`;
+                if (msg.text) content += `<span>${msg.text}</span>`;
+                el.innerHTML = `<div style="background:#e3f2fd;padding:0.6rem 0.8rem;border-radius:12px;word-break:break-word;font-size:0.9rem;line-height:1.4;">${content}</div>
+                    <div style="font-size:0.7rem;color:var(--accent);margin-top:0.15rem;">${formatMsgTime(timestamp)}</div>`;
+                messagesDiv.appendChild(el);
+            }
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        });
+
+    // Override sendMessage for channel context
+    const origInput = document.getElementById('message-input');
+    origInput.dataset.channelMode = channelId;
+}
+
+async function subscribeChannel(channelId) {
+    await db.collection('channels').doc(channelId).update({ subscribers: firebase.firestore.FieldValue.arrayUnion(currentUser.uid) });
+    showToast('✅ 구독 완료', 'success');
+    openChannel(channelId);
+}
+
+async function unsubscribeChannel(channelId) {
+    await db.collection('channels').doc(channelId).update({ subscribers: firebase.firestore.FieldValue.arrayRemove(currentUser.uid) });
+    showToast('구독 취소됨', 'info');
+    openChannel(channelId);
+}
+
+// Channel message sending is handled within sendMessage by checking currentChannel
 
 async function deleteContact(contactDocId, contactName) {
     if (!await showConfirmModal(t('social.delete_contact','연락처 삭제'), `"${contactName}" ${t('social.confirm_delete_contact','연락처를 삭제하시겠습니까?')}`)) return;
