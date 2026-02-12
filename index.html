@@ -13,7 +13,14 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="CROWNY">
     
-    <link rel="stylesheet" href="style.css?v=15.5">
+    <!-- OG Meta -->
+    <meta property="og:title" content="크라우니 — Protecting Beauty, Empowering Safety">
+    <meta property="og:description" content="지갑 · 트레이딩 · 마켓 · 소셜 · 아트 · 에너지 — 올인원 플랫폼">
+    <meta property="og:image" content="https://crowny-org.vercel.app/img/og-image.png">
+    <meta property="og:url" content="https://crowny-org.vercel.app">
+    <meta property="og:type" content="website">
+    
+    <link rel="stylesheet" href="style.css?v=15.6">
     
     <!-- Firebase SDK -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-app-compat.min.js"></script>
@@ -175,7 +182,7 @@
             <hr class="nav-divider">
             <div class="nav-group-label">FINANCE</div>
             <a href="#" onclick="showPage('wallet')" class="nav-item">💰 WALLET<span class="nav-sub" data-i18n="nav.wallet">지갑</span></a>
-            <a href="#" onclick="showPage('prop-trading')" class="nav-item">📈 PROP TRADING<span class="nav-sub" data-i18n="nav.trading">선물 거래</span></a>
+            <a href="#" onclick="showPage('prop-trading')" class="nav-item">📈 TRADING GAME<span class="nav-sub" data-i18n="nav.trading">트레이딩 게임</span></a>
             <a href="#" onclick="showPage('credit')" class="nav-item">💳 CREDIT<span class="nav-sub" data-i18n="nav.credit">신용</span></a>
             <hr class="nav-divider">
             <div class="nav-group-label">MARKETPLACE</div>
@@ -270,7 +277,7 @@
                 </div>
                 <div class="service-card" onclick="showPage('prop-trading')">
                     <span class="icon">📊</span>
-                    <h3>PROP TRADING</h3>
+                    <h3>TRADING GAME</h3>
                 </div>
                 <div class="service-card" onclick="showPage('care')">
                     <span class="icon">💝</span>
@@ -1320,7 +1327,7 @@
 
         <!-- Prop Trading Page -->
         <section id="prop-trading" class="page">
-            <h2 data-i18n="trading.title">📊 PROP TRADING</h2>
+            <h2 data-i18n="trading.title">📊 TRADING GAME</h2>
             
             <!-- 초기화 버튼 -->
             <button id="trading-reload-btn" onclick="reloadTradingSystem()" style="margin-bottom:1rem; padding:0.6rem 1.2rem; background:linear-gradient(135deg,#333,#555); color:white; border:none; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600;">
@@ -1329,7 +1336,7 @@
             <span id="trading-reload-status" style="margin-left:0.5rem; font-size:0.8rem; color:var(--accent);"></span>
             
             <div style="background:var(--bg); padding:1.5rem; border-radius:12px; margin-bottom:1.5rem;">
-                <h3 style="margin-bottom:1rem;" data-i18n="trading.rules_title">💎 CRTD 프랍 트레이딩 규칙</h3>
+                <h3 style="margin-bottom:1rem;" data-i18n="trading.rules_title">💎 CRTD 트레이딩 게임 규칙</h3>
                 <div id="prop-rules-display" style="line-height:1.8; font-size:0.9rem;">
                     <p data-i18n="trading.rules_placeholder">챌린지에 참가하면 규칙이 표시됩니다.</p>
                 </div>
@@ -1354,9 +1361,9 @@
                         </div>
                     </div>
                     
-                    <!-- ★ CRTD 프랍 상태 -->
+                    <!-- ★ CRTD 트레이딩 상태 -->
                     <div id="crtd-balance-display" style="margin-top:0.8rem; padding:0.8rem 1rem; background:linear-gradient(135deg, #1a1a2e, #16213e); border-radius:8px; color:#ddd; font-size:0.82rem;">
-                        💎 CRTD 프랍 상태 로딩...
+                        💎 CRTD 트레이딩 상태 로딩...
                     </div>
                 </div>
                 
@@ -2082,7 +2089,7 @@
     <script src="js/settings.js?v=1.1" defer></script>
     <script src="js/slogans.js?v=1.0" defer></script>
     <script src="js/care.js?v=2.0"></script>
-    <script src="js/ai-assistant.js?v=1.1"></script>
+    <script src="js/ai-assistant.js?v=1.2"></script>
     <script src="js/shortform.js?v=1.0"></script>
     <script src="js/pwa.js?v=1.1"></script>
 </body>

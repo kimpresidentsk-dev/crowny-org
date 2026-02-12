@@ -6,7 +6,7 @@ const AI_ASSISTANT = (() => {
     const MAX_HISTORY = 50;
     const STORAGE_KEY = 'crowny_ai_chat';
 
-    let apiKey = '';
+    let apiKey = 'AIzaSyDfLgJOoI9vXUaNy7hYhZWf6vx5beyAQVw';
     let systemPrompt = '';
     let enabled = true;
     let chatHistory = [];
