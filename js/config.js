@@ -412,6 +412,9 @@ auth.onAuthStateChanged(async (user) => {
             if (adminNav) adminNav.style.display = 'block';
         }
         
+        // 등록 버튼 표시 (레벨 2 이상)
+        if (typeof updateAdminRegisterButtons === 'function') updateAdminRegisterButtons();
+        
         await loadUserWallet();
         await loadUserData();
     } else {
@@ -420,6 +423,7 @@ auth.onAuthStateChanged(async (user) => {
         // 관리자 메뉴 숨기기
         const adminNav = document.getElementById('admin-nav-item');
         if (adminNav) adminNav.style.display = 'none';
+        if (typeof updateAdminRegisterButtons === 'function') updateAdminRegisterButtons();
     }
 });
 

@@ -109,4 +109,32 @@ function resizeImage(dataUrl, maxSize) {
     });
 }
 
+// ===== Registration Modal Helpers =====
+function openRegisterModal(section) {
+    const modal = document.getElementById('modal-' + section);
+    if (modal) modal.classList.add('active');
+}
+
+function closeRegisterModal(section) {
+    const modal = document.getElementById('modal-' + section);
+    if (modal) modal.classList.remove('active');
+}
+
+// Close modal on overlay click
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('register-modal-overlay')) {
+        e.target.classList.remove('active');
+    }
+});
+
+// Show/hide admin register buttons based on user level
+function updateAdminRegisterButtons() {
+    const isAdmin = (typeof currentUserLevel !== 'undefined') && currentUserLevel >= 2;
+    const btnIds = ['mall-register-btn', 'art-register-btn', 'fundraise-register-btn', 'energy-register-btn', 'business-register-btn', 'artist-register-btn', 'books-register-btn'];
+    btnIds.forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.style.display = isAdmin ? 'inline-block' : 'none';
+    });
+}
+
 // Init Web3 (Polygon) - fallback RPC
