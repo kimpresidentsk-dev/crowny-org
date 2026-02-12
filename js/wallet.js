@@ -110,6 +110,7 @@ async function displayCurrentWallet() {
     
     await loadRealBalances();
     await loadOffchainBalances();
+    await loadMaticBalance();
     updateBalances();
 }
 
@@ -299,7 +300,7 @@ function fallbackCopy(text) {
     document.body.removeChild(temp);
 }
 
-// Update Balances (7-token: 3 on-chain + 4 off-chain)
+// Update Balances (7-token: 3 on-chain + 4 off-chain + MATIC)
 function updateBalances() {
     if (!userWallet) return;
     
@@ -307,6 +308,10 @@ function updateBalances() {
     document.getElementById('crny-balance').textContent = userWallet.balances.crny.toFixed(2);
     document.getElementById('fnc-balance').textContent = userWallet.balances.fnc.toFixed(2);
     document.getElementById('crfn-balance').textContent = userWallet.balances.crfn.toFixed(2);
+    
+    // MATIC balance
+    const maticEl = document.getElementById('matic-balance');
+    if (maticEl) maticEl.textContent = (userWallet.maticBalance || 0).toFixed(4);
     
     // Off-chain balances
     const offchain = userWallet.offchainBalances || { crtd: 0, crac: 0, crgc: 0, creb: 0 };
@@ -329,6 +334,107 @@ function updateBalances() {
     // Total offchain points
     const offPtsEl = document.getElementById('total-offchain-pts');
     if (offPtsEl) offPtsEl.textContent = `${totalOffchain.toLocaleString()} pt`;
+    
+    // Sync badge
+    const badge = document.getElementById('wallet-sync-badge');
+    if (badge) { badge.style.display = 'inline'; setTimeout(() => badge.style.display = 'none', 3000); }
+}
+
+// ========== MATIC (가스비) 기능 ==========
+
+// MATIC 잔액 조회
+async function loadMaticBalance() {
+    if (!userWallet || !userWallet.walletAddress) return;
+    try {
+        const weiBalance = await web3.eth.getBalance(userWallet.walletAddress);
+        userWallet.maticBalance = parseFloat(web3.utils.fromWei(weiBalance, 'ether'));
+        const maticEl = document.getElementById('matic-balance');
+        if (maticEl) maticEl.textContent = userWallet.maticBalance.toFixed(4);
+        console.log('⟠ MATIC:', userWallet.maticBalance.toFixed(4));
+    } catch (e) {
+        console.warn('MATIC 잔액 조회 실패:', e.message);
+        userWallet.maticBalance = 0;
+    }
+}
+
+// MATIC 입금 안내 (주소 표시)
+function showMaticDeposit() {
+    if (!userWallet) { alert('지갑을 먼저 연결하세요'); return; }
+    const addr = userWallet.walletAddress;
+    
+    const msg = `📥 MATIC 입금 안내\n\n` +
+        `아래 Polygon 주소로 MATIC을 보내주세요:\n\n` +
+        `${addr}\n\n` +
+        `⚠️ 반드시 Polygon 네트워크(MATIC)로 전송하세요!\n` +
+        `다른 네트워크(ETH 등)로 보내면 복구 불가합니다.\n\n` +
+        `입금 후 "잔액 새로고침" 버튼을 눌러주세요.`;
+    
+    alert(msg);
+    
+    // 주소 복사
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(addr).then(() => {
+            if (typeof showToast === 'function') showToast('주소가 복사되었습니다', 'success');
+        });
+    }
+}
+
+// MATIC 송금
+async function showMaticSend() {
+    if (!userWallet) { alert('지갑을 먼저 연결하세요'); return; }
+    
+    const maticBal = userWallet.maticBalance || 0;
+    if (maticBal <= 0) {
+        alert('MATIC 잔액이 없습니다.\n먼저 MATIC을 입금해주세요.');
+        return;
+    }
+    
+    const toAddress = prompt(`MATIC 송금\n\n잔액: ${maticBal.toFixed(4)} MATIC\n\n받는 주소 (0x...):`);
+    if (!toAddress || !toAddress.startsWith('0x') || toAddress.length !== 42) {
+        if (toAddress) alert('유효하지 않은 주소입니다');
+        return;
+    }
+    
+    const amount = prompt(`${toAddress.slice(0,6)}...${toAddress.slice(-4)} 에게 보낼 MATIC:\n잔액: ${maticBal.toFixed(4)}`);
+    if (!amount) return;
+    
+    const amountNum = parseFloat(amount);
+    if (isNaN(amountNum) || amountNum <= 0 || amountNum >= maticBal) {
+        alert(`유효하지 않은 금액입니다\n잔액: ${maticBal.toFixed(4)} MATIC\n(가스비를 위해 약간의 MATIC을 남겨두세요)`);
+        return;
+    }
+    
+    if (!confirm(`MATIC 송금 확인\n\n받는 주소: ${toAddress}\n금액: ${amountNum} MATIC\n\n진행하시겠습니까?`)) return;
+    
+    try {
+        if (typeof showLoading === 'function') showLoading('MATIC 송금 중...');
+        
+        const amountWei = web3.utils.toWei(amountNum.toString(), 'ether');
+        const gasPrice = await web3.eth.getGasPrice();
+        
+        const tx = {
+            from: userWallet.walletAddress,
+            to: toAddress,
+            value: amountWei,
+            gas: 21000,
+            gasPrice: gasPrice
+        };
+        
+        const signedTx = await web3.eth.accounts.signTransaction(tx, userWallet.privateKey);
+        const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+        
+        if (typeof hideLoading === 'function') hideLoading();
+        
+        alert(`✅ MATIC 송금 완료!\n\n금액: ${amountNum} MATIC\nTX: ${receipt.transactionHash.slice(0,20)}...\n\nhttps://polygonscan.com/tx/${receipt.transactionHash}`);
+        
+        // 잔액 갱신
+        await loadMaticBalance();
+        
+    } catch (error) {
+        if (typeof hideLoading === 'function') hideLoading();
+        console.error('MATIC 송금 실패:', error);
+        alert('MATIC 송금 실패: ' + error.message);
+    }
 }
 
 
