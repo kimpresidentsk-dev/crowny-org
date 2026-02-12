@@ -151,7 +151,7 @@ function renderNotifPanel() {
         const style = NOTIF_STYLES[n.type] || NOTIF_STYLES.system;
         const timeAgo = getNotifTimeAgo(n.createdAt);
         return `
-            <div onclick="onNotifItemClick('${n.id}')" style="padding:0.7rem 1rem; border-bottom:1px solid rgba(0,0,0,0.04); cursor:pointer; display:flex; gap:0.6rem; align-items:flex-start; background:${n.read ? 'white' : 'rgba(33,150,243,0.04)'}; transition:background 0.15s;" onmouseenter="this.style.background='var(--bg)'" onmouseleave="this.style.background='${n.read ? 'white' : 'rgba(33,150,243,0.04)}'">
+            <div onclick="onNotifItemClick('${n.id}')" style="padding:0.7rem 1rem; border-bottom:1px solid rgba(0,0,0,0.04); cursor:pointer; display:flex; gap:0.6rem; align-items:flex-start; background:${n.read ? "white" : "rgba(33,150,243,0.04)"}; transition:background 0.15s;" onmouseenter="this.style.background='var(--bg)'" onmouseleave="this.style.background='${n.read ? "white" : "rgba(33,150,243,0.04)"}'">
                 <span style="font-size:1.2rem; flex-shrink:0; margin-top:0.1rem;">${style.icon}</span>
                 <div style="flex:1; min-width:0;">
                     <div style="font-size:0.82rem; line-height:1.4; color:var(--text); ${n.read ? '' : 'font-weight:600;'}">${n.message}</div>
