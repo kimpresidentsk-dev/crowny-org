@@ -812,5 +812,21 @@
   "ai.welcome_title": "¡Hola! Soy el asistente IA de CROWNY",
   "ai.welcome_sub": "¿En qué puedo ayudarte?",
   "ai.clear_confirm": "¿Borrar todo el historial?",
-  "admin.tab.ai": "Ajustes IA"
+  "admin.tab.ai": "Ajustes IA",
+  "nav.care": "CrownyCare",
+  "care.title": "💝 CrownyCare",
+  "care.banner_title": "💝 CrownyCare — Plataforma de Cuidado Familiar",
+  "care.banner_desc": "Conexión Familiar · Salud · Medicación · SOS · Panel Inteligente",
+  "care.welcome": "Bienvenido a CrownyCare",
+  "care.no_group": "Crea un grupo familiar o recibe una invitación",
+  "care.create_group": "Crear Grupo Familiar",
+  "care.messages": "Mensajes Familiares",
+  "care.schedule": "Horario de Hoy",
+  "care.medications": "Medicamentos",
+  "care.health": "Registros de Salud",
+  "care.photos": "Fotos Familiares",
+  "care.smartboard": "Modo Panel Inteligente",
+  "care.sos_label": "Llamada de Emergencia",
+  "care.taken": "Tomado",
+  "care.take": "Confirmar"
 }

@@ -3139,3 +3139,300 @@ a:not(.nav-item) {
 .ai-quick-cards { display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:center; }
 .ai-quick-card { background:#f5f3ff; border:1px solid #e0d9ff; border-radius:12px; padding:0.6rem 1rem; font-size:0.85rem; cursor:pointer; transition:all 0.2s; }
 .ai-quick-card:hover { background:#ede8ff; transform:translateY(-1px); }
+
+/* ========== CROWNY CARE - 크라우니케어 ========== */
+.care-mode {
+    font-size: 24px;
+}
+.care-mode * {
+    font-size: inherit;
+}
+.care-mode h2 { font-size: 1.8rem; }
+.care-mode h3 { font-size: 1.4rem; }
+.care-mode p { font-size: 1.1rem; }
+
+/* Clock */
+.care-clock-wrap {
+    text-align: center;
+    padding: 2rem 0 1rem;
+}
+.care-clock {
+    font-size: 4rem;
+    font-weight: 800;
+    color: var(--text, #1a1a1a);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 2px;
+}
+.care-date {
+    font-size: 1.3rem;
+    color: #666;
+    margin-top: 0.3rem;
+}
+
+/* Cards */
+.care-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    border: 1px solid #eee;
+}
+
+/* Buttons */
+.care-btn {
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+.care-btn:active { transform: scale(0.96); }
+.care-btn-primary {
+    background: linear-gradient(135deg, #D4AF37, #B8860B);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+}
+.care-btn-small {
+    background: #f5f5f5;
+    color: #333;
+    padding: 0.5rem 1rem;
+    font-size: 0.95rem;
+}
+.care-btn-med {
+    background: linear-gradient(135deg, #4CAF50, #388E3C);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    min-width: 80px;
+    min-height: 60px;
+    border-radius: 12px;
+}
+
+/* SOS Button */
+.care-sos-btn {
+    background: linear-gradient(135deg, #e53935, #b71c1c);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 140px;
+    height: 140px;
+    font-size: 2rem;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(229,57,53,0.4);
+    transition: transform 0.15s, box-shadow 0.15s;
+    animation: care-sos-pulse 2s infinite;
+}
+.care-sos-btn:active {
+    transform: scale(0.9);
+}
+@keyframes care-sos-pulse {
+    0%, 100% { box-shadow: 0 4px 20px rgba(229,57,53,0.4); }
+    50% { box-shadow: 0 4px 40px rgba(229,57,53,0.7); }
+}
+
+/* Quick Replies */
+.care-quick-replies {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    justify-content: center;
+}
+.care-quick-btn {
+    background: #FFF8F0;
+    border: 2px solid #D4AF37;
+    border-radius: 16px;
+    padding: 0.8rem;
+    min-width: 80px;
+    min-height: 80px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 1.8rem;
+    transition: transform 0.1s, background 0.1s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.care-quick-btn span {
+    font-size: 0.85rem;
+    color: #333;
+    margin-top: 0.2rem;
+    font-weight: 600;
+}
+.care-quick-btn:active {
+    transform: scale(0.92);
+    background: #D4AF37;
+    color: white;
+}
+
+/* Messages */
+.care-message-card {
+    background: #FFF8F0;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 0.8rem;
+    border-left: 4px solid #D4AF37;
+}
+
+/* Member Tags */
+.care-member-tag {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+.care-member-tag.guardian {
+    background: linear-gradient(135deg, #D4AF37, #B8860B);
+    color: white;
+}
+.care-member-tag.member-tag {
+    background: #FFF8F0;
+    color: #333;
+    border: 1px solid #D4AF37;
+}
+
+/* Schedule */
+.care-schedule-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+    background: #f9f9f9;
+}
+.care-schedule-item.past {
+    opacity: 0.5;
+    text-decoration: line-through;
+}
+.care-schedule-time {
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: #D4AF37;
+    min-width: 60px;
+}
+.care-schedule-label {
+    font-size: 1.1rem;
+    flex: 1;
+}
+
+/* Medications */
+.care-med-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 0.8rem;
+    background: #f9f9f9;
+    gap: 1rem;
+}
+.care-med-item.taken {
+    background: #e8f5e9;
+}
+.care-med-done {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #4CAF50;
+}
+
+/* Health Card */
+.care-health-card {
+    background: #f9f9f9;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 0.6rem;
+}
+
+/* Slideshow */
+.care-slideshow {
+    margin-top: 1rem;
+}
+
+/* ========== SMART BOARD (Fullscreen) ========== */
+.care-board-fullscreen {
+    position: fixed !important;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 99999;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+}
+.care-board-bg {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-color: #1a1a2e;
+    transition: background-image 1.5s ease-in-out;
+}
+.care-board-overlay {
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: white;
+    text-align: center;
+}
+.care-board-exit {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    font-size: 2rem;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+.care-board-clock {
+    font-size: 8rem;
+    font-weight: 900;
+    letter-spacing: 4px;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+}
+.care-board-date {
+    font-size: 2rem;
+    opacity: 0.9;
+    margin-top: 0.5rem;
+}
+.care-board-messages {
+    margin-top: 2rem;
+    max-width: 600px;
+}
+.care-board-msg {
+    font-size: 1.5rem;
+    padding: 0.8rem;
+    opacity: 0.9;
+    border-left: 3px solid #D4AF37;
+    margin-bottom: 0.5rem;
+    text-align: left;
+    padding-left: 1rem;
+}
+.care-board-schedule {
+    margin-top: 1.5rem;
+}
+.care-board-sched {
+    font-size: 1.3rem;
+    padding: 0.4rem;
+    opacity: 0.85;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .care-clock { font-size: 3rem; }
+    .care-sos-btn { width: 120px; height: 120px; font-size: 1.6rem; }
+    .care-board-clock { font-size: 5rem; }
+    .care-board-date { font-size: 1.4rem; }
+}

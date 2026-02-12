@@ -987,5 +987,21 @@
   "ai.welcome_title": "Hello! I'm CROWNY AI Assistant",
   "ai.welcome_sub": "How can I help you?",
   "ai.clear_confirm": "Clear all chat history?",
-  "admin.tab.ai": "AI Settings"
+  "admin.tab.ai": "AI Settings",
+  "nav.care": "CrownyCare",
+  "care.title": "💝 CrownyCare",
+  "care.banner_title": "💝 CrownyCare — Family Care Platform",
+  "care.banner_desc": "Family Connect · Health · Medication · SOS · Smart Board",
+  "care.welcome": "Welcome to CrownyCare",
+  "care.no_group": "Create a family group or get invited to start",
+  "care.create_group": "Create Family Group",
+  "care.messages": "Family Messages",
+  "care.schedule": "Today's Schedule",
+  "care.medications": "Medications",
+  "care.health": "Health Records",
+  "care.photos": "Family Photos",
+  "care.smartboard": "Smart Board Mode",
+  "care.sos_label": "Emergency Call",
+  "care.taken": "Taken",
+  "care.take": "Confirm"
 }

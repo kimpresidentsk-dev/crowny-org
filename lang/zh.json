@@ -843,5 +843,21 @@
   "ai.welcome_title": "你好！我是CROWNY AI助手",
   "ai.welcome_sub": "有什么可以帮您的？",
   "ai.clear_confirm": "确定要清除所有聊天记录吗？",
-  "admin.tab.ai": "AI设置"
+  "admin.tab.ai": "AI设置",
+  "nav.care": "皇冠关怀",
+  "care.title": "💝 皇冠关怀",
+  "care.banner_title": "💝 皇冠关怀 — 家庭护理平台",
+  "care.banner_desc": "家庭连接 · 健康 · 用药 · SOS · 智能面板",
+  "care.welcome": "欢迎来到皇冠关怀",
+  "care.no_group": "创建家庭群组或接受邀请开始",
+  "care.create_group": "创建家庭群组",
+  "care.messages": "家庭消息",
+  "care.schedule": "今日日程",
+  "care.medications": "用药",
+  "care.health": "健康记录",
+  "care.photos": "家庭照片",
+  "care.smartboard": "智能面板模式",
+  "care.sos_label": "紧急呼叫",
+  "care.taken": "已服用",
+  "care.take": "确认"
 }

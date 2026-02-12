@@ -84,6 +84,9 @@ function showPage(pageId) {
     if (pageId === 'books') {
         loadBooksList();
     }
+    if (pageId === 'care') {
+        if (typeof CARE !== 'undefined' && CARE.init) CARE.init();
+    }
     if (pageId === 'credit') {
         loadCreditInfo();
         loadPumasiList();
