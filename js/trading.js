@@ -444,15 +444,30 @@ async function loadTradingDashboard() {
 function updateTradingUI() {
     if (!myParticipation) return;
     
-    const balance = myParticipation.currentBalance || 100000;
+    const cashBalance = myParticipation.currentBalance || 100000;
     const initial = myParticipation.initialBalance || 100000;
-    const profit = ((balance - initial) / initial * 100).toFixed(2);
-    const positions = myParticipation.trades?.filter(t => t.status === 'open').length || 0;
+    const openTrades = (myParticipation.trades || []).filter(t => t.status === 'open');
     
-    document.getElementById('trading-balance').textContent = `$${balance.toLocaleString()}`;
+    // 미실현 PnL + 잠긴 증거금 합산 → 총 자산(equity)
+    let unrealizedPnL = 0;
+    let lockedMargin = 0;
+    for (const trade of openTrades) {
+        const multiplier = trade.contract === 'NQ' ? 20 : 2;
+        const effContracts = trade.effectiveContracts || (trade.contracts * (trade.copyAccounts || 1));
+        const pnl = trade.side === 'BUY'
+            ? (currentPrice - trade.entryPrice) * multiplier * effContracts
+            : (trade.entryPrice - currentPrice) * multiplier * effContracts;
+        unrealizedPnL += pnl;
+        lockedMargin += (trade.margin || 0);
+    }
+    
+    const equity = cashBalance + lockedMargin + unrealizedPnL;
+    const profit = ((equity - initial) / initial * 100).toFixed(2);
+    
+    document.getElementById('trading-balance').textContent = `$${equity.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
     document.getElementById('trading-profit').textContent = `${profit >= 0 ? '+' : ''}${profit}%`;
     document.getElementById('trading-profit').style.color = profit >= 0 ? '#0066cc' : '#cc0000';
-    document.getElementById('trading-positions').textContent = positions;
+    document.getElementById('trading-positions').textContent = openTrades.length;
 }
 
 // ========================================
