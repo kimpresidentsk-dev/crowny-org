@@ -65,6 +65,13 @@ async function showProfileEdit() {
                 <input type="text" id="profile-edit-status" value="${data.statusMessage || ''}" placeholder="상태 메시지" maxlength="50" style="width:100%;padding:0.7rem;border:1px solid #ddd;border-radius:8px;font-size:0.95rem;box-sizing:border-box;">
             </div>
             <p style="font-size:0.75rem; color:#999;">이메일: ${data.email}</p>
+            ${currentUser && !currentUser.providerData.some(p => p.providerId === 'google.com') ? `
+            <div style="margin-top:0.8rem; padding-top:0.8rem; border-top:1px solid #eee;">
+                <button onclick="linkGoogleAccount(); document.getElementById('profile-edit-modal').remove();" style="width:100%;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#fff;font-size:0.9rem;display:flex;align-items:center;justify-content:center;gap:0.5rem;">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width:16px;height:16px;"> Google 계정 연동
+                </button>
+            </div>` : currentUser && currentUser.providerData.some(p => p.providerId === 'google.com') ? `
+            <p style="font-size:0.75rem; color:#4CAF50; margin-top:0.5rem;">✅ Google 계정 연동됨</p>` : ''}
         </div>
         <div style="display:flex;gap:0.5rem;margin-top:1rem;">
             <button onclick="document.getElementById('profile-edit-modal').remove()" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">취소</button>
