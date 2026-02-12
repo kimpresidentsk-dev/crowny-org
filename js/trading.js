@@ -4,6 +4,42 @@ let currentPrice = 0;
 let priceWs = null;
 let myParticipation = null;
 
+// ========== 트레이딩 시스템 초기화 버튼 ==========
+async function reloadTradingSystem() {
+    const statusEl = document.getElementById('trading-reload-status');
+    const btn = document.getElementById('trading-reload-btn');
+    if (btn) btn.disabled = true;
+    if (statusEl) statusEl.textContent = '⏳ 초기화 중...';
+    
+    try {
+        // 1) 참가 데이터 재로드
+        myParticipation = null;
+        await loadTradingDashboard();
+        
+        // 2) 가격 피드 재시작
+        if (typeof startLiveDataFeed === 'function') {
+            startLiveDataFeed();
+        }
+        
+        // 3) 차트 재초기화
+        if (typeof initTradingViewChart === 'function') {
+            await initTradingViewChart();
+        }
+        
+        const ok = !!myParticipation && currentPrice > 0;
+        if (statusEl) statusEl.textContent = ok 
+            ? `✅ 완료! 참가: ${myParticipation?.participantId?.slice(0,8)}…, 가격: $${currentPrice.toFixed(2)}`
+            : `⚠️ ${!myParticipation ? '참가 데이터 없음' : '가격 수신 대기 중...'}`;
+        if (statusEl) statusEl.style.color = ok ? '#00cc66' : '#ff6600';
+    } catch (e) {
+        console.error('❌ reloadTradingSystem:', e);
+        if (statusEl) statusEl.textContent = '❌ 오류: ' + e.message;
+        if (statusEl) statusEl.style.color = '#ff3333';
+    }
+    
+    if (btn) btn.disabled = false;
+}
+
 // ========== 거래 권한 시스템 (tradingTier) ==========
 // Firestore participant 필드:
 //   tradingTier: { MNQ: 3, NQ: 0 }  ← 상품별 최대 계약 수 (0=불허)
