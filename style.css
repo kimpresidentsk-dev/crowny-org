@@ -3142,6 +3142,31 @@ a:not(.nav-item) {
 .ai-quick-card { background:#f5f3ff; border:1px solid #e0d9ff; border-radius:12px; padding:0.6rem 1rem; font-size:0.85rem; cursor:pointer; transition:all 0.2s; }
 .ai-quick-card:hover { background:#ede8ff; transform:translateY(-1px); }
 
+/* ── Crowny Panel: Character Select ── */
+.panel-select-screen { text-align:center; padding:1.5rem 1rem; margin:auto; width:100%; max-width:420px; }
+.panel-select-title { margin-bottom:1.5rem; }
+.panel-select-icon { font-size:3rem; margin-bottom:0.3rem; }
+.panel-select-title h3 { font-size:1.15rem; color:#333; margin-bottom:0.2rem; }
+.panel-select-title p { color:#888; font-size:0.85rem; }
+.panel-char-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0.7rem; }
+.panel-char-grid > :nth-child(4),
+.panel-char-grid > :nth-child(5) { grid-column:span 1; }
+@media(max-width:360px){ .panel-char-grid { grid-template-columns:repeat(2,1fr); } }
+
+.panel-char-card { background:#fff; border:2px solid #eee; border-radius:14px; padding:1rem 0.5rem; cursor:pointer; transition:all 0.2s; text-align:center; }
+.panel-char-card:hover { border-color:var(--char-color); transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,0.1); }
+.panel-char-avatar { width:48px; height:48px; border-radius:50%; margin:0 auto 0.4rem; display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:#fff; }
+.panel-char-name { font-weight:700; font-size:0.9rem; color:#333; }
+.panel-char-role { font-size:0.7rem; color:#888; margin-top:0.15rem; line-height:1.3; }
+
+/* ── Crowny Panel: Chat Header ── */
+.panel-chat-header-left { display:flex; align-items:center; gap:0.5rem; }
+.panel-back-btn { background:none; border:none; font-size:1.3rem; cursor:pointer; padding:0.2rem 0.4rem; color:#666; }
+.panel-back-btn:hover { color:#333; }
+.panel-chat-avatar { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
+.panel-chat-name { font-weight:700; font-size:0.9rem; line-height:1.2; }
+.panel-chat-role { font-size:0.7rem; color:#888; line-height:1.2; }
+
 /* ========== CROWNY CARE - 크라우니케어 ========== */
 .care-mode {
     font-size: 24px;
