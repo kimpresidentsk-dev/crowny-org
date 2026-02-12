@@ -323,6 +323,9 @@ auth.onAuthStateChanged(async (user) => {
         // ★ 알림 시스템 초기화
         if (typeof initNotifications === 'function') initNotifications();
         
+        // ★ FCM 푸시 알림 권한 요청
+        if (typeof requestNotificationPermission === 'function') requestNotificationPermission();
+        
         // ★ 현재 보이는 섹션이 prop-trading이면 자동 로드
         const activePage = document.querySelector('.page.active');
         if (activePage && activePage.id === 'prop-trading') {

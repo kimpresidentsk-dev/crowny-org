@@ -42,6 +42,9 @@ async function loadSettings() {
                 </label>
             </div>
             
+            <!-- Push Notifications -->
+            ${typeof renderPushNotifToggle === 'function' ? renderPushNotifToggle() : ''}
+            
             <!-- Language -->
             <div class="settings-card">
                 <h4>🌐 ${t('settings.language', '언어 설정')}</h4>

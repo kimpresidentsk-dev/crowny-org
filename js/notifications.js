@@ -360,6 +360,10 @@ function setupMessengerNotifications() {
                             const info = await getUserDisplayInfo(otherId);
                             const preview = lastMsg && lastMsg.length > 30 ? lastMsg.substring(0, 30) + '...' : lastMsg;
                             addNotification(NOTIF_TYPES.MESSENGER, `💬 ${info.nickname}: ${preview || '새 메시지'}`, { chatId: change.doc.id, otherId });
+                            // Browser notification when tab not focused
+                            if (typeof showBrowserNotification === 'function') {
+                              showBrowserNotification(info.nickname, preview || '새 메시지', { chatId: change.doc.id, otherId });
+                            }
                         }
                     }
                 }

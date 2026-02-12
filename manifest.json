@@ -1,0 +1,23 @@
+{
+  "name": "CROWNY",
+  "short_name": "CROWNY",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#1a1a2e",
+  "background_color": "#f5f0e8",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/img/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/img/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

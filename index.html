@@ -2,8 +2,17 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>CROWNY PLATFORM</title>
+    
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a1a2e">
+    <link rel="apple-touch-icon" href="/img/icons/icon-192x192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CROWNY">
+    
     <link rel="stylesheet" href="style.css?v=17.0">
     
     <!-- Firebase SDK -->
@@ -11,6 +20,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-auth-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-firestore-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-storage-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-messaging-compat.min.js"></script>
     
     <!-- Thirdweb SDK (NFT 민팅 지원) -->
     <script type="module">
@@ -1963,5 +1973,6 @@
     <script src="js/search.js?v=1.0" defer></script>
     <script src="js/settings.js?v=1.0" defer></script>
     <script src="js/slogans.js?v=1.0" defer></script>
+    <script src="js/pwa.js?v=1.0"></script>
 </body>
 </html>
