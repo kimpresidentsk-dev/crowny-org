@@ -723,13 +723,26 @@
                 </div>
             </div>
             
+            <!-- 검색/정렬 -->
+            <div style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
+                <input type="text" id="mall-search" placeholder="🔍 상품 검색..." oninput="loadMallProducts()" style="flex:1; min-width:140px; padding:0.6rem; border:1px solid var(--border); border-radius:6px; font-size:0.85rem;">
+                <select id="mall-sort" onchange="loadMallProducts()" style="padding:0.6rem; border:1px solid var(--border); border-radius:6px; font-size:0.85rem;">
+                    <option value="newest">최신순</option>
+                    <option value="price-low">낮은가격순</option>
+                    <option value="price-high">높은가격순</option>
+                    <option value="popular">인기순</option>
+                    <option value="rating">평점순</option>
+                </select>
+            </div>
+
             <div id="mall-products" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:0.8rem;"></div>
             
             <div style="background:white; padding:1.5rem; border-radius:12px; margin-top:1.5rem;">
                 <h3 style="margin-bottom:1rem;">📋 내 주문/판매</h3>
-                <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
+                <div style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
                     <button onclick="loadMyOrders()" class="btn-primary" style="flex:1;">🛒 주문 내역</button>
                     <button onclick="loadMyProducts()" class="btn-secondary" style="flex:1;">📦 내 상품</button>
+                    <button onclick="loadSellerOrders()" style="flex:1; background:#ff9800; color:white; border:none; padding:0.6rem; border-radius:6px; cursor:pointer; font-weight:600;">📬 받은 주문</button>
                 </div>
                 <div id="mall-my-list"></div>
             </div>
@@ -812,6 +825,11 @@
             </div>
             
             <div id="fund-campaigns" style="display:grid; gap:1rem;"></div>
+            
+            <!-- 캠페인 상세 모달 -->
+            <div id="campaign-detail-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); z-index:10000; display:none; align-items:center; justify-content:center; padding:1rem;">
+                <div id="campaign-detail-content" style="background:white; border-radius:12px; max-width:550px; width:100%; max-height:90vh; overflow-y:auto; padding:1.5rem;"></div>
+            </div>
         </section>
 
         <!-- ========== ENERGY - 에너지 사업 ========== -->
@@ -851,7 +869,11 @@
             <!-- 프로젝트 -->
             <div style="background:white; padding:1.5rem; border-radius:12px;">
                 <h3 style="margin-bottom:1rem;">⚡ 발전소 프로젝트</h3>
-                <button onclick="loadEnergyProjects()" class="btn-primary" style="margin-bottom:1rem;">🔄 프로젝트 새로고침</button>
+                <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
+                    <button onclick="loadEnergyProjects()" class="btn-primary" style="flex:1;">🔄 프로젝트 새로고침</button>
+                    <button onclick="loadMyEnergyInvestments()" class="btn-secondary" style="flex:1;">📋 내 투자 내역</button>
+                </div>
+                <div id="energy-my-investments" style="margin-bottom:1rem;"></div>
                 <div id="energy-projects"></div>
             </div>
             
@@ -986,6 +1008,13 @@
             </div>
             
             <div id="books-list" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:0.8rem;"></div>
+            
+            <!-- 읽고 싶은 책 -->
+            <div style="background:white; padding:1.5rem; border-radius:12px; margin-top:1.5rem;">
+                <h3 style="margin-bottom:0.5rem;">📚 읽고 싶은 책</h3>
+                <button onclick="loadReadingList()" style="background:#ff9800; color:white; border:none; padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; font-size:0.8rem; margin-bottom:0.5rem;">🔄 새로고침</button>
+                <div id="reading-list"><p style="color:var(--accent); font-size:0.85rem;">목록을 불러오려면 새로고침을 누르세요</p></div>
+            </div>
         </section>
 
         <!-- ========== CREDIT - P2P 크레딧 ========== -->
@@ -1072,6 +1101,13 @@
                     </div>
                 </div>
                 <div id="insurance-list"></div>
+                <!-- 관리자 보험 승인 -->
+                <div id="insurance-admin-list" style="background:white; padding:1rem; border-radius:12px; margin-top:1rem;"></div>
+                <!-- 내 보험 신청 내역 -->
+                <div style="background:white; padding:1rem; border-radius:12px; margin-top:1rem;">
+                    <h4 style="margin-bottom:0.5rem;">📋 내 보험 신청 내역</h4>
+                    <div id="my-insurance-claims"></div>
+                </div>
             </div>
             
             <!-- 기부 연동 -->
@@ -1124,7 +1160,7 @@
             <!-- 내 크레딧 현황 -->
             <div style="background:white; padding:1.5rem; border-radius:12px; margin-top:1rem;">
                 <h3 style="margin-bottom:1rem;">📊 내 크레딧 현황</h3>
-                <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+                <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">
                     <div style="flex:1; min-width:100px; background:var(--bg); padding:0.8rem; border-radius:8px; text-align:center;">
                         <div style="font-size:0.75rem; color:var(--accent);">크레딧 점수</div>
                         <div id="credit-score" style="font-size:1.8rem; font-weight:700; color:#0066cc;">--</div>
@@ -1138,6 +1174,9 @@
                         <div id="total-donated" style="font-size:1.5rem; font-weight:700; color:#4CAF50;">0</div>
                     </div>
                 </div>
+                <!-- 크레딧 점수 상세 분석 -->
+                <h4 style="margin-bottom:0.5rem;">🔍 점수 상세 분석</h4>
+                <div id="credit-score-breakdown"><p style="color:var(--accent); font-size:0.85rem;">로딩...</p></div>
             </div>
         </section>
 
