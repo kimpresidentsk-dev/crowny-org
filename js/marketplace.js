@@ -15,6 +15,8 @@ const BRAND_ICONS = {
     present:'💄', doctor:'💊', medical:'🏥', avls:'🎬', solution:'🔐', architect:'🏗️', mall:'🛒', designers:'👗'
 };
 const RETURN_REASONS = ['불량','오배송','단순변심','기타'];
+const MAX_ORDER_AMOUNT = 10000; // 1회 최대 주문 금액 (CRGC)
+let _orderInProgress = false; // 동시 주문 방지 플래그
 
 const MALL_CATEGORIES = {
     'present':'💄 프레즌트','doctor':'💊 포닥터','medical':'🏥 메디컬','avls':'🎬 AVLs',
@@ -334,6 +336,9 @@ async function buyProduct(id, btn) {
     if (!currentUser) return;
     // 이중 클릭 방지
     if (btn) { btn.disabled = true; setTimeout(() => { if(btn) btn.disabled = false; }, 3000); }
+    // 동시 주문 방지
+    if (_orderInProgress) { showToast(t('mall.order_in_progress','주문 처리 중입니다. 잠시 기다려주세요.'), 'warning'); return; }
+    _orderInProgress = true;
     try {
         const tk = 'crgc';
         
@@ -343,6 +348,12 @@ async function buyProduct(id, btn) {
         if (!p || p.status !== 'active') { showToast('상품을 구매할 수 없습니다', 'warning'); return; }
         const price = p.price;
         if (!price || price <= 0 || !Number.isFinite(price)) { showToast('비정상 가격', 'error'); return; }
+        // 주문 금액 상한 검증
+        if (price > MAX_ORDER_AMOUNT) { showToast(t('mall.max_order_exceeded',`1회 최대 주문 금액은 ${MAX_ORDER_AMOUNT} CRGC입니다`), 'warning'); return; }
+        // 클라이언트 잔액 사전 검증
+        const preCheck = await db.collection('users').doc(currentUser.uid).get();
+        const preBal = preCheck.data()?.offchainBalances || {};
+        if ((preBal[tk] || 0) < price) { showToast(t('mall.insufficient_balance','CRGC 잔액이 부족합니다'), 'warning'); return; }
         if ((p.stock - (p.sold||0)) <= 0) { showToast(t('mall.sold_out','품절'), 'warning'); return; }
         
         if (!await showConfirmModal(t('mall.confirm_buy','구매 확인'), `"${p.title}"\n${price} CRGC로 구매하시겠습니까?`)) return;
@@ -401,7 +412,7 @@ async function buyProduct(id, btn) {
         showToast(`🎉 "${p.title}" 구매 완료!`, 'success');
         document.getElementById('product-modal')?.remove();
         loadMallProducts(); loadUserWallet();
-    } catch (e) { showToast('구매 실패: ' + e.message, 'error'); }
+    } catch (e) { showToast('구매 실패: ' + e.message, 'error'); } finally { _orderInProgress = false; }
 }
 
 async function loadMyOrders() {
