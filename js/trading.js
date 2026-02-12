@@ -2643,29 +2643,41 @@ function drawPositionLinesLW() {
         const isTrailing = type === 'sl' && trade.trailingStop?.activated;
         const displayColor = isTrailing ? '#ff9800' : color;
         
+        const isMobile = window.innerWidth < 768;
+        const handleW = isMobile ? '80px' : '60px';
+        const handleH = isMobile ? '36px' : '24px';
+        const fontSize = isMobile ? '12px' : '10px';
+        
         Object.assign(handle.style, {
             position: 'absolute',
             right: '0px',
-            top: (y - 12) + 'px',
-            width: '60px',
-            height: '24px',
-            background: displayColor + '33',
-            border: `1px solid ${displayColor}`,
-            borderRadius: '4px',
+            top: (y - (isMobile ? 18 : 12)) + 'px',
+            width: handleW,
+            height: handleH,
+            background: displayColor + '44',
+            border: `2px solid ${displayColor}`,
+            borderRadius: isMobile ? '6px' : '4px',
             cursor: 'ns-resize',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '10px',
+            fontSize: fontSize,
             fontFamily: 'Consolas, Monaco, monospace',
             fontWeight: '700',
             color: displayColor,
             zIndex: '100',
             userSelect: 'none',
             touchAction: 'none',
+            WebkitUserSelect: 'none',
             transition: 'none',
+            boxShadow: isMobile ? `0 0 6px ${displayColor}55` : 'none',
         });
-        handle.textContent = price.toFixed(2);
+        // 터치 영역 확장 (최소 44px 히트 영역)
+        if (isMobile) {
+            handle.style.minHeight = '44px';
+            handle.style.padding = '0 6px';
+        }
+        handle.textContent = `☰ ${price.toFixed(2)}`;
         handle.title = `드래그하여 ${type.toUpperCase()} 이동`;
         
         container.style.position = 'relative';
@@ -2743,8 +2755,12 @@ function drawPositionLinesLW() {
             window.lwChart.applyOptions({ handleScroll: false, handleScale: false });
         }
         
-        handle.style.opacity = '0.9';
-        handle.style.boxShadow = '0 0 8px ' + (type === 'sl' ? '#ff000088' : '#00cc0088');
+        // 모바일 햅틱 피드백
+        if (navigator.vibrate) navigator.vibrate(30);
+        
+        handle.style.opacity = '0.95';
+        handle.style.transform = 'scale(1.15)';
+        handle.style.boxShadow = '0 0 12px ' + (type === 'sl' ? '#ff0000aa' : '#00cc00aa');
     }
     
     function onDragMove(e) {
@@ -2765,8 +2781,9 @@ function drawPositionLinesLW() {
         const relY = clientY - rect.top;
         
         // 핸들 위치 업데이트
-        _dragState.handle.style.top = (relY - 12) + 'px';
-        _dragState.handle.textContent = rounded.toFixed(2);
+        const dragOffset = window.innerWidth < 768 ? 18 : 12;
+        _dragState.handle.style.top = (relY - dragOffset) + 'px';
+        _dragState.handle.textContent = `☰ ${rounded.toFixed(2)}`;
         
         // 라벨 표시
         showDragLabel(container, relY, rounded, _dragState.type);
@@ -2837,8 +2854,12 @@ function drawPositionLinesLW() {
         }
         
         handle.style.opacity = '1';
+        handle.style.transform = 'scale(1)';
         handle.style.boxShadow = 'none';
         hideDragLabel();
+        
+        // 저장 완료 햅틱
+        if (navigator.vibrate && currentPrice !== startPrice) navigator.vibrate([20, 50, 20]);
         
         _dragState = null;
         
@@ -2900,7 +2921,8 @@ function drawPositionLinesLW() {
                 if (!price) return;
                 const y = priceToCoord(price);
                 if (y !== null && y !== undefined) {
-                    h.style.top = (y - 12) + 'px';
+                    const offset = window.innerWidth < 768 ? 18 : 12;
+                    h.style.top = (y - offset) + 'px';
                 }
             });
         }
