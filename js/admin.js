@@ -880,6 +880,7 @@ async function adminResumeTrading(targetParticipantId, challengeId) {
 // 관리자 탭 메뉴 시스템 — 권한 매트릭스
 // ═══════════════════════════════════════════════════════
 const ADMIN_TAB_CONFIG = [
+    { id: 'dashboard', icon: '📈', label: t('admin.tab.dashboard','대시보드'), minLevel: 3 },
     { id: 'offchain',  icon: '🔥', label: t('admin.tab.offchain','오프체인'),  minLevel: 2 },
     { id: 'wallet',    icon: '💰', label: t('admin.tab.onchain','온체인'),    minLevel: 4 },
     { id: 'challenge', icon: '📊', label: t('admin.tab.challenge','챌린지'),    minLevel: 3 },
@@ -965,6 +966,7 @@ function switchAdminTab(tabId) {
     activeAdminTab = tabId;
     
     // 탭 전환 시 데이터 로드
+    if (tabId === 'dashboard') loadAdminDashboardStats();
     if (tabId === 'offchain') { refreshAllTokenDropdowns(); loadTokenList(); }
     if (tabId === 'wallet') loadAdminWallet();
     if (tabId === 'users') loadAdminUserList();
@@ -3373,6 +3375,275 @@ async function loadSuperWalletLog() {
         container.innerHTML = html;
     } catch (e) {
         container.innerHTML = `<p style="color:red;font-size:0.8rem;">로그 로드 실패: ${e.message}</p>`;
+    }
+}
+
+// ═══════════════════════════════════════════════════════
+// 📈 대시보드 통계 (admin-tab-dashboard)
+// ═══════════════════════════════════════════════════════
+
+let _dashboardCache = null;
+let _dashboardCacheTime = 0;
+const DASHBOARD_CACHE_TTL = 5 * 60 * 1000; // 5분
+
+async function loadAdminDashboardStats(forceRefresh = false) {
+    if (!hasLevel(3)) return;
+
+    const now = Date.now();
+
+    // 로컬 메모리 캐시 체크
+    if (!forceRefresh && _dashboardCache && (now - _dashboardCacheTime < DASHBOARD_CACHE_TTL)) {
+        renderDashboardStats(_dashboardCache);
+        return;
+    }
+
+    // Firestore 캐시 체크
+    if (!forceRefresh) {
+        try {
+            const cacheDoc = await db.collection('admin_config').doc('dashboard_cache').get();
+            if (cacheDoc.exists) {
+                const cached = cacheDoc.data();
+                const cachedAt = cached.cachedAt?.toMillis?.() || 0;
+                if (now - cachedAt < DASHBOARD_CACHE_TTL) {
+                    _dashboardCache = cached;
+                    _dashboardCacheTime = cachedAt;
+                    renderDashboardStats(cached);
+                    return;
+                }
+            }
+        } catch (e) { console.warn('대시보드 캐시 로드 실패:', e); }
+    }
+
+    // 데이터 수집
+    const cacheInfoEl = document.getElementById('dashboard-cache-info');
+    if (cacheInfoEl) cacheInfoEl.textContent = t('admin.dash_loading', '집계 중...');
+
+    try {
+        const stats = {};
+
+        // 날짜 기준
+        const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+        const weekStart = new Date(todayStart); weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+
+        // 1) 사용자 통계
+        const usersSnap = await db.collection('users').get();
+        stats.totalUsers = usersSnap.size;
+        let todayUsers = 0, weekUsers = 0;
+        usersSnap.forEach(doc => {
+            const d = doc.data();
+            const created = d.createdAt?.toDate?.() || (d.createdAt ? new Date(d.createdAt) : null);
+            if (created) {
+                if (created >= todayStart) todayUsers++;
+                if (created >= weekStart) weekUsers++;
+            }
+        });
+        stats.todayUsers = todayUsers;
+        stats.weekUsers = weekUsers;
+
+        // 최근 7일 가입자 (일별)
+        const signups7d = {};
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date(todayStart); d.setDate(d.getDate() - i);
+            signups7d[d.toISOString().slice(0,10)] = 0;
+        }
+        usersSnap.forEach(doc => {
+            const d = doc.data();
+            const created = d.createdAt?.toDate?.() || (d.createdAt ? new Date(d.createdAt) : null);
+            if (created) {
+                const key = created.toISOString().slice(0,10);
+                if (key in signups7d) signups7d[key]++;
+            }
+        });
+        stats.signups7d = signups7d;
+
+        // 2) 거래 통계
+        const txSnap = await db.collection('offchain_transactions').get();
+        stats.totalTx = txSnap.size;
+        let todayTx = 0;
+        const txByToken = {};
+        txSnap.forEach(doc => {
+            const d = doc.data();
+            const ts = d.timestamp?.toDate?.() || null;
+            if (ts && ts >= todayStart) todayTx++;
+            const tk = (d.token || 'unknown').toUpperCase();
+            txByToken[tk] = (txByToken[tk] || 0) + Math.abs(d.amount || 0);
+        });
+        stats.todayTx = todayTx;
+        stats.txByToken = txByToken;
+
+        // 3) 섹션별 통계
+        const sections = {};
+
+        // MALL
+        const productsSnap = await db.collection('products').get();
+        const ordersSnap = await db.collection('orders').get();
+        let mallRevenue = 0;
+        ordersSnap.forEach(doc => { mallRevenue += doc.data().totalPrice || doc.data().price || 0; });
+        sections.mall = { icon: '🛒', label: 'MALL', items: [
+            { label: t('admin.dash.total_products','총 상품'), value: productsSnap.size },
+            { label: t('admin.dash.total_orders','총 주문'), value: ordersSnap.size },
+            { label: t('admin.dash.total_revenue','총 매출'), value: mallRevenue.toLocaleString() + ' pt' }
+        ]};
+
+        // ART
+        let artCount = 0, artSold = 0;
+        try {
+            const artSnap = await db.collection('artworks').get();
+            artCount = artSnap.size;
+            artSnap.forEach(doc => { artSold += doc.data().sold || 0; });
+        } catch(e) {}
+        sections.art = { icon: '🎭', label: 'ART', items: [
+            { label: t('admin.dash.total_artworks','총 작품'), value: artCount },
+            { label: t('admin.dash.total_art_sold','총 판매'), value: artSold }
+        ]};
+
+        // BOOKS
+        let bookCount = 0, bookSold = 0;
+        try {
+            const bookSnap = await db.collection('books').get();
+            bookCount = bookSnap.size;
+            bookSnap.forEach(doc => { bookSold += doc.data().sold || 0; });
+        } catch(e) {}
+        sections.books = { icon: '📚', label: 'BOOKS', items: [
+            { label: t('admin.dash.total_books','총 등록 책'), value: bookCount },
+            { label: t('admin.dash.total_book_sold','총 판매'), value: bookSold }
+        ]};
+
+        // TRADING
+        let activeChallenges = 0, totalParticipants = 0;
+        try {
+            const chSnap = await db.collection('prop_challenges').where('status', '==', 'active').get();
+            activeChallenges = chSnap.size;
+            for (const doc of chSnap.docs) {
+                totalParticipants += doc.data().participants || 0;
+            }
+        } catch(e) {}
+        sections.trading = { icon: '📊', label: 'TRADING', items: [
+            { label: t('admin.dash.active_challenges','활성 챌린지'), value: activeChallenges },
+            { label: t('admin.dash.participants','참가자'), value: totalParticipants }
+        ]};
+
+        // SOCIAL
+        let postCount = 0, commentCount = 0;
+        try {
+            const postSnap = await db.collection('posts').get();
+            postCount = postSnap.size;
+            // 댓글은 서브컬렉션이므로 대략적으로 카운트
+            for (const doc of postSnap.docs) {
+                const comments = await doc.ref.collection('comments').get();
+                commentCount += comments.size;
+                if (commentCount > 500) break; // 성능 보호
+            }
+        } catch(e) {}
+        sections.social = { icon: '💬', label: 'SOCIAL', items: [
+            { label: t('admin.dash.total_posts','총 게시물'), value: postCount },
+            { label: t('admin.dash.total_comments','총 댓글'), value: commentCount > 500 ? '500+' : commentCount }
+        ]};
+
+        stats.sections = sections;
+
+        // Firestore에 캐시 저장
+        try {
+            await db.collection('admin_config').doc('dashboard_cache').set({
+                ...stats,
+                cachedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        } catch (e) { console.warn('대시보드 캐시 저장 실패:', e); }
+
+        _dashboardCache = stats;
+        _dashboardCacheTime = Date.now();
+        renderDashboardStats(stats);
+
+    } catch (e) {
+        console.error('대시보드 통계 로드 실패:', e);
+        if (cacheInfoEl) cacheInfoEl.textContent = '로드 실패: ' + e.message;
+    }
+}
+
+function renderDashboardStats(stats) {
+    // 사용자 통계
+    const el = (id) => document.getElementById(id);
+    if (el('dash-total-users')) el('dash-total-users').textContent = (stats.totalUsers || 0).toLocaleString();
+    if (el('dash-today-users')) el('dash-today-users').textContent = (stats.todayUsers || 0).toLocaleString();
+    if (el('dash-week-users')) el('dash-week-users').textContent = (stats.weekUsers || 0).toLocaleString();
+
+    // 거래 통계
+    if (el('dash-total-tx')) el('dash-total-tx').textContent = (stats.totalTx || 0).toLocaleString();
+    if (el('dash-today-tx')) el('dash-today-tx').textContent = (stats.todayTx || 0).toLocaleString();
+
+    // 토큰별 거래량
+    const txByToken = stats.txByToken || {};
+    const tokenEl = el('dash-tx-by-token');
+    if (tokenEl) {
+        tokenEl.innerHTML = Object.entries(txByToken).map(([tk, vol]) => {
+            const info = typeof getTokenInfo === 'function' ? getTokenInfo(tk.toLowerCase()) : { icon: '🪙', color: '#888' };
+            return `<div style="background:${info.color}11; border:1px solid ${info.color}33; padding:0.5rem; border-radius:8px; text-align:center;">
+                <div style="font-size:0.7rem; color:${info.color};">${info.icon || '🪙'} ${tk}</div>
+                <div style="font-size:1rem; font-weight:700;">${vol.toLocaleString()}</div>
+            </div>`;
+        }).join('');
+    }
+
+    // 섹션별 통계
+    const sections = stats.sections || {};
+    const sectionEl = el('dash-section-stats');
+    if (sectionEl) {
+        const colors = { mall: '#00BFA5', art: '#E91E63', books: '#FF9800', trading: '#FF6D00', social: '#2196F3' };
+        sectionEl.innerHTML = Object.entries(sections).map(([key, sec]) => {
+            const color = colors[key] || '#607D8B';
+            return `<div style="background:white; border:1px solid ${color}33; border-left:4px solid ${color}; padding:1rem; border-radius:10px;">
+                <div style="font-weight:700; margin-bottom:0.5rem;">${sec.icon} ${sec.label}</div>
+                ${(sec.items || []).map(item => `<div style="display:flex; justify-content:space-between; font-size:0.82rem; padding:0.2rem 0;">
+                    <span style="color:#666;">${item.label}</span>
+                    <strong>${item.value}</strong>
+                </div>`).join('')}
+            </div>`;
+        }).join('');
+    }
+
+    // 차트: 최근 7일 가입자 바 차트
+    const signups7d = stats.signups7d || {};
+    const chartEl = el('dash-chart-signups');
+    if (chartEl) {
+        const values = Object.values(signups7d);
+        const maxVal = Math.max(...values, 1);
+        chartEl.innerHTML = Object.entries(signups7d).map(([date, count]) => {
+            const pct = Math.max((count / maxVal) * 100, 2);
+            const dayLabel = new Date(date + 'T00:00:00').toLocaleDateString('ko-KR', { weekday: 'short' });
+            return `<div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+                <span style="font-size:0.7rem; font-weight:700; color:#1565c0;">${count}</span>
+                <div style="width:100%; background:linear-gradient(180deg,#42a5f5,#1565c0); border-radius:4px 4px 0 0; height:${pct}%; min-height:4px; transition:height 0.3s;"></div>
+                <span style="font-size:0.65rem; color:#999;">${dayLabel}</span>
+            </div>`;
+        }).join('');
+    }
+
+    // 차트: 토큰별 거래량 바 차트
+    const chartTokenEl = el('dash-chart-tokens');
+    if (chartTokenEl) {
+        const entries = Object.entries(txByToken);
+        if (entries.length === 0) {
+            chartTokenEl.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;color:#999;font-size:0.85rem;">거래 데이터 없음</div>';
+        } else {
+            const maxVol = Math.max(...entries.map(([,v]) => v), 1);
+            const tokenColors = { CRTD: '#FF6D00', CRAC: '#E91E63', CRGC: '#00BFA5', CREB: '#2E7D32' };
+            chartTokenEl.innerHTML = entries.map(([tk, vol]) => {
+                const pct = Math.max((vol / maxVol) * 100, 2);
+                const color = tokenColors[tk] || '#607D8B';
+                return `<div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+                    <span style="font-size:0.68rem; font-weight:700; color:${color};">${vol.toLocaleString()}</span>
+                    <div style="width:100%; background:linear-gradient(180deg,${color}cc,${color}); border-radius:4px 4px 0 0; height:${pct}%; min-height:4px; transition:height 0.3s;"></div>
+                    <span style="font-size:0.7rem; color:#666; font-weight:600;">${tk}</span>
+                </div>`;
+            }).join('');
+        }
+    }
+
+    // 캐시 정보
+    const cacheInfoEl = el('dashboard-cache-info');
+    if (cacheInfoEl) {
+        const cacheTime = _dashboardCacheTime ? new Date(_dashboardCacheTime).toLocaleTimeString('ko-KR') : '';
+        cacheInfoEl.textContent = cacheTime ? `캐시: ${cacheTime}` : '';
     }
 }
 

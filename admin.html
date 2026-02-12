@@ -449,6 +449,74 @@
                     </div>
                 </div>
 
+                <!-- ═══════════════════════════════════════════ -->
+                <!-- TAB: 📈 대시보드 통계 (레벨 3+)           -->
+                <!-- ═══════════════════════════════════════════ -->
+                <div id="admin-tab-dashboard" class="admin-tab-content" style="display:none;">
+                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                            <h3 style="margin:0;">📈 대시보드 통계</h3>
+                            <div style="display:flex; gap:0.5rem; align-items:center;">
+                                <span id="dashboard-cache-info" style="font-size:0.7rem; color:#999;"></span>
+                                <button onclick="loadAdminDashboardStats(true)" style="background:#1565c0; color:white; border:none; padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; font-size:0.8rem;">🔄 새로고침</button>
+                            </div>
+                        </div>
+
+                        <!-- 사용자 통계 -->
+                        <div style="margin-bottom:1.5rem;">
+                            <h4 style="font-size:0.9rem; margin-bottom:0.6rem;">👥 사용자 통계</h4>
+                            <div id="dash-user-stats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:0.6rem;">
+                                <div style="background:#e3f2fd; padding:1rem; border-radius:10px; text-align:center;">
+                                    <div style="font-size:0.75rem; color:#1565c0;">총 사용자</div>
+                                    <div id="dash-total-users" style="font-size:1.8rem; font-weight:800; color:#0d47a1;">-</div>
+                                </div>
+                                <div style="background:#e8f5e9; padding:1rem; border-radius:10px; text-align:center;">
+                                    <div style="font-size:0.75rem; color:#2e7d32;">오늘 가입</div>
+                                    <div id="dash-today-users" style="font-size:1.8rem; font-weight:800; color:#1b5e20;">-</div>
+                                </div>
+                                <div style="background:#fff3e0; padding:1rem; border-radius:10px; text-align:center;">
+                                    <div style="font-size:0.75rem; color:#e65100;">이번 주 가입</div>
+                                    <div id="dash-week-users" style="font-size:1.8rem; font-weight:800; color:#bf360c;">-</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 거래 통계 -->
+                        <div style="margin-bottom:1.5rem;">
+                            <h4 style="font-size:0.9rem; margin-bottom:0.6rem;">💰 거래 통계</h4>
+                            <div id="dash-tx-stats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:0.6rem;">
+                                <div style="background:#f3e5f5; padding:1rem; border-radius:10px; text-align:center;">
+                                    <div style="font-size:0.75rem; color:#7b1fa2;">총 거래</div>
+                                    <div id="dash-total-tx" style="font-size:1.8rem; font-weight:800; color:#4a148c;">-</div>
+                                </div>
+                                <div style="background:#fce4ec; padding:1rem; border-radius:10px; text-align:center;">
+                                    <div style="font-size:0.75rem; color:#c2185b;">오늘 거래</div>
+                                    <div id="dash-today-tx" style="font-size:1.8rem; font-weight:800; color:#880e4f;">-</div>
+                                </div>
+                            </div>
+                            <div id="dash-tx-by-token" style="margin-top:0.6rem; display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); gap:0.4rem;"></div>
+                        </div>
+
+                        <!-- 섹션별 통계 -->
+                        <div style="margin-bottom:1.5rem;">
+                            <h4 style="font-size:0.9rem; margin-bottom:0.6rem;">📊 섹션별 통계</h4>
+                            <div id="dash-section-stats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0.8rem;"></div>
+                        </div>
+
+                        <!-- 차트: 최근 7일 가입자 -->
+                        <div style="margin-bottom:1.5rem;">
+                            <h4 style="font-size:0.9rem; margin-bottom:0.6rem;">📅 최근 7일 가입자</h4>
+                            <div id="dash-chart-signups" style="display:flex; align-items:flex-end; gap:4px; height:150px; padding:0.5rem; background:#f9f9f9; border-radius:10px;"></div>
+                        </div>
+
+                        <!-- 차트: 토큰별 거래량 -->
+                        <div>
+                            <h4 style="font-size:0.9rem; margin-bottom:0.6rem;">🪙 토큰별 거래량</h4>
+                            <div id="dash-chart-tokens" style="display:flex; align-items:flex-end; gap:8px; height:150px; padding:0.5rem; background:#f9f9f9; border-radius:10px;"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 🏦 슈퍼관리자 계좌 관리 탭 -->
                 <div id="admin-tab-superwall" class="admin-tab-content" style="display:none;">
                     <!-- Content rendered dynamically by loadSuperAdminWallets() -->
@@ -545,7 +613,7 @@
     </script>
     <script src="js/config.js?v=10.0"></script>
     <script src="js/offchain.js?v=10.0"></script>
-    <script src="js/admin.js?v=13.0"></script>
+    <script src="js/admin.js?v=14.0"></script>
     <script>
     // Admin page auth - redirect if not admin
     let web3;

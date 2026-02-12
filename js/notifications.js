@@ -1,21 +1,35 @@
-// ===== notifications.js v1.0 - 통합 알림 시스템 =====
+// ===== notifications.js v1.2 - 통합 알림 시스템 =====
 
 const NOTIF_TYPES = {
     MESSENGER: 'messenger',
     SOCIAL_COMMENT: 'social_comment',
     SOCIAL_LIKE: 'social_like',
+    SOCIAL_FOLLOW: 'social_follow',
+    SOCIAL_MENTION: 'social_mention',
     TRADING_SIGNAL: 'trading_signal',
     TRADING_ORDER: 'trading_order',
+    ORDER_STATUS: 'order_status',
+    ART_SOLD: 'art_sold',
+    BOOK_SOLD: 'book_sold',
+    DONATION: 'donation',
+    FRIEND_REQUEST: 'friend_request',
     SYSTEM: 'system'
 };
 
 const NOTIF_STYLES = {
-    [NOTIF_TYPES.MESSENGER]: { icon: '💬', color: '#2196F3', bg: 'linear-gradient(135deg, #2196F3, #1976D2)', label: '메신저' },
-    [NOTIF_TYPES.SOCIAL_COMMENT]: { icon: '💬', color: '#9C27B0', bg: 'linear-gradient(135deg, #9C27B0, #7B1FA2)', label: '댓글' },
-    [NOTIF_TYPES.SOCIAL_LIKE]: { icon: '❤️', color: '#E91E63', bg: 'linear-gradient(135deg, #E91E63, #C2185B)', label: '좋아요' },
-    [NOTIF_TYPES.TRADING_SIGNAL]: { icon: '📊', color: '#FF9800', bg: 'linear-gradient(135deg, #FF9800, #F57C00)', label: '시그널' },
-    [NOTIF_TYPES.TRADING_ORDER]: { icon: '📈', color: '#4CAF50', bg: 'linear-gradient(135deg, #4CAF50, #388E3C)', label: '주문' },
-    [NOTIF_TYPES.SYSTEM]: { icon: '🔔', color: '#607D8B', bg: 'linear-gradient(135deg, #607D8B, #455A64)', label: '시스템' },
+    [NOTIF_TYPES.MESSENGER]: { icon: '💬', color: '#2196F3', bg: 'linear-gradient(135deg, #2196F3, #1976D2)', label: t('notif.messenger','메신저') },
+    [NOTIF_TYPES.SOCIAL_COMMENT]: { icon: '💬', color: '#9C27B0', bg: 'linear-gradient(135deg, #9C27B0, #7B1FA2)', label: t('notif.comment','댓글') },
+    [NOTIF_TYPES.SOCIAL_LIKE]: { icon: '❤️', color: '#E91E63', bg: 'linear-gradient(135deg, #E91E63, #C2185B)', label: t('notif.like','좋아요') },
+    [NOTIF_TYPES.SOCIAL_FOLLOW]: { icon: '👤', color: '#00BCD4', bg: 'linear-gradient(135deg, #00BCD4, #0097A7)', label: t('notif.follow','팔로우') },
+    [NOTIF_TYPES.SOCIAL_MENTION]: { icon: '📢', color: '#FF5722', bg: 'linear-gradient(135deg, #FF5722, #E64A19)', label: t('notif.mention','멘션') },
+    [NOTIF_TYPES.TRADING_SIGNAL]: { icon: '📊', color: '#FF9800', bg: 'linear-gradient(135deg, #FF9800, #F57C00)', label: t('notif.signal','시그널') },
+    [NOTIF_TYPES.TRADING_ORDER]: { icon: '📈', color: '#4CAF50', bg: 'linear-gradient(135deg, #4CAF50, #388E3C)', label: t('notif.order','주문') },
+    [NOTIF_TYPES.ORDER_STATUS]: { icon: '📦', color: '#795548', bg: 'linear-gradient(135deg, #795548, #5D4037)', label: t('notif.order_status','주문상태') },
+    [NOTIF_TYPES.ART_SOLD]: { icon: '🎨', color: '#E91E63', bg: 'linear-gradient(135deg, #E91E63, #AD1457)', label: t('notif.art_sold','작품판매') },
+    [NOTIF_TYPES.BOOK_SOLD]: { icon: '📚', color: '#FF9800', bg: 'linear-gradient(135deg, #FF9800, #E65100)', label: t('notif.book_sold','책판매') },
+    [NOTIF_TYPES.DONATION]: { icon: '💝', color: '#4CAF50', bg: 'linear-gradient(135deg, #4CAF50, #2E7D32)', label: t('notif.donation','기부') },
+    [NOTIF_TYPES.FRIEND_REQUEST]: { icon: '🤝', color: '#3F51B5', bg: 'linear-gradient(135deg, #3F51B5, #283593)', label: t('notif.friend_request','친구요청') },
+    [NOTIF_TYPES.SYSTEM]: { icon: '🔔', color: '#607D8B', bg: 'linear-gradient(135deg, #607D8B, #455A64)', label: t('notif.system','시스템') },
 };
 
 // Client-side notification store (session only)
@@ -29,8 +43,15 @@ let notificationSettings = {
     messenger: true,
     social_comment: true,
     social_like: true,
+    social_follow: true,
+    social_mention: true,
     trading_signal: true,
     trading_order: true,
+    order_status: true,
+    art_sold: true,
+    book_sold: true,
+    donation: true,
+    friend_request: true,
     system: true
 };
 
@@ -84,10 +105,50 @@ function handleNotifClick(type, data) {
     if (type === NOTIF_TYPES.MESSENGER && data.chatId && data.otherId) {
         showPage('messenger');
         setTimeout(() => openChat(data.chatId, data.otherId), 300);
-    } else if (type === NOTIF_TYPES.SOCIAL_COMMENT || type === NOTIF_TYPES.SOCIAL_LIKE) {
+    } else if (type === NOTIF_TYPES.SOCIAL_COMMENT || type === NOTIF_TYPES.SOCIAL_LIKE || type === NOTIF_TYPES.SOCIAL_FOLLOW || type === NOTIF_TYPES.SOCIAL_MENTION) {
         showPage('social');
     } else if (type === NOTIF_TYPES.TRADING_SIGNAL || type === NOTIF_TYPES.TRADING_ORDER) {
         showPage('prop-trading');
+    } else if (type === NOTIF_TYPES.ORDER_STATUS) {
+        showPage('mall');
+    } else if (type === NOTIF_TYPES.ART_SOLD) {
+        showPage('art');
+    } else if (type === NOTIF_TYPES.BOOK_SOLD) {
+        showPage('books');
+    } else if (type === NOTIF_TYPES.DONATION) {
+        showPage('fundraise');
+    } else if (type === NOTIF_TYPES.FRIEND_REQUEST) {
+        showPage('social');
+    }
+}
+
+// ========== FIRESTORE NOTIFICATION HELPER ==========
+
+/**
+ * createNotification - Firestore에 알림 저장 + 로컬 표시
+ * @param {string} userId - 알림 받을 사용자 UID
+ * @param {string} type - NOTIF_TYPES 중 하나
+ * @param {object} data - { message, ...extra }
+ */
+async function createNotification(userId, type, data = {}) {
+    if (!userId) return;
+    try {
+        const notifData = {
+            userId,
+            type,
+            message: data.message || '',
+            data: data,
+            read: false,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        await db.collection('notifications').add(notifData);
+
+        // 현재 사용자에게 해당하면 로컬에도 표시
+        if (currentUser && userId === currentUser.uid) {
+            addNotification(type, data.message || '', data);
+        }
+    } catch (e) {
+        console.warn('createNotification 실패:', e);
     }
 }
 
@@ -232,12 +293,19 @@ function openNotifSettings() {
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
 
     const items = [
-        { key: 'messenger', icon: '💬', label: '메신저 메시지' },
-        { key: 'social_comment', icon: '💬', label: '소셜 댓글' },
-        { key: 'social_like', icon: '❤️', label: '소셜 좋아요' },
-        { key: 'trading_signal', icon: '📊', label: '트레이딩 시그널' },
-        { key: 'trading_order', icon: '📈', label: '주문 체결/청산' },
-        { key: 'system', icon: '🔔', label: '시스템 알림' },
+        { key: 'messenger', icon: '💬', label: t('notif.set.messenger','메신저 메시지') },
+        { key: 'social_comment', icon: '💬', label: t('notif.set.comment','소셜 댓글') },
+        { key: 'social_like', icon: '❤️', label: t('notif.set.like','소셜 좋아요') },
+        { key: 'social_follow', icon: '👤', label: t('notif.set.follow','팔로우') },
+        { key: 'social_mention', icon: '📢', label: t('notif.set.mention','멘션') },
+        { key: 'trading_signal', icon: '📊', label: t('notif.set.signal','트레이딩 시그널') },
+        { key: 'trading_order', icon: '📈', label: t('notif.set.order','주문 체결/청산') },
+        { key: 'order_status', icon: '📦', label: t('notif.set.order_status','주문 상태 변경') },
+        { key: 'art_sold', icon: '🎨', label: t('notif.set.art_sold','작품 판매') },
+        { key: 'book_sold', icon: '📚', label: t('notif.set.book_sold','책 판매') },
+        { key: 'donation', icon: '💝', label: t('notif.set.donation','기부 알림') },
+        { key: 'friend_request', icon: '🤝', label: t('notif.set.friend','친구 요청') },
+        { key: 'system', icon: '🔔', label: t('notif.set.system','시스템 알림') },
     ];
 
     overlay.innerHTML = `
@@ -408,12 +476,66 @@ async function setupCommentNotifications() {
     }
 }
 
+// ========== FIRESTORE REALTIME NOTIFICATION LISTENER ==========
+
+let _firestoreNotifListener = null;
+
+function setupFirestoreNotifications() {
+    if (!currentUser) return;
+
+    _firestoreNotifListener = db.collection('notifications')
+        .where('userId', '==', currentUser.uid)
+        .where('read', '==', false)
+        .orderBy('createdAt', 'desc')
+        .limit(10)
+        .onSnapshot(snapshot => {
+            snapshot.docChanges().forEach(change => {
+                if (change.type === 'added') {
+                    const d = change.doc.data();
+                    const ts = d.createdAt?.toMillis?.() || 0;
+                    const now = Date.now();
+                    // Only show toast for recent notifications (<30s)
+                    if (now - ts < 30000) {
+                        addNotification(d.type, d.message || d.data?.message || '', { ...d.data, _docId: change.doc.id });
+                    } else {
+                        // Older unread — just add to list silently
+                        const style = NOTIF_STYLES[d.type] || NOTIF_STYLES.system;
+                        const notif = {
+                            id: change.doc.id,
+                            type: d.type,
+                            message: d.message || d.data?.message || '',
+                            data: d.data || {},
+                            read: false,
+                            createdAt: d.createdAt?.toDate?.() || new Date()
+                        };
+                        // Avoid duplicates
+                        if (!notifications.find(n => n.id === notif.id)) {
+                            notifications.push(notif);
+                            if (notifications.length > MAX_NOTIFICATIONS) notifications.shift();
+                            unreadCount = notifications.filter(n => !n.read).length;
+                            updateBellBadge();
+                        }
+                    }
+                }
+            });
+        });
+}
+
+// Mark notification as read in Firestore
+async function markNotifReadInFirestore(docId) {
+    if (!docId || typeof docId !== 'string') return;
+    try {
+        await db.collection('notifications').doc(docId).update({ read: true });
+    } catch (e) { /* ignore */ }
+}
+
 // ========== INIT ==========
 
 async function initNotifications() {
     await loadNotificationSettings();
     initNotifBell();
     setupMessengerNotifications();
+    setupFirestoreNotifications();
     
     // Delay social notifications to let posts load
     setTimeout(async () => {
@@ -421,7 +543,7 @@ async function initNotifications() {
         await setupCommentNotifications();
     }, 3000);
 
-    console.log('🔔 알림 시스템 초기화 완료');
+    console.log('🔔 알림 시스템 v1.2 초기화 완료');
 }
 
 // Cleanup on logout
@@ -430,6 +552,7 @@ function cleanupNotifications() {
     _messengerNotifListeners = [];
     _socialNotifListeners.forEach(fn => fn());
     _socialNotifListeners = [];
+    if (_firestoreNotifListener) { _firestoreNotifListener(); _firestoreNotifListener = null; }
     notifications = [];
     unreadCount = 0;
     _myPostIds.clear();
