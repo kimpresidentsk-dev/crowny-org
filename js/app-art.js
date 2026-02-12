@@ -588,7 +588,7 @@ function _renderArtCard(art) {
         const ended = endMs && new Date(endMs) < new Date();
         priceLabel = ended
             ? '<span style="color:#cc0000">경매 종료</span>'
-            : `<span style="color:#ff9800">🔨 ${art.currentBid || art.startPrice} CRNY</span>`;
+            : `<span style="color:#ff9800">🔨 ${art.currentBid || art.startPrice} CRAC</span>`;
     } else {
         priceLabel = '<span style="color:var(--accent)">전시 중</span>';
     }
@@ -709,7 +709,7 @@ async function viewArtwork(artId) {
                     <input type="number" id="bid-amount-${artId}" value="${minBid}" min="${minBid}" style="flex:1;padding:.7rem;border:1px solid var(--border);border-radius:6px">
                     <button onclick="placeBid('${artId}')" style="background:#ff9800;color:#fff;border:none;padding:.8rem 1.5rem;border-radius:8px;cursor:pointer;font-weight:700">🔨 입찰</button>
                 </div>
-                <p style="font-size:.75rem;color:var(--accent);margin-top:.3rem">현재 최고: ${curBid} CRNY${art.highestBidderNickname ? ' (' + art.highestBidderNickname + ')' : ''}</p>`;
+                <p style="font-size:.75rem;color:var(--accent);margin-top:.3rem">현재 최고: ${curBid} CRAC${art.highestBidderNickname ? ' (' + art.highestBidderNickname + ')' : ''}</p>`;
         }
 
         if (isOwner) {
@@ -810,23 +810,15 @@ async function buyArtwork(artId) {
         }
 
         const effectivePrice = art.price || _calcEffectivePrice(art.basePrice || 0, art.artistWeight || 1);
-        const tokenKey = (art.priceToken || 'CRAC').toLowerCase();
-        const isOffchain = typeof isOffchainToken === 'function' && isOffchainToken(tokenKey);
+        const tokenKey = 'crac';
+        const isOffchain = true;
 
-        // Balance check
-        if (isOffchain) {
+        // Balance check (CRAC 오프체인 전용)
+        {
             const userDoc = await db.collection('users').doc(currentUser.uid).get();
             const offBal = userDoc.data()?.offchainBalances?.[tokenKey] || 0;
             if (offBal < effectivePrice) {
-                showToast(`${art.priceToken || 'CRAC'} 잔액 부족. 보유: ${offBal}, 필요: ${effectivePrice}`, 'warning');
-                return;
-            }
-        } else {
-            const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
-            if (wallets.empty) { showToast('지갑이 없습니다', 'warning'); return; }
-            const balances = wallets.docs[0].data().balances || {};
-            if ((balances[tokenKey] || 0) < effectivePrice) {
-                showToast(`${art.priceToken || 'CRAC'} 잔액 부족`, 'warning');
+                showToast(`CRAC 잔액 부족. 보유: ${offBal}, 필요: ${effectivePrice}`, 'warning');
                 return;
             }
         }
@@ -942,10 +934,10 @@ async function placeBid(artId) {
         const artDoc = await db.collection('artworks').doc(artId).get();
         const art = artDoc.data();
         const minBid = (art.currentBid || art.startPrice || 1) + 1;
-        if (bidAmount < minBid) { showToast(`최소 입찰가: ${minBid} CRNY`, 'warning'); return; }
-        const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
-        const balances = wallets.docs[0]?.data()?.balances || {};
-        if ((balances.crny || 0) < bidAmount) { showToast(`CRNY 잔액 부족. 보유: ${balances.crny || 0}`, 'warning'); return; }
+        if (bidAmount < minBid) { showToast(`최소 입찰가: ${minBid} CRAC`, 'warning'); return; }
+        const userDocBid = await db.collection('users').doc(currentUser.uid).get();
+        const cracBal = userDocBid.data()?.offchainBalances?.crac || 0;
+        if (cracBal < bidAmount) { showToast(`CRAC 잔액 부족. 보유: ${cracBal}`, 'warning'); return; }
         const userDoc = await db.collection('users').doc(currentUser.uid).get();
         const nickname = userDoc.data()?.nickname || currentUser.email;
         await db.collection('artworks').doc(artId).update({
@@ -956,7 +948,7 @@ async function placeBid(artId) {
             bidderId: currentUser.uid, bidderEmail: currentUser.email,
             bidderNickname: nickname, amount: bidAmount, timestamp: new Date()
         });
-        showToast(`🔨 ${bidAmount} CRNY 입찰 완료!`, 'success');
+        showToast(`🔨 ${bidAmount} CRAC 입찰 완료!`, 'success');
         const modal = document.getElementById('art-modal');
         if (modal) modal.remove();
         loadArtGallery();
@@ -1200,14 +1192,15 @@ async function cancelReservation(reservationId) {
 async function _artDonationAuto(userId, amount, token) {
     try {
         const donationAmount = Math.max(ART_CONFIG.donationMinCRFN, amount * 0.02);
-        const wallets = await db.collection('users').doc(userId).collection('wallets').limit(1).get();
-        if (wallets.empty) return;
-        const walletDoc = wallets.docs[0];
-        const crfnBal = walletDoc.data().balances?.crfn || 0;
-        if (crfnBal >= donationAmount) {
-            await walletDoc.ref.update({ 'balances.crfn': crfnBal - donationAmount });
+        const userDoc = await db.collection('users').doc(userId).get();
+        if (!userDoc.exists) return;
+        const cracBal = userDoc.data()?.offchainBalances?.crac || 0;
+        if (cracBal >= donationAmount) {
+            await db.collection('users').doc(userId).update({
+                ['offchainBalances.crac']: cracBal - donationAmount
+            });
             await db.collection('giving_pool_logs').add({
-                userId, amount: donationAmount, token: 'CRFN',
+                userId, amount: donationAmount, token: 'CRAC',
                 source: 'art_trade', note: `아트 거래 자동 기부 (${amount} ${token})`,
                 timestamp: new Date()
             });

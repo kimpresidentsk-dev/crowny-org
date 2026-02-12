@@ -2814,7 +2814,7 @@ async function registerProduct() {
         await db.collection('products').add({
             title, description: document.getElementById('product-desc').value.trim(),
             category: document.getElementById('product-category').value,
-            price, priceToken: document.getElementById('product-token').value,
+            price, priceToken: 'CRGC',
             stock: parseInt(document.getElementById('product-stock').value) || 1,
             imageData, sellerId: currentUser.uid, sellerEmail: currentUser.email,
             sellerNickname: userDoc.data()?.nickname || '',

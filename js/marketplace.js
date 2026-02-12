@@ -44,7 +44,7 @@ async function loadMallProducts() {
                     <div style="padding:0.6rem;">
                         <div style="font-weight:600; font-size:0.85rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.title}</div>
                         <div style="font-size:0.7rem; color:var(--accent);">${MALL_CATEGORIES[p.category] || ''} · ${p.sellerNickname || t('mall.seller','판매자')}</div>
-                        <div style="font-weight:700; color:#0066cc; margin-top:0.3rem;">${p.price} ${p.priceToken}</div>
+                        <div style="font-weight:700; color:#0066cc; margin-top:0.3rem;">${p.price} CRGC</div>
                         <div style="font-size:0.7rem; color:var(--accent);">재고: ${p.stock - (p.sold||0)}개</div>
                         ${ratingHtml}
                     </div>
@@ -106,7 +106,7 @@ async function viewProduct(id) {
             <p style="color:var(--accent); font-size:0.85rem; margin:0.5rem 0;">${MALL_CATEGORIES[p.category]} · 판매자: ${p.sellerNickname || p.sellerEmail}</p>
             ${ratingDisplay}
             ${p.description ? `<p style="font-size:0.9rem; margin-bottom:1rem;">${p.description}</p>` : ''}
-            <div style="font-size:1.2rem; font-weight:700; color:#0066cc; margin-bottom:0.5rem;">${p.price} ${p.priceToken}</div>
+            <div style="font-size:1.2rem; font-weight:700; color:#0066cc; margin-bottom:0.5rem;">${p.price} CRGC</div>
             <div style="font-size:0.85rem; color:var(--accent); margin-bottom:1rem;">재고: ${remaining}개 · 판매: ${p.sold||0}개</div>
             ${!isOwner && remaining > 0 ? `<button onclick="buyProduct('${id}')" style="background:#0066cc; color:white; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; width:100%;">${t('mall.buy_btn','🛒 구매하기')}</button>` : ''}
             ${remaining <= 0 ? '<p style="color:#cc0000; font-weight:700; text-align:center;">품절</p>' : ''}
@@ -143,9 +143,9 @@ async function buyProduct(id) {
         const doc = await db.collection('products').doc(id).get();
         const p = doc.data();
         if ((p.stock - (p.sold||0)) <= 0) { showToast(t('mall.sold_out','품절'), 'warning'); return; }
-        const tk = p.priceToken.toLowerCase();
+        const tk = 'crgc';
         
-        if (!await showConfirmModal(t('mall.confirm_buy','구매 확인'), `"${p.title}"\n${p.price} ${p.priceToken}로 구매하시겠습니까?`)) return;
+        if (!await showConfirmModal(t('mall.confirm_buy','구매 확인'), `"${p.title}"\n${p.price} CRGC로 구매하시겠습니까?`)) return;
         
         if (isOffchainToken(tk)) {
             const success = await spendOffchainPoints(tk, p.price, `몰 구매: ${p.title}`);
@@ -154,21 +154,17 @@ async function buyProduct(id) {
             await db.collection('users').doc(p.sellerId).update({
                 [`offchainBalances.${tk}`]: (sellerOff[tk] || 0) + p.price
             });
-            if (tk === 'crgc' && typeof autoGivingPoolContribution === 'function') {
+            if (typeof autoGivingPoolContribution === 'function') {
                 await autoGivingPoolContribution(p.price);
             }
         } else {
-            const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
-            const bal = wallets.docs[0]?.data()?.balances || {};
-            if ((bal[tk]||0) < p.price) { showToast(`${p.priceToken} ${t('mall.insufficient','잔액 부족')}`, 'error'); return; }
-            await wallets.docs[0].ref.update({ [`balances.${tk}`]: bal[tk] - p.price });
-            const sellerW = await db.collection('users').doc(p.sellerId).collection('wallets').limit(1).get();
-            if (!sellerW.empty) { const sb = sellerW.docs[0].data().balances||{}; await sellerW.docs[0].ref.update({ [`balances.${tk}`]: (sb[tk]||0) + p.price }); }
+            // MALL은 CRGC(오프체인) 전용이므로 온체인 경로 불필요
+            showToast('CRGC 잔액 부족', 'error'); return;
         }
         
         await db.collection('products').doc(id).update({ sold: (p.sold||0) + 1 });
-        await db.collection('orders').add({ productId:id, productTitle:p.title, buyerId:currentUser.uid, buyerEmail:currentUser.email, sellerId:p.sellerId, sellerEmail:p.sellerEmail||'', amount:p.price, token:p.priceToken, status:'paid', createdAt:new Date() });
-        if (typeof distributeReferralReward === 'function') await distributeReferralReward(currentUser.uid, p.price, p.priceToken);
+        await db.collection('orders').add({ productId:id, productTitle:p.title, buyerId:currentUser.uid, buyerEmail:currentUser.email, sellerId:p.sellerId, sellerEmail:p.sellerEmail||'', amount:p.price, token:'CRGC', status:'paid', createdAt:new Date() });
+        if (typeof distributeReferralReward === 'function') await distributeReferralReward(currentUser.uid, p.price, 'CRGC');
         showToast(`🎉 "${p.title}" 구매 완료!`, 'success');
         document.getElementById('product-modal')?.remove();
         loadMallProducts(); loadUserWallet();
@@ -205,7 +201,7 @@ async function loadMyProducts() {
             const statusBadge = x.status === 'active' ? '<span style="color:#4CAF50; font-size:0.75rem;">● 판매중</span>' : '<span style="color:#999; font-size:0.75rem;">● 비활성</span>';
             c.innerHTML += `<div style="padding:0.6rem; background:var(--bg); border-radius:6px; margin-bottom:0.4rem; font-size:0.85rem;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.3rem;">
-                    <div><strong>${x.title}</strong> — ${x.price} ${x.priceToken} · 판매: ${x.sold||0}/${x.stock} ${statusBadge}</div>
+                    <div><strong>${x.title}</strong> — ${x.price} CRGC · 판매: ${x.sold||0}/${x.stock} ${statusBadge}</div>
                     <div style="display:flex; gap:0.3rem;">
                         <button onclick="editProduct('${d.id}')" style="background:#2196f3; color:white; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.edit_btn','✏️ 수정')}</button>
                         <button onclick="toggleProduct('${d.id}','${x.status}')" style="background:${x.status==='active'?'#999':'#4CAF50'}; color:white; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${x.status==='active'?t('mall.deactivate','⏸ 비활성'):t('mall.activate','▶ 활성')}</button>
@@ -313,7 +309,7 @@ async function createCampaign() {
         await db.collection('campaigns').add({
             title, description: document.getElementById('fund-desc').value.trim(),
             category: document.getElementById('fund-category').value,
-            goal, raised: 0, token: document.getElementById('fund-token').value,
+            goal, raised: 0, token: 'CRGC',
             backers: 0, imageData, platformFee,
             creatorId: currentUser.uid, creatorEmail: currentUser.email,
             creatorNickname: userDoc.data()?.nickname || '',
@@ -370,7 +366,7 @@ async function donateCampaign(id) {
     try {
         const doc = await db.collection('campaigns').doc(id).get();
         const camp = doc.data();
-        const tk = camp.token.toLowerCase();
+        const tk = 'crgc';
         const platformFee = amount * ((camp.platformFee || 2.5) / 100);
         const creatorReceive = amount - platformFee;
         
@@ -414,10 +410,10 @@ async function loadEnergyProjects() {
             const isAdmin = currentUser && (currentUser.email === 'admin@crowny.org' || currentUser.uid === x.creatorId);
             c.innerHTML += `<div style="background:var(--bg); padding:1rem; border-radius:8px; margin-bottom:0.8rem;">
                 <h4>⚡ ${x.title}</h4><p style="font-size:0.85rem; color:var(--accent); margin:0.3rem 0;">${x.location || ''} · ${x.capacity || ''}kW · 예상 수익률 ${rate}%</p>
-                <div style="font-size:0.8rem; color:#2e7d32; margin-top:0.3rem;">💰 100 CRNY 투자 시 → 월 ${exMonthly} CRFN (연 ${rate}%)</div>
+                <div style="font-size:0.8rem; color:#2e7d32; margin-top:0.3rem;">💰 100 CREB 투자 시 → 월 ${exMonthly} CREB (연 ${rate}%)</div>
                 <div style="font-size:0.75rem; color:var(--accent);">👥 투자자 ${x.investors||0}명</div>
                 <div style="background:#e0e0e0; height:6px; border-radius:3px; margin:0.5rem 0;"><div style="background:#ff9800; height:100%; border-radius:3px; width:${pct}%;"></div></div>
-                <div style="display:flex; justify-content:space-between; font-size:0.85rem;"><span>${x.invested||0}/${x.goal} CRNY</span><span>${pct}%</span></div>
+                <div style="display:flex; justify-content:space-between; font-size:0.85rem;"><span>${x.invested||0}/${x.goal} CREB</span><span>${pct}%</span></div>
                 <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
                     <button onclick="investEnergy('${d.id}')" style="background:#ff9800; color:white; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; flex:1;">${t('energy.invest_btn','☀️ 투자하기')}</button>
                     ${isAdmin ? `<button onclick="distributeEnergyReturns('${d.id}')" style="background:#1976D2; color:white; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; flex:1; font-size:0.8rem;">${t('energy.distribute','📊 수익 배분')}</button>` : ''}
@@ -427,9 +423,8 @@ async function loadEnergyProjects() {
 }
 
 async function investEnergy(id) {
-    const tokenChoice = await showPromptModal(t('energy.select_token','투자 토큰 선택'), 'CRNY: 1\nCREB: 2', '1');
-    const tk = tokenChoice === '2' ? 'creb' : 'crny';
-    const tkName = tk.toUpperCase();
+    const tk = 'creb';
+    const tkName = 'CREB';
     const amountStr = await showPromptModal(t('energy.invest_amount','투자 금액'), `${tkName} ${t('energy.enter_amount','금액을 입력하세요')}`, '');
     const amount = parseFloat(amountStr);
     if (!amount || amount <= 0) return;
@@ -535,9 +530,8 @@ async function loadArtistList() {
 }
 
 async function supportArtist(id) {
-    const tokenChoice = await showPromptModal(t('artist.select_token','후원 토큰 선택'), 'CRNY: 1\nCRAC: 2', '1');
-    const tk = tokenChoice === '2' ? 'crac' : 'crny';
-    const tkName = tk.toUpperCase();
+    const tk = 'crac';
+    const tkName = 'CRAC';
     const amountStr = await showPromptModal(t('artist.support_amount','후원 금액'), `${tkName} ${t('energy.enter_amount','금액을 입력하세요')}`, '');
     const amount = parseFloat(amountStr);
     if (!amount || amount <= 0) return;
@@ -584,7 +578,7 @@ async function registerBook() {
             title, author: document.getElementById('book-author').value.trim(),
             description: document.getElementById('book-desc').value.trim(),
             genre: document.getElementById('book-genre').value,
-            price: price || 0, priceToken: document.getElementById('book-token').value,
+            price: price || 0, priceToken: 'CRGC',
             imageData, publisherId: currentUser.uid, publisherEmail: currentUser.email,
             sold: 0, rating: 0, reviews: 0, status: 'active', createdAt: new Date()
         });
@@ -608,7 +602,7 @@ async function loadBooksList() {
                 ${x.imageData ? `<img src="${x.imageData}" style="width:100%; height:100%; object-fit:contain;">` : `<div style="height:100%; display:flex; align-items:center; justify-content:center; font-size:3rem;">${GENRES[x.genre]||'📚'}</div>`}</div>
                 <div style="padding:0.5rem;"><div style="font-weight:600; font-size:0.8rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${x.title}</div>
                 <div style="font-size:0.7rem; color:var(--accent);">${x.author||'저자 미상'}</div>
-                <div style="font-weight:700; color:#0066cc; font-size:0.85rem; margin-top:0.2rem;">${x.price>0 ? x.price+' '+x.priceToken : '무료'}</div></div></div>`; });
+                <div style="font-weight:700; color:#0066cc; font-size:0.85rem; margin-top:0.2rem;">${x.price>0 ? x.price+' CRGC' : '무료'}</div></div></div>`; });
     } catch (e) { c.innerHTML = e.message; }
 }
 
@@ -617,8 +611,8 @@ async function buyBook(id) {
     if (!doc.exists) return; const b = doc.data();
     if (b.publisherId === currentUser?.uid) { showToast('본인 책입니다', 'info'); return; }
     if (b.price <= 0) { showToast(`📖 "${b.title}" — 무료 열람!`, 'info'); return; }
-    const tk = b.priceToken.toLowerCase();
-    if (!await showConfirmModal('책 구매', `"${b.title}"\n${b.price} ${b.priceToken}로 구매하시겠습니까?`)) return;
+    const tk = 'crgc';
+    if (!await showConfirmModal('책 구매', `"${b.title}"\n${b.price} CRGC로 구매하시겠습니까?`)) return;
     try {
         if (isOffchainToken(tk)) {
             const success = await spendOffchainPoints(tk, b.price, `책 구매: ${b.title}`);
@@ -628,16 +622,12 @@ async function buyBook(id) {
                 [`offchainBalances.${tk}`]: (pubOff[tk] || 0) + b.price
             });
         } else {
-            const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
-            const bal = wallets.docs[0]?.data()?.balances || {};
-            if ((bal[tk]||0) < b.price) { showToast('잔액 부족', 'error'); return; }
-            await wallets.docs[0].ref.update({ [`balances.${tk}`]: bal[tk] - b.price });
-            const pubW = await db.collection('users').doc(b.publisherId).collection('wallets').limit(1).get();
-            if (!pubW.empty) { const pb = pubW.docs[0].data().balances||{}; await pubW.docs[0].ref.update({ [`balances.${tk}`]: (pb[tk]||0) + b.price }); }
+            // BOOKS는 CRGC(오프체인) 전용이므로 온체인 경로 불필요
+            showToast('CRGC 잔액 부족', 'error'); return;
         }
         await db.collection('books').doc(id).update({ sold: (b.sold||0) + 1 });
-        await db.collection('transactions').add({ from:currentUser.uid, to:b.publisherId, amount:b.price, token:b.priceToken, type:'book_purchase', bookId:id, timestamp:new Date() });
-        if (typeof distributeReferralReward === 'function') await distributeReferralReward(currentUser.uid, b.price, b.priceToken);
+        await db.collection('transactions').add({ from:currentUser.uid, to:b.publisherId, amount:b.price, token:'CRGC', type:'book_purchase', bookId:id, timestamp:new Date() });
+        if (typeof distributeReferralReward === 'function') await distributeReferralReward(currentUser.uid, b.price, 'CRGC');
         showToast(`📖 "${b.title}" 구매 완료!`, 'success'); loadUserWallet();
     } catch (e) { showToast('실패: ' + e.message, 'error'); }
 }
@@ -654,17 +644,17 @@ async function approveInsurance(id) {
         if (!doc.exists) return;
         const req = doc.data();
         if (req.status !== 'pending') { showToast(t('credit.already_processed','이미 처리된 요청입니다'), 'info'); return; }
-        if (!await showConfirmModal('보험 승인', `${req.requesterNickname || req.requesterEmail}\n${req.amount} CRNY — ${req.reason}\n\n승인하시겠습니까?`)) return;
-        // 보험금 지급 (오프체인 CRNY 기반)
+        if (!await showConfirmModal('보험 승인', `${req.requesterNickname || req.requesterEmail}\n${req.amount} CRTD — ${req.reason}\n\n승인하시겠습니까?`)) return;
+        // 보험금 지급 (오프체인 CRTD 기반)
         const reqUser = await db.collection('users').doc(req.requesterId).get();
         const reqBal = reqUser.data()?.offchainBalances || {};
         await db.collection('users').doc(req.requesterId).update({
-            ['offchainBalances.crny']: (reqBal.crny || 0) + req.amount
+            ['offchainBalances.crtd']: (reqBal.crtd || 0) + req.amount
         });
         await db.collection('insurance_requests').doc(id).update({
             status: 'approved', approvedBy: currentUser.uid, approvedAt: new Date()
         });
-        showToast(`🛡️ 보험 ${req.amount} CRNY 승인 완료!`, 'success');
+        showToast(`🛡️ 보험 ${req.amount} CRTD 승인 완료!`, 'success');
         loadInsuranceAdmin(); loadMyInsuranceClaims();
     } catch (e) { showToast('실패: ' + e.message, 'error'); }
 }
@@ -701,7 +691,7 @@ async function loadInsuranceAdmin() {
             c.innerHTML += `<div style="background:#fff3e0; padding:0.8rem; border-radius:8px; margin-bottom:0.5rem; border-left:4px solid #ff9800;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div><strong>${r.requesterNickname || r.requesterEmail}</strong> <span style="font-size:0.75rem; color:var(--accent);">${TYPES[r.type] || r.type}</span></div>
-                    <span style="font-weight:700; color:#e65100;">${r.amount} CRNY</span>
+                    <span style="font-weight:700; color:#e65100;">${r.amount} CRTD</span>
                 </div>
                 <p style="font-size:0.85rem; color:#555; margin:0.3rem 0;">${r.reason}</p>
                 <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
@@ -748,13 +738,13 @@ async function executeGyeRound(gyeId) {
         if (g.currentRound >= g.members.length) { showToast('모든 라운드가 완료되었습니다', 'info'); return; }
         const recipient = g.members[g.currentRound];
         const totalPot = g.monthlyAmount * g.members.length;
-        if (!await showConfirmModal('계모임 라운드 실행', `Round ${g.currentRound + 1}: ${g.members.length}명 × ${g.monthlyAmount} CRNY = ${totalPot} CRNY\n\n수령자: ${recipient.nickname || recipient.email}\n\n실행하시겠습니까?`)) return;
+        if (!await showConfirmModal('계모임 라운드 실행', `Round ${g.currentRound + 1}: ${g.members.length}명 × ${g.monthlyAmount} CRTD = ${totalPot} CRTD\n\n수령자: ${recipient.nickname || recipient.email}\n\n실행하시겠습니까?`)) return;
         // 각 멤버에서 monthlyAmount 차감, 수령자에게 전체 지급
         for (const member of g.members) {
             if (member.userId === recipient.userId) continue;
             const mUser = await db.collection('users').doc(member.userId).get();
             const mBal = mUser.data()?.offchainBalances || {};
-            if ((mBal.crny || 0) < g.monthlyAmount) {
+            if ((mBal.crtd || 0) < g.monthlyAmount) {
                 showToast(`${member.nickname || member.email}의 잔액이 부족합니다`, 'error');
                 return;
             }
@@ -764,13 +754,13 @@ async function executeGyeRound(gyeId) {
             const mUser = await db.collection('users').doc(member.userId).get();
             const mBal = mUser.data()?.offchainBalances || {};
             await db.collection('users').doc(member.userId).update({
-                ['offchainBalances.crny']: (mBal.crny || 0) - g.monthlyAmount
+                ['offchainBalances.crtd']: (mBal.crtd || 0) - g.monthlyAmount
             });
         }
         const rUser = await db.collection('users').doc(recipient.userId).get();
         const rBal = rUser.data()?.offchainBalances || {};
         await db.collection('users').doc(recipient.userId).update({
-            ['offchainBalances.crny']: (rBal.crny || 0) + totalPot
+            ['offchainBalances.crtd']: (rBal.crtd || 0) + totalPot
         });
         await db.collection('gye_groups').doc(gyeId).update({
             currentRound: g.currentRound + 1,
@@ -778,10 +768,10 @@ async function executeGyeRound(gyeId) {
         });
         await db.collection('transactions').add({
             type: 'gye_round', gyeId, round: g.currentRound + 1,
-            recipientId: recipient.userId, amount: totalPot, token: 'CRNY',
+            recipientId: recipient.userId, amount: totalPot, token: 'CRTD',
             participants: g.members.length, timestamp: new Date()
         });
-        showToast(`🔄 Round ${g.currentRound + 1} 완료! ${recipient.nickname || recipient.email}에게 ${totalPot} CRNY 지급`, 'success');
+        showToast(`🔄 Round ${g.currentRound + 1} 완료! ${recipient.nickname || recipient.email}에게 ${totalPot} CRTD 지급`, 'success');
         loadGyeList();
     } catch (e) { showToast('실패: ' + e.message, 'error'); }
 }
@@ -795,7 +785,8 @@ async function loadCreditScoreBreakdown() {
         const data = userDoc.data();
         const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
         const bal = wallets.docs[0]?.data()?.balances || {};
-        const crnyHeld = bal.crny || 0;
+        const offBal = data?.offchainBalances || {};
+        const crtdHeld = offBal.crtd || 0;
         const referrals = data.referralCount || 0;
         // 거래 내역 수
         const txCount = (await db.collection('transactions').where('from', '==', currentUser.uid).limit(100).get()).size;
@@ -805,7 +796,7 @@ async function loadCreditScoreBreakdown() {
         allPumasi.forEach(d => { if (d.data().status === 'repaid' || d.data().raised >= d.data().amount) repaidP++; });
         const repayRate = totalP > 0 ? Math.round((repaidP / totalP) * 100) : 100;
 
-        const holdingScore = Math.min(200, crnyHeld * 10);
+        const holdingScore = Math.min(200, crtdHeld * 10);
         const referralScore = Math.min(150, referrals * 20);
         const txScore = Math.min(150, txCount * 3);
         const repayScore = Math.min(150, repayRate * 1.5);
@@ -814,7 +805,7 @@ async function loadCreditScoreBreakdown() {
         c.innerHTML = `
             <div style="display:grid; gap:0.5rem;">
                 <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem; background:#e3f2fd; border-radius:6px;">
-                    <span>👑 CRNY 보유량</span><span style="font-weight:700;">${crnyHeld} CRNY → +${holdingScore}점</span>
+                    <span>👑 CRTD 보유량</span><span style="font-weight:700;">${crtdHeld} CRTD → +${holdingScore}점</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem; background:#e8f5e9; border-radius:6px;">
                     <span>👥 추천인 수</span><span style="font-weight:700;">${referrals}명 → +${referralScore}점</span>
@@ -865,7 +856,7 @@ async function viewBusinessDetail(id) {
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.5rem; margin:1rem 0;">
                 <div style="background:var(--bg); padding:0.6rem; border-radius:8px; text-align:center;">
                     <div style="font-size:0.7rem; color:var(--accent);">총 투자</div>
-                    <div style="font-weight:700;">${totalInvested} CRNY</div>
+                    <div style="font-weight:700;">${totalInvested} CRGC</div>
                 </div>
                 <div style="background:var(--bg); padding:0.6rem; border-radius:8px; text-align:center;">
                     <div style="font-size:0.7rem; color:var(--accent);">투자자</div>
@@ -884,10 +875,8 @@ async function viewBusinessDetail(id) {
 
 async function investBusiness(id) {
     if (!currentUser) return;
-    const tokenChoice = await showPromptModal('투자 토큰 선택', 'CRNY: 1\nCRTD: 2\nCREB: 3', '1');
-    const tkMap = { '1': 'crny', '2': 'crtd', '3': 'creb' };
-    const tk = tkMap[tokenChoice] || 'crny';
-    const tkName = tk.toUpperCase();
+    const tk = 'crgc';
+    const tkName = 'CRGC';
     const amountStr = await showPromptModal('투자 금액', `${tkName} 금액을 입력하세요`, '');
     const amount = parseFloat(amountStr);
     if (!amount || amount <= 0) return;
@@ -1000,7 +989,7 @@ async function viewBookDetail(id) {
         <div style="padding:1.2rem;">
             <h3>${b.title}</h3>
             <p style="color:var(--accent); font-size:0.85rem; margin:0.3rem 0;">${b.author || '저자 미상'} · ${GENRES[b.genre] || ''} · 판매 ${b.sold || 0}부</p>
-            <p style="font-size:1.1rem; font-weight:700; color:#0066cc; margin:0.5rem 0;">${b.price > 0 ? b.price + ' ' + b.priceToken : '무료'}</p>
+            <p style="font-size:1.1rem; font-weight:700; color:#0066cc; margin:0.5rem 0;">${b.price > 0 ? b.price + ' CRGC' : '무료'}</p>
             ${b.description ? `<p style="font-size:0.9rem; margin:0.8rem 0; line-height:1.6;">${b.description}</p>` : ''}
             <div style="display:flex; gap:0.5rem; margin-top:1rem;">
                 ${!isOwner && b.price > 0 ? `<button onclick="buyBook('${id}'); document.getElementById('book-detail-modal').remove();" style="flex:1; background:#0066cc; color:white; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">🛒 구매하기</button>` : ''}
@@ -1085,7 +1074,7 @@ async function requestPumasi() {
             dueDate: new Date(Date.now() + days * 86400000),
             status: 'active', createdAt: new Date()
         });
-        showToast(`🤝 품앗이 ${amount} CRNY 요청 완료!`, 'success');
+        showToast(`🤝 품앗이 ${amount} CRTD 요청 완료!`, 'success');
         loadPumasiList();
     } catch (e) { showToast('실패: ' + e.message, 'error'); }
 }
@@ -1099,7 +1088,7 @@ async function loadPumasiList() {
         c.innerHTML = '';
         docs.forEach(d => { const x = d.data(); const pct = Math.min(100, Math.round((x.raised/x.amount)*100));
             c.innerHTML += `<div style="background:white; padding:1rem; border-radius:8px; margin-bottom:0.5rem;">
-                <div style="display:flex; justify-content:space-between;"><strong>${x.requesterNickname || x.requesterEmail}</strong><span style="color:#0066cc; font-weight:700;">${x.amount} CRNY</span></div>
+                <div style="display:flex; justify-content:space-between;"><strong>${x.requesterNickname || x.requesterEmail}</strong><span style="color:#0066cc; font-weight:700;">${x.amount} CRTD</span></div>
                 <p style="font-size:0.85rem; color:var(--accent); margin:0.3rem 0;">${x.reason}</p>
                 <div style="background:#e0e0e0; height:6px; border-radius:3px; margin:0.5rem 0;"><div style="background:#4CAF50; height:100%; border-radius:3px; width:${pct}%;"></div></div>
                 <div style="display:flex; justify-content:space-between; font-size:0.8rem;"><span>${x.raised}/${x.amount} · ${x.backers}명</span><span style="color:#4CAF50;">이자 0%</span></div>
@@ -1109,14 +1098,8 @@ async function loadPumasiList() {
 }
 
 async function contributePumasi(id) {
-    const tokenChoice = await showPromptModal('도와줄 토큰 선택', 'CRNY: 1\n오프체인 토큰: 2', '1');
-    let tk = 'crny';
-    if (tokenChoice === '2') {
-        const offChoice = await showPromptModal('오프체인 토큰 선택', 'CRTD: 4\nCRAC: 5\nCRGC: 6\nCREB: 7', '4');
-        const offMap = { '4':'crtd', '5':'crac', '6':'crgc', '7':'creb' };
-        tk = offMap[offChoice] || 'crtd';
-    }
-    const tkName = tk.toUpperCase();
+    const tk = 'crtd';
+    const tkName = 'CRTD';
     const amountStr = await showPromptModal('도와줄 금액', `${tkName} 금액을 입력하세요`, '');
     const amount = parseFloat(amountStr);
     if (!amount || amount <= 0) return;
@@ -1171,7 +1154,7 @@ async function requestInsurance() {
 async function quickDonate() {
     if (!currentUser) { showToast(t('common.login_required','로그인이 필요합니다'), 'warning'); return; }
     const amount = parseFloat(document.getElementById('donate-amount').value);
-    const token = document.getElementById('donate-token-type').value;
+    const token = 'CRTD';
     const target = document.getElementById('donate-target').value;
     if (!amount || amount < 1) { showToast('최소 1 이상 기부해주세요', 'warning'); return; }
     
@@ -1226,8 +1209,8 @@ async function loadCreditInfo() {
         const data = userDoc.data();
         const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
         const bal = wallets.docs[0]?.data()?.balances || {};
-        const crnyHeld = bal.crny || 0;
-        const score = Math.min(850, 300 + crnyHeld * 10 + (data.referralCount || 0) * 20);
+        const crtdHeld = data?.offchainBalances?.crtd || 0;
+        const score = Math.min(850, 300 + crtdHeld * 10 + (data.referralCount || 0) * 20);
         
         const scoreEl = document.getElementById('credit-score');
         if (scoreEl) { scoreEl.textContent = score; scoreEl.style.color = score >= 700 ? '#4CAF50' : score >= 500 ? '#ff9800' : '#cc0000'; }
@@ -1288,7 +1271,7 @@ async function createGye() {
             members: [{ userId: currentUser.uid, email: currentUser.email, nickname: userDoc.data()?.nickname || '' }],
             organizerId: currentUser.uid, organizerEmail: currentUser.email,
             organizerNickname: userDoc.data()?.nickname || '',
-            token: 'CRNY', status: 'recruiting',
+            token: 'CRTD', status: 'recruiting',
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
         showToast(`🔄 "${name}" 계모임 생성!`, 'success');
@@ -1314,7 +1297,7 @@ async function loadGyeList() {
                         <div style="font-size:0.8rem; color:var(--accent);">${g.organizerNickname || g.organizerEmail} · ${g.currentMembers}/${g.maxMembers}명</div>
                     </div>
                     <div style="text-align:right;">
-                        <div style="font-weight:700; color:#FF9800;">${g.monthlyAmount} CRNY/월</div>
+                        <div style="font-weight:700; color:#FF9800;">${g.monthlyAmount} CRTD/월</div>
                         <div style="font-size:0.75rem; color:var(--accent);">Round ${g.currentRound}</div>
                     </div>
                 </div>
@@ -1335,7 +1318,7 @@ async function joinGye(gyeId) {
         if (g.currentMembers >= g.maxMembers) { showToast('정원 초과', 'warning'); return; }
         if (g.members?.some(m => m.userId === currentUser.uid)) { showToast('이미 참여 중', 'info'); return; }
         const userDoc = await db.collection('users').doc(currentUser.uid).get();
-        const confirmed = await showConfirmModal('계모임 참여', `"${g.name}"\n월 ${g.monthlyAmount} CRNY 납입\n참여하시겠습니까?`);
+        const confirmed = await showConfirmModal('계모임 참여', `"${g.name}"\n월 ${g.monthlyAmount} CRTD 납입\n참여하시겠습니까?`);
         if (!confirmed) return;
         await db.collection('gye_groups').doc(gyeId).update({
             members: firebase.firestore.FieldValue.arrayUnion({
@@ -1398,7 +1381,7 @@ async function loadMyEnergyInvestments() {
                     </div>
                     <div style="text-align:right;">
                         <div style="font-weight:700; color:#ff9800;">${inv.amount} ${inv.token || 'CRNY'}</div>
-                        <div style="font-size:0.75rem; color:#4CAF50;">월 ${monthlyReturn.toFixed(2)} CRFN (연 ${rate}%)</div>
+                        <div style="font-size:0.75rem; color:#4CAF50;">월 ${monthlyReturn.toFixed(2)} CREB (연 ${rate}%)</div>
                     </div>
                 </div>
             </div>`;
@@ -1407,16 +1390,16 @@ async function loadMyEnergyInvestments() {
         c.innerHTML = `
             <div style="background:#FFF8E1; padding:0.8rem; border-radius:8px; margin-bottom:0.8rem; display:flex; justify-content:space-around; text-align:center;">
                 <div><div style="font-size:0.7rem; color:var(--accent);">총 투자</div><strong>${totalInvested.toFixed(1)}</strong></div>
-                <div><div style="font-size:0.7rem; color:var(--accent);">예상 월 수익</div><strong style="color:#4CAF50;">${totalMonthly.toFixed(2)} CRFN</strong></div>
-                <div><div style="font-size:0.7rem; color:var(--accent);">예상 연 수익</div><strong style="color:#1976D2;">${(totalMonthly * 12).toFixed(2)} CRFN</strong></div>
+                <div><div style="font-size:0.7rem; color:var(--accent);">예상 월 수익</div><strong style="color:#4CAF50;">${totalMonthly.toFixed(2)} CREB</strong></div>
+                <div><div style="font-size:0.7rem; color:var(--accent);">예상 연 수익</div><strong style="color:#1976D2;">${(totalMonthly * 12).toFixed(2)} CREB</strong></div>
             </div>
             ${rows}`;
         
         // 상단 투자 현황도 업데이트
         const ei = document.getElementById('energy-invested');
-        if (ei) ei.textContent = `${totalInvested.toFixed(1)} CRNY`;
+        if (ei) ei.textContent = `${totalInvested.toFixed(1)} CREB`;
         const em = document.getElementById('energy-monthly');
-        if (em) em.textContent = `${totalMonthly.toFixed(2)} CRFN`;
+        if (em) em.textContent = `${totalMonthly.toFixed(2)} CREB`;
     } catch (e) { c.innerHTML = `<p style="color:red;">${e.message}</p>`; }
 }
 
@@ -1435,7 +1418,7 @@ async function distributeEnergyReturns(projectId) {
         let totalInvested = 0;
         investments.forEach(d => totalInvested += d.data().amount);
         
-        const confirmed = await showConfirmModal('수익 배분 확인', `프로젝트: ${proj.title}\n총 투자: ${totalInvested}\n수익률: ${rate}%\n월 배분 총액: ${(totalInvested * rate / 100 / 12).toFixed(2)} CRFN\n\n${investments.size}명에게 배분하시겠습니까?`);
+        const confirmed = await showConfirmModal('수익 배분 확인', `프로젝트: ${proj.title}\n총 투자: ${totalInvested}\n수익률: ${rate}%\n월 배분 총액: ${(totalInvested * rate / 100 / 12).toFixed(2)} CREB\n\n${investments.size}명에게 배분하시겠습니까?`);
         if (!confirmed) return;
         
         let distributed = 0;
@@ -1444,24 +1427,23 @@ async function distributeEnergyReturns(projectId) {
             const share = inv.amount * rate / 100 / 12; // 월간 수익
             if (share <= 0) continue;
             
-            // CRFN을 오프체인 잔액에 적립 (crfn은 온체인이지만 여기선 시뮬레이션)
+            // CREB을 오프체인 잔액에 적립
             const userDoc = await db.collection('users').doc(inv.userId).get();
             if (userDoc.exists) {
-                const wallets = await db.collection('users').doc(inv.userId).collection('wallets').limit(1).get();
-                if (!wallets.empty) {
-                    const bal = wallets.docs[0].data().balances || {};
-                    await wallets.docs[0].ref.update({ ['balances.crfn']: (bal.crfn || 0) + share });
-                }
+                const uOff = userDoc.data()?.offchainBalances || {};
+                await db.collection('users').doc(inv.userId).update({
+                    ['offchainBalances.creb']: (uOff.creb || 0) + share
+                });
                 await db.collection('transactions').add({
                     from: 'energy_system', to: inv.userId,
-                    amount: share, token: 'CRFN', type: 'energy_return',
+                    amount: share, token: 'CREB', type: 'energy_return',
                     projectId, timestamp: new Date()
                 });
                 distributed += share;
             }
         }
         
-        showToast(`✅ ${distributed.toFixed(2)} CRFN을 ${investments.size}명에게 배분 완료!`, 'success');
+        showToast(`✅ ${distributed.toFixed(2)} CREB을 ${investments.size}명에게 배분 완료!`, 'success');
     } catch (e) { showToast('배분 실패: ' + e.message, 'error'); }
 }
 

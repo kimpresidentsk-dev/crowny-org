@@ -665,7 +665,7 @@
             
             <div class="section-banner" id="mall-banner" style="background:linear-gradient(135deg, #1a1a2e, #16213e);">
                 <h3 data-i18n="mall.banner_title">🛒 CROWNY MALL — 크라우니 생태계 마켓플레이스</h3>
-                <p data-i18n="mall.banner_desc">CRNY · FNC · CRFN 토큰으로 결제</p>
+                <p data-i18n="mall.banner_desc">CRGC 토큰으로 결제</p>
             </div>
             
             <!-- 브랜드 카테고리 -->
@@ -758,7 +758,7 @@
             
             <div class="section-banner" id="energy-banner" style="background:linear-gradient(135deg, #134e5e, #71b280);">
                 <h3 data-i18n="energy.banner_title">⚡ ENERGY — 신재생 에너지 투자</h3>
-                <p data-i18n="energy.banner_desc">태양광 발전 소액투자 → 실제 발전 수익 배분 · 1 CRNY 투자 → 매달 최대 5 CRFN 수익</p>
+                <p data-i18n="energy.banner_desc">태양광 발전 소액투자 → 실제 발전 수익 배분 · 1 CREB 투자 → 매달 최대 5 CREB 수익</p>
             </div>
             
             <!-- 시뮬레이션 모드 배지 -->
@@ -773,15 +773,15 @@
                 <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">
                     <div style="flex:1; min-width:100px; background:#FFF8E1; padding:0.8rem; border-radius:8px; text-align:center;">
                         <div style="font-size:0.75rem; color:var(--accent);" data-i18n="energy.total_invested">총 투자</div>
-                        <div id="energy-invested" style="font-weight:700; font-size:1.2rem;">0 CRNY</div>
+                        <div id="energy-invested" style="font-weight:700; font-size:1.2rem;">0 CREB</div>
                     </div>
                     <div style="flex:1; min-width:100px; background:#E8F5E9; padding:0.8rem; border-radius:8px; text-align:center;">
                         <div style="font-size:0.75rem; color:var(--accent);" data-i18n="energy.monthly_return">월 수익</div>
-                        <div id="energy-monthly" style="font-weight:700; font-size:1.2rem; color:#4CAF50;">0 CRFN</div>
+                        <div id="energy-monthly" style="font-weight:700; font-size:1.2rem; color:#4CAF50;">0 CREB</div>
                     </div>
                     <div style="flex:1; min-width:100px; background:#E3F2FD; padding:0.8rem; border-radius:8px; text-align:center;">
                         <div style="font-size:0.75rem; color:var(--accent);" data-i18n="energy.total_return">누적 수익</div>
-                        <div id="energy-total-return" style="font-weight:700; font-size:1.2rem; color:#1976D2;">0 CRFN</div>
+                        <div id="energy-total-return" style="font-weight:700; font-size:1.2rem; color:#1976D2;">0 CREB</div>
                     </div>
                 </div>
             </div>
@@ -948,7 +948,7 @@
             <div id="credit-donate" class="credit-panel" style="display:none;">
                 <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                     <h3 style="margin-bottom:0.5rem;" data-i18n="credit.donate_title">💝 기부 활성화</h3>
-                    <p style="font-size:0.85rem; color:var(--accent); margin-bottom:1rem;" data-i18n-html="credit.donate_desc">거래 건마다 1 CRFN 이상 자동 기부<br>사전 지정 대상 또는 오픈 기부 (시스템 우선순위 처리)</p>
+                    <p style="font-size:0.85rem; color:var(--accent); margin-bottom:1rem;" data-i18n-html="credit.donate_desc">거래 건마다 1 CRTD 이상 자동 기부<br>사전 지정 대상 또는 오픈 기부 (시스템 우선순위 처리)</p>
                     <div style="display:grid; gap:0.8rem;">
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
                             <div>
@@ -957,10 +957,8 @@
                             </div>
                             <div>
                                 <label style="font-size:0.8rem; color:var(--accent);">토큰</label>
-                                <select id="donate-token-type" style="width:100%; padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                                    <optgroup label="⛓ 온체인"><option value="CRFN">CRFN</option><option value="CRNY">CRNY</option><option value="FNC">FNC</option></optgroup>
-                                    <optgroup label="🔥 오프체인"><option value="CRTD">CRTD</option><option value="CRAC">CRAC</option><option value="CRGC">CRGC</option><option value="CREB">CREB</option></optgroup>
-                                </select>
+                                <input type="hidden" id="donate-token-type" value="CRTD">
+                                <span style="display:block; padding:0.7rem; background:var(--bg); border-radius:6px; font-weight:700; color:#FF6D00;">CRTD</span>
                             </div>
                         </div>
                         <select id="donate-target" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
@@ -1364,11 +1362,9 @@
                     <input type="number" id="product-stock" placeholder="재고 수량" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                 </div>
                 <div style="display:grid; grid-template-columns:1fr auto; gap:0.5rem;">
-                    <input type="number" id="product-price" placeholder="가격" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                    <select id="product-token" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                        <optgroup label="⛓ 온체인"><option value="CRNY">CRNY</option><option value="FNC">FNC</option><option value="CRFN">CRFN</option></optgroup>
-                        <optgroup label="🔥 오프체인"><option value="CRGC">CRGC</option><option value="CRAC">CRAC</option><option value="CRTD">CRTD</option><option value="CREB">CREB</option></optgroup>
-                    </select>
+                    <input type="number" id="product-price" placeholder="가격 (CRGC)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    <input type="hidden" id="product-token" value="CRGC">
+                    <span style="padding:0.7rem; background:var(--bg); border-radius:6px; font-weight:700; color:#00BFA5;">CRGC</span>
                 </div>
                 <input type="file" id="product-image" accept="image/*" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
                 <button onclick="registerProduct(); closeRegisterModal('mall');" class="btn-primary" data-i18n="mall.product_register">📦 상품 등록</button>
@@ -1458,7 +1454,7 @@
                         </div>
                     </div>
                 </div>
-                <p style="font-size:0.75rem; color:var(--accent);" data-i18n="art.donation_notice">⚠️ 거래 시 10 CRFN 이상이 자동 기부됩니다</p>
+                <p style="font-size:0.75rem; color:var(--accent);" data-i18n="art.donation_notice">⚠️ 거래 시 10 CRAC 이상이 자동 기부됩니다</p>
                 <div id="art-upload-status" style="font-size:0.8rem; color:#8B2BE2; min-height:1.2em;"></div>
                 <button onclick="uploadArtwork()" class="btn-primary" data-i18n="art.upload_title">🎨 작품 등록</button>
             </div>
@@ -1488,10 +1484,8 @@
                 </div>
                 <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.5rem;">
                     <input type="number" id="fund-days" value="30" placeholder="기간(일)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                    <select id="fund-token" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                        <optgroup label="⛓ 온체인"><option value="CRNY">CRNY</option><option value="FNC">FNC</option><option value="CRFN">CRFN</option></optgroup>
-                        <optgroup label="🔥 오프체인"><option value="CRTD">CRTD</option><option value="CRAC">CRAC</option><option value="CRGC">CRGC</option><option value="CREB">CREB</option></optgroup>
-                    </select>
+                    <input type="hidden" id="fund-token" value="CRGC">
+                    <span style="padding:0.7rem; background:var(--bg); border-radius:6px; font-weight:700; color:#00BFA5;">CRGC</span>
                     <select id="fund-country" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                         <option value="KR">🇰🇷</option>
                         <option value="US">🇺🇸</option>
@@ -1604,11 +1598,9 @@
                         <option value="other">📚 기타</option>
                     </select>
                     <div style="display:flex; gap:0.3rem;">
-                        <input type="number" id="book-price" placeholder="가격" style="flex:1; padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                        <select id="book-token" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                            <option value="FNC">FNC</option>
-                            <option value="CRNY">CRNY</option>
-                        </select>
+                        <input type="number" id="book-price" placeholder="가격 (CRGC)" style="flex:1; padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                        <input type="hidden" id="book-token" value="CRGC">
+                        <span style="padding:0.7rem; background:var(--bg); border-radius:6px; font-weight:700; color:#00BFA5;">CRGC</span>
                     </div>
                 </div>
                 <input type="file" id="book-cover" accept="image/*" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
@@ -1714,11 +1706,11 @@
     <script src="js/group-chat.js?v=1.0"></script>
     <script src="js/send.js?v=9.5"></script>
     <script src="js/admin.js?v=13.0"></script>
-    <script src="js/marketplace.js?v=12.0"></script>
+    <script src="js/marketplace.js?v=13.0"></script>
     <script src="js/trading.js?v=13.5"></script>
     <script src="js/mentor-learning.js?v=1.0"></script>
     <script src="js/mentors.js?v=2.2"></script>
     <script src="js/notifications.js?v=1.0"></script>
-    <script src="js/app-art.js?v=2.0"></script>
+    <script src="js/app-art.js?v=2.1"></script>
 </body>
 </html>
