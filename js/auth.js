@@ -285,6 +285,62 @@ async function linkGoogleAccount() {
     }
 }
 
+// 비밀번호 설정 (Google-only 사용자가 이메일/비밀번호 추가)
+async function setupPasswordFromProfile() {
+    const user = firebase.auth().currentUser;
+    if (!user) return;
+    const hasPassword = user.providerData.some(p => p.providerId === 'password');
+    if (hasPassword) { showToast('이미 비밀번호가 설정되어 있습니다', 'info'); return; }
+
+    if (typeof showPromptModal !== 'function') { showToast('UI 모듈 로드 실패', 'error'); return; }
+
+    const pw = await showPromptModal('🔑 비밀번호 설정', '새 비밀번호 (6자 이상)', '', true);
+    if (!pw || pw.length < 6) { if (pw !== null) showToast('비밀번호는 6자 이상이어야 합니다', 'error'); return; }
+
+    const pw2 = await showPromptModal('🔑 비밀번호 확인', '비밀번호를 다시 입력하세요', '', true);
+    if (pw !== pw2) { showToast('비밀번호가 일치하지 않습니다', 'error'); return; }
+
+    try {
+        const credential = firebase.auth.EmailAuthProvider.credential(user.email, pw);
+        await user.linkWithCredential(credential);
+        await db.collection('users').doc(user.uid).update({
+            provider: user.providerData.map(p => p.providerId === 'google.com' ? 'google' : 'email').join('+')
+        });
+        showToast('✅ 비밀번호 설정 완료! 이제 이메일/비밀번호로도 로그인 가능합니다.', 'success');
+        // 프로필 모달 새로고침
+        const modal = document.getElementById('profile-edit-modal');
+        if (modal) { modal.remove(); showProfileEdit(); }
+    } catch (e) {
+        console.error('비밀번호 설정 실패:', e);
+        showToast('비밀번호 설정 실패: ' + e.message, 'error');
+    }
+}
+
+// 비밀번호 변경
+async function changePasswordFromProfile() {
+    const user = firebase.auth().currentUser;
+    if (!user) return;
+
+    if (typeof showPromptModal !== 'function') { showToast('UI 모듈 로드 실패', 'error'); return; }
+
+    const newPw = await showPromptModal('🔑 비밀번호 변경', '새 비밀번호 (6자 이상)', '', true);
+    if (!newPw || newPw.length < 6) { if (newPw !== null) showToast('비밀번호는 6자 이상이어야 합니다', 'error'); return; }
+
+    const newPw2 = await showPromptModal('🔑 비밀번호 확인', '새 비밀번호를 다시 입력하세요', '', true);
+    if (newPw !== newPw2) { showToast('비밀번호가 일치하지 않습니다', 'error'); return; }
+
+    try {
+        await user.updatePassword(newPw);
+        showToast('✅ 비밀번호 변경 완료!', 'success');
+    } catch (e) {
+        if (e.code === 'auth/requires-recent-login') {
+            showToast('보안을 위해 재로그인이 필요합니다. 로그아웃 후 다시 로그인해주세요.', 'warning');
+        } else {
+            showToast('비밀번호 변경 실패: ' + e.message, 'error');
+        }
+    }
+}
+
 // Logout
 function logout() {
     if (typeof cleanupNotifications === 'function') cleanupNotifications();
