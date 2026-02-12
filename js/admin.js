@@ -482,7 +482,7 @@ async function loadAdminStats() {
 
 // ========== 소개자(레퍼럴) 시스템 ==========
 
-// 소개 코드 생성 (정회원 이상)
+// 소개 코드 생성 (정회원 이상) — CR-XXXXXX 고유 ID
 async function generateReferralCode() {
     if (!currentUser) return;
     
@@ -491,21 +491,40 @@ async function generateReferralCode() {
         const userData = userDoc.data();
         
         if (userData.referralCode) {
-            alert(`이미 소개 코드가 있습니다: ${userData.referralCode}`);
+            const nick = userData.referralNickname || userData.nickname || '';
+            const display = nick ? `${nick} (${userData.referralCode})` : userData.referralCode;
+            alert(`이미 소개 코드가 있습니다: ${display}`);
             return userData.referralCode;
         }
         
-        // 6자리 코드 생성
-        const code = (userData.nickname || currentUser.email.split('@')[0]).slice(0, 4).toUpperCase() 
-            + Math.random().toString(36).slice(2, 4).toUpperCase();
+        // CR-XXXXXX 형식 고유 코드 생성 (변경 불가)
+        let code;
+        let exists = true;
+        while (exists) {
+            const rand = Math.random().toString(36).slice(2, 8).toUpperCase();
+            code = 'CR-' + rand;
+            const dup = await db.collection('users').where('referralCode', '==', code).get();
+            exists = !dup.empty;
+        }
+        
+        // 소개 닉네임 입력
+        const nickname = await showPromptModal(
+            t('social.referral_nick_title', '소개 닉네임 설정'),
+            t('social.referral_nick_desc', '소개 코드와 함께 표시될 닉네임을 입력하세요:\n(나중에 변경 가능)'),
+            userData.nickname || ''
+        );
         
         await db.collection('users').doc(currentUser.uid).update({
             referralCode: code,
+            referralNickname: (nickname || '').trim() || userData.nickname || '',
             referralCount: 0,
-            referralEarnings: { crny: 0, fnc: 0, crfn: 0 }
+            referralEarnings: { crny: 0, fnc: 0, crfn: 0, crtd: 0, crac: 0, crgc: 0, creb: 0 }
         });
         
-        alert(`✅ 소개 코드 생성: ${code}\n\n이 코드를 공유하세요!`);
+        const displayNick = (nickname || '').trim() || userData.nickname || '';
+        const display = displayNick ? `${displayNick} (${code})` : code;
+        alert(`✅ 소개 코드 생성: ${display}\n\n이 코드를 공유하세요!\n⚠️ 소개 코드(${code})는 변경할 수 없습니다.`);
+        if (typeof loadReferralInfo === 'function') loadReferralInfo();
         return code;
     } catch (error) {
         alert('코드 생성 실패: ' + error.message);
@@ -570,6 +589,8 @@ async function applyReferralCode(newUserId, referralCode) {
 }
 
 // 챌린지 참가 시 소개자 수익 배분
+// - CRTD: 참가비 10% 즉시 지급 (소개자 offchainBalances.crtd)
+// - CRNY: 30일 후 자동 지급 (pendingRewards 컬렉션)
 async function distributeReferralReward(userId, amount, token) {
     try {
         const userDoc = await db.collection('users').doc(userId).get();
@@ -578,42 +599,70 @@ async function distributeReferralReward(userId, amount, token) {
         const referredBy = userDoc.data().referredBy;
         if (!referredBy) return;
         
-        // 10% 수익 배분
-        const rewardAmount = Math.floor(amount * 0.1);
+        const rewardAmount = Math.floor(amount);
         if (rewardAmount <= 0) return;
         
-        const referrerWallets = await db.collection('users').doc(referredBy)
-            .collection('wallets').limit(1).get();
+        const tokenKey = token.toLowerCase();
         
-        if (!referrerWallets.empty) {
-            const walletDoc = referrerWallets.docs[0];
-            const balances = walletDoc.data().balances || {};
-            const tokenKey = token.toLowerCase();
-            await walletDoc.ref.update({
-                [`balances.${tokenKey}`]: (balances[tokenKey] || 0) + rewardAmount
-            });
-            
-            // 소개자 누적 수익
-            const referrerDoc = await db.collection('users').doc(referredBy).get();
-            const earnings = referrerDoc.data()?.referralEarnings || {};
+        // 소개자 문서 로드
+        const referrerDoc = await db.collection('users').doc(referredBy).get();
+        if (!referrerDoc.exists) return;
+        const referrerData = referrerDoc.data();
+        
+        if (tokenKey === 'crtd') {
+            // CRTD → 즉시 오프체인 지급
+            const off = referrerData.offchainBalances || {};
             await db.collection('users').doc(referredBy).update({
-                [`referralEarnings.${tokenKey}`]: (earnings[tokenKey] || 0) + rewardAmount
+                [`offchainBalances.crtd`]: (off.crtd || 0) + rewardAmount,
+                [`referralEarnings.crtd`]: ((referrerData.referralEarnings || {}).crtd || 0) + rewardAmount
             });
             
-            await db.collection('transactions').add({
-                from: 'system:referral_commission',
-                to: referredBy,
-                amount: rewardAmount,
-                token: token,
-                type: 'referral_commission',
-                sourceUser: userId,
-                sourceAmount: amount,
-                commission: '10%',
-                timestamp: new Date()
+            console.log(`💰 소개 CRTD 즉시 지급: ${rewardAmount} → ${referredBy}`);
+        } else if (tokenKey === 'crny') {
+            // CRNY → 30일 후 자동 지급 (pendingRewards)
+            const releaseDate = new Date();
+            releaseDate.setDate(releaseDate.getDate() + 30);
+            
+            await db.collection('users').doc(referredBy)
+                .collection('pendingRewards').add({
+                    token: 'crny',
+                    amount: rewardAmount,
+                    sourceUser: userId,
+                    sourceAmount: amount,
+                    type: 'referral_commission',
+                    released: false,
+                    releaseDate: releaseDate,
+                    createdAt: new Date()
+                });
+            
+            // 누적 수익에도 기록 (대기 표시)
+            const earnings = referrerData.referralEarnings || {};
+            await db.collection('users').doc(referredBy).update({
+                [`referralEarnings.crny`]: (earnings.crny || 0) + rewardAmount
             });
             
-            console.log(`💰 소개 수수료: ${rewardAmount} ${token} → ${referredBy}`);
+            console.log(`⏳ 소개 CRNY 30일 후 지급 예정: ${rewardAmount} → ${referredBy}`);
+        } else {
+            // 기타 토큰: 오프체인 즉시 지급
+            const off = referrerData.offchainBalances || {};
+            await db.collection('users').doc(referredBy).update({
+                [`offchainBalances.${tokenKey}`]: (off[tokenKey] || 0) + rewardAmount,
+                [`referralEarnings.${tokenKey}`]: ((referrerData.referralEarnings || {}).tokenKey || 0) + rewardAmount
+            });
         }
+        
+        await db.collection('transactions').add({
+            from: 'system:referral_commission',
+            to: referredBy,
+            amount: rewardAmount,
+            token: token,
+            type: 'referral_commission',
+            sourceUser: userId,
+            sourceAmount: amount,
+            commission: '10%',
+            isPending: tokenKey === 'crny',
+            timestamp: new Date()
+        });
     } catch (error) {
         console.error('소개 수수료 배분 실패:', error);
     }
@@ -1775,6 +1824,74 @@ async function adminAdjustTradingTier(participantId, challengeId) {
 }
 
 // Admin 지갑 - 온체인 잔액 로드
+// ═══════════════════════════════════════════════════════
+// 삭제된 지갑 조회 (관리자)
+// ═══════════════════════════════════════════════════════
+async function adminLoadDeletedWallets() {
+    if (!hasLevel(3)) { showToast('권한 부족 (레벨 3+)', 'warning'); return; }
+    
+    const container = document.getElementById('admin-deleted-wallets');
+    if (!container) return;
+    container.innerHTML = '<p style="color:var(--accent);">삭제된 지갑 조회 중...</p>';
+    
+    try {
+        const users = await db.collection('users').get();
+        let html = '';
+        let count = 0;
+        
+        for (const userDoc of users.docs) {
+            const userData = userDoc.data();
+            const wallets = await db.collection('users').doc(userDoc.id)
+                .collection('wallets').where('status', '==', 'deleted').get();
+            
+            for (const wDoc of wallets.docs) {
+                const w = wDoc.data();
+                count++;
+                const deletedAt = w.deletedAt?.toDate ? w.deletedAt.toDate().toLocaleString('ko-KR') : (w.deletedAt ? new Date(w.deletedAt).toLocaleString('ko-KR') : '--');
+                html += `<div style="padding:0.6rem;background:#fff5f5;border-radius:6px;margin-bottom:0.4rem;border-left:3px solid #c62828;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.3rem;">
+                        <div>
+                            <strong style="font-size:0.85rem;">${w.name || '지갑'}</strong>
+                            <span style="font-size:0.7rem;color:#999;margin-left:0.3rem;">${userData.email || userDoc.id}</span>
+                            <div style="font-size:0.72rem;color:#666;font-family:monospace;">${w.walletAddress || '--'}</div>
+                            <div style="font-size:0.68rem;color:#c62828;">삭제: ${deletedAt}</div>
+                        </div>
+                        ${hasLevel(4) ? `<button onclick="adminRestoreWallet('${userDoc.id}','${wDoc.id}')" style="background:#4CAF50;color:white;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;font-size:0.7rem;">♻️ 복구</button>` : ''}
+                    </div>
+                </div>`;
+            }
+        }
+        
+        container.innerHTML = html || '<p style="font-size:0.85rem;color:#999;">삭제된 지갑이 없습니다.</p>';
+        container.insertAdjacentHTML('beforebegin', `<div style="font-size:0.8rem;color:var(--accent);margin-bottom:0.3rem;">총 ${count}개 삭제된 지갑</div>`);
+    } catch (e) {
+        container.innerHTML = `<p style="color:red;">조회 실패: ${e.message}</p>`;
+    }
+}
+
+// 삭제된 지갑 복구
+async function adminRestoreWallet(userId, walletId) {
+    if (!hasLevel(4)) return;
+    if (!confirm('이 지갑을 복구하시겠습니까?')) return;
+    try {
+        await db.collection('users').doc(userId).collection('wallets').doc(walletId).update({
+            status: firebase.firestore.FieldValue.delete(),
+            deletedAt: firebase.firestore.FieldValue.delete(),
+            restoredAt: new Date(),
+            restoredBy: currentUser.email
+        });
+        await db.collection('admin_log').add({
+            action: 'restore_wallet', adminEmail: currentUser.email,
+            adminLevel: currentUserLevel, targetUserId: userId, walletId,
+            timestamp: new Date()
+        });
+        showToast('✅ 지갑 복구 완료', 'success');
+        adminLoadDeletedWallets();
+    } catch (e) {
+        showToast('복구 실패: ' + e.message, 'error');
+    }
+}
+
 async function loadAdminWallet() {
     if (!isAdmin()) return;
     
@@ -2582,8 +2699,8 @@ async function joinChallenge(challengeId, tierKey) {
             `💰 ${tier.withdrawUnit.toLocaleString()} CRTD 단위 인출`
         );
         
-        // 소개자 수수료 (10%)
-        await distributeReferralReward(currentUser.uid, tier.deposit * 0.1, 'CRTD');
+        // 소개자 수수료: 참가비 10% → CRTD 즉시 지급
+        await distributeReferralReward(currentUser.uid, Math.floor(tier.deposit * 0.1), 'CRTD');
         
         loadUserWallet();
         loadPropTrading();

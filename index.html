@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CROWNY PLATFORM</title>
-    <link rel="stylesheet" href="style.css?v=12.1">
+    <link rel="stylesheet" href="style.css?v=12.2">
     
     <!-- Firebase SDK -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-app-compat.min.js"></script>
@@ -436,32 +436,56 @@
             <div style="background:white; padding:1.5rem; border-radius:12px; margin-top:1rem;">
                 <h3 style="margin-bottom:1rem;" data-i18n="wallet.referral_title">⭐ 소개자 프로그램</h3>
                 <p style="font-size:0.85rem; color:var(--accent); margin-bottom:1rem;">
-                    친구를 초대하면 가입 시 CRNY 1개 보상 + 챌린지 참가비의 10%를 받습니다!
+                    친구를 초대하면 가입 시 CRNY 1개 보상 + 챌린지 참가비 10% CRTD 즉시 지급!
                 </p>
                 <div id="referral-info" style="background:var(--bg); padding:1rem; border-radius:8px; margin-bottom:1rem;">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
                         <div>
                             <span style="font-size:0.8rem; color:var(--accent);" data-i18n="wallet.referral_code">내 소개 코드</span>
-                            <div id="my-referral-code" style="font-size:1.5rem; font-weight:700; color:var(--primary); letter-spacing:2px;">--</div>
+                            <div style="display:flex;align-items:center;gap:0.3rem;">
+                                <div id="my-referral-code" style="font-size:1.3rem; font-weight:700; color:var(--primary); letter-spacing:1px;">--</div>
+                                <button id="referral-nick-edit" onclick="editReferralNickname()" style="display:none;background:none;border:1px solid #ddd;border-radius:4px;padding:0.1rem 0.3rem;cursor:pointer;font-size:0.65rem;" title="닉네임 변경">✏️</button>
+                            </div>
                         </div>
                         <div style="text-align:right;">
                             <div style="font-size:0.8rem; color:var(--accent);" data-i18n="wallet.referral_friends">초대한 친구</div>
                             <div id="my-referral-count" style="font-size:1.2rem; font-weight:700;">0명</div>
                         </div>
                     </div>
-                    <div style="margin-top:0.8rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
-                        <div style="flex:1; background:white; padding:0.5rem; border-radius:6px; text-align:center; min-width:80px;">
-                            <div style="font-size:0.7rem; color:var(--accent);" data-i18n="wallet.referral_earn_crny">CRNY 수익</div>
-                            <div id="referral-earn-crny" style="font-weight:700;">0</div>
+                    <!-- 7개 토큰별 누적 보상 -->
+                    <div style="margin-top:0.8rem; display:grid; grid-template-columns:repeat(auto-fill, minmax(85px, 1fr)); gap:0.4rem;">
+                        <div style="background:white; padding:0.4rem; border-radius:6px; text-align:center;">
+                            <div style="font-size:0.65rem; color:var(--accent);">👑 CRNY</div>
+                            <div id="referral-earn-crny" style="font-weight:700;font-size:0.9rem;">0</div>
                         </div>
-                        <div style="flex:1; background:white; padding:0.5rem; border-radius:6px; text-align:center; min-width:80px;">
-                            <div style="font-size:0.7rem; color:var(--accent);" data-i18n="wallet.referral_earn_fnc">FNC 수익</div>
-                            <div id="referral-earn-fnc" style="font-weight:700;">0</div>
+                        <div style="background:white; padding:0.4rem; border-radius:6px; text-align:center;">
+                            <div style="font-size:0.65rem; color:var(--accent);">🌉 FNC</div>
+                            <div id="referral-earn-fnc" style="font-weight:700;font-size:0.9rem;">0</div>
                         </div>
-                        <div style="flex:1; background:white; padding:0.5rem; border-radius:6px; text-align:center; min-width:80px;">
-                            <div style="font-size:0.7rem; color:var(--accent);" data-i18n="wallet.referral_earn_crfn">CRFN 수익</div>
-                            <div id="referral-earn-crfn" style="font-weight:700;">0</div>
+                        <div style="background:white; padding:0.4rem; border-radius:6px; text-align:center;">
+                            <div style="font-size:0.65rem; color:var(--accent);">🔒 CRFN</div>
+                            <div id="referral-earn-crfn" style="font-weight:700;font-size:0.9rem;">0</div>
                         </div>
+                        <div style="background:white; padding:0.4rem; border-radius:6px; text-align:center;">
+                            <div style="font-size:0.65rem; color:#FF6D00;">📈 CRTD</div>
+                            <div id="referral-earn-crtd" style="font-weight:700;font-size:0.9rem;">0</div>
+                        </div>
+                        <div style="background:white; padding:0.4rem; border-radius:6px; text-align:center;">
+                            <div style="font-size:0.65rem; color:#E91E63;">🎭 CRAC</div>
+                            <div id="referral-earn-crac" style="font-weight:700;font-size:0.9rem;">0</div>
+                        </div>
+                        <div style="background:white; padding:0.4rem; border-radius:6px; text-align:center;">
+                            <div style="font-size:0.65rem; color:#00BFA5;">🛒 CRGC</div>
+                            <div id="referral-earn-crgc" style="font-weight:700;font-size:0.9rem;">0</div>
+                        </div>
+                        <div style="background:white; padding:0.4rem; border-radius:6px; text-align:center;">
+                            <div style="font-size:0.65rem; color:#2E7D32;">🌱 CREB</div>
+                            <div id="referral-earn-creb" style="font-weight:700;font-size:0.9rem;">0</div>
+                        </div>
+                    </div>
+                    <!-- 대기 중 보상 -->
+                    <div id="referral-pending-rewards" style="margin-top:0.6rem;padding:0.4rem;background:white;border-radius:6px;min-height:1.2rem;">
+                        <div style="font-size:0.75rem;color:#999;">대기 중인 보상 없음</div>
                     </div>
                 </div>
                 <div style="display:flex; gap:0.5rem;">
@@ -1634,11 +1658,11 @@
     <script src="js/config.js?v=12.4"></script>
     <script src="js/ui.js?v=12.2"></script>
     <script src="js/auth.js?v=9.5"></script>
-    <script src="js/wallet.js?v=9.5"></script>
+    <script src="js/wallet.js?v=10.0"></script>
     <script src="js/offchain.js?v=10.0"></script>
-    <script src="js/social.js?v=11.2"></script>
+    <script src="js/social.js?v=12.0"></script>
     <script src="js/send.js?v=9.5"></script>
-    <script src="js/admin.js?v=11.2"></script>
+    <script src="js/admin.js?v=12.0"></script>
     <script src="js/marketplace.js?v=12.0"></script>
     <script src="js/trading.js?v=13.5"></script>
     <script src="js/mentor-learning.js?v=1.0"></script>

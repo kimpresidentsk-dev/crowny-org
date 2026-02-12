@@ -7,13 +7,15 @@ let allWallets = [];
 async function loadUserWallet() {
     if (!currentUser) return;
     
-    // Load all wallets
+    // Load all wallets (소프트 삭제된 지갑 제외)
     const walletsSnapshot = await db.collection('users').doc(currentUser.uid)
         .collection('wallets').get();
     
     allWallets = [];
     walletsSnapshot.forEach(doc => {
-        allWallets.push({ id: doc.id, ...doc.data() });
+        const data = doc.data();
+        if (data.status === 'deleted') return; // 소프트 삭제된 지갑 제외
+        allWallets.push({ id: doc.id, ...data });
     });
     
     // If no wallets, create first one
@@ -213,14 +215,44 @@ async function deleteCurrentWallet() {
     const wallet = allWallets.find(w => w.id === currentWalletId);
     const confirmed = await showConfirmModal(
         t('wallet.delete_wallet', '지갑 삭제'),
-        `${t('wallet.delete_confirm', '지갑을 삭제하시겠습니까?')}\n\n${wallet.name}\n${wallet.walletAddress}\n\n${t('wallet.delete_warning', '⚠️ 이 작업은 되돌릴 수 없습니다!')}`
+        `${t('wallet.delete_confirm', '지갑을 삭제하시겠습니까?')}\n\n${wallet.name}\n${wallet.walletAddress}\n\n${t('wallet.delete_warning', '⚠️ 삭제된 지갑은 관리자만 복구할 수 있습니다.')}`
     );
     
     if (!confirmed) return;
     
+    // 비밀번호 재인증
+    try {
+        const user = firebase.auth().currentUser;
+        const isGoogleOnly = user.providerData.every(p => p.providerId === 'google.com');
+        
+        if (isGoogleOnly) {
+            // Google 전용 사용자: Google 재인증
+            const provider = new firebase.auth.GoogleAuthProvider();
+            await user.reauthenticateWithPopup(provider);
+        } else {
+            // 이메일/비밀번호 사용자: 비밀번호 입력
+            const password = await showPromptModal(
+                t('wallet.password_confirm', '🔐 비밀번호 확인'),
+                t('wallet.password_confirm_desc', '지갑 삭제를 위해 비밀번호를 입력하세요:')
+            );
+            if (!password) return;
+            
+            const credential = firebase.auth.EmailAuthProvider.credential(user.email, password);
+            await user.reauthenticateWithCredential(credential);
+        }
+    } catch (authError) {
+        console.error('Reauth error:', authError);
+        showToast(t('wallet.auth_failed', '인증 실패. 비밀번호를 확인하세요.'), 'error');
+        return;
+    }
+    
+    // 소프트 삭제 (실제 삭제 대신 status 변경)
     try {
         await db.collection('users').doc(currentUser.uid)
-            .collection('wallets').doc(currentWalletId).delete();
+            .collection('wallets').doc(currentWalletId).update({
+                status: 'deleted',
+                deletedAt: new Date()
+            });
         
         showToast(t('wallet.delete_success', '지갑 삭제 완료!'), 'success');
         await loadUserWallet();

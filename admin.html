@@ -235,6 +235,14 @@
                 <!-- TAB 2: 💰 온체인 지갑 (레벨 4+)           -->
                 <!-- ═══════════════════════════════════════════ -->
                 <div id="admin-tab-wallet" class="admin-tab-content" style="display:none;">
+                    <!-- 삭제된 지갑 조회 -->
+                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                            <h3 style="margin:0;">🗑️ 삭제된 지갑</h3>
+                            <button onclick="adminLoadDeletedWallets()" style="background:#c62828;color:white;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.8rem;">🔍 조회</button>
+                        </div>
+                        <div id="admin-deleted-wallets"><p style="font-size:0.85rem;color:#999;">조회 버튼을 눌러주세요</p></div>
+                    </div>
                     <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                         <h3 style="margin-bottom:1rem;">💰 온체인 지갑 관리</h3>
                         <div id="admin-wallet-info" style="margin-bottom:1rem;">

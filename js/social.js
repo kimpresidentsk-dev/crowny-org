@@ -140,23 +140,78 @@ async function loadReferralInfo() {
         const userDoc = await db.collection('users').doc(currentUser.uid).get();
         if (!userDoc.exists) return;
         const data = userDoc.data();
+        
+        // 소개코드 표시: "닉네임 (CR-XXXXXX)"
         const codeEl = document.getElementById('my-referral-code');
-        if (codeEl) codeEl.textContent = data.referralCode || t('social.not_generated','미생성');
+        if (codeEl) {
+            if (data.referralCode) {
+                const nick = data.referralNickname || data.nickname || '';
+                codeEl.textContent = nick ? `${nick} (${data.referralCode})` : data.referralCode;
+            } else {
+                codeEl.textContent = t('social.not_generated','미생성');
+            }
+        }
+        
+        // 소개 닉네임 편집 버튼 표시
+        const nickEditEl = document.getElementById('referral-nick-edit');
+        if (nickEditEl) nickEditEl.style.display = data.referralCode ? 'inline-block' : 'none';
+        
         const countEl = document.getElementById('my-referral-count');
         if (countEl) countEl.textContent = `${data.referralCount || 0}명`;
+        
+        // 7개 토큰별 누적 보상
         const earnings = data.referralEarnings || {};
-        const earnCrny = document.getElementById('referral-earn-crny');
-        const earnFnc = document.getElementById('referral-earn-fnc');
-        const earnCrfn = document.getElementById('referral-earn-crfn');
-        if (earnCrny) earnCrny.textContent = earnings.crny || 0;
-        if (earnFnc) earnFnc.textContent = earnings.fnc || 0;
-        if (earnCrfn) earnCrfn.textContent = earnings.crfn || 0;
+        const tokenKeys = ['crny','fnc','crfn','crtd','crac','crgc','creb'];
+        for (const tk of tokenKeys) {
+            const el = document.getElementById(`referral-earn-${tk}`);
+            if (el) el.textContent = earnings[tk] || 0;
+        }
+        
+        // 대기 중 보상 (pendingRewards)
+        const pendingEl = document.getElementById('referral-pending-rewards');
+        if (pendingEl) {
+            try {
+                const pending = await db.collection('users').doc(currentUser.uid)
+                    .collection('pendingRewards').where('released', '==', false).get();
+                let pendingHTML = '';
+                if (!pending.empty) {
+                    pending.forEach(doc => {
+                        const r = doc.data();
+                        const releaseDate = r.releaseDate?.toDate ? r.releaseDate.toDate().toLocaleDateString('ko-KR') : '--';
+                        pendingHTML += `<div style="font-size:0.75rem;color:#e65100;">⏳ ${r.amount} ${(r.token||'').toUpperCase()} → ${releaseDate}</div>`;
+                    });
+                }
+                pendingEl.innerHTML = pendingHTML || '<div style="font-size:0.75rem;color:#999;">대기 중인 보상 없음</div>';
+            } catch (e) {
+                pendingEl.innerHTML = '';
+            }
+        }
 
         // Update sidebar with nickname
         const userInfoEl = document.getElementById('user-email');
         if (userInfoEl) userInfoEl.textContent = data.nickname || data.email;
     } catch (error) {
         console.error('소개자 정보 로드 실패:', error);
+    }
+}
+
+// 소개 닉네임 변경
+async function editReferralNickname() {
+    if (!currentUser) return;
+    const userDoc = await db.collection('users').doc(currentUser.uid).get();
+    const data = userDoc.data() || {};
+    const newNick = await showPromptModal(
+        t('social.edit_referral_nick', '소개 닉네임 변경'),
+        t('social.enter_referral_nick', '표시될 소개 닉네임을 입력하세요:'),
+        data.referralNickname || data.nickname || ''
+    );
+    if (!newNick || !newNick.trim()) return;
+    try {
+        await db.collection('users').doc(currentUser.uid).update({ referralNickname: newNick.trim() });
+        showToast(t('social.nick_changed', '✅ 소개 닉네임 변경 완료'), 'success');
+        loadReferralInfo();
+    } catch (e) {
+        showToast(t('social.nick_change_fail', '변경 실패: ') + e.message, 'error');
     }
 }
 

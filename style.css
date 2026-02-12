@@ -2025,6 +2025,30 @@ input:checked + .notif-toggle-slider::before {
     transform: translateX(20px);
 }
 
+/* ===== Desktop Wallet Card Layout ===== */
+@media (min-width: 769px) {
+    .wallet-info .token-card {
+        flex-direction: row;
+        align-items: center;
+    }
+    .wallet-info .token-card .token-balance {
+        margin-left: auto;
+        white-space: nowrap;
+    }
+    /* 지갑 주소 카드: 버튼들 우측 컴팩트 배치 */
+    .wallet-info > div:first-child > div:first-child {
+        flex-direction: row;
+        align-items: center;
+    }
+    .wallet-info > div:first-child > div:first-child > div:last-child {
+        flex-shrink: 0;
+        gap: 0.3rem;
+    }
+    .wallet-info .btn-action {
+        max-width: 280px;
+    }
+}
+
 /* ===== Notification Toast (colored) ===== */
 .notif-toast {
     box-shadow: 0 4px 16px rgba(0,0,0,0.2);
