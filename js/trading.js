@@ -866,17 +866,32 @@ async function loadCandleHistory(symbol) {
         
         if (data && data.candles && data.candles.length > 0) {
             window.liveTicks = [];
+            let prevClose = 0;
             for (const candle of data.candles) {
                 const t = candle.time;
                 const vol = candle.volume || candle.tick_count || 1;
-                window.liveTicks.push({ time: t, price: candle.open, volume: Math.ceil(vol * 0.25) });
-                if (candle.high !== candle.open) {
-                    window.liveTicks.push({ time: t + 15, price: candle.high, volume: Math.ceil(vol * 0.25) });
+                // 스파이크 필터: 이전 캔들 대비 50pt 이상 점프 시 스킵
+                if (prevClose > 0 && Math.abs(candle.open - prevClose) > 50) {
+                    console.warn(`⚠️ 히스토리 스파이크 스킵: ${prevClose} → ${candle.open}`);
+                    continue;
                 }
-                if (candle.low !== candle.high) {
-                    window.liveTicks.push({ time: t + 30, price: candle.low, volume: Math.ceil(vol * 0.25) });
+                // 캔들 내부 스파이크 필터: high/low가 open 대비 비정상
+                const bodyRange = Math.abs(candle.high - candle.low);
+                if (bodyRange > 100) {
+                    // 범위 100pt 초과 캔들은 open/close만 사용
+                    window.liveTicks.push({ time: t, price: candle.open, volume: Math.ceil(vol * 0.5) });
+                    window.liveTicks.push({ time: t + 59, price: candle.close, volume: Math.ceil(vol * 0.5) });
+                } else {
+                    window.liveTicks.push({ time: t, price: candle.open, volume: Math.ceil(vol * 0.25) });
+                    if (candle.high !== candle.open) {
+                        window.liveTicks.push({ time: t + 15, price: candle.high, volume: Math.ceil(vol * 0.25) });
+                    }
+                    if (candle.low !== candle.high) {
+                        window.liveTicks.push({ time: t + 30, price: candle.low, volume: Math.ceil(vol * 0.25) });
+                    }
+                    window.liveTicks.push({ time: t + 59, price: candle.close, volume: Math.ceil(vol * 0.25) });
                 }
-                window.liveTicks.push({ time: t + 59, price: candle.close, volume: Math.ceil(vol * 0.25) });
+                prevClose = candle.close;
             }
             updateLiveCandleChart();
             scrollToLatest();
@@ -895,7 +910,13 @@ async function loadTickData(symbol) {
         const res = await fetch(`${PRICE_SERVER}/api/market/ticks?symbol=${symbol}&limit=5000`);
         const data = await res.json();
         if (data && data.ticks && data.ticks.length > 0) {
-            window.liveTicks = data.ticks.map(t => ({ time: t.time, price: t.price, volume: t.volume || 1 }));
+            // 스파이크 필터 적용
+            const filtered = [];
+            for (const tick of data.ticks) {
+                if (filtered.length > 0 && Math.abs(tick.price - filtered[filtered.length - 1].price) > 30) continue;
+                filtered.push({ time: tick.time, price: tick.price, volume: tick.volume || 1 });
+            }
+            window.liveTicks = filtered;
             updateLiveCandleChart();
             scrollToLatest();
             console.log(`✅ ${symbol} ${data.count}개 틱 로드`);
@@ -918,8 +939,8 @@ async function fetchLiveTick() {
         if (window.liveTicks.length > 0) {
             const lastPrice = window.liveTicks[window.liveTicks.length - 1].price;
             const diff = Math.abs(data.price - lastPrice);
-            if (diff > 30) {
-                console.warn(`⚠️ 스파이크 필터: ${lastPrice} → ${data.price}`);
+            if (diff > 20) {
+                console.warn(`⚠️ 스파이크 필터: ${lastPrice} → ${data.price} (diff=${diff.toFixed(2)})`);
                 return;
             }
         }
@@ -1122,8 +1143,12 @@ function aggregateTicksToCandles(ticks, intervalSec) {
     
     const candles = [];
     let currentCandle = null;
+    let prevPrice = 0;
     
     for (const tick of ticks) {
+        // 틱 레벨 스파이크 필터
+        if (prevPrice > 0 && Math.abs(tick.price - prevPrice) > 30) continue;
+        prevPrice = tick.price;
         const candleTime = Math.floor(tick.time / intervalSec) * intervalSec;
         
         if (!currentCandle || currentCandle.time !== candleTime) {
