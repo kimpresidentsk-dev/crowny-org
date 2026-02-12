@@ -191,10 +191,10 @@ async function setUserAdminLevel(targetEmail, level) {
             appointedByLevel: currentUserLevel,
             appointedAt: new Date()
         };
-        // Preserve existing admin assignment fields
-        if (targetData.adminCountry) updateData.adminCountry = targetData.adminCountry;
-        if (targetData.adminBusiness) updateData.adminBusiness = targetData.adminBusiness;
-        if (targetData.adminService) updateData.adminService = targetData.adminService;
+        // Preserve existing admin assignment fields (normalize to arrays)
+        if (targetData.adminCountry) updateData.adminCountry = normalizeToArray(targetData.adminCountry);
+        if (targetData.adminBusiness) updateData.adminBusiness = normalizeToArray(targetData.adminBusiness);
+        if (targetData.adminService) updateData.adminService = normalizeToArray(targetData.adminService);
         if (targetData.adminStartDate) updateData.adminStartDate = targetData.adminStartDate;
         if (targetData.adminEndDate !== undefined) updateData.adminEndDate = targetData.adminEndDate;
         
@@ -220,7 +220,25 @@ async function setUserAdminLevel(targetEmail, level) {
     }
 }
 
-// ★ 관리자 편집 모달
+// ★ 배열 정규화 헬퍼: 문자열이면 배열로 변환, 빈값이면 빈 배열
+function normalizeToArray(val) {
+    if (!val) return [];
+    if (Array.isArray(val)) return val.filter(v => v && v !== 'ALL');
+    if (typeof val === 'string' && val !== 'ALL') return [val];
+    return [];
+}
+
+// ★ 체크박스 그리드 HTML 생성
+function buildCheckboxGrid(name, options, selectedArr) {
+    return options.map(o => {
+        const checked = selectedArr.includes(o.v) ? 'checked' : '';
+        return `<label style="display:inline-flex;align-items:center;gap:0.2rem;padding:0.25rem 0.5rem;background:${checked ? '#e3f2fd' : '#f5f5f5'};border-radius:6px;cursor:pointer;font-size:0.78rem;border:1px solid ${checked ? '#90caf9' : '#ddd'};transition:all 0.15s;">
+            <input type="checkbox" name="${name}" value="${o.v}" ${checked} style="margin:0;accent-color:#1565c0;"> ${o.l}
+        </label>`;
+    }).join('');
+}
+
+// ★ 관리자 편집 모달 — 다중 선택 (체크박스 그리드)
 async function showAdminEditModal(userId, userData) {
     const level = userData.adminLevel ?? -1;
     const maxAppointLevel = isSuperAdmin() ? 5 : currentUserLevel - 1;
@@ -235,18 +253,18 @@ async function showAdminEditModal(userId, userData) {
     }
     
     const countries = [
-        {v:'ALL',l:'전체'},{v:'KR',l:'🇰🇷 한국'},{v:'US',l:'🇺🇸 미국'},{v:'JP',l:'🇯🇵 일본'},{v:'CN',l:'🇨🇳 중국'},{v:'VN',l:'🇻🇳 베트남'},{v:'TH',l:'🇹🇭 태국'},{v:'PH',l:'🇵🇭 필리핀'},{v:'ID',l:'🇮🇩 인도네시아'},{v:'MY',l:'🇲🇾 말레이시아'},{v:'SG',l:'🇸🇬 싱가포르'},{v:'OTHER',l:'기타'}
+        {v:'KR',l:'🇰🇷 한국'},{v:'US',l:'🇺🇸 미국'},{v:'JP',l:'🇯🇵 일본'},{v:'CN',l:'🇨🇳 중국'},{v:'VN',l:'🇻🇳 베트남'},{v:'TH',l:'🇹🇭 태국'},{v:'PH',l:'🇵🇭 필리핀'},{v:'ID',l:'🇮🇩 인도네시아'},{v:'MY',l:'🇲🇾 말레이시아'},{v:'SG',l:'🇸🇬 싱가포르'},{v:'AU',l:'🇦🇺 호주'},{v:'UK',l:'🇬🇧 영국'},{v:'DE',l:'🇩🇪 독일'},{v:'FR',l:'🇫🇷 프랑스'},{v:'CA',l:'🇨🇦 캐나다'},{v:'OTHER',l:'기타'}
     ];
     const businesses = [
-        {v:'ALL',l:'전체'},{v:'trading',l:'📊 트레이딩'},{v:'marketplace',l:'🛒 마켓플레이스'},{v:'energy',l:'🌱 에너지'},{v:'art',l:'🎭 아트/NFT'},{v:'fundraise',l:'💰 펀드레이즈'},{v:'credit',l:'💳 크레딧'},{v:'social',l:'💬 소셜'},{v:'messenger',l:'📨 메신저'}
+        {v:'trading',l:'📊 트레이딩'},{v:'marketplace',l:'🛒 마켓플레이스'},{v:'energy',l:'🌱 에너지'},{v:'art',l:'🎭 아트/NFT'},{v:'fundraise',l:'💰 펀드레이즈'},{v:'credit',l:'💳 크레딧'},{v:'social',l:'💬 소셜'},{v:'messenger',l:'📨 메신저'},{v:'beauty',l:'💄 뷰티'},{v:'sound',l:'🎵 음향'},{v:'it',l:'💻 IT'},{v:'fnb',l:'🍽️ F&B'},{v:'edu',l:'📚 교육'},{v:'health',l:'🏥 헬스'}
     ];
     const services = [
-        {v:'ALL',l:'전체'},{v:'prop-trading',l:'프랍 트레이딩'},{v:'mall',l:'쇼핑몰'},{v:'art-gallery',l:'아트 갤러리'},{v:'nft-mint',l:'NFT 민팅'},{v:'energy-invest',l:'에너지 투자'},{v:'fundraise-campaign',l:'펀드레이즈'},{v:'p2p-credit',l:'P2P 크레딧'},{v:'books',l:'도서'},{v:'business',l:'비즈니스'}
+        {v:'prop-trading',l:'프랍 트레이딩'},{v:'mall',l:'Mall'},{v:'art-gallery',l:'Art'},{v:'nft-mint',l:'NFT'},{v:'energy-invest',l:'Energy'},{v:'fundraise-campaign',l:'Fundraise'},{v:'p2p-credit',l:'Credit'},{v:'social',l:'Social'},{v:'books',l:'도서'},{v:'business',l:'비즈니스'},{v:'trading',l:'Trading'}
     ];
     
-    const curCountry = userData.adminCountry || 'ALL';
-    const curBusiness = userData.adminBusiness || 'ALL';
-    const curService = userData.adminService || 'ALL';
+    const curCountry = normalizeToArray(userData.adminCountry);
+    const curBusiness = normalizeToArray(userData.adminBusiness);
+    const curService = normalizeToArray(userData.adminService);
     const curStart = userData.adminStartDate ? (userData.adminStartDate.toDate ? userData.adminStartDate.toDate() : new Date(userData.adminStartDate)) : new Date();
     const curEnd = userData.adminEndDate ? (userData.adminEndDate.toDate ? userData.adminEndDate.toDate() : new Date(userData.adminEndDate)) : null;
     
@@ -256,7 +274,7 @@ async function showAdminEditModal(userId, userData) {
     const overlay = document.createElement('div');
     overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;overflow-y:auto;';
     overlay.innerHTML = `
-        <div style="background:white;padding:1.5rem;border-radius:16px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;">
+        <div style="background:white;padding:1.5rem;border-radius:16px;max-width:540px;width:100%;max-height:90vh;overflow-y:auto;">
             <h3 style="margin-bottom:0.3rem;">🔑 관리자 설정</h3>
             <p style="font-size:0.85rem;color:#666;margin-bottom:1rem;">${userData.nickname || '이름없음'} · ${userData.email}</p>
             
@@ -265,26 +283,25 @@ async function showAdminEditModal(userId, userData) {
                 <select id="edit-admin-level" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;">${levelOptions}</select>
             </div>
             
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:1rem;">
-                <div>
-                    <label style="font-size:0.8rem;color:#666;display:block;margin-bottom:0.3rem;">🌍 담당 국가</label>
-                    <select id="edit-admin-country" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;">
-                        ${countries.map(c => `<option value="${c.v}" ${c.v===curCountry?'selected':''}>${c.l}</option>`).join('')}
-                    </select>
-                </div>
-                <div>
-                    <label style="font-size:0.8rem;color:#666;display:block;margin-bottom:0.3rem;">💼 담당 사업</label>
-                    <select id="edit-admin-business" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;">
-                        ${businesses.map(b => `<option value="${b.v}" ${b.v===curBusiness?'selected':''}>${b.l}</option>`).join('')}
-                    </select>
+            <div style="margin-bottom:1rem;">
+                <label style="font-size:0.8rem;color:#666;display:block;margin-bottom:0.4rem;">🌍 담당 국가 <span style="font-size:0.7rem;color:#999;">(다중 선택)</span></label>
+                <div id="edit-admin-country-grid" style="display:flex;flex-wrap:wrap;gap:0.3rem;">
+                    ${buildCheckboxGrid('adminCountry', countries, curCountry)}
                 </div>
             </div>
             
             <div style="margin-bottom:1rem;">
-                <label style="font-size:0.8rem;color:#666;display:block;margin-bottom:0.3rem;">🔧 담당 서비스</label>
-                <select id="edit-admin-service" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;">
-                    ${services.map(s => `<option value="${s.v}" ${s.v===curService?'selected':''}>${s.l}</option>`).join('')}
-                </select>
+                <label style="font-size:0.8rem;color:#666;display:block;margin-bottom:0.4rem;">💼 담당 사업 <span style="font-size:0.7rem;color:#999;">(다중 선택)</span></label>
+                <div id="edit-admin-business-grid" style="display:flex;flex-wrap:wrap;gap:0.3rem;">
+                    ${buildCheckboxGrid('adminBusiness', businesses, curBusiness)}
+                </div>
+            </div>
+            
+            <div style="margin-bottom:1rem;">
+                <label style="font-size:0.8rem;color:#666;display:block;margin-bottom:0.4rem;">🔧 담당 서비스 <span style="font-size:0.7rem;color:#999;">(다중 선택)</span></label>
+                <div id="edit-admin-service-grid" style="display:flex;flex-wrap:wrap;gap:0.3rem;">
+                    ${buildCheckboxGrid('adminService', services, curService)}
+                </div>
             </div>
             
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:1rem;">
@@ -305,13 +322,23 @@ async function showAdminEditModal(userId, userData) {
         </div>`;
     
     document.body.appendChild(overlay);
+    
+    // 체크박스 토글 시 라벨 스타일 업데이트
+    overlay.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        cb.addEventListener('change', () => {
+            const lbl = cb.closest('label');
+            if (cb.checked) { lbl.style.background = '#e3f2fd'; lbl.style.borderColor = '#90caf9'; }
+            else { lbl.style.background = '#f5f5f5'; lbl.style.borderColor = '#ddd'; }
+        });
+    });
+    
     overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
     overlay.querySelector('#edit-admin-cancel').onclick = () => overlay.remove();
     overlay.querySelector('#edit-admin-save').onclick = async () => {
         const newLevel = parseInt(document.getElementById('edit-admin-level').value);
-        const country = document.getElementById('edit-admin-country').value;
-        const business = document.getElementById('edit-admin-business').value;
-        const service = document.getElementById('edit-admin-service').value;
+        const countryArr = [...overlay.querySelectorAll('input[name="adminCountry"]:checked')].map(c => c.value);
+        const businessArr = [...overlay.querySelectorAll('input[name="adminBusiness"]:checked')].map(c => c.value);
+        const serviceArr = [...overlay.querySelectorAll('input[name="adminService"]:checked')].map(c => c.value);
         const startDate = document.getElementById('edit-admin-start').value;
         const endDate = document.getElementById('edit-admin-end').value;
         
@@ -325,9 +352,9 @@ async function showAdminEditModal(userId, userData) {
         try {
             const updateData = {
                 adminLevel: newLevel,
-                adminCountry: country,
-                adminBusiness: business,
-                adminService: service,
+                adminCountry: countryArr,
+                adminBusiness: businessArr,
+                adminService: serviceArr,
                 adminStartDate: startDate ? firebase.firestore.Timestamp.fromDate(new Date(startDate)) : firebase.firestore.FieldValue.serverTimestamp(),
                 appointedBy: currentUser.email,
                 appointedByLevel: currentUserLevel,
@@ -349,14 +376,17 @@ async function showAdminEditModal(userId, userData) {
                 targetEmail: userData.email,
                 prevLevel: level,
                 newLevel: newLevel,
-                country, business, service,
+                country: countryArr, business: businessArr, service: serviceArr,
                 startDate: startDate || null,
                 endDate: endDate || null,
                 timestamp: new Date()
             });
             
             overlay.remove();
-            showToast(`✅ ${userData.email} → ${info.icon} Lv${newLevel} (${country}/${business}/${service})`, 'success');
+            const cLabel = countryArr.length ? countryArr.join(',') : '전체';
+            const bLabel = businessArr.length ? businessArr.join(',') : '전체';
+            const sLabel = serviceArr.length ? serviceArr.join(',') : '전체';
+            showToast(`✅ ${userData.email} → ${info.icon} Lv${newLevel} (${cLabel}/${bLabel}/${sLabel})`, 'success');
             loadAdminUserList();
         } catch (e) {
             showToast('설정 실패: ' + e.message, 'error');
@@ -731,7 +761,8 @@ const ADMIN_TAB_CONFIG = [
     { id: 'giving',    icon: '🎁', label: '기부풀',    minLevel: 3 },
     { id: 'rate',      icon: '⚖️', label: '비율',      minLevel: 6 },
     { id: 'log',       icon: '📋', label: '로그',      minLevel: 3 },
-    { id: 'coupon',    icon: '🎟️', label: '쿠폰',      minLevel: 3 }
+    { id: 'coupon',    icon: '🎟️', label: '쿠폰',      minLevel: 3 },
+    { id: 'superwall', icon: '🏦', label: '계좌관리',  minLevel: 6 }
 ];
 
 let activeAdminTab = null;
@@ -814,6 +845,7 @@ function switchAdminTab(tabId) {
     if (tabId === 'giving') adminLoadGivingPool();
     if (tabId === 'rate') loadExchangeRate();
     if (tabId === 'coupon') loadCouponList();
+    if (tabId === 'superwall') loadSuperAdminWallets();
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1455,9 +1487,12 @@ async function loadAdminUserList() {
             const canManage = (level < currentUserLevel || isSuperAdmin()) && u.email !== SUPER_ADMIN_EMAIL;
             window._adminUserCache[u.id] = u;
             
-            const countryBadge = u.adminCountry && u.adminCountry !== 'ALL' ? `<span style="font-size:0.6rem;background:#e3f2fd;color:#1565c0;padding:1px 4px;border-radius:3px;">${u.adminCountry}</span>` : '';
-            const businessBadge = u.adminBusiness && u.adminBusiness !== 'ALL' ? `<span style="font-size:0.6rem;background:#fff3e0;color:#e65100;padding:1px 4px;border-radius:3px;">${u.adminBusiness}</span>` : '';
-            const serviceBadge = u.adminService && u.adminService !== 'ALL' ? `<span style="font-size:0.6rem;background:#f3e5f5;color:#7b1fa2;padding:1px 4px;border-radius:3px;">${u.adminService}</span>` : '';
+            const countryArr = normalizeToArray(u.adminCountry);
+            const businessArr = normalizeToArray(u.adminBusiness);
+            const serviceArr = normalizeToArray(u.adminService);
+            const countryBadge = countryArr.map(c => `<span style="font-size:0.6rem;background:#e3f2fd;color:#1565c0;padding:1px 4px;border-radius:3px;">${c}</span>`).join('');
+            const businessBadge = businessArr.map(b => `<span style="font-size:0.6rem;background:#fff3e0;color:#e65100;padding:1px 4px;border-radius:3px;">${b}</span>`).join('');
+            const serviceBadge = serviceArr.map(s => `<span style="font-size:0.6rem;background:#f3e5f5;color:#7b1fa2;padding:1px 4px;border-radius:3px;">${s}</span>`).join('');
             
             let periodText = '';
             if (u.adminEndDate) {
@@ -2704,6 +2739,256 @@ async function toggleCoupon(couponId, enabled) {
         loadCouponList();
     } catch (e) {
         alert('상태 변경 실패: ' + e.message);
+    }
+}
+
+// ═══════════════════════════════════════════════════════
+// 🏦 슈퍼관리자 계좌 관리 (오리지널 + 운영)
+// ═══════════════════════════════════════════════════════
+
+async function loadSuperAdminWallets() {
+    if (!isSuperAdmin()) return;
+    const container = document.getElementById('admin-tab-superwall');
+    if (!container) return;
+    
+    container.style.display = 'block';
+    container.innerHTML = '<div style="background:white;padding:1.5rem;border-radius:12px;"><p style="color:var(--accent);">🔄 계좌 정보 로드 중...</p></div>';
+    
+    try {
+        const uid = currentUser.uid;
+        const walletsRef = db.collection('users').doc(uid).collection('wallets');
+        
+        // Load or create wallet docs
+        const [originalDoc, operatingDoc, defaultDoc] = await Promise.all([
+            walletsRef.doc('original').get(),
+            walletsRef.doc('operating').get(),
+            walletsRef.doc('default').get()
+        ]);
+        
+        // Get active wallet setting
+        const userDoc = await db.collection('users').doc(uid).get();
+        const activeWallet = userDoc.data()?.activeWallet || 'default';
+        
+        const wallets = {
+            original: originalDoc.exists ? originalDoc.data() : null,
+            operating: operatingDoc.exists ? operatingDoc.data() : null,
+            default: defaultDoc.exists ? defaultDoc.data() : null
+        };
+        
+        // Format balances
+        function formatBal(walletData) {
+            if (!walletData) return '<span style="color:#999;">미생성</span>';
+            const bal = walletData.offchainBalances || walletData.balances || {};
+            const entries = Object.entries(bal).filter(([,v]) => v > 0);
+            if (entries.length === 0) return '<span style="color:#999;">잔액 없음</span>';
+            return entries.map(([k, v]) => `<span style="font-size:0.8rem;">${k.toUpperCase()}: <strong>${v.toLocaleString()}</strong></span>`).join(' · ');
+        }
+        
+        function walletCard(type, label, icon, color, data) {
+            const isActive = activeWallet === type;
+            const exists = !!data;
+            return `
+                <div style="background:${isActive ? `linear-gradient(135deg,${color}15,${color}08)` : 'white'};padding:1.2rem;border-radius:12px;border:2px solid ${isActive ? color : '#eee'};position:relative;">
+                    ${isActive ? `<span style="position:absolute;top:8px;right:8px;background:${color};color:white;padding:2px 8px;border-radius:10px;font-size:0.65rem;font-weight:700;">활성</span>` : ''}
+                    <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.8rem;">
+                        <span style="font-size:1.5rem;">${icon}</span>
+                        <div>
+                            <div style="font-weight:700;font-size:0.95rem;">${label}</div>
+                            <div style="font-size:0.7rem;color:#999;">${type === 'original' ? '원본 자산 보관 (안전 금고)' : type === 'operating' ? '일상 운영/거래용' : '기존 기본 지갑'}</div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom:0.8rem;">${formatBal(data)}</div>
+                    <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+                        ${!exists ? `<button onclick="createSuperWallet('${type}')" style="background:${color};color:white;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;">➕ 생성</button>` : ''}
+                        ${exists && !isActive ? `<button onclick="switchActiveWallet('${type}')" style="background:${color};color:white;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;">🔄 활성화</button>` : ''}
+                        ${exists ? `<button onclick="showInternalTransfer('${type}')" style="background:#455a64;color:white;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.78rem;">↔️ 이체</button>` : ''}
+                    </div>
+                </div>`;
+        }
+        
+        container.innerHTML = `
+            <div style="background:white;padding:1.5rem;border-radius:12px;margin-bottom:1rem;">
+                <h3 style="margin-bottom:0.3rem;">🏦 슈퍼관리자 계좌 관리</h3>
+                <p style="font-size:0.78rem;color:#666;margin-bottom:1.2rem;">오리지널 계좌(금고)와 운영 계좌를 분리 관리합니다. 오리지널 계좌 출금 시 2단계 확인이 필요합니다.</p>
+                
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;">
+                    ${walletCard('original', '오리지널 계좌', '🔐', '#FF6D00', wallets.original)}
+                    ${walletCard('operating', '운영 계좌', '⚡', '#1565C0', wallets.operating)}
+                    ${walletCard('default', '기본 지갑', '💼', '#2E7D32', wallets.default)}
+                </div>
+            </div>
+            
+            <div style="background:white;padding:1.5rem;border-radius:12px;">
+                <h4 style="margin-bottom:0.8rem;">📜 내부 이체 로그</h4>
+                <div id="super-wallet-log" style="max-height:300px;overflow-y:auto;"><p style="color:#999;font-size:0.8rem;">로그 로딩 중...</p></div>
+            </div>`;
+        
+        // Load transfer logs
+        loadSuperWalletLog();
+    } catch (e) {
+        container.innerHTML = `<div style="background:white;padding:1.5rem;border-radius:12px;"><p style="color:red;">로드 실패: ${e.message}</p></div>`;
+    }
+}
+
+async function createSuperWallet(type) {
+    if (!isSuperAdmin()) return;
+    const labels = { original: '오리지널 계좌 (금고)', operating: '운영 계좌', default: '기본 지갑' };
+    const confirmed = await showConfirmModal('🏦 계좌 생성', `${labels[type]}을(를) 생성하시겠습니까?\n\n빈 잔액으로 생성됩니다.`);
+    if (!confirmed) return;
+    
+    try {
+        await db.collection('users').doc(currentUser.uid).collection('wallets').doc(type).set({
+            type: type,
+            offchainBalances: {},
+            balances: {},
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            createdBy: currentUser.email
+        });
+        showToast(`✅ ${labels[type]} 생성 완료`, 'success');
+        loadSuperAdminWallets();
+    } catch (e) {
+        showToast('생성 실패: ' + e.message, 'error');
+    }
+}
+
+async function switchActiveWallet(type) {
+    if (!isSuperAdmin()) return;
+    try {
+        await db.collection('users').doc(currentUser.uid).update({ activeWallet: type });
+        showToast(`🔄 활성 계좌 → ${type}`, 'success');
+        loadSuperAdminWallets();
+    } catch (e) {
+        showToast('전환 실패: ' + e.message, 'error');
+    }
+}
+
+async function showInternalTransfer(fromType) {
+    if (!isSuperAdmin()) return;
+    
+    const targets = ['original', 'operating', 'default'].filter(t => t !== fromType);
+    const labels = { original: '🔐 오리지널', operating: '⚡ 운영', default: '💼 기본' };
+    
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    overlay.innerHTML = `
+        <div style="background:white;padding:1.5rem;border-radius:16px;max-width:400px;width:100%;">
+            <h3 style="margin-bottom:0.5rem;">↔️ 내부 이체</h3>
+            <p style="font-size:0.8rem;color:#666;margin-bottom:1rem;">보내는 계좌: <strong>${labels[fromType]}</strong></p>
+            
+            <div style="margin-bottom:0.8rem;">
+                <label style="font-size:0.8rem;color:#666;">받는 계좌</label>
+                <select id="transfer-to" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;">
+                    ${targets.map(t => `<option value="${t}">${labels[t]}</option>`).join('')}
+                </select>
+            </div>
+            <div style="margin-bottom:0.8rem;">
+                <label style="font-size:0.8rem;color:#666;">토큰</label>
+                <input type="text" id="transfer-token" placeholder="예: crtd" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;">
+            </div>
+            <div style="margin-bottom:1rem;">
+                <label style="font-size:0.8rem;color:#666;">수량</label>
+                <input type="number" id="transfer-amount" min="1" placeholder="0" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;">
+            </div>
+            
+            ${fromType === 'original' ? '<p style="font-size:0.75rem;color:#FF6D00;margin-bottom:0.8rem;">⚠️ 오리지널 계좌 출금: 2단계 확인 필요</p>' : ''}
+            
+            <div style="display:flex;gap:0.5rem;">
+                <button id="transfer-submit" style="flex:1;padding:0.7rem;background:#1565C0;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:700;">💸 이체</button>
+                <button id="transfer-cancel" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">취소</button>
+            </div>
+        </div>`;
+    
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    overlay.querySelector('#transfer-cancel').onclick = () => overlay.remove();
+    overlay.querySelector('#transfer-submit').onclick = async () => {
+        const toType = document.getElementById('transfer-to').value;
+        const tokenKey = (document.getElementById('transfer-token').value || '').trim().toLowerCase();
+        const amount = parseInt(document.getElementById('transfer-amount').value);
+        
+        if (!tokenKey || !amount || amount <= 0) { showToast('토큰과 수량을 입력하세요', 'warning'); return; }
+        
+        // Check balance
+        const fromDoc = await db.collection('users').doc(currentUser.uid).collection('wallets').doc(fromType).get();
+        if (!fromDoc.exists) { showToast('보내는 계좌가 없습니다', 'error'); return; }
+        const fromBal = (fromDoc.data().offchainBalances || {})[tokenKey] || 0;
+        if (fromBal < amount) { showToast(`잔액 부족: ${tokenKey.toUpperCase()} ${fromBal} < ${amount}`, 'error'); return; }
+        
+        // 2-step confirm for original account
+        if (fromType === 'original') {
+            const ok1 = await showConfirmModal('🔐 오리지널 계좌 출금 확인', `오리지널 계좌(금고)에서 ${amount.toLocaleString()} ${tokenKey.toUpperCase()}를 ${labels[toType]}로 이체합니다.\n\n이 작업은 관리자 로그에 기록됩니다.`);
+            if (!ok1) return;
+            const code = await showPromptModal('보안 확인', '"CONFIRM"을 정확히 입력하세요:', '');
+            if (code !== 'CONFIRM') { showToast('확인 코드 불일치. 이체 취소됨.', 'error'); return; }
+        }
+        
+        try {
+            const uid = currentUser.uid;
+            const toDoc = await db.collection('users').doc(uid).collection('wallets').doc(toType).get();
+            const toBal = toDoc.exists ? ((toDoc.data().offchainBalances || {})[tokenKey] || 0) : 0;
+            
+            // If target wallet doesn't exist, create it
+            if (!toDoc.exists) {
+                await db.collection('users').doc(uid).collection('wallets').doc(toType).set({
+                    type: toType, offchainBalances: {}, balances: {},
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+            
+            // Update both wallets
+            await db.collection('users').doc(uid).collection('wallets').doc(fromType).update({
+                [`offchainBalances.${tokenKey}`]: fromBal - amount
+            });
+            await db.collection('users').doc(uid).collection('wallets').doc(toType).update({
+                [`offchainBalances.${tokenKey}`]: toBal + amount
+            });
+            
+            // Log
+            await db.collection('admin_log').add({
+                action: 'super_internal_transfer',
+                adminEmail: currentUser.email,
+                fromWallet: fromType,
+                toWallet: toType,
+                token: tokenKey,
+                amount: amount,
+                timestamp: new Date()
+            });
+            
+            overlay.remove();
+            showToast(`✅ ${amount.toLocaleString()} ${tokenKey.toUpperCase()} 이체 완료 (${fromType} → ${toType})`, 'success');
+            loadSuperAdminWallets();
+        } catch (e) {
+            showToast('이체 실패: ' + e.message, 'error');
+        }
+    };
+}
+
+async function loadSuperWalletLog() {
+    const container = document.getElementById('super-wallet-log');
+    if (!container) return;
+    
+    try {
+        const logs = await db.collection('admin_log')
+            .where('action', '==', 'super_internal_transfer')
+            .orderBy('timestamp', 'desc').limit(20).get();
+        
+        if (logs.empty) { container.innerHTML = '<p style="font-size:0.8rem;color:#999;">이체 내역 없음</p>'; return; }
+        
+        const labels = { original: '🔐 오리지널', operating: '⚡ 운영', default: '💼 기본' };
+        let html = '';
+        logs.forEach(doc => {
+            const d = doc.data();
+            const time = d.timestamp?.toDate ? d.timestamp.toDate().toLocaleString('ko-KR') : '--';
+            html += `<div style="padding:0.5rem;border-bottom:1px solid #eee;font-size:0.8rem;">
+                <div style="display:flex;justify-content:space-between;">
+                    <span><strong>${d.amount?.toLocaleString()} ${(d.token||'').toUpperCase()}</strong> ${labels[d.fromWallet]||d.fromWallet} → ${labels[d.toWallet]||d.toWallet}</span>
+                    <span style="color:#999;font-size:0.72rem;">${time}</span>
+                </div>
+            </div>`;
+        });
+        container.innerHTML = html;
+    } catch (e) {
+        container.innerHTML = `<p style="color:red;font-size:0.8rem;">로그 로드 실패: ${e.message}</p>`;
     }
 }
 
