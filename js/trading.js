@@ -871,13 +871,13 @@ async function loadCandleHistory(symbol) {
                 const t = candle.time;
                 const vol = candle.volume || candle.tick_count || 1;
                 // 스파이크 필터: 이전 캔들 대비 50pt 이상 점프 시 스킵
-                if (prevClose > 0 && Math.abs(candle.open - prevClose) > 30) {
+                if (prevClose > 0 && Math.abs(candle.open - prevClose) > 100) {
                     console.warn(`⚠️ 히스토리 스파이크 스킵: ${prevClose} → ${candle.open}`);
                     continue;
                 }
-                // 캔들 내부 스파이크 필터: high/low 범위가 비정상적으로 클 때
+                // 캔들 내부 스파이크 필터: 비정상적 범위만 (200pt+ = 진짜 에러)
                 const bodyRange = Math.abs(candle.high - candle.low);
-                if (bodyRange > 40) {
+                if (bodyRange > 200) {
                     // 범위 100pt 초과 캔들은 open/close만 사용
                     window.liveTicks.push({ time: t, price: candle.open, volume: Math.ceil(vol * 0.5) });
                     window.liveTicks.push({ time: t + 59, price: candle.close, volume: Math.ceil(vol * 0.5) });
@@ -913,7 +913,7 @@ async function loadTickData(symbol) {
             // 스파이크 필터 적용
             const filtered = [];
             for (const tick of data.ticks) {
-                if (filtered.length > 0 && Math.abs(tick.price - filtered[filtered.length - 1].price) > 30) continue;
+                if (filtered.length > 0 && Math.abs(tick.price - filtered[filtered.length - 1].price) > 100) continue;
                 filtered.push({ time: tick.time, price: tick.price, volume: tick.volume || 1 });
             }
             window.liveTicks = filtered;
@@ -939,7 +939,7 @@ async function fetchLiveTick() {
         if (window.liveTicks.length > 0) {
             const lastPrice = window.liveTicks[window.liveTicks.length - 1].price;
             const diff = Math.abs(data.price - lastPrice);
-            if (diff > 20) {
+            if (diff > 50) {
                 console.warn(`⚠️ 스파이크 필터: ${lastPrice} → ${data.price} (diff=${diff.toFixed(2)})`);
                 return;
             }
@@ -1146,8 +1146,8 @@ function aggregateTicksToCandles(ticks, intervalSec) {
     let prevPrice = 0;
     
     for (const tick of ticks) {
-        // 틱 레벨 스파이크 필터
-        if (prevPrice > 0 && Math.abs(tick.price - prevPrice) > 30) continue;
+        // 틱 레벨 스파이크 필터 (진짜 에러만: 100pt+)
+        if (prevPrice > 0 && Math.abs(tick.price - prevPrice) > 100) continue;
         prevPrice = tick.price;
         const candleTime = Math.floor(tick.time / intervalSec) * intervalSec;
         
