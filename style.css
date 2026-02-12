@@ -109,6 +109,10 @@ body {
     body {
         font-size: 14px;
     }
+    #trading-order-panel {
+        max-width: 100% !important;
+        margin-left: 0 !important;
+    }
     
     .menu-toggle {
         display: block;
