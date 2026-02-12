@@ -1693,6 +1693,87 @@ async function adminAdjustMaxDrawdown(participantId, challengeId) {
     }
 }
 
+// 카피트레이딩 계정 수 조정 (레벨 3+)
+async function adminAdjustCopyAccounts(participantId, challengeId) {
+    if (!hasLevel(3)) return;
+    
+    try {
+        const doc = await db.collection('prop_challenges').doc(challengeId)
+            .collection('participants').doc(participantId).get();
+        
+        if (!doc.exists) { alert('참가자를 찾을 수 없습니다'); return; }
+        const data = doc.data();
+        const currentCopy = data.copyAccounts || 1;
+        const email = data.email || data.userId || participantId;
+        
+        const newCopy = prompt(`[${email}]\n현재 카피트레이딩 계정 수: ${currentCopy}\n\n새 카피 계정 수 (1~10):`, currentCopy);
+        if (!newCopy || isNaN(newCopy)) return;
+        
+        const val = Math.min(10, Math.max(1, parseInt(newCopy)));
+        
+        await db.collection('prop_challenges').doc(challengeId)
+            .collection('participants').doc(participantId)
+            .update({ copyAccounts: val });
+        
+        await db.collection('admin_log').add({
+            action: 'adjust_copy_accounts',
+            adminEmail: currentUser.email,
+            adminLevel: currentUserLevel,
+            participantId, challengeId,
+            prevCopyAccounts: currentCopy,
+            newCopyAccounts: val,
+            timestamp: new Date()
+        });
+        
+        alert(`✅ 카피 계정 ${currentCopy} → ${val} 변경 완료\n(실효 계약수 = 입력계약 × ${val})`);
+        loadAdminParticipants();
+    } catch (error) {
+        alert('변경 실패: ' + error.message);
+    }
+}
+
+// 거래 티어 (MNQ/NQ 최대 계약수) 조정 (레벨 3+)
+async function adminAdjustTradingTier(participantId, challengeId) {
+    if (!hasLevel(3)) return;
+    
+    try {
+        const doc = await db.collection('prop_challenges').doc(challengeId)
+            .collection('participants').doc(participantId).get();
+        
+        if (!doc.exists) { alert('참가자를 찾을 수 없습니다'); return; }
+        const data = doc.data();
+        const currentTier = data.tradingTier || { MNQ: 1, NQ: 0 };
+        const email = data.email || data.userId || participantId;
+        
+        const mnqMax = prompt(`[${email}]\n현재 MNQ 최대: ${currentTier.MNQ || 0}\nNQ 최대: ${currentTier.NQ || 0}\n\nMNQ 최대 계약수:`, currentTier.MNQ || 1);
+        if (mnqMax === null) return;
+        
+        const nqMax = prompt(`NQ 최대 계약수:`, currentTier.NQ || 0);
+        if (nqMax === null) return;
+        
+        const newTier = { MNQ: parseInt(mnqMax) || 0, NQ: parseInt(nqMax) || 0 };
+        
+        await db.collection('prop_challenges').doc(challengeId)
+            .collection('participants').doc(participantId)
+            .update({ tradingTier: newTier });
+        
+        await db.collection('admin_log').add({
+            action: 'adjust_trading_tier',
+            adminEmail: currentUser.email,
+            adminLevel: currentUserLevel,
+            participantId, challengeId,
+            prevTier: currentTier,
+            newTier: newTier,
+            timestamp: new Date()
+        });
+        
+        alert(`✅ 거래 티어 변경 완료\nMNQ: ${currentTier.MNQ||0} → ${newTier.MNQ}\nNQ: ${currentTier.NQ||0} → ${newTier.NQ}`);
+        loadAdminParticipants();
+    } catch (error) {
+        alert('변경 실패: ' + error.message);
+    }
+}
+
 // Admin 지갑 - 온체인 잔액 로드
 async function loadAdminWallet() {
     if (!isAdmin()) return;
@@ -1989,6 +2070,8 @@ async function loadAdminParticipants() {
                                         일일 PnL: <span style="color:${(p.dailyPnL || 0) < 0 ? '#cc0000' : '#0066cc'}">$${(p.dailyPnL || 0).toFixed(2)}</span> / 
                                         일일한도: <span style="font-weight:700;">$${p.dailyLossLimit || 100}</span> · 
                                         청산한도: <span style="font-weight:700;">$${(p.maxDrawdown || 3000).toLocaleString()}</span>
+                                        ${p.copyAccounts > 1 ? ` · <span style="color:#FF6D00; font-weight:700;">카피: ${p.copyAccounts}계정</span>` : ''}
+                                        ${p.tradingTier ? ` · <span style="color:#9C27B0;">MNQ×${p.tradingTier.MNQ||0} NQ×${p.tradingTier.NQ||0}</span>` : ''}
                                     </div>
                                     ${isSuspended ? `<div style="font-size:0.75rem; color:#cc0000; margin-top:0.2rem;">사유: ${p.suspendReason || '-'}</div>` : ''}
                                 </div>
@@ -2027,6 +2110,14 @@ async function loadAdminParticipants() {
                                     <button onclick="adminAdjustBalance('${participantId}', '${challengeId}')" 
                                         style="background:#795548; color:white; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
                                         💰 잔액 조정
+                                    </button>
+                                    <button onclick="adminAdjustCopyAccounts('${participantId}', '${challengeId}')" 
+                                        style="background:#FF6D00; color:white; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
+                                        📋 카피계정
+                                    </button>
+                                    <button onclick="adminAdjustTradingTier('${participantId}', '${challengeId}')" 
+                                        style="background:#9C27B0; color:white; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
+                                        📊 거래티어
                                     </button>
                                 </div>
                             </div>
@@ -2218,6 +2309,8 @@ async function showCreateChallenge() {
                                     <th style="padding:0.4rem;">청산선<br>(-$)</th>
                                     <th style="padding:0.4rem;">수익기준<br>(+$)</th>
                                     <th style="padding:0.4rem;">인출단위<br>(CRTD)</th>
+                                    <th style="padding:0.4rem;">MNQ<br>최대</th>
+                                    <th style="padding:0.4rem;">NQ<br>최대</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -2228,6 +2321,8 @@ async function showCreateChallenge() {
                                     <td><input type="number" id="tier-a-liq" value="3000" style="width:65px; padding:0.3rem; border:1px solid var(--border); border-radius:4px; text-align:center;"></td>
                                     <td><input type="number" id="tier-a-profit" value="1000" style="width:65px; padding:0.3rem; border:1px solid var(--border); border-radius:4px; text-align:center;"></td>
                                     <td><input type="number" id="tier-a-unit" value="1000" style="width:65px; padding:0.3rem; border:1px solid var(--border); border-radius:4px; text-align:center;"></td>
+                                    <td><input type="number" id="tier-a-mnq" value="3" min="0" style="width:45px; padding:0.3rem; border:1px solid var(--border); border-radius:4px; text-align:center;"></td>
+                                    <td><input type="number" id="tier-a-nq" value="0" min="0" style="width:45px; padding:0.3rem; border:1px solid var(--border); border-radius:4px; text-align:center;"></td>
                                 </tr>
                                 <tr style="background:var(--bg);">
                                     <td style="padding:0.4rem; font-weight:700;">🅱️ B군</td>
@@ -2236,6 +2331,8 @@ async function showCreateChallenge() {
                                     <td><input type="number" id="tier-b-liq" value="5000" style="width:65px; padding:0.3rem; border:1px solid var(--border); border-radius:4px; text-align:center;"></td>
                                     <td><input type="number" id="tier-b-profit" value="1500" style="width:65px; padding:0.3rem; border:1px solid var(--border); border-radius:4px; text-align:center;"></td>
                                     <td><input type="number" id="tier-b-unit" value="1000" style="width:65px; padding:0.3rem; border:1px solid var(--border); border-radius:4px; text-align:center;"></td>
+                                    <td><input type="number" id="tier-b-mnq" value="5" min="0" style="width:45px; padding:0.3rem; border:1px solid var(--border); border-radius:4px; text-align:center;"></td>
+                                    <td><input type="number" id="tier-b-nq" value="1" min="0" style="width:45px; padding:0.3rem; border:1px solid var(--border); border-radius:4px; text-align:center;"></td>
                                 </tr>
                                 <tr>
                                     <td style="padding:0.4rem; font-weight:700;">🅲 C군</td>
@@ -2244,6 +2341,8 @@ async function showCreateChallenge() {
                                     <td><input type="number" id="tier-c-liq" value="10000" style="width:65px; padding:0.3rem; border:1px solid var(--border); border-radius:4px; text-align:center;"></td>
                                     <td><input type="number" id="tier-c-profit" value="3000" style="width:65px; padding:0.3rem; border:1px solid var(--border); border-radius:4px; text-align:center;"></td>
                                     <td><input type="number" id="tier-c-unit" value="1000" style="width:65px; padding:0.3rem; border:1px solid var(--border); border-radius:4px; text-align:center;"></td>
+                                    <td><input type="number" id="tier-c-mnq" value="10" min="0" style="width:45px; padding:0.3rem; border:1px solid var(--border); border-radius:4px; text-align:center;"></td>
+                                    <td><input type="number" id="tier-c-nq" value="3" min="0" style="width:45px; padding:0.3rem; border:1px solid var(--border); border-radius:4px; text-align:center;"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -2316,7 +2415,9 @@ function readTierInput(prefix) {
         account: parseFloat(document.getElementById(`tier-${prefix}-account`).value) || 100000,
         liquidation: parseFloat(document.getElementById(`tier-${prefix}-liq`).value) || 3000,
         profitThreshold: parseFloat(document.getElementById(`tier-${prefix}-profit`).value) || 1000,
-        withdrawUnit: parseFloat(document.getElementById(`tier-${prefix}-unit`).value) || 1000
+        withdrawUnit: parseFloat(document.getElementById(`tier-${prefix}-unit`).value) || 1000,
+        mnqMax: parseInt(document.getElementById(`tier-${prefix}-mnq`)?.value) || 1,
+        nqMax: parseInt(document.getElementById(`tier-${prefix}-nq`)?.value) || 0
     };
 }
 
@@ -2444,8 +2545,9 @@ async function joinChallenge(challengeId, tierKey) {
                 currentBalance: tier.account,
                 // 공통 설정
                 allowedProduct: data.allowedProduct || 'MNQ',
-                tradingTier: data.tradingTier || null,
-                maxContracts: data.maxContracts || 1,
+                tradingTier: tier.mnqMax !== undefined ? { MNQ: tier.mnqMax || 1, NQ: tier.nqMax || 0 } : (data.tradingTier || null),
+                maxContracts: Math.max(tier.mnqMax || 1, tier.nqMax || 0, data.maxContracts || 1),
+                copyAccounts: 1,
                 maxPositions: data.maxPositions || 5,
                 dailyLossLimit: data.dailyLossLimit || 500,
                 maxDrawdown: tier.liquidation,

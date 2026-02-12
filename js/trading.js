@@ -1,4 +1,4 @@
-// ===== trading.js v5.4 - 차트, 실시간데이터, 거래, 포지션, NinjaTrader =====
+// ===== trading.js v5.5 - 차트, 실시간데이터, 거래, 포지션, NinjaTrader =====
 // ========== REAL-TIME CRYPTO TRADING ==========
 let currentPrice = 0;
 let priceWs = null;
@@ -36,6 +36,23 @@ function getMaxContracts(contract) {
 
 function isProductAllowed(contract) {
     return getMaxContracts(contract) > 0;
+}
+
+// ========== 카피트레이딩 시스템 ==========
+function getCopyAccounts() {
+    if (!myParticipation) return 1;
+    return myParticipation.copyAccounts || 1;
+}
+
+// 실효 계약수 (입력 × 카피계정)
+function getEffectiveContracts(inputContracts) {
+    return inputContracts * getCopyAccounts();
+}
+
+// 예상 수수료 계산
+function getEstimatedFee(contracts) {
+    const copyAccounts = getCopyAccounts();
+    return RISK_CONFIG.tradeFeeRoundTrip * contracts * copyAccounts;
 }
 
 // 폼 UI에 권한 반영
@@ -79,14 +96,20 @@ function applyTradingPermissions() {
         const nqText = tier.NQ > 0 ? `NQ ×${tier.NQ}` : 'NQ 🔒';
         const mnqColor = tier.MNQ > 0 ? '#00cc00' : '#666';
         const nqColor = tier.NQ > 0 ? '#00cc00' : '#666';
+        const copyAccounts = getCopyAccounts();
+        const copyBadge = copyAccounts > 1 ? `<span style="margin-left:8px; color:#ff9800; font-weight:600;">📋 카피: ${copyAccounts}계정</span>` : '';
         badge.style.display = 'block';
         badge.innerHTML = `
             📋 거래 권한: 
             <span style="color:${mnqColor}; font-weight:600;">${mnqText}</span> · 
             <span style="color:${nqColor}; font-weight:600;">${nqText}</span>
+            ${copyBadge}
             <span style="margin-left:8px; color:#888;">| 🪙 CRTD: ${(userWallet?.offchainBalances?.crtd || 0).toLocaleString()}</span>
         `;
     }
+    
+    // 수수료 & 카피 정보 업데이트
+    updateFeeDisplay();
 }
 
 // ========== CRTD 프랍 트레이딩 시스템 ==========
@@ -1047,11 +1070,11 @@ function updateLivePnL() {
     let totalPnL = 0;
     for (const trade of openTrades) {
         const multiplier = trade.contract === 'MNQ' ? 2 : 20;
-        const contracts = trade.contracts || 1;
+        const effContracts = trade.effectiveContracts || (trade.contracts * (trade.copyAccounts || 1));
         if (trade.side === 'BUY') {
-            totalPnL += (currentPrice - trade.entryPrice) * multiplier * contracts;
+            totalPnL += (currentPrice - trade.entryPrice) * multiplier * effContracts;
         } else {
-            totalPnL += (trade.entryPrice - currentPrice) * multiplier * contracts;
+            totalPnL += (trade.entryPrice - currentPrice) * multiplier * effContracts;
         }
     }
     
@@ -1190,12 +1213,55 @@ function updateNQPriceDisplay() {
     const pointValueEl = document.getElementById('point-value');
     const tickValueEl = document.getElementById('tick-value');
     
+    const copyAccounts = getCopyAccounts();
+    const effectiveContracts = contracts * copyAccounts;
+    
     if (priceEl) priceEl.textContent = currentPrice.toFixed(2);
     if (tickSizeEl) tickSizeEl.textContent = tickSize.toFixed(2);
-    if (pointValueEl) pointValueEl.textContent = contracts > 1 ? `$${multiplier} ×${contracts} = $${multiplier * contracts}` : `$${multiplier}`;
-    if (tickValueEl) tickValueEl.textContent = contracts > 1 ? `$${tickValue.toFixed(2)} ×${contracts} = $${(tickValue * contracts).toFixed(2)}` : `$${tickValue.toFixed(2)}`;
+    if (pointValueEl) {
+        if (effectiveContracts > 1) {
+            pointValueEl.textContent = `$${multiplier} ×${effectiveContracts} = $${multiplier * effectiveContracts}`;
+        } else {
+            pointValueEl.textContent = `$${multiplier}`;
+        }
+    }
+    if (tickValueEl) {
+        if (effectiveContracts > 1) {
+            tickValueEl.textContent = `$${tickValue.toFixed(2)} ×${effectiveContracts} = $${(tickValue * effectiveContracts).toFixed(2)}`;
+        } else {
+            tickValueEl.textContent = `$${tickValue.toFixed(2)}`;
+        }
+    }
     
+    updateFeeDisplay();
     updateOpenPositions();
+}
+
+// 수수료 & 카피트레이딩 표시 업데이트
+function updateFeeDisplay() {
+    const contract = document.getElementById('futures-contract')?.value || 'MNQ';
+    const contracts = parseInt(document.getElementById('trade-contracts')?.value) || 1;
+    const copyAccounts = getCopyAccounts();
+    const effectiveContracts = contracts * copyAccounts;
+    const fee = RISK_CONFIG.tradeFeeRoundTrip * effectiveContracts;
+    
+    // 수수료 표시
+    const feeEl = document.getElementById('trade-fee-display');
+    if (feeEl) {
+        feeEl.innerHTML = `💰 예상 수수료: <strong>$${fee.toFixed(2)}</strong>` +
+            (copyAccounts > 1 ? ` <span style="color:#ff9800;">(${contracts}계약 × ${copyAccounts}계정 = ${effectiveContracts}계약)</span>` : '');
+    }
+    
+    // 카피트레이딩 표시
+    const copyEl = document.getElementById('copy-trade-display');
+    if (copyEl) {
+        if (copyAccounts > 1) {
+            copyEl.style.display = 'block';
+            copyEl.innerHTML = `📋 카피트레이딩: <strong>${copyAccounts}계정</strong> × ${contracts}계약 = <strong style="color:#ff9800;">${effectiveContracts}계약</strong> 실효`;
+        } else {
+            copyEl.style.display = 'none';
+        }
+    }
 }
 
 function updateContractSpecs() {
@@ -1254,8 +1320,9 @@ async function autoClosePosition(tradeIndex, reason) {
         ? (exitPrice - trade.entryPrice) 
         : (trade.entryPrice - exitPrice);
     
-    const pnl = priceDiff * trade.multiplier * trade.contracts;
-    const fee = trade.fee || (RISK_CONFIG.tradeFeeRoundTrip * trade.contracts);
+    const effContracts = trade.effectiveContracts || (trade.contracts * (trade.copyAccounts || 1));
+    const pnl = priceDiff * trade.multiplier * effContracts;
+    const fee = trade.fee || (RISK_CONFIG.tradeFeeRoundTrip * effContracts);
     const netPnl = pnl - fee;
     
     try {
@@ -1319,8 +1386,9 @@ async function closePosition(tradeIndex) {
         ? (currentPrice - trade.entryPrice) 
         : (trade.entryPrice - currentPrice);
     
-    const pnl = priceDiff * trade.multiplier * trade.contracts;
-    const fee = trade.fee || (RISK_CONFIG.tradeFeeRoundTrip * trade.contracts);
+    const effContracts = trade.effectiveContracts || (trade.contracts * (trade.copyAccounts || 1));
+    const pnl = priceDiff * trade.multiplier * effContracts;
+    const fee = trade.fee || (RISK_CONFIG.tradeFeeRoundTrip * effContracts);
     const netPnl = pnl - fee;
     
     try {
@@ -1499,7 +1567,9 @@ function updateOpenPositions() {
             ? (currentPrice - trade.entryPrice) 
             : (trade.entryPrice - currentPrice);
         
-        const pnl = priceDiff * trade.multiplier * trade.contracts;
+        const effContracts = trade.effectiveContracts || (trade.contracts * (trade.copyAccounts || 1));
+        const pnl = priceDiff * trade.multiplier * effContracts;
+        const tradeFee = trade.fee || (RISK_CONFIG.tradeFeeRoundTrip * effContracts);
         const pnlColor = pnl >= 0 ? '#0066cc' : '#cc0000';
         
         const div = document.createElement('div');
@@ -1540,7 +1610,7 @@ function updateOpenPositions() {
                 <div style="flex:1;">
                     <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.3rem;">
                         <strong style="color:${trade.side === 'BUY' ? '#0066cc' : '#cc0000'}">${trade.side}</strong> 
-                        <span>${trade.contract} × ${trade.contracts}</span>
+                        <span>${trade.contract} × ${trade.contracts}${(trade.copyAccounts || 1) > 1 ? ` <span style="color:#ff9800; font-size:0.75rem;">×${trade.copyAccounts}계정=${effContracts}계약</span>` : ''}</span>
                         <span style="font-size:0.75rem; color:var(--accent);">${trade.orderType}</span>
                     </div>
                     <div style="font-size:0.85rem;">
@@ -1553,6 +1623,9 @@ function updateOpenPositions() {
                         </strong>
                         <span style="font-size:0.8rem; color:var(--accent); margin-left:0.5rem;">
                             (${((pnl / trade.margin) * 100).toFixed(2)}%)
+                        </span>
+                        <span style="font-size:0.7rem; color:#888; margin-left:0.5rem;">
+                            수수료: $${tradeFee.toFixed(2)}
                         </span>
                     </div>
                 </div>
@@ -1885,12 +1958,14 @@ async function closeLastPosition() {
     }
     
     const trade = myParticipation.trades[lastIndex];
+    const effContracts = trade.effectiveContracts || (trade.contracts * (trade.copyAccounts || 1));
     const priceDiff = trade.side === 'BUY' 
         ? (currentPrice - trade.entryPrice) 
         : (trade.entryPrice - currentPrice);
-    const pnl = priceDiff * trade.multiplier * trade.contracts;
+    const pnl = priceDiff * trade.multiplier * effContracts;
+    const copyLabel = (trade.copyAccounts || 1) > 1 ? ` (×${trade.copyAccounts}계정=${effContracts}계약)` : '';
     
-    if (!await showConfirmModal('마지막 포지션 청산', `${trade.side} ${trade.contract} ×${trade.contracts}\n진입: ${trade.entryPrice.toFixed(2)} → 현재: ${currentPrice.toFixed(2)}\n예상 손익: ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)}\n\n청산하시겠습니까?`)) return;
+    if (!await showConfirmModal('마지막 포지션 청산', `${trade.side} ${trade.contract} ×${trade.contracts}${copyLabel}\n진입: ${trade.entryPrice.toFixed(2)} → 현재: ${currentPrice.toFixed(2)}\n예상 손익: ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)}\n\n청산하시겠습니까?`)) return;
     
     await closePosition(lastIndex);
 }
@@ -1913,7 +1988,8 @@ async function flattenAllPositions() {
         const priceDiff = trade.side === 'BUY' 
             ? (currentPrice - trade.entryPrice) 
             : (trade.entryPrice - currentPrice);
-        totalPnL += priceDiff * trade.multiplier * trade.contracts;
+        const effContracts = trade.effectiveContracts || (trade.contracts * (trade.copyAccounts || 1));
+        totalPnL += priceDiff * trade.multiplier * effContracts;
     }
     
     if (!await showConfirmModal('🚨 전체 청산 (FLATTEN)', `오픈: ${openTrades.length}개\n예상 총 손익: ${totalPnL >= 0 ? '+' : ''}$${totalPnL.toFixed(2)}\n\n모두 청산하시겠습니까?`)) return;
@@ -1947,7 +2023,8 @@ function updatePositionCountBar() {
         const priceDiff = trade.side === 'BUY' 
             ? (currentPrice - trade.entryPrice) 
             : (trade.entryPrice - currentPrice);
-        totalPnL += priceDiff * trade.multiplier * trade.contracts;
+        const effContracts = trade.effectiveContracts || (trade.contracts * (trade.copyAccounts || 1));
+        totalPnL += priceDiff * trade.multiplier * effContracts;
         if (trade.side === 'BUY') buyCount++; else sellCount++;
     }
     
@@ -1983,8 +2060,9 @@ async function closeAllPositions(contractFilter) {
                     ? (currentPrice - trade.entryPrice) 
                     : (trade.entryPrice - currentPrice);
                 
-                const pnl = priceDiff * trade.multiplier * trade.contracts;
-                const fee = trade.fee || (RISK_CONFIG.tradeFeeRoundTrip * trade.contracts);
+                const effContracts = trade.effectiveContracts || (trade.contracts * (trade.copyAccounts || 1));
+                const pnl = priceDiff * trade.multiplier * effContracts;
+                const fee = trade.fee || (RISK_CONFIG.tradeFeeRoundTrip * effContracts);
                 const netPnl = pnl - fee;
                 
                 trade.status = 'closed';
@@ -2139,13 +2217,18 @@ async function executeFuturesTrade(side) {
         }
     }
     
+    const copyAccounts = getCopyAccounts();
+    const effectiveContracts = contracts * copyAccounts;
+    const tradeFee = RISK_CONFIG.tradeFeeRoundTrip * effectiveContracts;
+    
     let confirmMsg = `${side} 포지션 진입\n\n` +
         `상품: ${contract}\n` +
         `👑 슬롯: ${slots}개\n` +
-        `계약: ${contracts}개\n` +
+        `계약: ${contracts}개` + (copyAccounts > 1 ? ` × ${copyAccounts}계정 = ${effectiveContracts}계약 실효` : '') + `\n` +
         `주문: ${orderTypeText}\n` +
         `증거금: $${requiredMargin.toLocaleString()}\n` +
-        `포인트당: $${multiplier * contracts}`;
+        `포인트당: $${multiplier * effectiveContracts}\n` +
+        `수수료: $${tradeFee.toFixed(2)}`;
     
     if (useSLTP) {
         confirmMsg += `\n\n손절: ${stopLoss.toFixed(2)}\n익절: ${takeProfit.toFixed(2)}`;
@@ -2168,6 +2251,8 @@ async function executeFuturesTrade(side) {
             contract: contract,
             side: side,
             contracts: contracts,
+            copyAccounts: copyAccounts,
+            effectiveContracts: effectiveContracts,
             orderType: orderType,
             entryPrice: entryPrice,
             currentPrice: currentPrice,
@@ -2178,7 +2263,7 @@ async function executeFuturesTrade(side) {
             trailingStop: trailingStop,
             crnyAtEntry: Math.floor(userWallet?.balances?.crny || 0),
             slotsAtEntry: slots,
-            fee: RISK_CONFIG.tradeFeeRoundTrip * contracts,
+            fee: tradeFee,
             timestamp: new Date(),
             status: orderType === 'MARKET' ? 'open' : 'pending',
             pnl: 0
@@ -2200,7 +2285,8 @@ async function executeFuturesTrade(side) {
         myParticipation.currentBalance = newBalance;
         
         const statusText = orderType === 'MARKET' ? '체결' : '접수';
-        showToast(`✅ ${side} 주문 ${statusText}! ${contract} ${contracts}계약 @ ${entryPrice.toFixed(2)}`, 'success');
+        const copyLabel = copyAccounts > 1 ? ` (×${copyAccounts}계정)` : '';
+        showToast(`✅ ${side} 주문 ${statusText}! ${contract} ${contracts}계약${copyLabel} @ ${entryPrice.toFixed(2)}`, 'success');
         
         updateTradingUI();
         updateOpenPositions();
@@ -2295,11 +2381,17 @@ async function quickChartTrade(side, contractOverride) {
         };
     }
     
+    const copyAccounts = getCopyAccounts();
+    const effectiveContracts = contracts * copyAccounts;
+    const tradeFee = RISK_CONFIG.tradeFeeRoundTrip * effectiveContracts;
+    
     try {
         const trade = {
             contract: contract,
             side: side,
             contracts: contracts,
+            copyAccounts: copyAccounts,
+            effectiveContracts: effectiveContracts,
             orderType: 'MARKET',
             entryPrice: currentPrice,
             currentPrice: currentPrice,
@@ -2310,7 +2402,7 @@ async function quickChartTrade(side, contractOverride) {
             trailingStop: trailingStop,
             crnyAtEntry: Math.floor(userWallet?.balances?.crny || 0),
             slotsAtEntry: slots,
-            fee: RISK_CONFIG.tradeFeeRoundTrip * contracts,
+            fee: tradeFee,
             timestamp: new Date(),
             status: 'open',
             pnl: 0
@@ -2331,7 +2423,7 @@ async function quickChartTrade(side, contractOverride) {
         myParticipation.trades = trades;
         myParticipation.currentBalance = newBalance;
         
-        console.log(`✅ 차트 ${side} 주문 체결! ${slots}슬롯, SL: ${stopLoss.toFixed(2)}, TP: ${takeProfit.toFixed(2)}`);
+        console.log(`✅ 차트 ${side} 주문 체결! ${slots}슬롯, 카피:${copyAccounts}, SL: ${stopLoss.toFixed(2)}, TP: ${takeProfit.toFixed(2)}`);
         
         updateTradingUI();
         updateOpenPositions();
