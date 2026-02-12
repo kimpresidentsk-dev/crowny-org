@@ -3109,10 +3109,10 @@ a:not(.nav-item) {
 .reply-comment { margin-left:2rem;padding-left:0.5rem;border-left:2px solid #eee; }
 
 /* ===== AI ASSISTANT ===== */
-#ai-assistant { display:flex; flex-direction:column; height:100%; }
+#ai-assistant { display:flex; flex-direction:column; height:100%; max-height:100dvh; overflow:hidden; }
 #ai-assistant .section-header { display:flex; justify-content:space-between; align-items:center; padding:0.8rem 1rem; border-bottom:1px solid #eee; flex-shrink:0; }
 .ai-chat-messages { flex:1; overflow-y:auto; padding:1rem; display:flex; flex-direction:column; gap:0.8rem; }
-.ai-input-bar { display:flex; gap:0.5rem; padding:0.8rem 1rem; border-top:1px solid #eee; flex-shrink:0; background:#1a1a2e; position:sticky; bottom:0; z-index:10; }
+.ai-input-bar { display:flex; gap:0.5rem; padding:0.8rem 1rem; border-top:1px solid #eee; flex-shrink:0; background:#1a1a2e; position:sticky; bottom:0; z-index:10; padding-bottom:max(0.8rem, env(safe-area-inset-bottom)); }
 .ai-input-bar input { flex:1; border:1px solid #ddd; border-radius:20px; padding:0.6rem 1rem; font-size:0.9rem; outline:none; }
 .ai-input-bar input:focus { border-color:#6c5ce7; }
 .ai-input-bar button { flex-shrink:0; }
@@ -3430,10 +3430,210 @@ a:not(.nav-item) {
     opacity: 0.85;
 }
 
+/* ========== SOS COUNTDOWN OVERLAY ========== */
+.sos-countdown-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(180, 0, 0, 0.92);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: none;
+}
+.sos-countdown-content {
+    text-align: center;
+    color: white;
+    animation: sosCountdownPulse 1s infinite;
+}
+.sos-countdown-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+.sos-countdown-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+}
+.sos-countdown-number {
+    font-size: 8rem;
+    font-weight: 900;
+    line-height: 1;
+    margin: 1rem 0;
+    font-variant-numeric: tabular-nums;
+}
+.sos-countdown-desc {
+    font-size: 1.3rem;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+}
+.sos-countdown-cancel {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: 2px solid white;
+    padding: 1rem 3rem;
+    border-radius: 50px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    cursor: pointer;
+    min-height: 60px;
+    min-width: 200px;
+}
+.sos-countdown-cancel:active {
+    background: rgba(255,255,255,0.4);
+}
+@keyframes sosCountdownPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+/* ========== SOS ACTIVE PANEL ========== */
+.sos-active-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 24px rgba(229,57,53,0.2);
+    border: 2px solid #e53935;
+    margin-bottom: 1.5rem;
+}
+.sos-active-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #ffcdd2;
+}
+.sos-active-icon {
+    font-size: 3rem;
+    animation: sosIconPulse 1.5s infinite;
+}
+@keyframes sosIconPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+.sos-active-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #b71c1c;
+}
+.sos-active-time {
+    font-size: 1rem;
+    color: #666;
+}
+.sos-section {
+    margin-bottom: 1.2rem;
+    padding: 1rem;
+    background: #fafafa;
+    border-radius: 12px;
+}
+.sos-location-status {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1565c0;
+}
+.sos-map-btn {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #e3f2fd;
+    color: #1565c0;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+.sos-emergency-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+}
+.sos-emergency-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.2rem;
+    border-radius: 16px;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: 800;
+    min-height: 90px;
+    transition: transform 0.1s;
+}
+.sos-emergency-btn:active {
+    transform: scale(0.95);
+}
+.sos-emergency-btn span {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-top: 0.2rem;
+}
+.sos-119 {
+    background: linear-gradient(135deg, #e53935, #b71c1c);
+    color: white;
+}
+.sos-112 {
+    background: linear-gradient(135deg, #1565c0, #0d47a1);
+    color: white;
+}
+.sos-ec-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem;
+    background: white;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+    border: 1px solid #eee;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+.sos-call-btn {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    background: #4CAF50;
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+}
+.sos-status-list > div {
+    font-size: 1rem;
+    padding: 0.3rem 0;
+    color: #333;
+}
+.sos-deactivate-btn {
+    display: block;
+    width: 100%;
+    padding: 1.2rem;
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    font-size: 1.3rem;
+    font-weight: 800;
+    cursor: pointer;
+    min-height: 60px;
+    margin-top: 0.5rem;
+}
+.sos-deactivate-btn:active {
+    transform: scale(0.97);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .care-clock { font-size: 3rem; }
     .care-sos-btn { width: 120px; height: 120px; font-size: 1.6rem; }
     .care-board-clock { font-size: 5rem; }
     .care-board-date { font-size: 1.4rem; }
+    .sos-countdown-number { font-size: 5rem; }
+    .sos-countdown-title { font-size: 1.4rem; }
+    .sos-emergency-btn { min-height: 80px; font-size: 1.3rem; }
 }

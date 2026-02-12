@@ -46,7 +46,7 @@ const AI_ASSISTANT = (() => {
                 systemPrompt = DEFAULT_SYSTEM_PROMPT;
             }
         } catch (e) {
-            console.warn('AI settings load failed:', e);
+            console.error('AI settings load failed:', e);
             systemPrompt = DEFAULT_SYSTEM_PROMPT;
         }
     }
@@ -239,6 +239,15 @@ const AI_ASSISTANT = (() => {
         loadHistory();
         await loadSettings();
         renderChat();
+        // iOS 키보드 대응: 입력 포커스 시 입력바로 스크롤
+        const inputEl = document.querySelector('.ai-input-bar input');
+        if (inputEl) {
+            inputEl.addEventListener('focus', () => {
+                setTimeout(() => {
+                    inputEl.scrollIntoView({ block: 'end', behavior: 'smooth' });
+                }, 300);
+            });
+        }
     }
 
     function reset() {

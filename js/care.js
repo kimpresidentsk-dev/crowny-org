@@ -1,5 +1,5 @@
-// ===== care.js v1.0 - 크라우니케어: 가족돌봄/건강관리/SOS/케어모드UI =====
-// IIFE 패턴
+// ===== care.js v2.0 - 크라우니케어: 가족돌봄/건강관리/SOS 강화/케어모드UI =====
+// SOS: 카운트다운, 사이렌, 실시간위치, 녹음, 119·112, 병원정보, 이웃네트워크
 
 window.CARE = (function() {
     'use strict';
@@ -13,6 +13,21 @@ window.CARE = (function() {
     let slideshowPhotos = [];
     let slideshowIndex = 0;
     let medicationListeners = [];
+
+    // SOS state
+    let sosActive = false;
+    let sosCountdownTimer = null;
+    let sosAudioCtx = null;
+    let sosSirenInterval = null;
+    let sosWatchId = null;
+    let sosWatchTimeout = null;
+    let sosMediaRecorder = null;
+    let sosRecordingChunks = [];
+    let sosRecordingTimer = null;
+    let sosAlertId = null;
+    let sosStartTime = null;
+    let sosLocationMinutesLeft = 30;
+    let sosLocationInterval = null;
 
     const QUICK_REPLIES = [
         { emoji: '😊', text: '좋아요' },
@@ -57,7 +72,6 @@ window.CARE = (function() {
     async function loadCareGroup() {
         if (!currentUser) return;
         try {
-            // Find group where user is a member
             const snap = await db.collection('care_groups')
                 .where('memberUids', 'array-contains', currentUser.uid)
                 .limit(1).get();
@@ -148,7 +162,6 @@ window.CARE = (function() {
         const role = (roleChoice === 'guardian') ? 'guardian' : 'member';
 
         try {
-            // Find user by email
             const userSnap = await db.collection('users').where('email', '==', email).limit(1).get();
             if (userSnap.empty) {
                 showToast(t('care.user_not_found','해당 이메일의 사용자를 찾을 수 없습니다'), 'error');
@@ -157,7 +170,6 @@ window.CARE = (function() {
             const invitedUser = userSnap.docs[0];
             const invitedData = invitedUser.data();
 
-            // Check already member
             if ((careGroup.memberUids || []).includes(invitedUser.id)) {
                 showToast(t('care.already_member','이미 그룹에 속해 있습니다'), 'error');
                 return;
@@ -174,7 +186,6 @@ window.CARE = (function() {
                 })
             });
 
-            // Send notification
             await db.collection('notifications').add({
                 userId: invitedUser.id,
                 type: 'care_invite',
@@ -211,18 +222,25 @@ window.CARE = (function() {
             <div class="care-card">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
                     <h3 style="margin:0; font-size:1.4rem;">👨‍👩‍👧‍👦 ${careGroup.name}</h3>
-                    ${careRole === 'guardian' ? `<button onclick="CARE.inviteMember()" class="care-btn care-btn-small">➕ ${t('care.invite_short','초대')}</button>` : ''}
+                    <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                        ${careRole === 'guardian' ? `<button onclick="CARE.inviteMember()" class="care-btn care-btn-small">➕ ${t('care.invite_short','초대')}</button>` : ''}
+                        ${careRole === 'guardian' ? `<button onclick="CARE.showEmergencyContacts()" class="care-btn care-btn-small">🏥 ${t('care.emergency_contacts','응급연락처')}</button>` : ''}
+                        ${careRole === 'guardian' ? `<button onclick="CARE.showNeighborSettings()" class="care-btn care-btn-small">🏘️ ${t('care.neighbors','이웃 돌봄')}</button>` : ''}
+                    </div>
                 </div>
                 <div style="margin-top:0.8rem; display:flex; flex-wrap:wrap; gap:0.5rem;">${membersHtml}</div>
             </div>
 
             <!-- SOS Button -->
             <div style="text-align:center; margin:1.5rem 0;">
-                <button onclick="CARE.triggerSOS()" class="care-sos-btn">
+                <button onclick="CARE.triggerSOS()" class="care-sos-btn" id="care-sos-main-btn">
                     🆘 SOS
                     <span style="display:block; font-size:1rem; margin-top:0.3rem;">${t('care.sos_label','긴급 호출')}</span>
                 </button>
             </div>
+
+            <!-- SOS Active Panel (hidden by default) -->
+            <div id="sos-active-panel" style="display:none;"></div>
 
             <!-- Messages -->
             <div class="care-card">
@@ -231,7 +249,6 @@ window.CARE = (function() {
                     <button onclick="CARE.showSendMessage()" class="care-btn care-btn-small">✏️ ${t('care.write','쓰기')}</button>
                 </div>
                 <div id="care-messages" style="margin-top:1rem;"></div>
-                <!-- Quick Reply -->
                 <div class="care-quick-replies">
                     ${QUICK_REPLIES.map(q => `<button onclick="CARE.sendQuickReply('${q.emoji} ${q.text}')" class="care-quick-btn">${q.emoji}<br><span>${q.text}</span></button>`).join('')}
                 </div>
@@ -333,7 +350,6 @@ window.CARE = (function() {
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
 
-            // Notify other members
             for (const m of careGroup.members) {
                 if (m.uid !== currentUser.uid) {
                     await db.collection('notifications').add({
@@ -379,8 +395,6 @@ window.CARE = (function() {
         if (!el) return;
 
         try {
-            const today = new Date();
-            const dayOfWeek = today.getDay();
             const snap = await db.collection('care_groups').doc(careGroupId)
                 .collection('schedules').orderBy('time', 'asc').get();
 
@@ -506,7 +520,6 @@ window.CARE = (function() {
             const userDoc = await db.collection('users').doc(currentUser.uid).get();
             const nickname = userDoc.exists ? userDoc.data().nickname : currentUser.email;
 
-            // Notify guardians
             for (const m of careGroup.members) {
                 if (m.role === 'guardian' && m.uid !== currentUser.uid) {
                     await db.collection('notifications').add({
@@ -560,7 +573,6 @@ window.CARE = (function() {
     }
 
     async function showAddHealthLog() {
-        // Simple multi-step
         const bp = await showPromptModal('🩸 혈압', '혈압을 입력하세요 (예: 120/80, 없으면 빈칸)', '');
         const temp = await showPromptModal('🌡️ 체온', '체온을 입력하세요 (예: 36.5, 없으면 빈칸)', '');
         const sugar = await showPromptModal('💉 혈당', '혈당을 입력하세요 (없으면 빈칸)', '');
@@ -592,55 +604,598 @@ window.CARE = (function() {
         }
     }
 
-    // ========== SOS ==========
-    async function triggerSOS() {
-        const confirmed = await showConfirm(
-            t('care.sos_confirm_title','🆘 긴급 호출'),
-            t('care.sos_confirm','정말 긴급 호출을 보내시겠습니까? 모든 보호자에게 알림이 전송됩니다.')
-        );
-        if (!confirmed) return;
+    // =============================================
+    // ========== SOS SYSTEM (Enhanced) ============
+    // =============================================
 
+    // --- 5-second Countdown ---
+    function triggerSOS() {
+        if (sosActive) return;
+        showSOSCountdown();
+    }
+
+    function showSOSCountdown() {
+        let count = 5;
+        // Create overlay
+        const overlay = document.createElement('div');
+        overlay.id = 'sos-countdown-overlay';
+        overlay.className = 'sos-countdown-overlay';
+        overlay.innerHTML = `
+            <div class="sos-countdown-content">
+                <div class="sos-countdown-icon">🆘</div>
+                <div class="sos-countdown-title">${t('care.sos_countdown_title','SOS 긴급 호출')}</div>
+                <div class="sos-countdown-number" id="sos-countdown-num">${count}</div>
+                <div class="sos-countdown-desc">${t('care.sos_countdown_desc','초 후 발송됩니다')}</div>
+                <button onclick="CARE.cancelSOSCountdown()" class="sos-countdown-cancel">
+                    ✕ ${t('care.sos_cancel','취소')}
+                </button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+
+        // Prevent accidental touches
+        overlay.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+
+        sosCountdownTimer = setInterval(() => {
+            count--;
+            const numEl = document.getElementById('sos-countdown-num');
+            if (numEl) numEl.textContent = count;
+            if (count <= 0) {
+                clearInterval(sosCountdownTimer);
+                sosCountdownTimer = null;
+                overlay.remove();
+                executeSOSSequence();
+            }
+        }, 1000);
+    }
+
+    function cancelSOSCountdown() {
+        if (sosCountdownTimer) {
+            clearInterval(sosCountdownTimer);
+            sosCountdownTimer = null;
+        }
+        const overlay = document.getElementById('sos-countdown-overlay');
+        if (overlay) overlay.remove();
+        showToast(t('care.sos_cancelled','SOS가 취소되었습니다'));
+    }
+
+    // --- Main SOS execution ---
+    async function executeSOSSequence() {
+        sosActive = true;
+        sosStartTime = new Date();
+
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        const nickname = userDoc.exists ? userDoc.data().nickname : currentUser.email;
+
+        // 1) Start siren
+        startSiren();
+
+        // 2) Get location
         let location = null;
         try {
             const pos = await new Promise((resolve, reject) => {
-                navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
+                navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 8000, enableHighAccuracy: true });
             });
             location = { lat: pos.coords.latitude, lng: pos.coords.longitude };
         } catch(e) {
             console.warn('Location unavailable:', e);
         }
 
-        try {
-            const userDoc = await db.collection('users').doc(currentUser.uid).get();
-            const nickname = userDoc.exists ? userDoc.data().nickname : currentUser.email;
+        // 3) Start recording
+        startAudioRecording();
 
-            // Save SOS record
-            await db.collection('care_groups').doc(careGroupId).collection('sos_logs').add({
+        // 4) Save SOS record to Firestore
+        try {
+            const alertRef = await db.collection('care_groups').doc(careGroupId).collection('sos_alerts').add({
                 senderId: currentUser.uid,
                 senderName: nickname,
                 location: location,
+                status: 'active',
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
+            sosAlertId = alertRef.id;
 
-            // Notify all guardians
-            for (const m of careGroup.members) {
-                if (m.uid !== currentUser.uid) {
+            // Also save initial location
+            if (location) {
+                await alertRef.collection('locations').add({
+                    lat: location.lat,
+                    lng: location.lng,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+        } catch(e) {
+            console.error('SOS save error:', e);
+        }
+
+        // 5) Notify all guardians + messenger auto-message
+        const locationStr = location ? `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}` : t('care.location_unavailable','위치 확인 불가');
+        for (const m of careGroup.members) {
+            if (m.uid !== currentUser.uid) {
+                try {
                     await db.collection('notifications').add({
                         userId: m.uid,
                         type: 'care_sos',
-                        message: `🆘 긴급! ${nickname}님이 SOS를 호출했습니다!${location ? ` (위치: ${location.lat.toFixed(4)}, ${location.lng.toFixed(4)})` : ''}`,
+                        message: `🆘 긴급! ${nickname}님이 SOS를 호출했습니다! (위치: ${locationStr})`,
                         read: false,
                         priority: 'urgent',
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
+                } catch(e) { console.error(e); }
+            }
+        }
+
+        // Auto-message via messenger
+        try {
+            await db.collection('care_groups').doc(careGroupId).collection('messages').add({
+                text: `🆘 ${nickname}${t('care.sos_auto_msg','님이 긴급 호출을 보냈습니다!')} ${t('care.sos_location','위치')}: ${locationStr}`,
+                senderId: currentUser.uid,
+                senderName: '🆘 SOS',
+                type: 'sos',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        } catch(e) { console.error(e); }
+
+        // 6) Notify neighbors
+        let neighborCount = 0;
+        try {
+            neighborCount = await notifyNeighbors(location, nickname);
+        } catch(e) { console.error('Neighbor notify error:', e); }
+
+        // 7) Start real-time location sharing (30 min)
+        startLocationSharing();
+
+        // 8) Load emergency contacts
+        let emergencyContacts = [];
+        try {
+            const ecSnap = await db.collection('care_groups').doc(careGroupId)
+                .collection('emergency_contacts').get();
+            emergencyContacts = ecSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        } catch(e) { console.error(e); }
+
+        // Show SOS complete screen
+        const guardianCount = careGroup.members.filter(m => m.uid !== currentUser.uid).length;
+        renderSOSActivePanel(location, guardianCount, neighborCount, emergencyContacts);
+    }
+
+    // --- Siren (Web Audio API) ---
+    function startSiren() {
+        try {
+            sosAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            let high = true;
+            function beep() {
+                if (!sosAudioCtx || sosAudioCtx.state === 'closed') return;
+                const osc = sosAudioCtx.createOscillator();
+                const gain = sosAudioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(sosAudioCtx.destination);
+                osc.type = 'square';
+                osc.frequency.value = high ? 880 : 660;
+                gain.gain.value = 0.3;
+                osc.start();
+                gain.gain.exponentialRampToValueAtTime(0.01, sosAudioCtx.currentTime + 0.4);
+                osc.stop(sosAudioCtx.currentTime + 0.45);
+                high = !high;
+            }
+            beep();
+            sosSirenInterval = setInterval(beep, 500);
+        } catch(e) {
+            console.error('Siren error:', e);
+        }
+    }
+
+    function stopSiren() {
+        if (sosSirenInterval) {
+            clearInterval(sosSirenInterval);
+            sosSirenInterval = null;
+        }
+        if (sosAudioCtx) {
+            try { sosAudioCtx.close(); } catch(e) {}
+            sosAudioCtx = null;
+        }
+    }
+
+    // --- Audio Recording (MediaRecorder, 30s) ---
+    function startAudioRecording() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            console.warn('MediaRecorder not supported');
+            return;
+        }
+        navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+            sosRecordingChunks = [];
+            sosMediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+            sosMediaRecorder.ondataavailable = (e) => {
+                if (e.data.size > 0) sosRecordingChunks.push(e.data);
+            };
+            sosMediaRecorder.onstop = () => {
+                stream.getTracks().forEach(t => t.stop());
+                uploadRecording();
+            };
+            sosMediaRecorder.start();
+
+            // Auto-stop after 30 seconds
+            sosRecordingTimer = setTimeout(() => {
+                if (sosMediaRecorder && sosMediaRecorder.state === 'recording') {
+                    sosMediaRecorder.stop();
+                }
+            }, 30000);
+        }).catch(e => {
+            console.warn('Recording permission denied:', e);
+        });
+    }
+
+    function stopAudioRecording() {
+        if (sosRecordingTimer) {
+            clearTimeout(sosRecordingTimer);
+            sosRecordingTimer = null;
+        }
+        if (sosMediaRecorder && sosMediaRecorder.state === 'recording') {
+            sosMediaRecorder.stop();
+        }
+    }
+
+    async function uploadRecording() {
+        if (sosRecordingChunks.length === 0) return;
+        try {
+            const blob = new Blob(sosRecordingChunks, { type: 'audio/webm' });
+            const storageRef = firebase.storage().ref();
+            const ts = Date.now();
+            const path = `sos_recordings/${currentUser.uid}/${ts}.webm`;
+            const fileRef = storageRef.child(path);
+            await fileRef.put(blob);
+            const url = await fileRef.getDownloadURL();
+
+            // Update SOS alert with recording URL
+            if (sosAlertId && careGroupId) {
+                await db.collection('care_groups').doc(careGroupId)
+                    .collection('sos_alerts').doc(sosAlertId)
+                    .update({ recordingUrl: url, recordingPath: path });
+            }
+            console.log('Recording uploaded:', path);
+        } catch(e) {
+            console.error('Recording upload error:', e);
+        }
+        sosRecordingChunks = [];
+    }
+
+    // --- Real-time Location Sharing (30 min) ---
+    function startLocationSharing() {
+        if (!navigator.geolocation) return;
+        sosLocationMinutesLeft = 30;
+
+        sosWatchId = navigator.geolocation.watchPosition(
+            async (pos) => {
+                if (!sosAlertId || !careGroupId) return;
+                try {
+                    await db.collection('care_groups').doc(careGroupId)
+                        .collection('sos_alerts').doc(sosAlertId)
+                        .collection('locations').add({
+                            lat: pos.coords.latitude,
+                            lng: pos.coords.longitude,
+                            accuracy: pos.coords.accuracy,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                } catch(e) { console.error(e); }
+                // Update panel
+                updateSOSLocationDisplay(pos.coords.latitude, pos.coords.longitude);
+            },
+            (err) => console.warn('Watch position error:', err),
+            { enableHighAccuracy: true, maximumAge: 10000, timeout: 15000 }
+        );
+
+        // Update minutes-left countdown
+        sosLocationInterval = setInterval(() => {
+            sosLocationMinutesLeft--;
+            const el = document.getElementById('sos-location-timer');
+            if (el) el.textContent = `${sosLocationMinutesLeft}${t('care.minutes_left','분 남음')}`;
+            if (sosLocationMinutesLeft <= 0) {
+                stopLocationSharing();
+            }
+        }, 60000);
+
+        // Auto-stop after 30 min
+        sosWatchTimeout = setTimeout(() => stopLocationSharing(), 30 * 60 * 1000);
+    }
+
+    function stopLocationSharing() {
+        if (sosWatchId !== null) {
+            navigator.geolocation.clearWatch(sosWatchId);
+            sosWatchId = null;
+        }
+        if (sosWatchTimeout) { clearTimeout(sosWatchTimeout); sosWatchTimeout = null; }
+        if (sosLocationInterval) { clearInterval(sosLocationInterval); sosLocationInterval = null; }
+    }
+
+    function updateSOSLocationDisplay(lat, lng) {
+        const latEl = document.getElementById('sos-lat');
+        const lngEl = document.getElementById('sos-lng');
+        if (latEl) latEl.textContent = lat.toFixed(4);
+        if (lngEl) lngEl.textContent = lng.toFixed(4);
+        // Update maps link
+        const mapLink = document.getElementById('sos-map-link');
+        if (mapLink) mapLink.href = `https://www.google.com/maps?q=${lat},${lng}`;
+    }
+
+    // --- Neighbor Network ---
+    function haversineDistance(lat1, lng1, lat2, lng2) {
+        const R = 6371; // km
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLng = (lng2 - lng1) * Math.PI / 180;
+        const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    }
+
+    async function notifyNeighbors(location, senderName) {
+        if (!location || !careGroupId) return 0;
+        let count = 0;
+        try {
+            const snap = await db.collection('care_groups').doc(careGroupId)
+                .collection('neighbors').get();
+            const radiusKm = 1; // default 1km
+
+            for (const doc of snap.docs) {
+                const neighbor = doc.data();
+                if (neighbor.lat && neighbor.lng) {
+                    const dist = haversineDistance(location.lat, location.lng, neighbor.lat, neighbor.lng);
+                    if (dist <= radiusKm && neighbor.uid) {
+                        await db.collection('notifications').add({
+                            userId: neighbor.uid,
+                            type: 'care_sos_neighbor',
+                            message: `🆘 이웃 ${senderName}님이 긴급 호출을 보냈습니다! (${dist.toFixed(1)}km)`,
+                            read: false,
+                            priority: 'urgent',
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        count++;
+                    }
                 }
             }
+        } catch(e) { console.error(e); }
+        return count;
+    }
 
-            showToast(t('care.sos_sent','🆘 긴급 호출이 전송되었습니다!'), 'error');
+    // --- SOS Active Panel UI ---
+    function renderSOSActivePanel(location, guardianCount, neighborCount, emergencyContacts) {
+        const panel = document.getElementById('sos-active-panel');
+        if (!panel) return;
+
+        const timeStr = sosStartTime.toLocaleTimeString('ko-KR', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+        const lat = location ? location.lat.toFixed(4) : '--';
+        const lng = location ? location.lng.toFixed(4) : '--';
+        const mapsUrl = location ? `https://www.google.com/maps?q=${location.lat},${location.lng}` : '#';
+
+        let ecHtml = '';
+        if (emergencyContacts.length > 0) {
+            ecHtml = emergencyContacts.map(ec => `
+                <div class="sos-ec-card">
+                    <div>
+                        <strong>🏥 ${ec.hospitalName || ec.name || t('care.hospital','병원')}</strong>
+                        ${ec.doctorName ? `<div style="font-size:0.9rem; color:#666;">👨‍⚕️ ${ec.doctorName}</div>` : ''}
+                        ${ec.address ? `<div style="font-size:0.85rem; color:#999;">📍 ${ec.address}</div>` : ''}
+                    </div>
+                    <a href="tel:${ec.phone}" class="sos-call-btn">📞 ${ec.phone}</a>
+                </div>
+            `).join('');
+        } else {
+            ecHtml = `<p style="color:#999; font-size:0.95rem;">${t('care.no_emergency_contacts','등록된 응급연락처가 없습니다')}</p>`;
+        }
+
+        panel.style.display = 'block';
+        panel.innerHTML = `
+            <div class="sos-active-card">
+                <div class="sos-active-header">
+                    <div class="sos-active-icon">🆘</div>
+                    <div>
+                        <div class="sos-active-title">${t('care.sos_complete_title','SOS 긴급 호출 완료')}</div>
+                        <div class="sos-active-time">${timeStr} ${t('care.sos_sent_at','발송됨')}</div>
+                    </div>
+                </div>
+
+                <!-- Location -->
+                <div class="sos-section">
+                    <div class="sos-location-status">
+                        📍 ${t('care.location_sharing','위치 공유 중...')} (<span id="sos-location-timer">${sosLocationMinutesLeft}${t('care.minutes_left','분 남음')}</span>)
+                    </div>
+                    <div style="font-size:1rem; color:#555; margin-top:0.3rem;">
+                        ${t('care.latitude','위도')}: <span id="sos-lat">${lat}</span> &nbsp; ${t('care.longitude','경도')}: <span id="sos-lng">${lng}</span>
+                    </div>
+                    <a id="sos-map-link" href="${mapsUrl}" target="_blank" class="sos-map-btn">🗺️ ${t('care.view_map','지도 보기')}</a>
+                </div>
+
+                <!-- 119 / 112 -->
+                <div class="sos-emergency-btns">
+                    <a href="tel:119" class="sos-emergency-btn sos-119">
+                        🚑 119<br><span>${t('care.emergency_call','응급신고')}</span>
+                    </a>
+                    <a href="tel:112" class="sos-emergency-btn sos-112">
+                        🚔 112<br><span>${t('care.police_call','경찰신고')}</span>
+                    </a>
+                </div>
+
+                <!-- Emergency Contacts -->
+                <div class="sos-section">
+                    <h4 style="margin:0 0 0.5rem;">🏥 ${t('care.emergency_contacts','담당 병원/의사')}</h4>
+                    ${ecHtml}
+                </div>
+
+                <!-- Status -->
+                <div class="sos-section sos-status-list">
+                    <div>✅ ${t('care.guardians_notified','보호자')} ${guardianCount}${t('care.people_notified','명에게 알림 완료')}</div>
+                    <div>✅ ${t('care.neighbors_notified','이웃')} ${neighborCount}${t('care.people_notified','명에게 알림 완료')}</div>
+                    <div id="sos-recording-status">🎙️ ${t('care.recording','녹음 중...')} (30${t('care.seconds_left','초 남음')})</div>
+                </div>
+
+                <!-- Cancel SOS -->
+                <button onclick="CARE.deactivateSOS()" class="sos-deactivate-btn">
+                    🟢 ${t('care.sos_deactivate','SOS 해제')}
+                </button>
+            </div>
+        `;
+
+        // Hide main SOS button
+        const mainBtn = document.getElementById('care-sos-main-btn');
+        if (mainBtn) mainBtn.style.display = 'none';
+
+        // Recording countdown display
+        let recSec = 30;
+        const recInterval = setInterval(() => {
+            recSec--;
+            const recEl = document.getElementById('sos-recording-status');
+            if (recEl && recSec > 0) {
+                recEl.textContent = `🎙️ ${t('care.recording','녹음 중...')} (${recSec}${t('care.seconds_left','초 남음')})`;
+            } else if (recEl) {
+                recEl.textContent = `🎙️ ${t('care.recording_done','녹음 완료 ✅')}`;
+                clearInterval(recInterval);
+            } else {
+                clearInterval(recInterval);
+            }
+        }, 1000);
+    }
+
+    // --- Deactivate SOS ---
+    async function deactivateSOS() {
+        sosActive = false;
+        stopSiren();
+        stopAudioRecording();
+        stopLocationSharing();
+
+        // Update Firestore status
+        if (sosAlertId && careGroupId) {
+            try {
+                await db.collection('care_groups').doc(careGroupId)
+                    .collection('sos_alerts').doc(sosAlertId)
+                    .update({ status: 'resolved', resolvedAt: firebase.firestore.FieldValue.serverTimestamp() });
+            } catch(e) { console.error(e); }
+        }
+
+        sosAlertId = null;
+        sosStartTime = null;
+
+        // Hide panel, show button
+        const panel = document.getElementById('sos-active-panel');
+        if (panel) panel.style.display = 'none';
+        const mainBtn = document.getElementById('care-sos-main-btn');
+        if (mainBtn) mainBtn.style.display = '';
+
+        showToast(t('care.sos_deactivated','SOS가 해제되었습니다 🟢'));
+    }
+
+    // ========== EMERGENCY CONTACTS MANAGEMENT ==========
+    async function showEmergencyContacts() {
+        if (!careGroupId) return;
+
+        let contacts = [];
+        try {
+            const snap = await db.collection('care_groups').doc(careGroupId)
+                .collection('emergency_contacts').get();
+            contacts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        } catch(e) { console.error(e); }
+
+        // Build modal content
+        let listHtml = contacts.length ? contacts.map(c => `
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:0.8rem; background:#f9f9f9; border-radius:10px; margin-bottom:0.5rem;">
+                <div>
+                    <strong>🏥 ${c.hospitalName || ''}</strong>
+                    ${c.doctorName ? `<span style="color:#666;"> · 👨‍⚕️ ${c.doctorName}</span>` : ''}
+                    <div style="font-size:0.85rem; color:#999;">${c.phone || ''} · ${c.address || ''}</div>
+                </div>
+                <button onclick="CARE.deleteEmergencyContact('${c.id}')" style="background:none;border:none;cursor:pointer;font-size:1.2rem;">🗑️</button>
+            </div>
+        `).join('') : `<p style="color:#999;">${t('care.no_emergency_contacts','등록된 연락처가 없습니다')}</p>`;
+
+        // Use prompt-style modal (simple approach)
+        const hospitalName = await showPromptModal(
+            `🏥 ${t('care.emergency_contacts','응급 연락처 관리')}`,
+            `${t('care.add_hospital','새 병원/의사 추가 — 병원명 입력 (빈칸이면 목록만 표시)')}\n\n현재 등록: ${contacts.length}건`,
+            ''
+        );
+        if (!hospitalName) return; // just viewing
+
+        const phone = await showPromptModal(t('care.phone','전화번호'), t('care.phone_prompt','전화번호를 입력하세요'), '');
+        const doctorName = await showPromptModal(t('care.doctor','담당의'), t('care.doctor_prompt','담당 의사명 (선택)'), '');
+        const address = await showPromptModal(t('care.address','주소'), t('care.address_prompt','병원 주소 (선택)'), '');
+
+        if (!phone) { showToast(t('care.phone_required','전화번호는 필수입니다'), 'error'); return; }
+
+        try {
+            await db.collection('care_groups').doc(careGroupId).collection('emergency_contacts').add({
+                hospitalName, phone, doctorName: doctorName || '', address: address || '',
+                createdBy: currentUser.uid,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            showToast(t('care.ec_added','응급 연락처가 추가되었습니다 🏥'));
         } catch(e) {
             console.error(e);
             showToast(t('common.error','오류'), 'error');
         }
+    }
+
+    async function deleteEmergencyContact(id) {
+        if (!confirm(t('care.delete_confirm','삭제하시겠습니까?'))) return;
+        try {
+            await db.collection('care_groups').doc(careGroupId).collection('emergency_contacts').doc(id).delete();
+            showToast(t('common.delete','삭제됨'));
+        } catch(e) { console.error(e); }
+    }
+
+    // ========== NEIGHBOR SETTINGS ==========
+    async function showNeighborSettings() {
+        if (!careGroupId) return;
+
+        const email = await showPromptModal(
+            `🏘️ ${t('care.neighbors','이웃 돌봄 네트워크')}`,
+            t('care.neighbor_email_prompt','이웃의 이메일을 입력하세요 (빈칸이면 취소)'),
+            ''
+        );
+        if (!email) return;
+
+        try {
+            const userSnap = await db.collection('users').where('email', '==', email).limit(1).get();
+            if (userSnap.empty) {
+                showToast(t('care.user_not_found','사용자를 찾을 수 없습니다'), 'error');
+                return;
+            }
+            const neighborUser = userSnap.docs[0];
+            const neighborData = neighborUser.data();
+
+            // Get neighbor's location (prompt for manual input)
+            const latStr = await showPromptModal(t('care.neighbor_lat','이웃 위도'), t('care.neighbor_lat_prompt','위도 입력 (예: 37.5665)'), '');
+            const lngStr = await showPromptModal(t('care.neighbor_lng','이웃 경도'), t('care.neighbor_lng_prompt','경도 입력 (예: 126.9780)'), '');
+
+            await db.collection('care_groups').doc(careGroupId).collection('neighbors').add({
+                uid: neighborUser.id,
+                email: email,
+                name: neighborData.nickname || email,
+                lat: latStr ? parseFloat(latStr) : null,
+                lng: lngStr ? parseFloat(lngStr) : null,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            showToast(t('care.neighbor_added','이웃이 등록되었습니다 🏘️'));
+        } catch(e) {
+            console.error(e);
+            showToast(t('common.error','오류'), 'error');
+        }
+    }
+
+    // ========== GUARDIAN SOS ALERT SOUND ==========
+    // Play alert sound when guardian receives SOS notification
+    function playGuardianAlert() {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            for (let i = 0; i < 5; i++) {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.value = 1000;
+                gain.gain.value = 0.4;
+                osc.start(ctx.currentTime + i * 0.6);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.6 + 0.4);
+                osc.stop(ctx.currentTime + i * 0.6 + 0.5);
+            }
+            setTimeout(() => ctx.close(), 4000);
+        } catch(e) { console.error(e); }
     }
 
     // ========== PHOTOS ==========
@@ -720,13 +1275,11 @@ window.CARE = (function() {
 
     function renderSmartBoard() {
         document.getElementById('sidebar').style.display = 'none';
-        document.querySelector('.main-content').style.marginLeft = '0';
+        document.querySelector('.main-content') && (document.querySelector('.main-content').style.marginLeft = '0');
 
-        const main = document.querySelector('.main-content');
-        // Hide all pages
+        const main = document.querySelector('.main-content') || document.querySelector('.content');
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
 
-        // Create or show board
         let board = document.getElementById('care-board');
         if (!board) {
             board = document.createElement('section');
@@ -752,16 +1305,13 @@ window.CARE = (function() {
                 </div>
             </div>`;
 
-        // Update board clock
         updateBoardClock();
         if (clockInterval) clearInterval(clockInterval);
         clockInterval = setInterval(updateBoardClock, 1000);
 
-        // Load board messages
         loadBoardMessages();
         loadBoardSchedule();
 
-        // Slideshow
         if (slideshowPhotos.length > 1) {
             if (slideshowInterval) clearInterval(slideshowInterval);
             let idx = 0;
@@ -816,10 +1366,11 @@ window.CARE = (function() {
     function exitSmartBoard() {
         if (slideshowInterval) clearInterval(slideshowInterval);
         document.getElementById('sidebar').style.display = '';
-        document.querySelector('.main-content').style.marginLeft = '';
+        const mc = document.querySelector('.main-content');
+        if (mc) mc.style.marginLeft = '';
         const board = document.getElementById('care-board');
         if (board) board.classList.remove('active');
-        showPage('care');
+        if (typeof showPage === 'function') showPage('care');
     }
 
     // ========== HASH ROUTING ==========
@@ -831,7 +1382,6 @@ window.CARE = (function() {
         }
     }
 
-    // Listen for hash changes
     window.addEventListener('hashchange', () => {
         if (location.hash === '#page=care-board') {
             CARE.openSmartBoard();
@@ -844,6 +1394,8 @@ window.CARE = (function() {
         showCreateGroup,
         inviteMember,
         triggerSOS,
+        cancelSOSCountdown,
+        deactivateSOS,
         showSendMessage,
         sendQuickReply,
         showAddSchedule,
@@ -851,6 +1403,10 @@ window.CARE = (function() {
         showAddMedication,
         confirmMedication,
         showAddHealthLog,
+        showEmergencyContacts,
+        deleteEmergencyContact,
+        showNeighborSettings,
+        playGuardianAlert,
         uploadPhoto,
         prevPhoto,
         nextPhoto,
