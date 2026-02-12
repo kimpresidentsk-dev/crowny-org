@@ -881,5 +881,28 @@
   "shortform.comments_coming": "评论功能即将推出",
   "shortform.size_limit": "最大50MB",
   "shortform.format_error": "仅支持MP4/MOV/WebM",
-  "shortform.duration_limit": "最长60秒"
+  "shortform.duration_limit": "最长60秒",
+  "mall": {
+    "order_in_progress": "订单处理中，请稍候。",
+    "max_order_exceeded": "单笔最大订单金额为10,000 CRGC",
+    "insufficient_balance": "CRGC余额不足",
+    "report_review": "举报评论",
+    "report_seller": "举报卖家",
+    "report_fake": "虚假商品",
+    "report_inappropriate": "不当内容",
+    "report_scam": "疑似欺诈",
+    "report_other": "其他",
+    "report_fake_review": "虚假评论",
+    "report_spam": "垃圾信息",
+    "report_fraud": "欺诈",
+    "report_nondelivery": "未发货",
+    "report_detail_placeholder": "详细内容 (可选)",
+    "report_submit": "举报",
+    "report_submitted": "🚨 举报已提交",
+    "report_failed": "举报失败",
+    "login_required": "需要登录"
+  },
+  "common": {
+    "cancel": "取消"
+  }
 }

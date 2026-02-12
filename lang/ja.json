@@ -850,5 +850,28 @@
   "shortform.comments_coming": "コメント機能準備中",
   "shortform.size_limit": "50MB以下のみ",
   "shortform.format_error": "MP4/MOV/WebMのみ",
-  "shortform.duration_limit": "60秒以下のみ"
+  "shortform.duration_limit": "60秒以下のみ",
+  "mall": {
+    "order_in_progress": "注文処理中です。しばらくお待ちください。",
+    "max_order_exceeded": "1回の最大注文額は10,000 CRGCです",
+    "insufficient_balance": "CRGC残高が不足しています",
+    "report_review": "レビューを報告",
+    "report_seller": "販売者を報告",
+    "report_fake": "偽造商品",
+    "report_inappropriate": "不適切",
+    "report_scam": "詐欺の疑い",
+    "report_other": "その他",
+    "report_fake_review": "偽のレビュー",
+    "report_spam": "スパム",
+    "report_fraud": "詐欺",
+    "report_nondelivery": "未配送",
+    "report_detail_placeholder": "詳細内容 (任意)",
+    "report_submit": "報告する",
+    "report_submitted": "🚨 報告が受理されました",
+    "report_failed": "報告失敗",
+    "login_required": "ログインが必要です"
+  },
+  "common": {
+    "cancel": "キャンセル"
+  }
 }

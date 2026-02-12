@@ -1025,5 +1025,28 @@
   "shortform.comments_coming": "댓글 기능 준비 중",
   "shortform.size_limit": "50MB 이하만 가능합니다",
   "shortform.format_error": "MP4/MOV/WebM만 지원",
-  "shortform.duration_limit": "60초 이하만 가능합니다"
+  "shortform.duration_limit": "60초 이하만 가능합니다",
+  "mall": {
+    "order_in_progress": "주문 처리 중입니다. 잠시 기다려주세요.",
+    "max_order_exceeded": "1회 최대 주문 금액은 10,000 CRGC입니다",
+    "insufficient_balance": "CRGC 잔액이 부족합니다",
+    "report_review": "리뷰 신고",
+    "report_seller": "판매자 신고",
+    "report_fake": "허위상품",
+    "report_inappropriate": "부적절",
+    "report_scam": "사기의심",
+    "report_other": "기타",
+    "report_fake_review": "허위 리뷰",
+    "report_spam": "스팸",
+    "report_fraud": "사기",
+    "report_nondelivery": "미배송",
+    "report_detail_placeholder": "상세 내용 (선택)",
+    "report_submit": "신고",
+    "report_submitted": "🚨 신고가 접수되었습니다",
+    "report_failed": "신고 실패",
+    "login_required": "로그인이 필요합니다"
+  },
+  "common": {
+    "cancel": "취소"
+  }
 }

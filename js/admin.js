@@ -3745,7 +3745,7 @@ async function loadAdminReports() {
                         <strong>🚨 ${REPORT_REASONS[r.reason] || r.reason}</strong>
                         <span style="font-size:0.75rem;color:var(--accent);margin-left:0.5rem;">${dateStr}</span>
                     </div>
-                    <span style="font-size:0.8rem;color:var(--accent);">${r.targetType}: ${r.targetId?.slice(0,8)}...</span>
+                    <span style="font-size:0.8rem;color:var(--accent);">${TARGET_TYPE_LABELS[r.targetType] || r.targetType}: ${r.targetId?.slice(0,8)}...</span>
                 </div>
                 <div style="font-size:0.8rem;color:#555;margin:0.3rem 0;">신고자: ${r.reporterEmail || r.reporterId?.slice(0,8)}</div>
                 ${r.detail ? `<div style="font-size:0.8rem;color:#555;">상세: ${r.detail}</div>` : ''}
@@ -3763,8 +3763,15 @@ async function handleReport(reportId, action) {
         const rDoc = await db.collection('reports').doc(reportId).get();
         const r = rDoc.data();
         await db.collection('reports').doc(reportId).update({ status: action, handledBy: currentUser.uid, handledAt: new Date() });
-        if (action === 'confirmed' && r.targetType === 'product' && r.targetId) {
-            await db.collection('products').doc(r.targetId).update({ status: 'removed', removedAt: new Date(), removedReason: '신고 확인' });
+        if (action === 'confirmed' && r.targetId) {
+            if (r.targetType === 'product') {
+                await db.collection('products').doc(r.targetId).update({ status: 'removed', removedAt: new Date(), removedReason: '신고 확인' });
+            } else if (r.targetType === 'review') {
+                await db.collection('product_reviews').doc(r.targetId).delete();
+            } else if (r.targetType === 'seller') {
+                // 판매자 경고 기록
+                await db.collection('users').doc(r.targetId).update({ reportWarnings: firebase.firestore.FieldValue.increment(1), lastWarningAt: new Date() });
+            }
         }
         showToast(action === 'confirmed' ? '🗑️ 신고 확인 및 삭제 조치' : '신고 무시 처리', action === 'confirmed' ? 'warning' : 'info');
         loadAdminReports();
