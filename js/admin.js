@@ -2387,10 +2387,10 @@ async function joinChallenge(challengeId, tierKey) {
         return;
     }
     
-    // CRTD 잔고 확인
-    const walletDoc = await db.collection('users').doc(currentUser.uid)
-        .collection('wallets').doc(currentWalletId || 'default').get();
-    const offchain = walletDoc.data()?.offchainBalances || walletDoc.data()?.offchain || {};
+    // CRTD 잔고 확인 (offchainBalances는 users 루트 문서에 저장됨)
+    const userDoc = await db.collection('users').doc(currentUser.uid).get();
+    const userData = userDoc.data() || {};
+    const offchain = userData.offchainBalances || {};
     const crtdBalance = offchain.crtd || 0;
     
     if (crtdBalance < tier.deposit) {
