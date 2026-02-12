@@ -136,12 +136,12 @@ function getLevelInfo(level) {
 // Lv3: Lv2 임명 (쿼터 내)
 async function setUserAdminLevel(targetEmail, level) {
     if (targetEmail === SUPER_ADMIN_EMAIL) {
-        alert('수퍼관리자는 변경할 수 없습니다');
+        showToast('수퍼관리자는 변경할 수 없습니다', 'warning');
         return;
     }
     
     if (level < -1 || level > 5) {
-        alert('레벨 범위: -1 ~ 5');
+        showToast('레벨 범위: -1 ~ 5', 'warning');
         return;
     }
     
@@ -149,7 +149,7 @@ async function setUserAdminLevel(targetEmail, level) {
     const maxAppointLevel = isSuperAdmin() ? 5 : currentUserLevel - 1;
     
     if (level > maxAppointLevel) {
-        alert(`⛔ 권한 부족\n\n당신: ${getLevelInfo(currentUserLevel).name} (Lv${currentUserLevel})\n최대 임명 가능: Lv${maxAppointLevel}\n요청: Lv${level}`);
+        showToast(`⛔ 권한 부족 — 최대 임명: Lv${maxAppointLevel}, 요청: Lv${level}`, 'error');
         return;
     }
     
@@ -157,10 +157,10 @@ async function setUserAdminLevel(targetEmail, level) {
     if (!isSuperAdmin()) {
         // 대상의 현재 레벨 확인
         const users = await db.collection('users').where('email', '==', targetEmail).get();
-        if (users.empty) { alert('사용자를 찾을 수 없습니다: ' + targetEmail); return; }
+        if (users.empty) { showToast('사용자를 찾을 수 없습니다: ' + targetEmail, 'error'); return; }
         const targetLevel = users.docs[0].data().adminLevel ?? -1;
         if (targetLevel >= currentUserLevel) {
-            alert(`⛔ 동급 이상 관리자는 변경할 수 없습니다\n대상: Lv${targetLevel} / 당신: Lv${currentUserLevel}`);
+            showToast(`⛔ 동급 이상 관리자는 변경할 수 없습니다 (대상: Lv${targetLevel})`, 'error');
             return;
         }
     }
@@ -177,19 +177,28 @@ async function setUserAdminLevel(targetEmail, level) {
     try {
         const users = await db.collection('users').where('email', '==', targetEmail).get();
         if (users.empty) {
-            alert('사용자를 찾을 수 없습니다: ' + targetEmail);
+            showToast('사용자를 찾을 수 없습니다: ' + targetEmail, 'error');
             return;
         }
         
         const targetDoc = users.docs[0];
-        const prevLevel = targetDoc.data().adminLevel ?? -1;
+        const targetData = targetDoc.data();
+        const prevLevel = targetData.adminLevel ?? -1;
         
-        await targetDoc.ref.update({ 
+        const updateData = { 
             adminLevel: level,
             appointedBy: currentUser.email,
             appointedByLevel: currentUserLevel,
             appointedAt: new Date()
-        });
+        };
+        // Preserve existing admin assignment fields
+        if (targetData.adminCountry) updateData.adminCountry = targetData.adminCountry;
+        if (targetData.adminBusiness) updateData.adminBusiness = targetData.adminBusiness;
+        if (targetData.adminService) updateData.adminService = targetData.adminService;
+        if (targetData.adminStartDate) updateData.adminStartDate = targetData.adminStartDate;
+        if (targetData.adminEndDate !== undefined) updateData.adminEndDate = targetData.adminEndDate;
+        
+        await targetDoc.ref.update(updateData);
         
         const info = getLevelInfo(level);
         
@@ -204,11 +213,155 @@ async function setUserAdminLevel(targetEmail, level) {
             timestamp: new Date()
         });
         
-        alert(`✅ ${targetEmail}\n${info.icon} ${info.name} (Lv${level}) 설정 완료\n\n임명자: ${currentUser.email} (Lv${currentUserLevel})`);
+        showToast(`✅ ${targetEmail} → ${info.icon} ${info.name} (Lv${level})`, 'success');
         loadAdminUserList();
     } catch (error) {
-        alert('권한 변경 실패: ' + error.message);
+        showToast('권한 변경 실패: ' + error.message, 'error');
     }
+}
+
+// ★ 관리자 편집 모달
+async function showAdminEditModal(userId, userData) {
+    const level = userData.adminLevel ?? -1;
+    const maxAppointLevel = isSuperAdmin() ? 5 : currentUserLevel - 1;
+    const canEdit = (level < currentUserLevel || isSuperAdmin()) && userData.email !== SUPER_ADMIN_EMAIL;
+    
+    if (!canEdit) { showToast('이 사용자를 편집할 수 없습니다', 'warning'); return; }
+    
+    let levelOptions = '';
+    for (let lv = -1; lv <= maxAppointLevel; lv++) {
+        const info = getLevelInfo(lv);
+        levelOptions += `<option value="${lv}" ${lv === level ? 'selected' : ''}>${lv} ${info.name} ${info.icon}</option>`;
+    }
+    
+    const countries = [
+        {v:'ALL',l:'전체'},{v:'KR',l:'🇰🇷 한국'},{v:'US',l:'🇺🇸 미국'},{v:'JP',l:'🇯🇵 일본'},{v:'CN',l:'🇨🇳 중국'},{v:'VN',l:'🇻🇳 베트남'},{v:'TH',l:'🇹🇭 태국'},{v:'PH',l:'🇵🇭 필리핀'},{v:'ID',l:'🇮🇩 인도네시아'},{v:'MY',l:'🇲🇾 말레이시아'},{v:'SG',l:'🇸🇬 싱가포르'},{v:'OTHER',l:'기타'}
+    ];
+    const businesses = [
+        {v:'ALL',l:'전체'},{v:'trading',l:'📊 트레이딩'},{v:'marketplace',l:'🛒 마켓플레이스'},{v:'energy',l:'🌱 에너지'},{v:'art',l:'🎭 아트/NFT'},{v:'fundraise',l:'💰 펀드레이즈'},{v:'credit',l:'💳 크레딧'},{v:'social',l:'💬 소셜'},{v:'messenger',l:'📨 메신저'}
+    ];
+    const services = [
+        {v:'ALL',l:'전체'},{v:'prop-trading',l:'프랍 트레이딩'},{v:'mall',l:'쇼핑몰'},{v:'art-gallery',l:'아트 갤러리'},{v:'nft-mint',l:'NFT 민팅'},{v:'energy-invest',l:'에너지 투자'},{v:'fundraise-campaign',l:'펀드레이즈'},{v:'p2p-credit',l:'P2P 크레딧'},{v:'books',l:'도서'},{v:'business',l:'비즈니스'}
+    ];
+    
+    const curCountry = userData.adminCountry || 'ALL';
+    const curBusiness = userData.adminBusiness || 'ALL';
+    const curService = userData.adminService || 'ALL';
+    const curStart = userData.adminStartDate ? (userData.adminStartDate.toDate ? userData.adminStartDate.toDate() : new Date(userData.adminStartDate)) : new Date();
+    const curEnd = userData.adminEndDate ? (userData.adminEndDate.toDate ? userData.adminEndDate.toDate() : new Date(userData.adminEndDate)) : null;
+    
+    const startStr = curStart.toISOString().slice(0,10);
+    const endStr = curEnd ? curEnd.toISOString().slice(0,10) : '';
+    
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;overflow-y:auto;';
+    overlay.innerHTML = `
+        <div style="background:white;padding:1.5rem;border-radius:16px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;">
+            <h3 style="margin-bottom:0.3rem;">🔑 관리자 설정</h3>
+            <p style="font-size:0.85rem;color:#666;margin-bottom:1rem;">${userData.nickname || '이름없음'} · ${userData.email}</p>
+            
+            <div style="margin-bottom:1rem;">
+                <label style="font-size:0.8rem;color:#666;display:block;margin-bottom:0.3rem;">관리자 레벨</label>
+                <select id="edit-admin-level" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;">${levelOptions}</select>
+            </div>
+            
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:1rem;">
+                <div>
+                    <label style="font-size:0.8rem;color:#666;display:block;margin-bottom:0.3rem;">🌍 담당 국가</label>
+                    <select id="edit-admin-country" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;">
+                        ${countries.map(c => `<option value="${c.v}" ${c.v===curCountry?'selected':''}>${c.l}</option>`).join('')}
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size:0.8rem;color:#666;display:block;margin-bottom:0.3rem;">💼 담당 사업</label>
+                    <select id="edit-admin-business" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;">
+                        ${businesses.map(b => `<option value="${b.v}" ${b.v===curBusiness?'selected':''}>${b.l}</option>`).join('')}
+                    </select>
+                </div>
+            </div>
+            
+            <div style="margin-bottom:1rem;">
+                <label style="font-size:0.8rem;color:#666;display:block;margin-bottom:0.3rem;">🔧 담당 서비스</label>
+                <select id="edit-admin-service" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;">
+                    ${services.map(s => `<option value="${s.v}" ${s.v===curService?'selected':''}>${s.l}</option>`).join('')}
+                </select>
+            </div>
+            
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:1rem;">
+                <div>
+                    <label style="font-size:0.8rem;color:#666;display:block;margin-bottom:0.3rem;">📅 시작일</label>
+                    <input type="date" id="edit-admin-start" value="${startStr}" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;">
+                </div>
+                <div>
+                    <label style="font-size:0.8rem;color:#666;display:block;margin-bottom:0.3rem;">📅 종료일 (비우면 무기한)</label>
+                    <input type="date" id="edit-admin-end" value="${endStr}" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;">
+                </div>
+            </div>
+            
+            <div style="display:flex;gap:0.5rem;">
+                <button id="edit-admin-save" style="flex:1;padding:0.7rem;background:#9C27B0;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:700;">💾 저장</button>
+                <button id="edit-admin-cancel" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">취소</button>
+            </div>
+        </div>`;
+    
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    overlay.querySelector('#edit-admin-cancel').onclick = () => overlay.remove();
+    overlay.querySelector('#edit-admin-save').onclick = async () => {
+        const newLevel = parseInt(document.getElementById('edit-admin-level').value);
+        const country = document.getElementById('edit-admin-country').value;
+        const business = document.getElementById('edit-admin-business').value;
+        const service = document.getElementById('edit-admin-service').value;
+        const startDate = document.getElementById('edit-admin-start').value;
+        const endDate = document.getElementById('edit-admin-end').value;
+        
+        if (newLevel >= 1 && newLevel > level) {
+            const quotaOk = await checkAdminQuota(newLevel);
+            if (!quotaOk) return;
+            const personalOk = await checkPersonalQuota(newLevel);
+            if (!personalOk) return;
+        }
+        
+        try {
+            const updateData = {
+                adminLevel: newLevel,
+                adminCountry: country,
+                adminBusiness: business,
+                adminService: service,
+                adminStartDate: startDate ? firebase.firestore.Timestamp.fromDate(new Date(startDate)) : firebase.firestore.FieldValue.serverTimestamp(),
+                appointedBy: currentUser.email,
+                appointedByLevel: currentUserLevel,
+                appointedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            if (endDate) {
+                updateData.adminEndDate = firebase.firestore.Timestamp.fromDate(new Date(endDate + 'T23:59:59'));
+            } else {
+                updateData.adminEndDate = null;
+            }
+            
+            await db.collection('users').doc(userId).update(updateData);
+            
+            const info = getLevelInfo(newLevel);
+            await db.collection('admin_log').add({
+                action: 'admin_edit',
+                adminEmail: currentUser.email,
+                adminLevel: currentUserLevel,
+                targetEmail: userData.email,
+                prevLevel: level,
+                newLevel: newLevel,
+                country, business, service,
+                startDate: startDate || null,
+                endDate: endDate || null,
+                timestamp: new Date()
+            });
+            
+            overlay.remove();
+            showToast(`✅ ${userData.email} → ${info.icon} Lv${newLevel} (${country}/${business}/${service})`, 'success');
+            loadAdminUserList();
+        } catch (e) {
+            showToast('설정 실패: ' + e.message, 'error');
+        }
+    };
 }
 
 // ★ 전체 쿼터 체크 (해당 레벨의 총 관리자 수)
@@ -1294,12 +1447,26 @@ async function loadAdminUserList() {
         // 레벨 내림차순 정렬
         allUsers.sort((a, b) => (b.adminLevel ?? -1) - (a.adminLevel ?? -1));
         
+        window._adminUserCache = {};
         let userHTML = '';
         for (const u of allUsers) {
             const level = u.adminLevel ?? -1;
             const info = getLevelInfo(level);
-            const appointed = u.appointedBy ? `← ${u.appointedBy}` : '';
-            const canManage = level < currentUserLevel || isSuperAdmin();
+            const canManage = (level < currentUserLevel || isSuperAdmin()) && u.email !== SUPER_ADMIN_EMAIL;
+            window._adminUserCache[u.id] = u;
+            
+            const countryBadge = u.adminCountry && u.adminCountry !== 'ALL' ? `<span style="font-size:0.6rem;background:#e3f2fd;color:#1565c0;padding:1px 4px;border-radius:3px;">${u.adminCountry}</span>` : '';
+            const businessBadge = u.adminBusiness && u.adminBusiness !== 'ALL' ? `<span style="font-size:0.6rem;background:#fff3e0;color:#e65100;padding:1px 4px;border-radius:3px;">${u.adminBusiness}</span>` : '';
+            const serviceBadge = u.adminService && u.adminService !== 'ALL' ? `<span style="font-size:0.6rem;background:#f3e5f5;color:#7b1fa2;padding:1px 4px;border-radius:3px;">${u.adminService}</span>` : '';
+            
+            let periodText = '';
+            if (u.adminEndDate) {
+                const end = u.adminEndDate.toDate ? u.adminEndDate.toDate() : new Date(u.adminEndDate);
+                const isExpired = end < new Date();
+                periodText = isExpired 
+                    ? `<span style="font-size:0.6rem;color:#c62828;font-weight:700;">⏰ 만료됨</span>`
+                    : `<span style="font-size:0.6rem;color:#666;">~${end.toLocaleDateString('ko-KR')}</span>`;
+            }
             
             userHTML += `
                 <div style="padding:0.6rem; background:var(--bg); border-radius:6px; margin-bottom:0.4rem; border-left:4px solid ${info.color};">
@@ -1307,14 +1474,15 @@ async function loadAdminUserList() {
                         <div style="flex:1; min-width:150px;">
                             <strong style="font-size:0.85rem;">${u.nickname || '이름없음'}</strong>
                             <span style="font-size:0.7rem; color:var(--accent); margin-left:0.3rem;">${u.email}</span>
+                            <div style="display:flex;gap:0.3rem;margin-top:0.2rem;flex-wrap:wrap;">
+                                ${countryBadge}${businessBadge}${serviceBadge}${periodText}
+                            </div>
                         </div>
                         <div style="display:flex; align-items:center; gap:0.4rem;">
                             <span style="font-size:0.72rem; padding:2px 6px; background:${info.color}22; color:${info.color}; border-radius:3px;">
                                 ${info.icon} Lv${level}
                             </span>
-                            ${appointed ? `<span style="font-size:0.65rem; color:#999;">${appointed}</span>` : ''}
-                            ${canManage && u.email !== SUPER_ADMIN_EMAIL && level >= 1 ? 
-                                `<button onclick="setUserAdminLevel('${u.email}', -1)" style="background:#ff4444; color:white; border:none; padding:2px 6px; border-radius:3px; cursor:pointer; font-size:0.65rem;">해임</button>` : ''}
+                            ${canManage ? `<button onclick="showAdminEditModal('${u.id}', window._adminUserCache['${u.id}'])" style="background:#9C27B0;color:white;border:none;padding:2px 6px;border-radius:3px;cursor:pointer;font-size:0.65rem;">편집</button>` : ''}
                         </div>
                     </div>
                 </div>
@@ -2326,33 +2494,38 @@ async function registerProduct() {
 
 // ========== 오프체인/CRNY 비율 관리 (수퍼관리자) ==========
 
-// 현재 비율 로드
+// 현재 비율 로드 (토큰별 개별 비율)
 async function loadExchangeRate() {
     try {
         const doc = await db.collection('admin_config').doc('exchange_rate').get();
         if (doc.exists) {
             const data = doc.data();
-            window.OFFCHAIN_RATE = data.rate || 100;
+            const legacyRate = data.rate || 100;
             
-            // UI 업데이트
-            const rateEl = document.getElementById('admin-rate-current');
-            if (rateEl) rateEl.textContent = `현재 비율: ${window.OFFCHAIN_RATE} 포인트 = 1 CRNY`;
+            // Per-token rates
+            window.OFFCHAIN_RATES = data.rates || {crtd: legacyRate, crac: legacyRate, crgc: legacyRate, creb: legacyRate};
+            window.OFFCHAIN_RATE = legacyRate; // backward compat
             
-            const inputEl = document.getElementById('admin-rate-input');
-            if (inputEl) inputEl.value = window.OFFCHAIN_RATE;
+            // Update UI inputs
+            ['crtd','crac','crgc','creb'].forEach(t => {
+                const el = document.getElementById('rate-' + t);
+                if (el) el.value = window.OFFCHAIN_RATES[t] || legacyRate;
+            });
             
-            // 변경 이력 표시
+            // History display (token info + reason)
             if (data.history && data.history.length > 0) {
                 const histEl = document.getElementById('admin-rate-history');
                 if (histEl) {
-                    histEl.innerHTML = data.history.slice(-10).reverse().map(h => {
+                    histEl.innerHTML = data.history.slice(-20).reverse().map(h => {
                         const date = h.timestamp?.toDate ? h.timestamp.toDate().toLocaleString('ko-KR') : new Date(h.timestamp).toLocaleString('ko-KR');
+                        const tokenLabel = h.token ? h.token.toUpperCase() : '전체';
                         return `<div style="padding:0.5rem; background:var(--bg); border-radius:6px; margin-bottom:0.3rem; font-size:0.8rem;">
-                            <div style="display:flex; justify-content:space-between;">
-                                <strong>${h.oldRate} → ${h.newRate}</strong>
-                                <span style="color:var(--accent);">${date}</span>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div><span style="background:#e3f2fd; color:#1565c0; padding:0.1rem 0.4rem; border-radius:4px; font-size:0.7rem; font-weight:700;">${tokenLabel}</span> <strong>${h.oldRate} → ${h.newRate}</strong></div>
+                                <span style="color:var(--accent); font-size:0.7rem;">${date}</span>
                             </div>
-                            <div style="color:var(--accent); font-size:0.75rem;">${h.adminEmail} · 사유: ${h.reason || '-'}</div>
+                            <div style="color:#666; font-size:0.75rem; margin-top:0.2rem;">📝 ${h.reason || '-'}</div>
+                            <div style="color:var(--accent); font-size:0.7rem;">${h.adminEmail}</div>
                         </div>`;
                     }).join('');
                 }
@@ -2363,88 +2536,83 @@ async function loadExchangeRate() {
     }
 }
 
-// 비율 변경 요청 (컨펌 단계)
+// 비율 변경 요청 (토큰별 개별 비율, 2단계 확인)
 async function requestRateChange() {
-    if (!isSuperAdmin()) { alert('수퍼관리자만 변경 가능합니다'); return; }
+    if (!isSuperAdmin()) { showToast('수퍼관리자만 변경 가능합니다', 'warning'); return; }
     
-    const newRate = parseInt(document.getElementById('admin-rate-input')?.value);
-    if (!newRate || newRate < 1 || newRate > 10000) {
-        alert('유효한 비율을 입력하세요 (1 ~ 10,000)');
-        return;
+    const reason = (document.getElementById('rate-change-reason')?.value || '').trim();
+    if (!reason) { showToast('변경 사유를 입력하세요', 'warning'); return; }
+    
+    const tokens = ['crtd', 'crac', 'crgc', 'creb'];
+    const currentRates = window.OFFCHAIN_RATES || {};
+    const newRates = {};
+    const changes = [];
+    
+    for (const t of tokens) {
+        const val = parseInt(document.getElementById('rate-' + t)?.value);
+        if (!val || val < 1 || val > 10000) {
+            showToast(`${t.toUpperCase()} 비율이 유효하지 않습니다 (1~10,000)`, 'error');
+            return;
+        }
+        newRates[t] = val;
+        const oldVal = currentRates[t] || 100;
+        if (val !== oldVal) {
+            changes.push({token: t, oldRate: oldVal, newRate: val});
+        }
     }
     
-    const currentRate = window.OFFCHAIN_RATE || 100;
-    if (newRate === currentRate) {
-        alert('현재 비율과 동일합니다');
-        return;
-    }
+    if (changes.length === 0) { showToast('변경된 비율이 없습니다', 'info'); return; }
     
-    const reason = prompt(`비율 변경 사유:\n\n현재: ${currentRate} pt = 1 CRNY\n변경: ${newRate} pt = 1 CRNY\n\n사유를 입력하세요:`);
-    if (!reason) { alert('사유는 필수입니다'); return; }
-    
-    // 영향도 계산
-    const direction = newRate > currentRate ? '오프체인 가치 하락 ↓' : '오프체인 가치 상승 ↑';
-    const changePercent = Math.abs(((newRate - currentRate) / currentRate) * 100).toFixed(1);
-    
-    const confirmMsg = `⚠️ 비율 변경 최종 확인\n\n` +
-        `현재: ${currentRate} pt = 1 CRNY\n` +
-        `변경: ${newRate} pt = 1 CRNY\n` +
-        `변동: ${changePercent}% (${direction})\n\n` +
-        `사유: ${reason}\n\n` +
-        `이 변경은 모든 브릿지 거래에 즉시 적용됩니다.\n정말 변경하시겠습니까?`;
-    
-    if (!confirm(confirmMsg)) return;
+    const changeText = changes.map(c => `${c.token.toUpperCase()}: ${c.oldRate} → ${c.newRate}`).join('\n');
+    const confirmed = await showConfirmModal('⚖️ 비율 변경 확인', `다음 비율이 변경됩니다:\n\n${changeText}\n\n사유: ${reason}\n\n모든 브릿지 거래에 즉시 적용됩니다.`);
+    if (!confirmed) return;
     
     // 2차 확인
-    const code = prompt(`보안 확인: "RATE${newRate}" 을 정확히 입력하세요:`);
-    if (code !== `RATE${newRate}`) {
-        alert('확인 코드가 일치하지 않습니다. 변경이 취소되었습니다.');
-        return;
-    }
+    const code = await showPromptModal('보안 확인', '"RATE" 를 정확히 입력하세요:', '');
+    if (code !== 'RATE') { showToast('확인 코드 불일치. 변경 취소됨.', 'error'); return; }
     
     try {
-        // 현재 문서 로드
         const doc = await db.collection('admin_config').doc('exchange_rate').get();
         const existingHistory = doc.exists ? (doc.data().history || []) : [];
         
-        // 이력 추가
-        existingHistory.push({
-            oldRate: currentRate,
-            newRate: newRate,
-            reason: reason,
-            adminEmail: currentUser.email,
-            adminLevel: currentUserLevel,
-            timestamp: new Date()
-        });
+        for (const c of changes) {
+            existingHistory.push({
+                token: c.token,
+                oldRate: c.oldRate,
+                newRate: c.newRate,
+                reason: reason,
+                adminEmail: currentUser.email,
+                adminLevel: currentUserLevel,
+                timestamp: new Date()
+            });
+        }
         
-        // 저장
         await db.collection('admin_config').doc('exchange_rate').set({
-            rate: newRate,
+            rates: newRates,
+            rate: newRates.crtd, // legacy compat
             lastChangedBy: currentUser.email,
             lastChangedAt: new Date(),
             history: existingHistory
         });
         
-        // 로그 저장
         await db.collection('admin_log').add({
             action: 'exchange_rate_change',
             adminEmail: currentUser.email,
             adminLevel: currentUserLevel,
-            oldRate: currentRate,
-            newRate: newRate,
+            changes: changes,
             reason: reason,
             timestamp: new Date()
         });
         
-        // 즉시 적용
-        window.OFFCHAIN_RATE = newRate;
+        window.OFFCHAIN_RATES = newRates;
+        window.OFFCHAIN_RATE = newRates.crtd;
         
-        alert(`✅ 비율 변경 완료!\n\n${currentRate} → ${newRate} pt = 1 CRNY\n\n모든 브릿지 거래에 즉시 적용됩니다.`);
-        
+        showToast(`✅ ${changes.length}개 토큰 비율 변경 완료!`, 'success');
+        document.getElementById('rate-change-reason').value = '';
         loadExchangeRate();
         
     } catch (e) {
-        alert('비율 변경 실패: ' + e.message);
+        showToast('비율 변경 실패: ' + e.message, 'error');
     }
 }
 

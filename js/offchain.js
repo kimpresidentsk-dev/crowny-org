@@ -9,6 +9,11 @@ const DEFAULT_OFFCHAIN_TOKENS = {
     creb: { name: 'CREB', fullName: '에코 바이오', icon: '🌱', color: '#2196F3', isDefault: true }
 };
 
+// 토큰별 교환 비율 헬퍼
+function getTokenRate(tokenKey) {
+    return (window.OFFCHAIN_RATES && window.OFFCHAIN_RATES[tokenKey]) || window.OFFCHAIN_RATE || 100;
+}
+
 // 동적 토큰 레지스트리 (런타임에 Firestore에서 로드)
 let OFFCHAIN_TOKEN_REGISTRY = { ...DEFAULT_OFFCHAIN_TOKENS };
 let OFFCHAIN_TOKENS_LIST = Object.keys(DEFAULT_OFFCHAIN_TOKENS);
@@ -159,7 +164,6 @@ function updateBridgePreview() {
 
     const from = fromSelect.value;
     const amount = parseFloat(amountInput.value) || 0;
-    const rate = window.OFFCHAIN_RATE || 100;
 
     if (toSelect) {
         toSelect.innerHTML = from === 'crny'
@@ -168,11 +172,14 @@ function updateBridgePreview() {
     }
     if (amount <= 0) { previewEl.textContent = ''; return; }
 
+    const tokenKey = from === 'crny' ? (toSelect?.value || 'crtd') : from;
+    const rate = getTokenRate(tokenKey);
+
     if (from === 'crny') {
-        previewEl.textContent = `${amount} CRNY → ${(amount * rate).toLocaleString()} ${(toSelect?.value || 'CRTD').toUpperCase()} 포인트`;
+        previewEl.textContent = `${amount} CRNY → ${(amount * rate).toLocaleString()} ${(toSelect?.value || 'CRTD').toUpperCase()} 포인트 (비율: ${rate})`;
     } else {
         const result = amount / rate;
-        previewEl.textContent = `${amount.toLocaleString()} ${from.toUpperCase()} → ${result.toFixed(2)} CRNY` + (amount < rate ? ` (최소 ${rate} pt)` : '');
+        previewEl.textContent = `${amount.toLocaleString()} ${from.toUpperCase()} → ${result.toFixed(2)} CRNY (비율: ${rate})` + (amount < rate ? ` (최소 ${rate} pt)` : '');
     }
 }
 
@@ -182,7 +189,8 @@ async function executeBridge() {
     const from = document.getElementById('bridge-from').value;
     const to = document.getElementById('bridge-to')?.value || (from === 'crny' ? 'crtd' : 'crny');
     const amount = parseFloat(document.getElementById('bridge-amount').value) || 0;
-    const rate = window.OFFCHAIN_RATE || 100;
+    const tokenKey = from === 'crny' ? to : from;
+    const rate = getTokenRate(tokenKey);
     if (amount <= 0) { alert('수량을 입력하세요'); return; }
 
     try {

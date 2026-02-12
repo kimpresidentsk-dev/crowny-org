@@ -114,37 +114,35 @@ async function displayCurrentWallet() {
     updateBalances();
 }
 
-function showAddWalletModal() {
-    const choice = prompt('지갑 추가:\n1. 새 크라우니 지갑 생성\n2. 외부 지갑 가져오기\n\n번호를 입력하세요:');
+async function showAddWalletModal() {
+    const choice = await showPromptModal('지갑 추가', '1. 새 크라우니 지갑 생성\n2. 외부 지갑 가져오기\n\n번호를 입력하세요:');
     
     if (choice === '1') {
-        createNewWallet();
+        await createNewWallet();
     } else if (choice === '2') {
-        showImportWallet();
+        await showImportWallet();
     }
 }
 
-function showImportWallet() {
-    const name = prompt('지갑 이름:') || '외부 지갑';
-    const privateKey = prompt('개인키를 입력하세요:\n(0x로 시작하는 64자리)');
+async function showImportWallet() {
+    const name = (await showPromptModal('지갑 가져오기', '지갑 이름:')) || '외부 지갑';
+    const privateKey = await showPromptModal('개인키 입력', '개인키를 입력하세요:\n(0x로 시작하는 64자리)');
     if (!privateKey) return;
     
     try {
         const web3 = new Web3();
         const account = web3.eth.accounts.privateKeyToAccount(privateKey);
         
-        const confirm = window.confirm(
-            `이 지갑을 추가하시겠습니까?\n\n` +
-            `이름: ${name}\n` +
-            `주소: ${account.address}\n\n` +
-            `⚠️ 외부 지갑은 가스비가 자동 차감됩니다.`
+        const confirmed = await showConfirmModal(
+            '지갑 추가 확인',
+            `이 지갑을 추가하시겠습니까?\n\n이름: ${name}\n주소: ${account.address}\n\n⚠️ 외부 지갑은 가스비가 자동 차감됩니다.`
         );
         
-        if (confirm) {
-            importExternalWallet(name, privateKey, account.address);
+        if (confirmed) {
+            await importExternalWallet(name, privateKey, account.address);
         }
     } catch (error) {
-        alert('잘못된 개인키입니다');
+        showToast('잘못된 개인키입니다', 'error');
     }
 }
 
@@ -160,18 +158,18 @@ async function importExternalWallet(name, privateKey, address) {
                 importedAt: new Date()
             });
         
-        alert('✅ 외부 지갑 추가 완료!');
+        showToast('외부 지갑 추가 완료!', 'success');
         currentWalletId = walletRef.id;
         await loadUserWallet();
     } catch (error) {
         console.error('Import error:', error);
-        alert('지갑 추가 실패: ' + error.message);
+        showToast('지갑 추가 실패: ' + error.message, 'error');
     }
 }
 
 async function createNewWallet() {
     try {
-        const name = prompt('지갑 이름:') || `크라우니 지갑 ${allWallets.length + 1}`;
+        const name = (await showPromptModal('새 지갑 생성', '지갑 이름:')) || `크라우니 지갑 ${allWallets.length + 1}`;
         
         const web3 = new Web3();
         const newAccount = web3.eth.accounts.create();
@@ -187,40 +185,38 @@ async function createNewWallet() {
                 createdAt: new Date()
             });
         
-        alert('✅ 새 지갑 생성 완료!');
+        showToast('새 지갑 생성 완료!', 'success');
         currentWalletId = walletRef.id;
         await loadUserWallet();
     } catch (error) {
         console.error('Create wallet error:', error);
-        alert('지갑 생성 실패: ' + error.message);
+        showToast('지갑 생성 실패: ' + error.message, 'error');
     }
 }
 
 async function deleteCurrentWallet() {
     if (allWallets.length === 1) {
-        alert('마지막 지갑은 삭제할 수 없습니다.');
+        showToast('마지막 지갑은 삭제할 수 없습니다.', 'warning');
         return;
     }
     
     const wallet = allWallets.find(w => w.id === currentWalletId);
-    const confirm = window.confirm(
-        `지갑을 삭제하시겠습니까?\n\n` +
-        `${wallet.name}\n` +
-        `${wallet.walletAddress}\n\n` +
-        `⚠️ 이 작업은 되돌릴 수 없습니다!`
+    const confirmed = await showConfirmModal(
+        '지갑 삭제',
+        `지갑을 삭제하시겠습니까?\n\n${wallet.name}\n${wallet.walletAddress}\n\n⚠️ 이 작업은 되돌릴 수 없습니다!`
     );
     
-    if (!confirm) return;
+    if (!confirmed) return;
     
     try {
         await db.collection('users').doc(currentUser.uid)
             .collection('wallets').doc(currentWalletId).delete();
         
-        alert('✅ 지갑 삭제 완료!');
+        showToast('지갑 삭제 완료!', 'success');
         await loadUserWallet();
     } catch (error) {
         console.error('Delete error:', error);
-        alert('지갑 삭제 실패: ' + error.message);
+        showToast('지갑 삭제 실패: ' + error.message, 'error');
     }
 }
 
@@ -270,7 +266,7 @@ function copyAddress() {
     // Modern clipboard API
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(address).then(() => {
-            alert('✅ 주소가 복사되었습니다!');
+            showToast('주소가 복사되었습니다', 'success');
         }).catch(err => {
             // Fallback
             fallbackCopy(address);
@@ -292,9 +288,9 @@ function fallbackCopy(text) {
     
     try {
         document.execCommand('copy');
-        alert('✅ 주소가 복사되었습니다!');
+        showToast('주소가 복사되었습니다', 'success');
     } catch (err) {
-        alert('복사 실패. 수동으로 복사해주세요:\n' + text);
+        showToast('복사 실패. 수동으로 복사해주세요', 'error');
     }
     
     document.body.removeChild(temp);
@@ -324,10 +320,14 @@ function updateBalances() {
     if (crgcEl) crgcEl.textContent = (offchain.crgc || 0).toLocaleString();
     if (crebEl) crebEl.textContent = (offchain.creb || 0).toLocaleString();
     
-    // Total asset in CRNY equivalent
-    const rate = window.OFFCHAIN_RATE || 100;
+    // Total asset in CRNY equivalent (per-token rates)
     const totalOffchain = (offchain.crtd || 0) + (offchain.crac || 0) + (offchain.crgc || 0) + (offchain.creb || 0);
-    const totalCrny = userWallet.balances.crny + userWallet.balances.fnc + userWallet.balances.crfn + (totalOffchain / rate);
+    const totalCrnyFromOffchain = 
+        (offchain.crtd || 0) / getTokenRate('crtd') +
+        (offchain.crac || 0) / getTokenRate('crac') +
+        (offchain.crgc || 0) / getTokenRate('crgc') +
+        (offchain.creb || 0) / getTokenRate('creb');
+    const totalCrny = userWallet.balances.crny + userWallet.balances.fnc + userWallet.balances.crfn + totalCrnyFromOffchain;
     const totalEl = document.getElementById('total-asset-crny');
     if (totalEl) totalEl.textContent = totalCrny.toFixed(2);
     
@@ -359,55 +359,58 @@ async function loadMaticBalance() {
 
 // MATIC 입금 안내 (주소 표시)
 function showMaticDeposit() {
-    if (!userWallet) { alert('지갑을 먼저 연결하세요'); return; }
+    if (!userWallet) { showToast('지갑을 먼저 연결하세요', 'warning'); return; }
     const addr = userWallet.walletAddress;
     
-    const msg = `📥 MATIC 입금 안내\n\n` +
-        `아래 Polygon 주소로 MATIC을 보내주세요:\n\n` +
-        `${addr}\n\n` +
-        `⚠️ 반드시 Polygon 네트워크(MATIC)로 전송하세요!\n` +
-        `다른 네트워크(ETH 등)로 보내면 복구 불가합니다.\n\n` +
-        `입금 후 "잔액 새로고침" 버튼을 눌러주세요.`;
-    
-    alert(msg);
-    
-    // 주소 복사
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(addr).then(() => {
-            if (typeof showToast === 'function') showToast('주소가 복사되었습니다', 'success');
-        });
-    }
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    overlay.innerHTML = `
+        <div style="background:white;padding:1.5rem;border-radius:16px;max-width:420px;width:100%;text-align:center;">
+            <h3 style="margin-bottom:1rem;">📥 MATIC 입금</h3>
+            <p style="font-size:0.85rem;color:#666;margin-bottom:1rem;">아래 Polygon 주소로 MATIC을 보내주세요</p>
+            <div style="background:#f5f5f5;padding:1rem;border-radius:10px;margin-bottom:1rem;word-break:break-all;font-family:monospace;font-size:0.82rem;font-weight:600;color:#1a1a2e;cursor:pointer;" onclick="navigator.clipboard&&navigator.clipboard.writeText('${addr}').then(()=>showToast('주소 복사됨','success'))">
+                ${addr}
+            </div>
+            <p style="font-size:0.75rem;color:#c62828;margin-bottom:1rem;">⚠️ 반드시 <strong>Polygon 네트워크</strong>로 전송하세요!<br>다른 네트워크(ETH 등)로 보내면 복구 불가합니다.</p>
+            <div style="display:flex;gap:0.5rem;">
+                <button onclick="navigator.clipboard&&navigator.clipboard.writeText('${addr}').then(()=>showToast('주소 복사됨','success'))" style="flex:1;padding:0.7rem;background:#1a1a2e;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:700;">📋 주소 복사</button>
+                <button onclick="this.closest('div[style*=fixed]').remove()" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">닫기</button>
+            </div>
+        </div>`;
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    document.body.appendChild(overlay);
 }
 
 // MATIC 송금
 async function showMaticSend() {
-    if (!userWallet) { alert('지갑을 먼저 연결하세요'); return; }
+    if (!userWallet) { showToast('지갑을 먼저 연결하세요', 'warning'); return; }
     
     const maticBal = userWallet.maticBalance || 0;
     if (maticBal <= 0) {
-        alert('MATIC 잔액이 없습니다.\n먼저 MATIC을 입금해주세요.');
+        showToast('MATIC 잔액이 없습니다. 먼저 입금해주세요.', 'warning');
         return;
     }
     
-    const toAddress = prompt(`MATIC 송금\n\n잔액: ${maticBal.toFixed(4)} MATIC\n\n받는 주소 (0x...):`);
+    const toAddress = await showPromptModal('MATIC 송금', `잔액: ${maticBal.toFixed(4)} MATIC\n\n받는 주소 (0x...):`);
     if (!toAddress || !toAddress.startsWith('0x') || toAddress.length !== 42) {
-        if (toAddress) alert('유효하지 않은 주소입니다');
+        if (toAddress) showToast('유효하지 않은 주소입니다', 'error');
         return;
     }
     
-    const amount = prompt(`${toAddress.slice(0,6)}...${toAddress.slice(-4)} 에게 보낼 MATIC:\n잔액: ${maticBal.toFixed(4)}`);
+    const amount = await showPromptModal('송금 금액', `${toAddress.slice(0,6)}...${toAddress.slice(-4)} 에게 보낼 MATIC:\n잔액: ${maticBal.toFixed(4)}`);
     if (!amount) return;
     
     const amountNum = parseFloat(amount);
     if (isNaN(amountNum) || amountNum <= 0 || amountNum >= maticBal) {
-        alert(`유효하지 않은 금액입니다\n잔액: ${maticBal.toFixed(4)} MATIC\n(가스비를 위해 약간의 MATIC을 남겨두세요)`);
+        showToast(`유효하지 않은 금액입니다 (잔액: ${maticBal.toFixed(4)} MATIC)`, 'error');
         return;
     }
     
-    if (!confirm(`MATIC 송금 확인\n\n받는 주소: ${toAddress}\n금액: ${amountNum} MATIC\n\n진행하시겠습니까?`)) return;
+    const confirmed = await showConfirmModal('MATIC 송금 확인', `받는 주소: ${toAddress}\n금액: ${amountNum} MATIC\n\n진행하시겠습니까?`);
+    if (!confirmed) return;
     
     try {
-        if (typeof showLoading === 'function') showLoading('MATIC 송금 중...');
+        showLoading('MATIC 송금 중...');
         
         const amountWei = web3.utils.toWei(amountNum.toString(), 'ether');
         const gasPrice = await web3.eth.getGasPrice();
@@ -423,17 +426,16 @@ async function showMaticSend() {
         const signedTx = await web3.eth.accounts.signTransaction(tx, userWallet.privateKey);
         const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
         
-        if (typeof hideLoading === 'function') hideLoading();
-        
-        alert(`✅ MATIC 송금 완료!\n\n금액: ${amountNum} MATIC\nTX: ${receipt.transactionHash.slice(0,20)}...\n\nhttps://polygonscan.com/tx/${receipt.transactionHash}`);
+        hideLoading();
+        showToast(`MATIC ${amountNum} 송금 완료!`, 'success');
         
         // 잔액 갱신
         await loadMaticBalance();
         
     } catch (error) {
-        if (typeof hideLoading === 'function') hideLoading();
+        hideLoading();
         console.error('MATIC 송금 실패:', error);
-        alert('MATIC 송금 실패: ' + error.message);
+        showToast('MATIC 송금 실패: ' + error.message, 'error');
     }
 }
 
@@ -461,6 +463,23 @@ async function getOnchainBalance(walletAddress, tokenKey) {
     } catch (error) {
         console.error(`온체인 잔액 조회 실패 (${tokenKey}):`, error);
         return 0;
+    }
+}
+
+// 전체 잔액 새로고침
+async function refreshAllBalances() {
+    if (!userWallet || !currentUser) { showToast('지갑을 먼저 연결하세요', 'warning'); return; }
+    try {
+        showLoading('잔액 새로고침 중...');
+        await loadRealBalances();
+        await loadOffchainBalances();
+        await loadMaticBalance();
+        updateBalances();
+        hideLoading();
+        showToast('잔액이 업데이트되었습니다', 'success');
+    } catch (e) {
+        hideLoading();
+        showToast('새로고침 실패: ' + e.message, 'error');
     }
 }
 

@@ -312,6 +312,7 @@
                     <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.6rem;">
                         <span style="font-size:0.7rem; background:#e3f2fd; color:#1565c0; padding:0.2rem 0.6rem; border-radius:10px; font-weight:700;">⛓ ON-CHAIN</span>
                         <span style="font-size:0.75rem; color:var(--accent);">Polygon ERC-20 · 글로벌 유동성</span>
+                        <button onclick="refreshAllBalances()" style="margin-left:auto; background:#e3f2fd; border:none; padding:0.2rem 0.5rem; border-radius:6px; cursor:pointer; font-size:0.7rem; color:#1565c0; font-weight:600;">🔄 새로고침</button>
                     </div>
                     <div class="token-balances">
                         <div class="token-card" onclick="selectToken('crny')" id="token-card-crny">
@@ -1667,24 +1668,68 @@
                 <div id="admin-tab-rate" class="admin-tab-content" style="display:none;">
                     <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                         <h3 style="margin-bottom:1rem;">⚖️ 오프체인/CRNY 교환 비율</h3>
-                        <div id="admin-rate-current" style="background:linear-gradient(135deg,#1565c0,#7B1FA2); color:white; padding:1.2rem; border-radius:10px; font-size:1.1rem; font-weight:700; text-align:center; margin-bottom:1rem;">
-                            현재 비율: 100 포인트 = 1 CRNY
-                        </div>
                         <p style="font-size:0.85rem; color:#666; margin-bottom:1rem;">
-                            비율을 변경하면 <strong>모든 브릿지 거래</strong>에 즉시 적용됩니다.<br>
+                            토큰별로 개별 비율을 설정할 수 있습니다.<br>
                             변경 시 2단계 확인이 필요하며, 모든 변경은 로그에 기록됩니다.
                         </p>
-                        <div style="display:flex; gap:0.5rem; align-items:end; margin-bottom:1rem;">
-                            <div style="flex:1;">
-                                <label style="font-size:0.8rem; color:#666;">새 비율 (포인트 = 1 CRNY)</label>
-                                <input type="number" id="admin-rate-input" value="100" min="1" max="10000" style="width:100%; padding:0.8rem; border:1px solid #ddd; border-radius:8px; font-size:1.1rem; font-weight:700; box-sizing:border-box;">
+                        
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin-bottom:1.5rem;">
+                            <div style="background:linear-gradient(135deg,#fff3e0,#ffe0b2); padding:1rem; border-radius:10px; border:1px solid #ffcc80;">
+                                <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+                                    <span style="font-size:1.2rem;">📈</span>
+                                    <strong style="font-size:0.9rem;">CRTD</strong>
+                                    <span style="font-size:0.7rem; color:#e65100;">트레이딩</span>
+                                </div>
+                                <div style="display:flex; gap:0.4rem; align-items:center;">
+                                    <input type="number" id="rate-crtd" value="100" min="1" max="10000" style="flex:1; padding:0.6rem; border:1px solid #ffcc80; border-radius:6px; font-size:1rem; font-weight:700; box-sizing:border-box;">
+                                    <span style="font-size:0.75rem; color:#666;">pt/CRNY</span>
+                                </div>
                             </div>
-                            <button onclick="requestRateChange()" style="background:#ff5722; color:white; border:none; padding:0.8rem 1.5rem; border-radius:8px; cursor:pointer; font-weight:700; white-space:nowrap;">⚖️ 비율 변경</button>
+                            <div style="background:linear-gradient(135deg,#fce4ec,#f8bbd0); padding:1rem; border-radius:10px; border:1px solid #f48fb1;">
+                                <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+                                    <span style="font-size:1.2rem;">🎭</span>
+                                    <strong style="font-size:0.9rem;">CRAC</strong>
+                                    <span style="font-size:0.7rem; color:#c2185b;">엔터테인먼트</span>
+                                </div>
+                                <div style="display:flex; gap:0.4rem; align-items:center;">
+                                    <input type="number" id="rate-crac" value="100" min="1" max="10000" style="flex:1; padding:0.6rem; border:1px solid #f48fb1; border-radius:6px; font-size:1rem; font-weight:700; box-sizing:border-box;">
+                                    <span style="font-size:0.75rem; color:#666;">pt/CRNY</span>
+                                </div>
+                            </div>
+                            <div style="background:linear-gradient(135deg,#e0f2f1,#b2dfdb); padding:1rem; border-radius:10px; border:1px solid #80cbc4;">
+                                <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+                                    <span style="font-size:1.2rem;">🛒</span>
+                                    <strong style="font-size:0.9rem;">CRGC</strong>
+                                    <span style="font-size:0.7rem; color:#00695c;">커머스</span>
+                                </div>
+                                <div style="display:flex; gap:0.4rem; align-items:center;">
+                                    <input type="number" id="rate-crgc" value="100" min="1" max="10000" style="flex:1; padding:0.6rem; border:1px solid #80cbc4; border-radius:6px; font-size:1rem; font-weight:700; box-sizing:border-box;">
+                                    <span style="font-size:0.75rem; color:#666;">pt/CRNY</span>
+                                </div>
+                            </div>
+                            <div style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9); padding:1rem; border-radius:10px; border:1px solid #81c784;">
+                                <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+                                    <span style="font-size:1.2rem;">🌱</span>
+                                    <strong style="font-size:0.9rem;">CREB</strong>
+                                    <span style="font-size:0.7rem; color:#2e7d32;">에코·바이오</span>
+                                </div>
+                                <div style="display:flex; gap:0.4rem; align-items:center;">
+                                    <input type="number" id="rate-creb" value="100" min="1" max="10000" style="flex:1; padding:0.6rem; border:1px solid #81c784; border-radius:6px; font-size:1rem; font-weight:700; box-sizing:border-box;">
+                                    <span style="font-size:0.75rem; color:#666;">pt/CRNY</span>
+                                </div>
+                            </div>
                         </div>
+                        
+                        <div style="margin-bottom:1rem;">
+                            <label style="font-size:0.8rem; color:#666; display:block; margin-bottom:0.3rem;">📝 변경 사유 (필수)</label>
+                            <input type="text" id="rate-change-reason" placeholder="비율 변경 사유를 입력하세요" style="width:100%; padding:0.7rem; border:1px solid #ddd; border-radius:8px; font-size:0.9rem; box-sizing:border-box;">
+                        </div>
+                        
+                        <button onclick="requestRateChange()" style="width:100%; background:#ff5722; color:white; border:none; padding:0.9rem; border-radius:8px; cursor:pointer; font-weight:700; font-size:1rem;">⚖️ 비율 변경</button>
                         
                         <h4 style="margin:1.5rem 0 0.8rem;">📜 변경 이력</h4>
                         <div id="admin-rate-history" style="max-height:300px; overflow-y:auto;">
-                            <p style="color:#999; font-size:0.85rem;">변경 이력이 없습니다</p>
+                            변경 이력이 없습니다
                         </div>
                     </div>
                 </div>
