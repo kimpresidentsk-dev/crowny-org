@@ -2326,7 +2326,7 @@ async function closeAllPositions(contractFilter) {
 async function executeFuturesTrade(side) {
     // console.log('🔍 executeFuturesTrade 호출:', side, 'myParticipation:', !!myParticipation, 'currentPrice:', currentPrice);
     // 더블클릭 방지 (3초) + UI 피드백
-    if (window._tradeLoading) { // console.log('⚠️ _tradeLoading 중복 차단'); showToast('⏳ 주문 처리 중...', 'warning', 1000); return; }
+    if (window._tradeLoading) { showToast('⏳ 주문 처리 중...', 'warning', 1000); return; }
     window._tradeLoading = true;
     const btns2 = ['btn-buy','btn-sell','btn-chart-buy','btn-chart-sell'].map(id => document.getElementById(id)).filter(Boolean);
     btns2.forEach(b => { b.disabled = true; b.style.opacity = '0.5'; });
@@ -2522,7 +2522,7 @@ async function executeFuturesTrade(side) {
 async function quickChartTrade(side, contractOverride) {
     // console.log('🔍 quickChartTrade 호출:', side, 'myParticipation:', !!myParticipation, 'currentPrice:', currentPrice);
     // 더블클릭 방지 (3초) + UI 피드백
-    if (window._quickTradeLoading) { // console.log('⚠️ _quickTradeLoading 중복 차단'); showToast('⏳ 주문 처리 중...', 'warning', 1000); return; }
+    if (window._quickTradeLoading) { showToast('⏳ 주문 처리 중...', 'warning', 1000); return; }
     window._quickTradeLoading = true;
     // BUY/SELL 버튼 임시 비활성화
     const btns = ['btn-buy','btn-sell','btn-chart-buy','btn-chart-sell'].map(id => document.getElementById(id)).filter(Boolean);
