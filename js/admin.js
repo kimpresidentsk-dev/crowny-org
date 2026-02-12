@@ -2355,11 +2355,11 @@ async function joinChallenge(challengeId, tierKey) {
     // CRTD 잔고 확인
     const walletDoc = await db.collection('users').doc(currentUser.uid)
         .collection('wallets').doc(currentWalletId || 'default').get();
-    const offchain = walletDoc.data()?.offchain || {};
+    const offchain = walletDoc.data()?.offchainBalances || walletDoc.data()?.offchain || {};
     const crtdBalance = offchain.crtd || 0;
     
     if (crtdBalance < tier.deposit) {
-        alert(`CRTD 잔액 부족\n\n필요: ${tier.deposit} CRTD\n보유: ${crtdBalance} CRTD\n\nCRTD는 관리자로부터 받을 수 있습니다.`);
+        showToast(`CRTD 잔액 부족 — 필요: ${tier.deposit}, 보유: ${crtdBalance}`, 'warning');
         return;
     }
     
