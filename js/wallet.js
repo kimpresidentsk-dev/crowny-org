@@ -101,13 +101,7 @@ async function displayCurrentWallet() {
             .update({ balances: { crny: 0, fnc: 0, crfn: 0 } });
     }
     
-    // Init off-chain points
-    if (!wallet.offchainBalances) {
-        userWallet.offchainBalances = { crtd: 0, crac: 0, crgc: 0, creb: 0 };
-    } else {
-        userWallet.offchainBalances = wallet.offchainBalances;
-    }
-    
+    // 오프체인은 계정(유저) 단위 — 지갑별이 아님
     await loadRealBalances();
     await loadOffchainBalances();
     await loadMaticBalance();
@@ -191,6 +185,22 @@ async function createNewWallet() {
     } catch (error) {
         console.error('Create wallet error:', error);
         showToast('지갑 생성 실패: ' + error.message, 'error');
+    }
+}
+
+async function renameCurrentWallet() {
+    const wallet = allWallets.find(w => w.id === currentWalletId);
+    if (!wallet) return;
+    const newName = await showPromptModal('✏️ 지갑 이름 변경', '새 이름을 입력하세요:', wallet.name || '');
+    if (!newName || !newName.trim()) return;
+    try {
+        await db.collection('users').doc(currentUser.uid)
+            .collection('wallets').doc(currentWalletId).update({ name: newName.trim() });
+        wallet.name = newName.trim();
+        showToast('✅ 지갑 이름 변경 완료', 'success');
+        await loadUserWallet();
+    } catch (e) {
+        showToast('이름 변경 실패: ' + e.message, 'error');
     }
 }
 
