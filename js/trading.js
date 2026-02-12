@@ -287,6 +287,17 @@ function updateCRTDDisplay() {
     const el = document.getElementById('crtd-balance-display');
     if (!el) return;
     
+    // offchainBalances가 아직 로드 안 됐으면 DB에서 직접 로드
+    if (currentUser && (!userWallet?.offchainBalances || userWallet.offchainBalances.crtd === undefined)) {
+        db.collection('users').doc(currentUser.uid).get().then(doc => {
+            const data = doc.data() || {};
+            if (!userWallet) userWallet = {};
+            userWallet.offchainBalances = data.offchainBalances || { crtd: 0, crac: 0, crgc: 0, creb: 0 };
+            updateCRTDDisplay(); // 재호출
+        }).catch(() => {});
+        return;
+    }
+    
     const pnl = cfg.totalPnL;
     const withdrawable = getWithdrawableCRTD();
     const totalWithdrawn = cfg.withdrawn;
