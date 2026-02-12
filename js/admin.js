@@ -2299,8 +2299,8 @@ async function showCreateChallenge() {
                     <h4 style="margin-bottom:0.8rem;">💎 CRTD 티어 설정</h4>
                     <p style="font-size:0.75rem; color:var(--accent); margin-bottom:0.8rem;">사용하지 않을 티어는 참가비를 0으로 설정</p>
                     
-                    <div style="overflow-x:auto;">
-                        <table style="width:100%; border-collapse:collapse; font-size:0.82rem;">
+                    <div style="overflow-x:auto; -webkit-overflow-scrolling:touch; max-width:100%;">
+                        <table style="min-width:580px; border-collapse:collapse; font-size:0.82rem;">
                             <thead>
                                 <tr style="background:var(--bg);">
                                     <th style="padding:0.4rem; text-align:left;">티어</th>
