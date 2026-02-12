@@ -139,12 +139,16 @@ async function loadContacts() {
         contactItem.className = 'contact-item';
         contactItem.innerHTML = `
             <div class="chat-avatar">👤</div>
-            <div class="contact-info">
+            <div class="contact-info" style="flex:1;">
                 <strong style="font-size:0.95rem;">${contact.name}</strong>
                 <p style="font-size:0.75rem; margin:0.2rem 0;">${contact.email}</p>
                 ${walletAddr ? `<p style="font-size:0.7rem; color:var(--accent); margin:0;">💳 ${walletAddr}</p>` : ''}
             </div>
-            <button onclick='startChatWithContact("${contact.email}")' class="btn-chat">채팅</button>
+            <div style="display:flex; gap:0.3rem; flex-direction:column;">
+                <button onclick='startChatWithContact("${contact.email}")' class="btn-chat" style="font-size:0.8rem; padding:0.4rem 0.6rem;">채팅</button>
+                <button onclick='editContact("${doc.id}", "${contact.name}")' style="background:none; border:1px solid #ddd; border-radius:4px; padding:0.2rem 0.5rem; font-size:0.7rem; cursor:pointer; color:#666;">✏️</button>
+                <button onclick='deleteContact("${doc.id}", "${contact.name}")' style="background:none; border:1px solid #fcc; border-radius:4px; padding:0.2rem 0.5rem; font-size:0.7rem; cursor:pointer; color:#c00;">🗑️</button>
+            </div>
         `;
         contactList.appendChild(contactItem);
     }
@@ -727,6 +731,35 @@ async function likePost(postId, currentLikes) {
         await loadSocialFeed();
     } catch (error) {
         console.error('Like error:', error);
+    }
+}
+
+// ========== 연락처 편집/삭제 ==========
+async function editContact(contactDocId, currentName) {
+    const newName = prompt('연락처 이름 변경:', currentName);
+    if (!newName || newName.trim() === currentName) return;
+    
+    try {
+        await db.collection('users').doc(currentUser.uid)
+            .collection('contacts').doc(contactDocId)
+            .update({ name: newName.trim() });
+        alert('✅ 연락처 이름이 변경되었습니다');
+        loadContacts();
+    } catch (error) {
+        alert('변경 실패: ' + error.message);
+    }
+}
+
+async function deleteContact(contactDocId, contactName) {
+    if (!confirm(`"${contactName}" 연락처를 삭제하시겠습니까?`)) return;
+    
+    try {
+        await db.collection('users').doc(currentUser.uid)
+            .collection('contacts').doc(contactDocId).delete();
+        alert('✅ 연락처가 삭제되었습니다');
+        loadContacts();
+    } catch (error) {
+        alert('삭제 실패: ' + error.message);
     }
 }
 

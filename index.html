@@ -95,15 +95,41 @@
                 <input type="email" id="login-email" placeholder="이메일" class="input">
                 <input type="password" id="login-password" placeholder="비밀번호" class="input">
                 <button onclick="login()" class="btn-primary">로그인</button>
-                <p>계정이 없으신가요? <a href="#" onclick="showSignup()">회원가입</a></p>
+                <div style="display:flex; align-items:center; gap:0.5rem; margin:1rem 0;">
+                    <hr style="flex:1; border:none; border-top:1px solid #ddd;">
+                    <span style="color:#888; font-size:0.85rem;">또는</span>
+                    <hr style="flex:1; border:none; border-top:1px solid #ddd;">
+                </div>
+                <button onclick="loginWithGoogle()" class="btn-google" style="background:#fff; color:#333; border:1px solid #ddd; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-size:0.95rem; display:flex; align-items:center; justify-content:center; gap:0.5rem;">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width:18px; height:18px;"> Google로 로그인
+                </button>
+                <p style="margin-top:1rem;">계정이 없으신가요? <a href="#" onclick="showSignup()">회원가입</a></p>
+                <p><a href="#" onclick="resetPassword()" style="font-size:0.85rem; color:#888;">비밀번호를 잊으셨나요?</a></p>
             </div>
             
             <div id="signup-form" class="auth-form" style="display:none;">
                 <h3>회원가입</h3>
                 <input type="email" id="signup-email" placeholder="이메일" class="input">
                 <input type="password" id="signup-password" placeholder="비밀번호 (6자 이상)" class="input">
+                <div id="password-strength" style="font-size:0.75rem; margin-top:-0.3rem; margin-bottom:0.5rem;"></div>
                 <button onclick="signup()" class="btn-primary">가입하기</button>
-                <p>이미 계정이 있으신가요? <a href="#" onclick="showLogin()">로그인</a></p>
+                <div style="display:flex; align-items:center; gap:0.5rem; margin:1rem 0;">
+                    <hr style="flex:1; border:none; border-top:1px solid #ddd;">
+                    <span style="color:#888; font-size:0.85rem;">또는</span>
+                    <hr style="flex:1; border:none; border-top:1px solid #ddd;">
+                </div>
+                <button onclick="loginWithGoogle()" class="btn-google" style="background:#fff; color:#333; border:1px solid #ddd; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-size:0.95rem; display:flex; align-items:center; justify-content:center; gap:0.5rem;">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width:18px; height:18px;"> Google로 가입
+                </button>
+                <p style="margin-top:1rem;">이미 계정이 있으신가요? <a href="#" onclick="showLogin()">로그인</a></p>
+            </div>
+            
+            <!-- 이메일 인증 안내 -->
+            <div id="verify-email-form" class="auth-form" style="display:none;">
+                <h3>📧 이메일 인증</h3>
+                <p style="color:#666; margin-bottom:1rem;">가입하신 이메일로 인증 링크를 보냈습니다.<br>인증 후 아래 버튼을 눌러주세요.</p>
+                <button onclick="checkEmailVerified()" class="btn-primary">✅ 인증 완료 확인</button>
+                <button onclick="resendVerification()" style="background:none; border:1px solid #ddd; padding:0.5rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.5rem; color:#666;">인증 메일 재발송</button>
             </div>
         </div>
     </div>
@@ -1616,6 +1642,81 @@
 
     </main>
 
+    <!-- 토스트 알림 컨테이너 -->
+    <div id="toast-container" style="position:fixed; top:20px; right:20px; z-index:99999; display:flex; flex-direction:column; gap:8px; pointer-events:none;"></div>
+    
+    <!-- 로딩 오버레이 -->
+    <div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:99998; align-items:center; justify-content:center;">
+        <div style="background:white; padding:2rem; border-radius:12px; text-align:center;">
+            <div style="width:40px; height:40px; border:4px solid #ddd; border-top:4px solid #0066cc; border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 1rem;"></div>
+            <p id="loading-text" style="color:#333;">처리 중...</p>
+        </div>
+    </div>
+    
+    <!-- 범용 확인 모달 -->
+    <div id="confirm-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); z-index:99997; align-items:center; justify-content:center; padding:1rem;">
+        <div style="background:white; padding:1.5rem; border-radius:12px; max-width:400px; width:100%;">
+            <h3 id="confirm-title" style="margin-bottom:0.8rem;"></h3>
+            <p id="confirm-message" style="color:#666; margin-bottom:1.2rem; white-space:pre-line;"></p>
+            <div style="display:flex; gap:0.5rem;">
+                <button id="confirm-cancel" onclick="closeConfirmModal(false)" style="flex:1; padding:0.7rem; border:1px solid #ddd; border-radius:8px; cursor:pointer; background:white;">취소</button>
+                <button id="confirm-ok" onclick="closeConfirmModal(true)" style="flex:1; padding:0.7rem; border:none; border-radius:8px; cursor:pointer; background:#0066cc; color:white; font-weight:700;">확인</button>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes slideIn { from { transform: translateX(100%); opacity:0; } to { transform: translateX(0); opacity:1; } }
+        @keyframes fadeOut { from { opacity:1; } to { opacity:0; transform:translateY(-10px); } }
+        .toast { pointer-events:auto; padding:0.8rem 1.2rem; border-radius:8px; color:white; font-size:0.9rem; box-shadow:0 4px 12px rgba(0,0,0,0.15); animation: slideIn 0.3s ease; max-width:350px; }
+        .toast.success { background:#4CAF50; }
+        .toast.error { background:#f44336; }
+        .toast.info { background:#2196F3; }
+        .toast.warning { background:#ff9800; }
+        .toast.fadeout { animation: fadeOut 0.3s ease forwards; }
+    </style>
+    
+    <script>
+    // ===== 토스트 알림 시스템 =====
+    function showToast(message, type = 'info', duration = 3000) {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.classList.add('fadeout');
+            setTimeout(() => toast.remove(), 300);
+        }, duration);
+    }
+    
+    // ===== 로딩 오버레이 =====
+    function showLoading(text = '처리 중...') {
+        const overlay = document.getElementById('loading-overlay');
+        document.getElementById('loading-text').textContent = text;
+        overlay.style.display = 'flex';
+    }
+    function hideLoading() {
+        document.getElementById('loading-overlay').style.display = 'none';
+    }
+    
+    // ===== 확인 모달 (alert/confirm 대체) =====
+    let _confirmResolve = null;
+    function showConfirmModal(title, message) {
+        return new Promise((resolve) => {
+            _confirmResolve = resolve;
+            document.getElementById('confirm-title').textContent = title;
+            document.getElementById('confirm-message').textContent = message;
+            document.getElementById('confirm-modal').style.display = 'flex';
+        });
+    }
+    function closeConfirmModal(result) {
+        document.getElementById('confirm-modal').style.display = 'none';
+        if (_confirmResolve) { _confirmResolve(result); _confirmResolve = null; }
+    }
+    </script>
+    
     <!-- ===== CROWNY v9.5 모듈화 JS (로드 순서 중요!) ===== -->
     <script src="js/config.js?v=10.0"></script>
     <script src="js/ui.js?v=9.5"></script>
