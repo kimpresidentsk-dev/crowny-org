@@ -1,4 +1,4 @@
-// ===== social.js - 유저데이터, 레퍼럴, 메신저, 소셜피드 (v2.0 Instagram-style) =====
+// ===== social.js - 유저데이터, 레퍼럴, 메신저, 소셜피드 (v14.0 Major Upgrade) =====
 
 // Truncate wallet addresses (0x...) in text
 function truncateWalletAddresses(text) {
@@ -9,25 +9,53 @@ function truncateWalletAddresses(text) {
 // ========== USER PROFILE MANAGEMENT ==========
 async function loadUserData() {
     if (!currentUser) return;
+    updatePresence(true);
+    startPresenceHeartbeat();
     loadMessages();
     loadSocialFeed();
     loadReferralInfo();
+}
+
+// ========== ONLINE PRESENCE ==========
+let presenceInterval = null;
+
+async function updatePresence(isOnline) {
+    if (!currentUser) return;
+    try {
+        await db.collection('users').doc(currentUser.uid).update({
+            isOnline: isOnline,
+            lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+        });
+    } catch (e) { console.warn('Presence update failed:', e); }
+}
+
+function startPresenceHeartbeat() {
+    if (presenceInterval) clearInterval(presenceInterval);
+    presenceInterval = setInterval(() => updatePresence(true), 5 * 60 * 1000);
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') updatePresence(false);
+        else updatePresence(true);
+    });
+    window.addEventListener('beforeunload', () => updatePresence(false));
 }
 
 // Get user display info (nickname + photo)
 async function getUserDisplayInfo(uid) {
     try {
         const doc = await db.collection('users').doc(uid).get();
-        if (!doc.exists) return { nickname: t('social.unknown','알 수 없음'), photoURL: '', email: '' };
+        if (!doc.exists) return { nickname: t('social.unknown','알 수 없음'), photoURL: '', email: '', isOnline: false, lastSeen: null };
         const data = doc.data();
         return {
             nickname: data.nickname || data.displayName || data.email?.split('@')[0] || t('social.user','사용자'),
             photoURL: data.photoURL || '',
             email: data.email || '',
-            statusMessage: data.statusMessage || ''
+            statusMessage: data.statusMessage || '',
+            isOnline: data.isOnline || false,
+            lastSeen: data.lastSeen?.toDate?.() || null
         };
     } catch (e) {
-        return { nickname: t('social.unknown','알 수 없음'), photoURL: '', email: '' };
+        return { nickname: t('social.unknown','알 수 없음'), photoURL: '', email: '', isOnline: false, lastSeen: null };
     }
 }
 
@@ -40,6 +68,10 @@ function avatarHTML(photoURL, nickname, size = 40) {
     const color = colors[(nickname || '').charCodeAt(0) % colors.length];
     const initial = (nickname || '?').charAt(0).toUpperCase();
     return `<div style="width:${size}px; height:${size}px; border-radius:50%; background:${color}; display:flex; align-items:center; justify-content:center; font-size:${size*0.45}px; font-weight:700; color:white; flex-shrink:0;">${initial}</div>`;
+}
+
+function onlineDotHTML(isOnline) {
+    return `<span class="online-dot ${isOnline ? 'online' : 'offline'}"></span>`;
 }
 
 // Show profile edit modal
@@ -124,7 +156,6 @@ async function saveProfile() {
         showToast(t('social.profile_saved','✅ 프로필 저장 완료!'), 'success');
         document.getElementById('profile-edit-modal')?.remove();
 
-        // Update sidebar user info
         const userInfoEl = document.getElementById('user-email');
         if (userInfoEl) userInfoEl.textContent = nickname;
     } catch (e) {
@@ -162,7 +193,6 @@ async function loadReferralInfo() {
         if (!userDoc.exists) return;
         const data = userDoc.data();
         
-        // 소개코드 표시: "닉네임 (CR-XXXXXX)"
         const codeEl = document.getElementById('my-referral-code');
         if (codeEl) {
             if (data.referralCode) {
@@ -173,14 +203,12 @@ async function loadReferralInfo() {
             }
         }
         
-        // 소개 닉네임 편집 버튼 표시
         const nickEditEl = document.getElementById('referral-nick-edit');
         if (nickEditEl) nickEditEl.style.display = data.referralCode ? 'inline-block' : 'none';
         
         const countEl = document.getElementById('my-referral-count');
         if (countEl) countEl.textContent = `${data.referralCount || 0}명`;
         
-        // 7개 토큰별 누적 보상
         const earnings = data.referralEarnings || {};
         const tokenKeys = ['crny','fnc','crfn','crtd','crac','crgc','creb'];
         for (const tk of tokenKeys) {
@@ -188,7 +216,6 @@ async function loadReferralInfo() {
             if (el) el.textContent = earnings[tk] || 0;
         }
         
-        // 대기 중 보상 (pendingRewards)
         const pendingEl = document.getElementById('referral-pending-rewards');
         if (pendingEl) {
             try {
@@ -208,7 +235,6 @@ async function loadReferralInfo() {
             }
         }
 
-        // Update sidebar with nickname
         const userInfoEl = document.getElementById('user-email');
         if (userInfoEl) userInfoEl.textContent = data.nickname || data.email;
     } catch (error) {
@@ -216,7 +242,6 @@ async function loadReferralInfo() {
     }
 }
 
-// 소개 닉네임 변경
 async function editReferralNickname() {
     if (!currentUser) return;
     const userDoc = await db.collection('users').doc(currentUser.uid).get();
@@ -252,6 +277,10 @@ async function copyReferralCode() {
 let currentChat = null;
 let currentChatOtherId = null;
 let chatUnsubscribe = null;
+let chatDocUnsubscribe = null;
+let typingTimeout = null;
+let cachedChatDocs = [];
+let msgLongPressTimer = null;
 
 function showChats() {
     document.querySelectorAll('.sidebar-tabs .tab-btn').forEach(b => b.classList.remove('active'));
@@ -268,22 +297,88 @@ function showContacts() {
     loadContacts();
 }
 
+// ===== Contact Add Modal (email + nickname search) =====
 async function showAddContactModal() {
-    const email = await showPromptModal(t('social.add_contact','연락처 추가'), t('social.contact_email','추가할 연락처 이메일'), '');
-    if (!email) return;
-    const users = await db.collection('users').where('email', '==', email).get();
-    if (users.empty) { showToast(t('social.user_not_found','사용자를 찾을 수 없습니다'), 'error'); return; }
-    const userId = users.docs[0].id;
-    const userData = users.docs[0].data();
-    const name = userData.nickname || userData.displayName || email;
-    await db.collection('users').doc(currentUser.uid)
-        .collection('contacts').doc(userId).set({
-            email: email,
-            name: name,
-            addedAt: new Date()
-        });
-    showToast(t('social.contact_added','✅ 연락처에 추가되었습니다'), 'success');
-    loadContacts();
+    const overlay = document.createElement('div');
+    overlay.id = 'add-contact-modal';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+    overlay.innerHTML = `
+    <div style="background:white;padding:1.5rem;border-radius:16px;max-width:420px;width:100%;">
+        <h3 style="margin-bottom:1rem;">${t('social.add_contact','➕ 연락처 추가')}</h3>
+        <div style="display:flex;gap:0.5rem;margin-bottom:0.8rem;">
+            <input type="text" id="contact-search-input" placeholder="${t('social.search_email_nick','이메일 또는 닉네임 검색')}" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;">
+            <button onclick="searchContactUsers()" style="padding:0.7rem 1rem;border:none;border-radius:8px;background:#1a1a2e;color:white;font-weight:600;cursor:pointer;">${t('social.search','검색')}</button>
+        </div>
+        <div id="contact-search-results" style="max-height:300px;overflow-y:auto;"></div>
+        <div style="margin-top:1rem;text-align:right;">
+            <button onclick="document.getElementById('add-contact-modal').remove()" style="padding:0.5rem 1rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">${t('common.cancel','취소')}</button>
+        </div>
+    </div>`;
+    document.body.appendChild(overlay);
+    document.getElementById('contact-search-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') searchContactUsers();
+    });
+    document.getElementById('contact-search-input').focus();
+}
+
+async function searchContactUsers() {
+    const query = document.getElementById('contact-search-input').value.trim();
+    const resultsDiv = document.getElementById('contact-search-results');
+    if (!query) { resultsDiv.innerHTML = `<p style="text-align:center;color:#999;font-size:0.85rem;">${t('social.enter_search','검색어를 입력하세요')}</p>`; return; }
+
+    resultsDiv.innerHTML = '<p style="text-align:center;color:var(--accent);">🔍 검색 중...</p>';
+
+    try {
+        const results = new Map();
+
+        // Search by email
+        const emailSnap = await db.collection('users').where('email', '==', query).get();
+        emailSnap.forEach(doc => results.set(doc.id, doc));
+
+        // Search by nickname (prefix match)
+        const nickSnap = await db.collection('users')
+            .where('nickname', '>=', query)
+            .where('nickname', '<=', query + '\uf8ff')
+            .limit(10).get();
+        nickSnap.forEach(doc => results.set(doc.id, doc));
+
+        resultsDiv.innerHTML = '';
+        if (results.size === 0) {
+            resultsDiv.innerHTML = `<p style="text-align:center;color:#999;font-size:0.85rem;">${t('social.no_results','검색 결과가 없습니다')}</p>`;
+            return;
+        }
+
+        for (const [uid, doc] of results) {
+            if (uid === currentUser.uid) continue;
+            const data = doc.data();
+            const nick = data.nickname || data.email?.split('@')[0] || '사용자';
+            const el = document.createElement('div');
+            el.style.cssText = 'display:flex;align-items:center;gap:0.8rem;padding:0.7rem;border-bottom:1px solid #eee;';
+            el.innerHTML = `
+                ${avatarHTML(data.photoURL, nick, 40)}
+                <div style="flex:1;min-width:0;">
+                    <strong style="font-size:0.9rem;">${nick}</strong> ${onlineDotHTML(data.isOnline)}
+                    <p style="font-size:0.75rem;color:#999;margin:0;">${data.email || ''}</p>
+                </div>
+                <button onclick="addContactFromSearch('${uid}','${(data.email||'').replace(/'/g,"\\'")}','${nick.replace(/'/g,"\\'")}')" style="padding:0.4rem 0.8rem;border:none;border-radius:6px;background:#1a1a2e;color:white;font-size:0.8rem;cursor:pointer;">추가</button>`;
+            resultsDiv.appendChild(el);
+        }
+    } catch (e) {
+        resultsDiv.innerHTML = `<p style="color:red;text-align:center;">${e.message}</p>`;
+    }
+}
+
+async function addContactFromSearch(uid, email, name) {
+    try {
+        await db.collection('users').doc(currentUser.uid)
+            .collection('contacts').doc(uid).set({ email, name, addedAt: new Date() });
+        showToast(t('social.contact_added','✅ 연락처에 추가되었습니다'), 'success');
+        document.getElementById('add-contact-modal')?.remove();
+        loadContacts();
+    } catch (e) {
+        showToast(t('social.add_fail','추가 실패: ') + e.message, 'error');
+    }
 }
 
 async function loadContacts() {
@@ -308,10 +403,13 @@ async function loadContacts() {
         const contactItem = document.createElement('div');
         contactItem.className = 'contact-item';
         contactItem.innerHTML = `
-            ${avatarHTML(info.photoURL, info.nickname, 44)}
+            <div style="position:relative;">
+                ${avatarHTML(info.photoURL, info.nickname, 44)}
+                <span class="online-dot ${info.isOnline ? 'online' : 'offline'}" style="position:absolute;bottom:0;right:0;"></span>
+            </div>
             <div class="contact-info" style="flex:1;min-width:0;overflow:hidden;">
                 <strong style="font-size:0.95rem;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${info.nickname}</strong>
-                <p style="font-size:0.7rem; margin:0.1rem 0; color:var(--accent); opacity:0.7; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${info.statusMessage || ''}</p>
+                <p style="font-size:0.7rem; margin:0.1rem 0; color:var(--accent); opacity:0.7; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${info.statusMessage || (info.lastSeen ? getTimeAgo(info.lastSeen) : '')}</p>
             </div>
             <div style="display:flex; gap:0.3rem; flex-direction:column;">
                 <button onclick='startChatWithContact("${contact.email}")' class="btn-chat" style="font-size:0.8rem; padding:0.4rem 0.6rem;">${t('social.chat','채팅')}</button>
@@ -356,7 +454,8 @@ async function startNewChat(otherEmail) {
         if (!chatId) {
             const newChat = await db.collection('chats').add({
                 participants: [currentUser.uid, otherId],
-                lastMessage: '', lastMessageTime: new Date(), createdAt: new Date()
+                lastMessage: '', lastMessageTime: new Date(), createdAt: new Date(),
+                unreadCount: {}, typing: {}
             });
             chatId = newChat.id;
         }
@@ -368,6 +467,35 @@ async function startNewChat(otherEmail) {
     }
 }
 
+// ===== Chat list search (filter) =====
+function filterChatList(query) {
+    const items = document.querySelectorAll('#chat-list .chat-item');
+    const q = query.toLowerCase();
+    items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(q) ? '' : 'none';
+    });
+}
+
+// ===== Format message time =====
+function formatMsgTime(date) {
+    if (!date) return '';
+    const h = date.getHours();
+    const m = date.getMinutes().toString().padStart(2, '0');
+    const ampm = h < 12 ? '오전' : '오후';
+    const h12 = h % 12 || 12;
+    return `${ampm} ${h12}:${m}`;
+}
+
+function formatDateLabel(date) {
+    const y = date.getFullYear();
+    const m = date.getMonth() + 1;
+    const d = date.getDate();
+    const days = ['일','월','화','수','목','금','토'];
+    return `${y}년 ${m}월 ${d}일 ${days[date.getDay()]}요일`;
+}
+
+// ===== Load chat list =====
 async function loadMessages() {
     if (!currentUser) return;
     const chatList = document.getElementById('chat-list');
@@ -376,41 +504,87 @@ async function loadMessages() {
     const chats = await db.collection('chats').where('participants', 'array-contains', currentUser.uid).get();
     if (chats.empty) { chatList.innerHTML = `<p style="padding:1rem; color:var(--accent); text-align:center;">${t('social.start_chat','채팅을 시작하세요')}</p>`; return; }
 
-    const chatDocs = chats.docs.sort((a, b) => {
+    cachedChatDocs = chats.docs.sort((a, b) => {
         const aTime = a.data().lastMessageTime?.toMillis?.() || 0;
         const bTime = b.data().lastMessageTime?.toMillis?.() || 0;
         return bTime - aTime;
     });
 
-    for (const doc of chatDocs) {
+    for (const doc of cachedChatDocs) {
         const chat = doc.data();
         const otherId = chat.participants.find(id => id !== currentUser.uid);
         const info = await getUserDisplayInfo(otherId);
+        const unread = (chat.unreadCount && chat.unreadCount[currentUser.uid]) || 0;
+        const lastTime = chat.lastMessageTime?.toDate?.();
+
         const chatItem = document.createElement('div');
         chatItem.className = 'chat-item';
+        chatItem.dataset.chatId = doc.id;
         chatItem.onclick = () => openChat(doc.id, otherId);
         chatItem.innerHTML = `
-            ${avatarHTML(info.photoURL, info.nickname, 44)}
-            <div class="chat-preview">
-                <strong>${info.nickname}</strong>
-                <p>${chat.lastMessage || t('social.no_messages','메시지 없음')}</p>
+            <div style="position:relative;">
+                ${avatarHTML(info.photoURL, info.nickname, 44)}
+                <span class="online-dot ${info.isOnline ? 'online' : 'offline'}" style="position:absolute;bottom:0;right:0;"></span>
+            </div>
+            <div class="chat-preview" style="flex:1;min-width:0;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <strong>${info.nickname}</strong>
+                    ${lastTime ? `<span class="chat-time">${getTimeAgo(lastTime)}</span>` : ''}
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <p style="flex:1;min-width:0;">${chat.lastMessage || t('social.no_messages','메시지 없음')}</p>
+                    ${unread > 0 ? `<span class="unread-badge">${unread > 99 ? '99+' : unread}</span>` : ''}
+                </div>
             </div>`;
         chatList.appendChild(chatItem);
     }
 }
 
+// ===== Open chat =====
 async function openChat(chatId, otherId) {
     if (chatUnsubscribe) chatUnsubscribe();
+    if (chatDocUnsubscribe) chatDocUnsubscribe();
     currentChat = chatId;
     currentChatOtherId = otherId;
+
+    // Mobile: show chat window
+    const container = document.getElementById('messenger-container');
+    if (container) container.classList.add('chat-open');
+
     const info = await getUserDisplayInfo(otherId);
     document.getElementById('chat-username').innerHTML = `
         <div style="display:flex;align-items:center;gap:0.5rem;">
             ${avatarHTML(info.photoURL, info.nickname, 32)}
-            <div><strong>${info.nickname}</strong>${info.statusMessage ? `<div style="font-size:0.7rem;color:var(--accent);">${info.statusMessage}</div>` : ''}</div>
+            <div>
+                <strong>${info.nickname}</strong> ${onlineDotHTML(info.isOnline)}
+                ${info.statusMessage ? `<div style="font-size:0.7rem;color:var(--accent);">${info.statusMessage}</div>` : ''}
+            </div>
         </div>`;
-    document.querySelector('.chat-window').style.display = 'flex';
+    document.getElementById('chat-header-actions').style.display = 'flex';
+    document.getElementById('chat-input-area').style.display = 'flex';
 
+    // Mark my unread as 0
+    try {
+        await db.collection('chats').doc(chatId).update({
+            [`unreadCount.${currentUser.uid}`]: 0
+        });
+    } catch (e) { /* ignore */ }
+
+    // Update chat list badge
+    const chatItemEl = document.querySelector(`.chat-item[data-chat-id="${chatId}"] .unread-badge`);
+    if (chatItemEl) chatItemEl.remove();
+
+    // Listen for typing indicator from chat doc
+    chatDocUnsubscribe = db.collection('chats').doc(chatId).onSnapshot((snap) => {
+        const data = snap.data();
+        if (!data) return;
+        const typing = data.typing || {};
+        const otherTyping = typing[otherId];
+        const indicator = document.getElementById('typing-indicator');
+        if (indicator) indicator.style.display = otherTyping ? 'flex' : 'none';
+    });
+
+    // Listen for messages
     chatUnsubscribe = db.collection('chats').doc(chatId)
         .collection('messages').orderBy('timestamp')
         .onSnapshot(async (snapshot) => {
@@ -419,51 +593,205 @@ async function openChat(chatId, otherId) {
             if (snapshot.empty) {
                 messagesDiv.innerHTML = `<p style="text-align:center; color:var(--accent); padding:2rem;">${t('social.send_first','메시지를 보내보세요!')}</p>`;
             }
-            // Cache sender info
             const senderCache = {};
+            let lastDateStr = '';
+
+            // Mark unread messages as read
+            const unreadDocs = [];
             for (const doc of snapshot.docs) {
                 const msg = doc.data();
+                if (msg.senderId !== currentUser.uid && !(msg.readBy || []).includes(currentUser.uid)) {
+                    unreadDocs.push(doc.ref);
+                }
+            }
+            // Batch mark as read
+            if (unreadDocs.length > 0) {
+                const batch = db.batch();
+                for (const ref of unreadDocs) {
+                    batch.update(ref, { readBy: firebase.firestore.FieldValue.arrayUnion(currentUser.uid) });
+                }
+                batch.commit().catch(() => {});
+            }
+
+            for (const doc of snapshot.docs) {
+                const msg = doc.data();
+                const msgId = doc.id;
                 const isMine = msg.senderId === currentUser.uid;
+                const timestamp = msg.timestamp?.toDate?.() || new Date();
+
+                // Date separator
+                const dateStr = formatDateLabel(timestamp);
+                if (dateStr !== lastDateStr) {
+                    lastDateStr = dateStr;
+                    const sep = document.createElement('div');
+                    sep.className = 'date-separator';
+                    sep.innerHTML = `<span>${dateStr}</span>`;
+                    messagesDiv.appendChild(sep);
+                }
+
                 if (!senderCache[msg.senderId]) senderCache[msg.senderId] = await getUserDisplayInfo(msg.senderId);
                 const senderInfo = senderCache[msg.senderId];
 
                 const msgEl = document.createElement('div');
                 msgEl.style.cssText = `display:flex;gap:0.5rem;margin-bottom:0.5rem;${isMine ? 'flex-direction:row-reverse;' : ''}`;
+                msgEl.dataset.msgId = msgId;
 
+                // Build content
                 let content = '';
-                if (msg.imageUrl) {
-                    content += `<img src="${msg.imageUrl}" style="max-width:200px;border-radius:8px;cursor:pointer;display:block;margin-bottom:0.3rem;" onclick="window.open('${msg.imageUrl}','_blank')">`;
+                if (msg.deleted) {
+                    content = `<span class="msg-deleted">🚫 ${t('social.msg_deleted','이 메시지는 삭제되었습니다')}</span>`;
+                } else {
+                    if (msg.imageUrl) {
+                        content += `<img src="${msg.imageUrl}" style="max-width:200px;border-radius:8px;cursor:pointer;display:block;margin-bottom:0.3rem;" onclick="window.open('${msg.imageUrl}','_blank')">`;
+                    }
+                    if (msg.tokenAmount) {
+                        content += `<div style="background:linear-gradient(135deg,#FFD700,#FFA000);color:#333;padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
+                    }
+                    if (msg.text) content += `<span>${msg.text}</span>`;
                 }
-                if (msg.tokenAmount) {
-                    content += `<div style="background:linear-gradient(135deg,#FFD700,#FFA000);color:#333;padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
+
+                // Read receipt for my messages
+                let readReceipt = '';
+                if (isMine && !msg.deleted) {
+                    const readBy = msg.readBy || [];
+                    const isRead = readBy.includes(otherId);
+                    readReceipt = `<span class="msg-read-receipt ${isRead ? 'read' : 'sent'}">${isRead ? '✓✓' : '✓'}</span>`;
                 }
-                if (msg.text) content += `<span>${msg.text}</span>`;
+
+                // Reactions display
+                let reactionsHTML = '';
+                if (msg.reactions && !msg.deleted) {
+                    const entries = Object.entries(msg.reactions);
+                    if (entries.length > 0) {
+                        reactionsHTML = '<div class="msg-reactions">';
+                        for (const [emoji, uids] of entries) {
+                            if (!uids || uids.length === 0) continue;
+                            const isMineReaction = uids.includes(currentUser.uid);
+                            reactionsHTML += `<span class="msg-reaction-chip ${isMineReaction ? 'mine' : ''}" onclick="toggleReaction('${msgId}','${emoji}')">${emoji} ${uids.length > 1 ? uids.length : ''}</span>`;
+                        }
+                        reactionsHTML += '</div>';
+                    }
+                }
+
+                // Action buttons (reaction + delete)
+                let actionsHTML = '';
+                if (!msg.deleted) {
+                    const side = isMine ? 'left' : 'right';
+                    actionsHTML = `<div class="msg-actions-bar ${side}" id="actions-${msgId}">`;
+                    actionsHTML += `<button class="msg-action-btn" onclick="showReactionPicker('${msgId}')">😊</button>`;
+                    if (isMine) actionsHTML += `<button class="msg-action-btn" onclick="deleteMessage('${msgId}')">🗑️</button>`;
+                    actionsHTML += '</div>';
+                }
 
                 msgEl.innerHTML = `
                     ${!isMine ? avatarHTML(senderInfo.photoURL, senderInfo.nickname, 28) : ''}
-                    <div style="max-width:70%;">
+                    <div style="max-width:70%;" class="msg-actions-wrapper"
+                        ontouchstart="msgTouchStart('${msgId}')" ontouchend="msgTouchEnd()" ontouchmove="msgTouchEnd()">
                         ${!isMine ? `<div style="font-size:0.7rem;color:var(--accent);margin-bottom:0.15rem;">${senderInfo.nickname}</div>` : ''}
+                        ${actionsHTML}
                         <div style="background:${isMine ? 'var(--text)' : '#f0f0f0'};color:${isMine ? 'white' : 'var(--text)'};padding:0.6rem 0.8rem;border-radius:${isMine ? '12px 12px 0 12px' : '12px 12px 12px 0'};word-break:break-word;font-size:0.9rem;line-height:1.4;">${content}</div>
+                        ${reactionsHTML}
+                        <div class="msg-time" style="${isMine ? 'justify-content:flex-end;' : ''}">${formatMsgTime(timestamp)}${readReceipt}</div>
                     </div>`;
                 messagesDiv.appendChild(msgEl);
             }
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         });
+
+    // Setup textarea typing events
+    setupTypingListener();
 }
 
+// ===== Mobile: close chat, back to list =====
+function closeChatMobile() {
+    const container = document.getElementById('messenger-container');
+    if (container) container.classList.remove('chat-open');
+    if (chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
+    if (chatDocUnsubscribe) { chatDocUnsubscribe(); chatDocUnsubscribe = null; }
+    currentChat = null;
+    currentChatOtherId = null;
+}
+
+// ===== Typing indicator =====
+function setupTypingListener() {
+    const input = document.getElementById('message-input');
+    if (!input) return;
+    input.removeEventListener('input', handleTypingInput);
+    input.addEventListener('input', handleTypingInput);
+}
+
+function handleTypingInput() {
+    if (!currentChat || !currentUser) return;
+    setTyping(true);
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(() => setTyping(false), 3000);
+}
+
+function setTyping(val) {
+    if (!currentChat) return;
+    db.collection('chats').doc(currentChat).update({
+        [`typing.${currentUser.uid}`]: val
+    }).catch(() => {});
+}
+
+// ===== Message input: Enter to send, Shift+Enter for newline =====
+document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('keydown', (e) => {
+        const input = document.getElementById('message-input');
+        if (!input || e.target !== input) return;
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+});
+
+// Auto-resize textarea
+document.addEventListener('input', (e) => {
+    if (e.target.id === 'message-input' && e.target.tagName === 'TEXTAREA') {
+        e.target.style.height = 'auto';
+        e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
+    }
+});
+
+// ===== Send message =====
 async function sendMessage() {
     if (!currentChat) { showToast(t('social.select_chat','채팅을 선택하세요'), 'warning'); return; }
     const input = document.getElementById('message-input');
     const text = input.value.trim();
     if (!text) return;
+
+    setTyping(false);
+    clearTimeout(typingTimeout);
+
     await db.collection('chats').doc(currentChat).collection('messages').add({
-        senderId: currentUser.uid, text: text, timestamp: new Date()
+        senderId: currentUser.uid, text: text, timestamp: new Date(), readBy: [currentUser.uid]
     });
-    await db.collection('chats').doc(currentChat).update({ lastMessage: text, lastMessageTime: new Date() });
+
+    // Update chat doc
+    await db.collection('chats').doc(currentChat).update({
+        lastMessage: text,
+        lastMessageTime: new Date(),
+        [`unreadCount.${currentChatOtherId}`]: firebase.firestore.FieldValue.increment(1)
+    });
+
+    // Notification for recipient
+    try {
+        const myInfo = await getUserDisplayInfo(currentUser.uid);
+        await db.collection('users').doc(currentChatOtherId).collection('notifications').add({
+            type: 'messenger',
+            message: `💬 ${myInfo.nickname}: ${text.substring(0, 50)}`,
+            data: { chatId: currentChat, otherId: currentUser.uid },
+            read: false,
+            createdAt: new Date()
+        });
+    } catch (e) { /* notification is best-effort */ }
+
     input.value = '';
+    input.style.height = 'auto';
 }
 
-// Send image in chat
+// ===== Send image =====
 async function sendChatImage() {
     if (!currentChat) { showToast(t('social.select_chat','채팅을 선택하세요'), 'warning'); return; }
     const input = document.createElement('input');
@@ -478,9 +806,13 @@ async function sendChatImage() {
             const resized = await resizeImage(dataUrl, 800);
 
             await db.collection('chats').doc(currentChat).collection('messages').add({
-                senderId: currentUser.uid, text: '', imageUrl: resized, timestamp: new Date()
+                senderId: currentUser.uid, text: '', imageUrl: resized, timestamp: new Date(), readBy: [currentUser.uid]
             });
-            await db.collection('chats').doc(currentChat).update({ lastMessage: '📷 사진', lastMessageTime: new Date() });
+            await db.collection('chats').doc(currentChat).update({
+                lastMessage: '📷 사진',
+                lastMessageTime: new Date(),
+                [`unreadCount.${currentChatOtherId}`]: firebase.firestore.FieldValue.increment(1)
+            });
             hideLoading();
             showToast(t('social.image_sent','📷 이미지 전송 완료'), 'success');
         } catch (e) {
@@ -491,6 +823,7 @@ async function sendChatImage() {
     input.click();
 }
 
+// ===== Token send =====
 async function sendTokenWithMessage() {
     if (!currentChat || !currentChatOtherId) { showToast(t('social.select_chat','채팅을 선택하세요'), 'warning'); return; }
     if (!userWallet || !currentWalletId) { showToast(t('social.connect_wallet','지갑을 먼저 연결하세요'), 'warning'); return; }
@@ -539,15 +872,184 @@ async function sendTokenWithMessage() {
             }
         }
         await db.collection('chats').doc(currentChat).collection('messages').add({
-            senderId: currentUser.uid, text: message, tokenAmount: amountNum, tokenType: tokenName, timestamp: new Date()
+            senderId: currentUser.uid, text: message, tokenAmount: amountNum, tokenType: tokenName, timestamp: new Date(), readBy: [currentUser.uid]
         });
-        await db.collection('chats').doc(currentChat).update({ lastMessage: `💰 ${amountNum} ${tokenName} 전송`, lastMessageTime: new Date() });
+        await db.collection('chats').doc(currentChat).update({
+            lastMessage: `💰 ${amountNum} ${tokenName} 전송`,
+            lastMessageTime: new Date(),
+            [`unreadCount.${currentChatOtherId}`]: firebase.firestore.FieldValue.increment(1)
+        });
         await db.collection('transactions').add({ from: currentUser.uid, to: currentChatOtherId, amount: amountNum, token: tokenName, type: isOffchain ? 'messenger_offchain' : 'messenger_onchain', message, timestamp: new Date() });
         updateBalances();
         showToast(`✅ ${amountNum} ${tokenName} ${t('social.sent','전송 완료!')}`, 'success');
     } catch (error) {
         console.error('메신저 토큰 전송 실패:', error);
         showToast(t('social.send_fail','전송 실패: ') + error.message, 'error');
+    }
+}
+
+// ===== Message delete (soft) =====
+async function deleteMessage(msgId) {
+    if (!currentChat) return;
+    if (!await showConfirmModal(t('social.delete_msg','메시지 삭제'), t('social.confirm_delete_msg','이 메시지를 삭제하시겠습니까?'))) return;
+    try {
+        await db.collection('chats').doc(currentChat).collection('messages').doc(msgId).update({ deleted: true, text: '', imageUrl: null, tokenAmount: null, reactions: {} });
+        showToast(t('social.msg_deleted_toast','메시지가 삭제되었습니다'), 'info');
+    } catch (e) {
+        showToast(t('social.delete_fail','삭제 실패'), 'error');
+    }
+}
+
+// ===== Reactions =====
+function showReactionPicker(msgId) {
+    // Remove any existing picker
+    document.querySelectorAll('.reaction-picker-popup').forEach(el => el.remove());
+
+    const emojis = ['👍','❤️','😂','😮','😢','🔥'];
+    const picker = document.createElement('div');
+    picker.className = 'reaction-picker-popup';
+    picker.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;border:1px solid #ddd;border-radius:24px;padding:6px 10px;box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:9999;display:flex;gap:4px;';
+    emojis.forEach(emoji => {
+        const btn = document.createElement('button');
+        btn.textContent = emoji;
+        btn.style.cssText = 'font-size:1.4rem;background:none;border:none;cursor:pointer;padding:4px 6px;border-radius:8px;transition:transform 0.1s;';
+        btn.onmouseenter = () => btn.style.transform = 'scale(1.3)';
+        btn.onmouseleave = () => btn.style.transform = 'scale(1)';
+        btn.onclick = () => { toggleReaction(msgId, emoji); picker.remove(); };
+        picker.appendChild(btn);
+    });
+
+    document.body.appendChild(picker);
+    setTimeout(() => {
+        const dismiss = (e) => { if (!picker.contains(e.target)) { picker.remove(); document.removeEventListener('click', dismiss); } };
+        document.addEventListener('click', dismiss);
+    }, 10);
+}
+
+async function toggleReaction(msgId, emoji) {
+    if (!currentChat) return;
+    const msgRef = db.collection('chats').doc(currentChat).collection('messages').doc(msgId);
+    const msgDoc = await msgRef.get();
+    if (!msgDoc.exists) return;
+    const reactions = msgDoc.data().reactions || {};
+    const uids = reactions[emoji] || [];
+    if (uids.includes(currentUser.uid)) {
+        // Remove my reaction
+        reactions[emoji] = uids.filter(u => u !== currentUser.uid);
+        if (reactions[emoji].length === 0) delete reactions[emoji];
+    } else {
+        reactions[emoji] = [...uids, currentUser.uid];
+    }
+    await msgRef.update({ reactions });
+}
+
+// ===== Long press for mobile =====
+function msgTouchStart(msgId) {
+    msgLongPressTimer = setTimeout(() => {
+        const actionsBar = document.getElementById('actions-' + msgId);
+        if (actionsBar) {
+            actionsBar.classList.toggle('show');
+            setTimeout(() => actionsBar.classList.remove('show'), 4000);
+        }
+    }, 500);
+}
+
+function msgTouchEnd() {
+    clearTimeout(msgLongPressTimer);
+}
+
+// ===== Chat message search =====
+function toggleChatSearch() {
+    const overlay = document.getElementById('chat-search-overlay');
+    if (overlay.style.display === 'none') {
+        overlay.style.display = 'flex';
+        document.getElementById('msg-search-input').focus();
+    } else {
+        closeChatSearch();
+    }
+}
+
+function closeChatSearch() {
+    document.getElementById('chat-search-overlay').style.display = 'none';
+    document.getElementById('msg-search-input').value = '';
+    // Remove highlights
+    document.querySelectorAll('.msg-highlight').forEach(el => {
+        el.replaceWith(document.createTextNode(el.textContent));
+    });
+}
+
+function searchMessagesInChat(query) {
+    // Remove old highlights first
+    document.querySelectorAll('.msg-highlight').forEach(el => {
+        el.replaceWith(document.createTextNode(el.textContent));
+    });
+    if (!query.trim()) return;
+
+    const msgs = document.getElementById('chat-messages');
+    const walker = document.createTreeWalker(msgs, NodeFilter.SHOW_TEXT, null, false);
+    const q = query.toLowerCase();
+    const nodes = [];
+    while (walker.nextNode()) {
+        if (walker.currentNode.textContent.toLowerCase().includes(q)) {
+            nodes.push(walker.currentNode);
+        }
+    }
+    for (const node of nodes) {
+        const text = node.textContent;
+        const idx = text.toLowerCase().indexOf(q);
+        if (idx === -1) continue;
+        const before = text.substring(0, idx);
+        const match = text.substring(idx, idx + query.length);
+        const after = text.substring(idx + query.length);
+        const span = document.createElement('span');
+        span.innerHTML = `${before}<span class="msg-highlight">${match}</span>${after}`;
+        node.parentNode.replaceChild(span, node);
+    }
+    // Scroll to first match
+    const first = msgs.querySelector('.msg-highlight');
+    if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ===== Chat menu (leave/delete) =====
+function showChatMenu() {
+    document.querySelectorAll('.chat-menu-dropdown').forEach(el => el.remove());
+    const header = document.getElementById('chat-header');
+    const menu = document.createElement('div');
+    menu.className = 'chat-menu-dropdown';
+    menu.style.position = 'absolute';
+    menu.style.top = '48px';
+    menu.style.right = '8px';
+    menu.innerHTML = `
+        <button class="chat-menu-item danger" onclick="leaveChat()">🚪 ${t('social.leave_chat','채팅방 나가기')}</button>`;
+    header.style.position = 'relative';
+    header.appendChild(menu);
+    setTimeout(() => {
+        const dismiss = (e) => { if (!menu.contains(e.target)) { menu.remove(); document.removeEventListener('click', dismiss); } };
+        document.addEventListener('click', dismiss);
+    }, 10);
+}
+
+async function leaveChat() {
+    if (!currentChat) return;
+    if (!await showConfirmModal(t('social.leave_chat','채팅방 나가기'), t('social.confirm_leave','이 채팅방을 나가시겠습니까? 대화 내역이 삭제됩니다.'))) return;
+    try {
+        // Remove self from participants
+        await db.collection('chats').doc(currentChat).update({
+            participants: firebase.firestore.FieldValue.arrayRemove(currentUser.uid)
+        });
+        if (chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
+        if (chatDocUnsubscribe) { chatDocUnsubscribe(); chatDocUnsubscribe = null; }
+        currentChat = null;
+        currentChatOtherId = null;
+        closeChatMobile();
+        document.getElementById('chat-messages').innerHTML = '';
+        document.getElementById('chat-header-actions').style.display = 'none';
+        document.getElementById('chat-input-area').style.display = 'none';
+        document.getElementById('chat-username').innerHTML = `<div class="chat-empty-state"><div style="font-size:3rem;margin-bottom:1rem;">💬</div><p>채팅을 선택하세요</p></div>`;
+        showToast(t('social.left_chat','채팅방을 나갔습니다'), 'info');
+        loadMessages();
+    } catch (e) {
+        showToast(t('social.leave_fail','나가기 실패: ') + e.message, 'error');
     }
 }
 
@@ -679,7 +1181,7 @@ async function addComment(postId) {
     await postRef.update({ commentCount: (post.data().commentCount || 0) + 1 });
     input.value = '';
     await loadComments(postId);
-    loadSocialFeed(); // Refresh counts
+    loadSocialFeed();
 }
 
 async function deletePost(postId) {

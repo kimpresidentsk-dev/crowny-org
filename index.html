@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CROWNY PLATFORM</title>
-    <link rel="stylesheet" href="style.css?v=13.0">
+    <link rel="stylesheet" href="style.css?v=14.0">
     
     <!-- Firebase SDK -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-app-compat.min.js"></script>
@@ -565,11 +565,25 @@
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
                 <h2 style="margin:0;" data-i18n="social.title">📸 SOCIAL</h2>
             </div>
+            
+            <!-- Friend Requests -->
+            <div id="friend-requests-list" style="display:none;margin-bottom:0.8rem;"></div>
+            
+            <!-- Friends Grid (Instagram stories style) -->
+            <div id="friends-grid" class="friends-grid"></div>
+            
+            <!-- Feed Filter Tabs -->
+            <div style="display:flex;gap:0.5rem;margin-bottom:0.8rem;border-bottom:1px solid var(--border);padding-bottom:0.5rem;">
+                <button class="social-filter-tab active" data-filter="all" onclick="setSocialFilter('all')" style="background:none;border:none;padding:0.4rem 0.8rem;cursor:pointer;font-size:0.85rem;font-weight:600;color:var(--text);border-bottom:2px solid transparent;">전체</button>
+                <button class="social-filter-tab" data-filter="following" onclick="setSocialFilter('following')" style="background:none;border:none;padding:0.4rem 0.8rem;cursor:pointer;font-size:0.85rem;font-weight:600;color:#999;border-bottom:2px solid transparent;">팔로잉</button>
+                <button class="social-filter-tab" data-filter="saved" onclick="setSocialFilter('saved')" style="background:none;border:none;padding:0.4rem 0.8rem;cursor:pointer;font-size:0.85rem;font-weight:600;color:#999;border-bottom:2px solid transparent;">🔖 저장됨</button>
+            </div>
+            
             <div class="post-create">
-                <textarea id="post-text" placeholder="무슨 생각을 하고 계신가요?" data-i18n-placeholder="social.post_placeholder" style="border:1px solid var(--border); border-radius:12px; padding:0.8rem; font-size:0.95rem; line-height:1.5; resize:none; min-height:60px; width:100%; margin-bottom:0.5rem;"></textarea>
+                <textarea id="post-text" placeholder="무슨 생각을 하고 계신가요? #해시태그 @멘션 가능" data-i18n-placeholder="social.post_placeholder" style="border:1px solid var(--border); border-radius:12px; padding:0.8rem; font-size:0.95rem; line-height:1.5; resize:none; min-height:60px; width:100%; margin-bottom:0.5rem;"></textarea>
                 <div style="display:flex; align-items:center; gap:0.5rem;">
                     <label for="post-image" style="display:flex; align-items:center; gap:0.3rem; padding:0.4rem 0.8rem; background:var(--bg); border-radius:20px; cursor:pointer; font-size:0.85rem; border:1px solid var(--border);" data-i18n="social.photo">📷 사진</label>
-                    <input type="file" id="post-image" accept="image/*" style="display:none;">
+                    <input type="file" id="post-image" accept="image/*" multiple style="display:none;">
                     <span id="post-image-name" style="font-size:0.75rem; color:var(--accent); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></span>
                     <button onclick="createPost()" class="btn-primary" style="padding:0.5rem 1.2rem; border-radius:20px; font-size:0.85rem;" data-i18n="social.post_btn">게시</button>
                 </div>
@@ -577,7 +591,8 @@
             <div class="feed" id="social-feed"></div>
             <script>
                 document.getElementById('post-image').addEventListener('change', function() {
-                    document.getElementById('post-image-name').textContent = this.files[0] ? this.files[0].name : '';
+                    const count = this.files.length;
+                    document.getElementById('post-image-name').textContent = count > 1 ? `${count}장 선택됨` : (this.files[0] ? this.files[0].name : '');
                 });
             </script>
         </section>
@@ -1686,7 +1701,8 @@
     <script src="js/auth.js?v=9.5"></script>
     <script src="js/wallet.js?v=10.0"></script>
     <script src="js/offchain.js?v=10.0"></script>
-    <script src="js/social.js?v=14.0"></script>
+    <script src="js/social.js?v=15.0"></script>
+    <script src="js/friends.js?v=1.0"></script>
     <script src="js/group-chat.js?v=1.0"></script>
     <script src="js/send.js?v=9.5"></script>
     <script src="js/admin.js?v=13.0"></script>

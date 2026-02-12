@@ -17,6 +17,8 @@ function showPage(pageId) {
     // Load page-specific data
     if (pageId === 'social') {
         if (typeof loadSocialFeed === 'function') loadSocialFeed();
+        if (typeof loadFriendsGrid === 'function') loadFriendsGrid();
+        if (typeof loadFriendRequests === 'function') loadFriendRequests();
     }
     if (pageId === 'messenger') {
         if (typeof loadMessages === 'function') loadMessages();
