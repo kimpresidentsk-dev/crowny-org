@@ -417,6 +417,9 @@ auth.onAuthStateChanged(async (user) => {
         
         await loadUserWallet();
         await loadUserData();
+        
+        // ★ 알림 시스템 초기화
+        if (typeof initNotifications === 'function') initNotifications();
     } else {
         document.getElementById('auth-modal').style.display = 'flex';
         document.getElementById('user-info').style.display = 'none';

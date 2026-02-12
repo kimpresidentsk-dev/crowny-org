@@ -371,6 +371,7 @@ function updateMentorAnalysis() {
             if (prev && prev.signal !== result.signal && mentorPreviousSignals[id] !== result.signal) {
                 const signalKo = { buy: '매수', sell: '매도', hold: '유지', wait: '관망' };
                 showToast(`${mentor.icon} ${mentor.name}: ${signalKo[prev.signal] || prev.signal} → ${signalKo[result.signal] || result.signal}으로 변경`, 'info', 4000);
+                if (typeof notifyTradingSignal === 'function') notifyTradingSignal(`${mentor.icon} ${mentor.name}`, prev.signal, result.signal);
             }
             mentorPreviousSignals[id] = result.signal;
             mentorResults[id] = result;

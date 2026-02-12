@@ -287,6 +287,7 @@ async function linkGoogleAccount() {
 
 // Logout
 function logout() {
+    if (typeof cleanupNotifications === 'function') cleanupNotifications();
     auth.signOut();
     location.reload();
 }
