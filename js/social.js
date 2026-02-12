@@ -1,5 +1,11 @@
 // ===== social.js - 유저데이터, 레퍼럴, 메신저, 소셜피드 (v2.0 Instagram-style) =====
 
+// Truncate wallet addresses (0x...) in text
+function truncateWalletAddresses(text) {
+    if (!text) return text;
+    return text.replace(/0x[a-fA-F0-9]{30,}/g, (addr) => addr.slice(0, 6) + '...' + addr.slice(-4));
+}
+
 // ========== USER PROFILE MANAGEMENT ==========
 async function loadUserData() {
     loadMessages();
@@ -221,9 +227,9 @@ async function loadContacts() {
         contactItem.className = 'contact-item';
         contactItem.innerHTML = `
             ${avatarHTML(info.photoURL, info.nickname, 44)}
-            <div class="contact-info" style="flex:1;">
-                <strong style="font-size:0.95rem;">${info.nickname}</strong>
-                <p style="font-size:0.75rem; margin:0.1rem 0; color:var(--accent);">${info.statusMessage || info.email}</p>
+            <div class="contact-info" style="flex:1;min-width:0;overflow:hidden;">
+                <strong style="font-size:0.95rem;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${info.nickname}</strong>
+                <p style="font-size:0.7rem; margin:0.1rem 0; color:var(--accent); opacity:0.7; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${info.statusMessage || ''}</p>
             </div>
             <div style="display:flex; gap:0.3rem; flex-direction:column;">
                 <button onclick='startChatWithContact("${contact.email}")' class="btn-chat" style="font-size:0.8rem; padding:0.4rem 0.6rem;">채팅</button>
@@ -500,13 +506,13 @@ async function loadSocialFeed() {
                     ${isMyPost ? `<button onclick="deletePost('${doc.id}')" style="background:none;border:none;cursor:pointer;font-size:1rem;color:#999;" title="삭제">⋯</button>` : ''}
                 </div>
                 ${post.imageUrl ? `<div style="margin:0 -1.2rem;"><img src="${post.imageUrl}" style="width:100%;display:block;" loading="lazy"></div>` : ''}
-                <div class="post-actions-bar" style="display:flex;align-items:center;gap:1rem;padding:0.6rem 0;">
-                    <button onclick="toggleLike('${doc.id}', ${likedByMe})" style="background:none;border:none;cursor:pointer;font-size:1.4rem;padding:0;line-height:1;transition:transform 0.15s;" onmousedown="this.style.transform='scale(1.2)'" onmouseup="this.style.transform='scale(1)'">${likedByMe ? '❤️' : '🤍'}</button>
-                    <button onclick="toggleComments('${doc.id}')" style="background:none;border:none;cursor:pointer;font-size:1.3rem;padding:0;line-height:1;">💬</button>
+                <div class="post-actions-bar" style="display:flex;align-items:center;gap:1.2rem;padding:0.6rem 0;">
+                    <button onclick="toggleLike('${doc.id}', ${likedByMe})" class="post-action-btn" style="background:none;border:none;cursor:pointer;font-size:1.3rem;padding:0;line-height:1;display:flex;align-items:center;gap:0.3rem;transition:transform 0.15s;" onmousedown="this.style.transform='scale(1.1)'" onmouseup="this.style.transform='scale(1)'">${likedByMe ? '❤️' : '🤍'}<span style="font-size:0.85rem;color:var(--text);font-weight:600;">${likeCount || ''}</span></button>
+                    <button onclick="toggleComments('${doc.id}')" class="post-action-btn" style="background:none;border:none;cursor:pointer;font-size:1.2rem;padding:0;line-height:1;display:flex;align-items:center;gap:0.3rem;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span style="font-size:0.85rem;color:var(--text);font-weight:600;">${commentCount || ''}</span></button>
                 </div>
                 <div style="font-size:0.85rem;">
                     ${likeCount > 0 ? `<div style="font-weight:700;margin-bottom:0.2rem;cursor:pointer;" onclick="showLikedUsers('${doc.id}')">좋아요 ${likeCount}개</div>` : ''}
-                    ${post.text ? `<div><strong style="margin-right:0.3rem;">${userInfo.nickname}</strong>${post.text}</div>` : ''}
+                    ${post.text ? `<div><strong style="margin-right:0.3rem;">${userInfo.nickname}</strong>${truncateWalletAddresses(post.text)}</div>` : ''}
                     ${commentCount > 0 ? `<div style="color:var(--accent);margin-top:0.2rem;cursor:pointer;" onclick="toggleComments('${doc.id}')">댓글 ${commentCount}개 모두 보기</div>` : ''}
                 </div>
                 <div id="comments-${doc.id}" style="display:none; margin-top:0.8rem; border-top:1px solid var(--border); padding-top:0.6rem;">
@@ -572,7 +578,7 @@ async function loadComments(postId) {
         const info = await getUserDisplayInfo(c.userId);
         const el = document.createElement('div');
         el.style.cssText = 'margin-bottom:0.4rem; font-size:0.85rem; line-height:1.4;';
-        el.innerHTML = `<strong style="margin-right:0.3rem;">${info.nickname}</strong>${c.text} <span style="font-size:0.7rem; color:var(--accent);">${getTimeAgo(c.timestamp.toDate())}</span>`;
+        el.innerHTML = `<strong style="margin-right:0.3rem;">${info.nickname}</strong>${truncateWalletAddresses(c.text)} <span style="font-size:0.7rem; color:var(--accent);">${getTimeAgo(c.timestamp.toDate())}</span>`;
         list.appendChild(el);
     }
 }

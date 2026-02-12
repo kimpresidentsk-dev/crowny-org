@@ -1707,3 +1707,74 @@ h2 {
     margin-bottom: 1rem;
     display: block;
 }
+
+/* ===== Chat input bar fix ===== */
+.chat-input {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+    padding: 0.6rem 0.8rem !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    flex-wrap: nowrap !important;
+}
+
+.chat-input input {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+}
+
+.chat-input .btn-send-token {
+    flex-shrink: 0 !important;
+    width: 36px !important;
+    height: 36px !important;
+    padding: 0 !important;
+    font-size: 1rem !important;
+    border-radius: 50% !important;
+}
+
+.chat-input button:last-child {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+}
+
+/* ===== Contact card overflow fix ===== */
+.contact-item {
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+/* ===== General mobile text overflow ===== */
+.post, .post-create, .chat-messages, .contact-item, .chat-item {
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+@media (max-width: 768px) {
+    .chat-input {
+        padding: 0.5rem !important;
+        gap: 0.3rem !important;
+    }
+
+    .chat-input input {
+        padding: 0.5rem 0.7rem !important;
+        font-size: 0.85rem !important;
+    }
+
+    .chat-input button:last-child {
+        padding: 0.5rem 0.8rem !important;
+        font-size: 0.8rem !important;
+        min-width: auto !important;
+        min-height: 36px !important;
+    }
+
+    .chat-input .btn-send-token {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 0.9rem !important;
+        min-width: 32px !important;
+        min-height: 32px !important;
+    }
+}
