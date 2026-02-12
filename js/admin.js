@@ -1544,7 +1544,7 @@ async function adminAdjustDailyLimit(participantId, challengeId) {
         
         if (!doc.exists) { alert('참가자를 찾을 수 없습니다'); return; }
         const data = doc.data();
-        const currentLimit = data.dailyLossLimit || 100;
+        const currentLimit = data.dailyLossLimit || 500;
         const email = data.email || data.userId || participantId;
         
         const newLimit = prompt(`[${email}]\n현재 일일 손실 한도: $${currentLimit}\n\n새 일일 손실 한도 ($):`, currentLimit);
@@ -2068,7 +2068,7 @@ async function loadAdminParticipants() {
                                     </div>
                                     <div style="font-size:0.75rem; color:var(--accent); margin-top:0.2rem;">
                                         일일 PnL: <span style="color:${(p.dailyPnL || 0) < 0 ? '#cc0000' : '#0066cc'}">$${(p.dailyPnL || 0).toFixed(2)}</span> / 
-                                        일일한도: <span style="font-weight:700;">$${p.dailyLossLimit || 100}</span> · 
+                                        일일한도: <span style="font-weight:700;">$${p.dailyLossLimit || 500}</span> · 
                                         청산한도: <span style="font-weight:700;">$${(p.maxDrawdown || 3000).toLocaleString()}</span>
                                         ${p.copyAccounts > 1 ? ` · <span style="color:#FF6D00; font-weight:700;">카피: ${p.copyAccounts}계정</span>` : ''}
                                         ${p.tradingTier ? ` · <span style="color:#9C27B0;">MNQ×${p.tradingTier.MNQ||0} NQ×${p.tradingTier.NQ||0}</span>` : ''}
@@ -2266,7 +2266,7 @@ async function loadPropTrading() {
                 </div>
                 
                 <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--accent); padding-top:0.5rem; border-top:1px solid var(--border);">
-                    <span>📊 ${ch.allowedProduct || 'MNQ'} | 🔴 일일 -$${ch.dailyLossLimit || 100}</span>
+                    <span>📊 ${ch.allowedProduct || 'MNQ'} | 🔴 일일 -$${ch.dailyLossLimit || 500}</span>
                     <span>👥 ${ch.participants || 0}명 참가중</span>
                 </div>
             `;
