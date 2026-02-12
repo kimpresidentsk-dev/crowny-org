@@ -40,6 +40,12 @@ function showPage(pageId) {
         window.location.href = 'admin.html';
         return;
     }
+    if (pageId === 'dashboard') {
+        if (typeof loadDashboard === 'function') loadDashboard();
+    }
+    if (pageId === 'settings') {
+        if (typeof loadSettings === 'function') loadSettings();
+    }
     if (pageId === 'art') {
         loadArtGallery();
     }

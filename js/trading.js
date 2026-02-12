@@ -386,9 +386,9 @@ function updateCRTDDisplay() {
 }
 
 async function loadTradingDashboard() {
-    console.log('🔍 loadTradingDashboard 시작, user:', currentUser?.uid);
+    // console.log('🔍 loadTradingDashboard 시작, user:', currentUser?.uid);
     if (!currentUser) {
-        console.log('⚠️ loadTradingDashboard: currentUser 없음, 건너뜀');
+        // console.log('⚠️ loadTradingDashboard: currentUser 없음, 건너뜀');
         return;
     }
     // Check if user has active participation
@@ -397,7 +397,7 @@ async function loadTradingDashboard() {
             .where('status', '==', 'active')
             .get();
         
-        console.log('🔍 활성 챌린지:', challenges.size, '개');
+        // console.log('🔍 활성 챌린지:', challenges.size, '개');
         
         for (const challengeDoc of challenges.docs) {
             // 복합 인덱스 없이도 작동하도록 단일 필드 쿼리
@@ -405,7 +405,7 @@ async function loadTradingDashboard() {
                 .where('userId', '==', currentUser.uid)
                 .get();
             
-            console.log('🔍 챌린지', challengeDoc.id, '참가자:', participants.size, '명');
+            // console.log('🔍 챌린지', challengeDoc.id, '참가자:', participants.size, '명');
             
             // 클라이언트에서 status 필터
             const activeParticipant = participants.docs.find(d => d.data().status === 'active');
@@ -416,7 +416,7 @@ async function loadTradingDashboard() {
                     participantId: activeParticipant.id,
                     ...activeParticipant.data() 
                 };
-                console.log('✅ myParticipation 설정됨:', myParticipation.participantId);
+                // console.log('✅ myParticipation 설정됨:', myParticipation.participantId);
                 break;
             }
         }
@@ -462,7 +462,7 @@ async function loadTradingDashboard() {
                 const btn = document.getElementById(id);
                 if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; btn.style.pointerEvents = 'auto'; }
             });
-            console.log('✅ BUY/SELL 버튼 강제 활성화');
+            // console.log('✅ BUY/SELL 버튼 강제 활성화');
         }
         
         // 차트 내 규칙 오버레이
@@ -687,7 +687,7 @@ function aggregateTicksToTickCandles(ticks, ticksPerCandle) {
 }
 
 async function initTradingViewChart() {
-    console.log('📊 initTradingViewChart 호출됨');
+    // console.log('📊 initTradingViewChart 호출됨');
     const container = document.getElementById('live-candle-chart');
     if (!container) { console.error('❌ 차트 컨테이너 없음'); return; }
     
@@ -769,7 +769,7 @@ async function initTradingViewChart() {
         
         window.addEventListener('resize', () => { chart.applyOptions({ width: container.clientWidth }); });
         
-        console.log('📊 통합 차트 준비 완료');
+        // console.log('📊 통합 차트 준비 완료');
         loadMASettings();
         setTimeout(() => applyMASettings(), 500);
         startClockTimer();
@@ -841,7 +841,7 @@ function startLiveDataFeed() {
     reloadChartData().then(() => {
         fetchLiveTick();
         window.liveDataInterval = setInterval(fetchLiveTick, POLL_INTERVAL);
-        console.log('✅ 실시간 데이터 수신 시작');
+        // console.log('✅ 실시간 데이터 수신 시작');
     });
 }
 
@@ -860,7 +860,7 @@ async function reloadChartData() {
 async function loadCandleHistory(symbol) {
     try {
         symbol = symbol || getActiveTabSymbol();
-        console.log(`📊 ${symbol} 캔들 히스토리 로딩...`);
+        // console.log(`📊 ${symbol} 캔들 히스토리 로딩...`);
         const res = await fetch(`${PRICE_SERVER}/api/market/candles?symbol=${symbol}&limit=1440`);
         const data = await res.json();
         
@@ -895,7 +895,7 @@ async function loadCandleHistory(symbol) {
             }));
             updateLiveCandleChart();
             scrollToLatest();
-            console.log(`✅ ${symbol} ${data.count}개 캔들 로드`);
+            // console.log(`✅ ${symbol} ${data.count}개 캔들 로드`);
         }
     } catch (err) {
         console.warn('⚠️ 캔들 히스토리 로드 실패:', err.message);
@@ -906,7 +906,7 @@ async function loadCandleHistory(symbol) {
 async function loadTickData(symbol) {
     try {
         symbol = symbol || getActiveTabSymbol();
-        console.log(`📊 ${symbol} 틱 데이터 로딩...`);
+        // console.log(`📊 ${symbol} 틱 데이터 로딩...`);
         const res = await fetch(`${PRICE_SERVER}/api/market/ticks?symbol=${symbol}&limit=5000`);
         const data = await res.json();
         if (data && data.ticks && data.ticks.length > 0) {
@@ -919,7 +919,7 @@ async function loadTickData(symbol) {
             window.liveTicks = filtered;
             updateLiveCandleChart();
             scrollToLatest();
-            console.log(`✅ ${symbol} ${data.count}개 틱 로드`);
+            // console.log(`✅ ${symbol} ${data.count}개 틱 로드`);
         }
     } catch (err) {
         console.warn('⚠️ 틱 데이터 로드 실패:', err.message);
@@ -1182,7 +1182,7 @@ function applyMASettings() {
     
     // 현재 탭 설정으로 MA 재계산
     updateLiveCandleChart();
-    console.log('📈 MA 설정 적용 완료');
+    // console.log('📈 MA 설정 적용 완료');
 }
 
 // localStorage에서 MA 설정 로드 (없으면 기본값 적용)
@@ -1217,7 +1217,7 @@ function loadMASettings() {
             }
             const lb = document.getElementById('nq-ma-label-show'); if (lb) lb.checked = s.nq.labelShow;
         }
-        console.log('📈 MA 설정 로드 완료');
+        // console.log('📈 MA 설정 로드 완료');
     } catch(e) {}
 }
 
@@ -1322,7 +1322,7 @@ function updateLivePnL() {
 // 하위 호환성 유지
 function startRealPriceUpdates() {
     // startLiveDataFeed에서 처리하므로 여기서는 아무것도 안 함
-    console.log('ℹ️ 실시간 업데이트는 startLiveDataFeed에서 처리');
+    // console.log('ℹ️ 실시간 업데이트는 startLiveDataFeed에서 처리');
 }
 
 function fetchRealNQData() {
@@ -1343,7 +1343,7 @@ async function updateTradeStopLoss(tradeIndex, newPrice) {
             .collection('participants').doc(myParticipation.participantId)
             .update({ trades: myParticipation.trades });
         
-        console.log(`✅ SL 업데이트: ${newPrice.toFixed(2)}`);
+        // console.log(`✅ SL 업데이트: ${newPrice.toFixed(2)}`);
         updateOpenPositions();
     } catch (error) {
         console.error('SL 업데이트 실패:', error);
@@ -1359,7 +1359,7 @@ async function updateTradeTakeProfit(tradeIndex, newPrice) {
             .collection('participants').doc(myParticipation.participantId)
             .update({ trades: myParticipation.trades });
         
-        console.log(`✅ TP 업데이트: ${newPrice.toFixed(2)}`);
+        // console.log(`✅ TP 업데이트: ${newPrice.toFixed(2)}`);
         updateOpenPositions();
     } catch (error) {
         console.error('TP 업데이트 실패:', error);
@@ -1376,7 +1376,7 @@ function updatePriceFromChart(chart) {
             updateNQPriceDisplay();
         }
     }).catch(err => {
-        console.log('차트 데이터 로드 중...');
+        // console.log('차트 데이터 로드 중...');
         // Fallback: 모의 데이터
         updateNQPrice();
     });
@@ -1402,12 +1402,12 @@ async function updateNQPrice() {
         
         if (data && data.price) {
             currentPrice = data.price;
-            console.log(`📊 NQ 가격: ${currentPrice.toFixed(2)} (${data.source}) bid:${data.bid} ask:${data.ask}`);
+            // console.log(`📊 NQ 가격: ${currentPrice.toFixed(2)} (${data.source}) bid:${data.bid} ask:${data.ask}`);
         } else {
             if (!currentPrice) {
                 currentPrice = 25400;
             }
-            console.log('⚠️ NQ 데이터 없음 (장 마감 가능성)');
+            // console.log('⚠️ NQ 데이터 없음 (장 마감 가능성)');
         }
         
         updateNQPriceDisplay();
@@ -1566,7 +1566,7 @@ async function autoClosePosition(tradeIndex, reason) {
             });
         
         const emoji = reason === 'TP' ? '🟢' : reason === 'TRAIL-SL' ? '🔄' : '🔴';
-        console.log(`${emoji} 자동 청산 (${reason}): ${trade.contract} ${trade.side} @ ${exitPrice.toFixed(2)} → $${netPnl.toFixed(2)}`);
+        // console.log(`${emoji} 자동 청산 (${reason}): ${trade.contract} ${trade.side} @ ${exitPrice.toFixed(2)} → $${netPnl.toFixed(2)}`);
         
         // ★ CRTD 프랍 — 청산 체크 + 디스플레이
         if (reason !== 'CRTD 청산') {
@@ -1631,7 +1631,7 @@ async function closePosition(tradeIndex) {
                 dailyPnL: myParticipation.dailyPnL
             });
         
-        console.log(`✅ 청산: ${trade.side} ${trade.contract} x${trade.contracts} | PnL: $${netPnl.toFixed(2)}`);
+        // console.log(`✅ 청산: ${trade.side} ${trade.contract} x${trade.contracts} | PnL: $${netPnl.toFixed(2)}`);
         
         // ★ CRTD 프랍 — 청산 체크 + 디스플레이
         updateCRTDDisplay();
@@ -1677,7 +1677,7 @@ function updateOpenPositions() {
             // 활성화 체크
             if (!ts.activated && profit >= ts.activation) {
                 ts.activated = true;
-                console.log(`🔄 트레일링 활성화 (BUY #${i}): 수익 ${profit.toFixed(2)}pt ≥ ${ts.activation}pt`);
+                // console.log(`🔄 트레일링 활성화 (BUY #${i}): 수익 ${profit.toFixed(2)}pt ≥ ${ts.activation}pt`);
             }
             
             if (ts.activated) {
@@ -1689,7 +1689,7 @@ function updateOpenPositions() {
                     if (!trade.stopLoss || newSL > trade.stopLoss) {
                         trade.stopLoss = Math.round(newSL * 4) / 4; // 0.25 단위로 반올림
                         trailingUpdated = true;
-                        console.log(`📈 트레일링 SL 상향: ${trade.stopLoss.toFixed(2)} (최고: ${ts.highWaterMark.toFixed(2)})`);
+                        // console.log(`📈 트레일링 SL 상향: ${trade.stopLoss.toFixed(2)} (최고: ${ts.highWaterMark.toFixed(2)})`);
                     }
                 }
             }
@@ -1700,7 +1700,7 @@ function updateOpenPositions() {
             // 활성화 체크
             if (!ts.activated && profit >= ts.activation) {
                 ts.activated = true;
-                console.log(`🔄 트레일링 활성화 (SELL #${i}): 수익 ${profit.toFixed(2)}pt ≥ ${ts.activation}pt`);
+                // console.log(`🔄 트레일링 활성화 (SELL #${i}): 수익 ${profit.toFixed(2)}pt ≥ ${ts.activation}pt`);
             }
             
             if (ts.activated) {
@@ -1712,7 +1712,7 @@ function updateOpenPositions() {
                     if (!trade.stopLoss || newSL < trade.stopLoss) {
                         trade.stopLoss = Math.round(newSL * 4) / 4;
                         trailingUpdated = true;
-                        console.log(`📉 트레일링 SL 하향: ${trade.stopLoss.toFixed(2)} (최저: ${ts.highWaterMark.toFixed(2)})`);
+                        // console.log(`📉 트레일링 SL 하향: ${trade.stopLoss.toFixed(2)} (최저: ${ts.highWaterMark.toFixed(2)})`);
                     }
                 }
             }
@@ -1982,7 +1982,7 @@ async function partialClosePosition(tradeIndex) {
             .collection('participants').doc(myParticipation.participantId)
             .update({ trades: myParticipation.trades, currentBalance: myParticipation.currentBalance });
         
-        console.log(`📊 분할 청산: ${closeCount}계약 청산, ${remainCount}계약 유지`);
+        // console.log(`📊 분할 청산: ${closeCount}계약 청산, ${remainCount}계약 유지`);
         
         // ★ CRTD 프랍 — 청산 체크 + 디스플레이
         updateCRTDDisplay();
@@ -2010,7 +2010,7 @@ async function toggleTrailingForTrade(tradeIndex) {
             .update({ trades: myParticipation.trades });
         
         const status = trade.trailingStop.enabled ? '활성화' : '비활성화';
-        console.log(`🔄 트레일링 ${status}: Trade #${tradeIndex}`);
+        // console.log(`🔄 트레일링 ${status}: Trade #${tradeIndex}`);
         updateOpenPositions();
     } catch (e) {
         console.error('트레일링 토글 실패:', e);
@@ -2324,9 +2324,9 @@ async function closeAllPositions(contractFilter) {
 
 // Modify executeFuturesTrade to support advanced order types + SLOT SYSTEM + RISK CHECK
 async function executeFuturesTrade(side) {
-    console.log('🔍 executeFuturesTrade 호출:', side, 'myParticipation:', !!myParticipation, 'currentPrice:', currentPrice);
+    // console.log('🔍 executeFuturesTrade 호출:', side, 'myParticipation:', !!myParticipation, 'currentPrice:', currentPrice);
     // 더블클릭 방지 (3초) + UI 피드백
-    if (window._tradeLoading) { console.log('⚠️ _tradeLoading 중복 차단'); showToast('⏳ 주문 처리 중...', 'warning', 1000); return; }
+    if (window._tradeLoading) { // console.log('⚠️ _tradeLoading 중복 차단'); showToast('⏳ 주문 처리 중...', 'warning', 1000); return; }
     window._tradeLoading = true;
     const btns2 = ['btn-buy','btn-sell','btn-chart-buy','btn-chart-sell'].map(id => document.getElementById(id)).filter(Boolean);
     btns2.forEach(b => { b.disabled = true; b.style.opacity = '0.5'; });
@@ -2520,9 +2520,9 @@ async function executeFuturesTrade(side) {
 
 // Quick chart trade (SLOT-based market order with default SL/TP)
 async function quickChartTrade(side, contractOverride) {
-    console.log('🔍 quickChartTrade 호출:', side, 'myParticipation:', !!myParticipation, 'currentPrice:', currentPrice);
+    // console.log('🔍 quickChartTrade 호출:', side, 'myParticipation:', !!myParticipation, 'currentPrice:', currentPrice);
     // 더블클릭 방지 (3초) + UI 피드백
-    if (window._quickTradeLoading) { console.log('⚠️ _quickTradeLoading 중복 차단'); showToast('⏳ 주문 처리 중...', 'warning', 1000); return; }
+    if (window._quickTradeLoading) { // console.log('⚠️ _quickTradeLoading 중복 차단'); showToast('⏳ 주문 처리 중...', 'warning', 1000); return; }
     window._quickTradeLoading = true;
     // BUY/SELL 버튼 임시 비활성화
     const btns = ['btn-buy','btn-sell','btn-chart-buy','btn-chart-sell'].map(id => document.getElementById(id)).filter(Boolean);
@@ -2642,7 +2642,7 @@ async function quickChartTrade(side, contractOverride) {
         myParticipation.trades = trades;
         myParticipation.currentBalance = newBalance;
         
-        console.log(`✅ 차트 ${side} 주문 체결! 카피:${copyAccounts}, SL: ${stopLoss.toFixed(2)}, TP: ${takeProfit.toFixed(2)}`);
+        // console.log(`✅ 차트 ${side} 주문 체결! 카피:${copyAccounts}, SL: ${stopLoss.toFixed(2)}, TP: ${takeProfit.toFixed(2)}`);
         
         try { updateTradingUI(); updateOpenPositions(); updateRiskGaugeUI(); setTimeout(() => { drawPositionLinesLW(); scrollToLatest(); }, 500); } catch(uiErr) { console.warn("UI update warning:", uiErr); }
 
@@ -2762,7 +2762,7 @@ function drawPositionLinesLW() {
         }
     });
     
-    console.log(`📊 ${tabSymbol} ${openTrades.length}개 포지션 라인 표시`);
+    // console.log(`📊 ${tabSymbol} ${openTrades.length}개 포지션 라인 표시`);
     
     // 드래그 핸들 업데이트
     updateDragHandles(openTrades);
@@ -3105,7 +3105,7 @@ function drawPositionLinesLW() {
         }
     }, 200);
     
-    console.log('🎯 SL/TP 드래그 시스템 초기화 완료');
+    // console.log('🎯 SL/TP 드래그 시스템 초기화 완료');
 })();
 
 // 거래 제한 확인
@@ -3149,7 +3149,7 @@ async function processEOD() {
     const totalPnL = myParticipation.currentBalance - myParticipation.initialBalance;
     const cfg = getCRTDConfig();
     
-    console.log(`📊 EOD 정산: USD PnL = $${totalPnL.toFixed(2)} | 인출가능: ${getWithdrawableCRTD()} CRTD`);
+    // console.log(`📊 EOD 정산: USD PnL = $${totalPnL.toFixed(2)} | 인출가능: ${getWithdrawableCRTD()} CRTD`);
     
     // lastEOD 업데이트
     await db.collection('prop_challenges').doc(myParticipation.challengeId)
@@ -3169,7 +3169,7 @@ let polygonWS = null;
 // Massive WebSocket 연결
 function connectMassiveRealtime() {
     if (!window.MASSIVE_CONFIG || !window.MASSIVE_CONFIG.enabled) {
-        console.log('⚠️ Massive 비활성화 - Yahoo Finance 사용');
+        // console.log('⚠️ Massive 비활성화 - Yahoo Finance 사용');
         return;
     }
     
@@ -3183,7 +3183,7 @@ function connectMassiveRealtime() {
     polygonWS = new WebSocket('wss://socket.polygon.io/futures');
     
     polygonWS.onopen = () => {
-        console.log('📡 Massive 연결 중...');
+        // console.log('📡 Massive 연결 중...');
         
         // 인증
         polygonWS.send(JSON.stringify({
@@ -3197,7 +3197,7 @@ function connectMassiveRealtime() {
         
         messages.forEach(msg => {
             if (msg.ev === 'status' && msg.status === 'auth_success') {
-                console.log('✅ Massive 인증 성공');
+                // console.log('✅ Massive 인증 성공');
                 
                 // NQ 선물 구독
                 polygonWS.send(JSON.stringify({
@@ -3205,7 +3205,7 @@ function connectMassiveRealtime() {
                     params: 'AM.C:NQ*' // NQ 전체 (1분, 5분 등)
                 }));
                 
-                console.log('📊 NQ 선물 구독 완료');
+                // console.log('📊 NQ 선물 구독 완료');
             }
             
             if (msg.ev === 'AM') {
@@ -3220,7 +3220,7 @@ function connectMassiveRealtime() {
     };
     
     polygonWS.onclose = () => {
-        console.log('🔌 Massive 연결 종료');
+        // console.log('🔌 Massive 연결 종료');
         // 재연결
         setTimeout(() => connectMassiveRealtime(), 5000);
     };
@@ -3246,7 +3246,7 @@ function handleMassiveAggregate(data) {
     updateNQPriceDisplay();
     updateOpenPositions();
     
-    console.log(`🔄 Massive 실시간: ${data.c.toFixed(2)}`);
+    // console.log(`🔄 Massive 실시간: ${data.c.toFixed(2)}`);
 }
 
 // Massive REST API로 히스토리 데이터
@@ -3281,7 +3281,7 @@ async function fetchMassiveHistory() {
                 color: r.c > r.o ? '#26a69a' : '#ef5350'
             }));
             
-            console.log('✅ Massive 히스토리 데이터:', candles.length, '개');
+            // console.log('✅ Massive 히스토리 데이터:', candles.length, '개');
             
             return { candles, volume };
         }
@@ -3337,11 +3337,11 @@ async function checkPendingOrders() {
                     if (trade.side === 'BUY' && currentPrice >= stopPrice) {
                         trade._stopTriggered = true;
                         trade.entryPrice = limitPrice; // 리밋가로 전환
-                        console.log(`⚡ STOP_LIMIT 트리거: BUY @ ${limitPrice.toFixed(2)}`);
+                        // console.log(`⚡ STOP_LIMIT 트리거: BUY @ ${limitPrice.toFixed(2)}`);
                     } else if (trade.side === 'SELL' && currentPrice <= stopPrice) {
                         trade._stopTriggered = true;
                         trade.entryPrice = limitPrice;
-                        console.log(`⚡ STOP_LIMIT 트리거: SELL @ ${limitPrice.toFixed(2)}`);
+                        // console.log(`⚡ STOP_LIMIT 트리거: SELL @ ${limitPrice.toFixed(2)}`);
                     }
                 } else {
                     // 리밋 체결 체크
@@ -3363,7 +3363,7 @@ async function checkPendingOrders() {
             trade.filledAt = new Date();
             filled = true;
             
-            console.log(`✅ 주문 체결: ${trade.side} ${trade.contract} ×${trade.contracts} @ ${fillPrice.toFixed(2)} (${trade.orderType})`);
+            // console.log(`✅ 주문 체결: ${trade.side} ${trade.contract} ×${trade.contracts} @ ${fillPrice.toFixed(2)} (${trade.orderType})`);
             showToast(`✅ ${trade.orderType} 주문 체결! ${trade.side} ${trade.contract} ×${trade.contracts} @ ${fillPrice.toFixed(2)}`, 'success');
         }
     }

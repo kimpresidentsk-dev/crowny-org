@@ -328,6 +328,12 @@ auth.onAuthStateChanged(async (user) => {
         if (activePage && activePage.id === 'prop-trading') {
             if (typeof loadTradingDashboard === 'function') loadTradingDashboard();
         }
+        
+        // ★ 대시보드를 기본 랜딩 페이지로
+        if (typeof showPage === 'function') showPage('dashboard');
+        
+        // ★ 검색 캐시 로드
+        if (typeof loadSearchCache === 'function') loadSearchCache();
     } else {
         document.getElementById('auth-modal').style.display = 'flex';
         document.getElementById('user-info').style.display = 'none';
