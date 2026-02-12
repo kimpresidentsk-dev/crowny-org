@@ -1022,8 +1022,10 @@
                             <option value="UK" data-i18n="trading.timezone.london">🇬🇧 런던</option>
                             <option value="UTC">🌐 UTC</option>
                         </select>
-                        <button onclick="scrollToLatest()" style="background:#16213e; color:#00ff88; border:1px solid #333; border-radius:4px; padding:2px 8px; font-size:0.7rem; cursor:pointer;">▶ 정렬</button>
-                        <button onclick="toggleMASettings()" style="background:#16213e; color:#ffab40; border:1px solid #333; border-radius:4px; padding:2px 8px; font-size:0.7rem; cursor:pointer;">📈 MA</button>
+                        <div style="display:flex; gap:4px; margin-left:auto;">
+                            <button onclick="scrollToLatest()" style="background:#16213e; color:#00ff88; border:1px solid #333; border-radius:4px; padding:2px 8px; font-size:0.7rem; cursor:pointer;">▶ 정렬</button>
+                            <button onclick="toggleMASettings()" style="background:#16213e; color:#ffab40; border:1px solid #333; border-radius:4px; padding:2px 8px; font-size:0.7rem; cursor:pointer;">📈 MA</button>
+                        </div>
                     </div>
                     
                     <!-- MA 세팅 패널 -->
@@ -1032,21 +1034,21 @@
                         <label style="float:right; font-size:0.65rem; color:#888; cursor:pointer;"><input type="checkbox" id="nq-ma-label-show" onchange="applyMASettings()" style="margin:0 2px 0 0; vertical-align:middle;"> 이름표시</label>
                         <div style="display:flex; flex-wrap:wrap; gap:4px; align-items:center; margin-top:4px;">
                             <input type="checkbox" id="nq-ma1-show" checked onchange="applyMASettings()" style="margin:0;">
-                            <input type="text" id="nq-ma1-name" value="MA5" style="width:32px; background:#16213e; color:#ffeb3b; border:1px solid #333; border-radius:3px; padding:1px 3px; font-size:0.7rem; text-align:center;">
+                            <select id="nq-ma1-type" onchange="applyMASettings()" style="background:#16213e; color:#aaa; border:1px solid #333; border-radius:3px; padding:1px 2px; font-size:0.65rem;"><option value="SMA">SMA</option><option value="EMA">EMA</option></select>
                             <input type="number" id="nq-ma1-period" value="5" style="width:32px; background:#16213e; color:#fff; border:1px solid #333; border-radius:3px; padding:1px 3px; font-size:0.7rem; text-align:center;">
                             <input type="color" id="nq-ma1-color" value="#ffeb3b" onchange="applyMASettings()" style="width:20px; height:20px; border:none; cursor:pointer; padding:0;">
-                            <span style="margin-left:4px;"></span>
+                            <span style="margin-left:2px;"></span>
                             <input type="checkbox" id="nq-ma2-show" checked onchange="applyMASettings()" style="margin:0;">
-                            <input type="text" id="nq-ma2-name" value="MA20" style="width:36px; background:#16213e; color:#FFA500; border:1px solid #333; border-radius:3px; padding:1px 3px; font-size:0.7rem; text-align:center;">
+                            <select id="nq-ma2-type" onchange="applyMASettings()" style="background:#16213e; color:#aaa; border:1px solid #333; border-radius:3px; padding:1px 2px; font-size:0.65rem;"><option value="SMA">SMA</option><option value="EMA">EMA</option></select>
                             <input type="number" id="nq-ma2-period" value="20" style="width:32px; background:#16213e; color:#fff; border:1px solid #333; border-radius:3px; padding:1px 3px; font-size:0.7rem; text-align:center;">
                             <input type="color" id="nq-ma2-color" value="#FFA500" onchange="applyMASettings()" style="width:20px; height:20px; border:none; cursor:pointer; padding:0;">
-                            <span style="margin-left:4px;"></span>
+                            <span style="margin-left:2px;"></span>
                             <input type="checkbox" id="nq-ma3-show" checked onchange="applyMASettings()" style="margin:0;">
-                            <input type="text" id="nq-ma3-name" value="MA60" style="width:36px; background:#16213e; color:#FF3333; border:1px solid #333; border-radius:3px; padding:1px 3px; font-size:0.7rem; text-align:center;">
+                            <select id="nq-ma3-type" onchange="applyMASettings()" style="background:#16213e; color:#aaa; border:1px solid #333; border-radius:3px; padding:1px 2px; font-size:0.65rem;"><option value="SMA">SMA</option><option value="EMA">EMA</option></select>
                             <input type="number" id="nq-ma3-period" value="60" style="width:32px; background:#16213e; color:#fff; border:1px solid #333; border-radius:3px; padding:1px 3px; font-size:0.7rem; text-align:center;">
                             <input type="color" id="nq-ma3-color" value="#FF3333" onchange="applyMASettings()" style="width:20px; height:20px; border:none; cursor:pointer; padding:0;">
                         </div>
-                        <button onclick="applyMASettings()" style="background:#333; color:#ccc; border:none; border-radius:3px; padding:4px 12px; font-size:0.75rem; cursor:pointer; margin-top:6px; width:100%;">✅ 적용</button>
+                        <button onclick="applyMASettings(); this.textContent='✅ 저장됨!'; setTimeout(()=>this.textContent='✅ 적용',1500);" style="background:#333; color:#ccc; border:none; border-radius:4px; padding:8px 12px; font-size:0.8rem; cursor:pointer; margin-top:6px; width:100%; touch-action:manipulation; -webkit-tap-highlight-color:transparent;">✅ 적용</button>
                     </div>
                     
                     <!-- 가격 + 시간 바 -->
@@ -1638,7 +1640,7 @@
     <script src="js/send.js?v=9.5"></script>
     <script src="js/admin.js?v=11.2"></script>
     <script src="js/marketplace.js?v=12.0"></script>
-    <script src="js/trading.js?v=13.3"></script>
+    <script src="js/trading.js?v=13.4"></script>
     <script src="js/mentor-learning.js?v=1.0"></script>
     <script src="js/mentors.js?v=2.2"></script>
     <script src="js/notifications.js?v=1.0"></script>

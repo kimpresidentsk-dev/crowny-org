@@ -1087,8 +1087,10 @@ function updateLiveCandleChart() {
 }
 
 // MA 계산
-function calculateMA(candles, period) {
+function calculateMA(candles, period, type = 'SMA') {
     if (candles.length < period) return [];
+    if (type === 'EMA') return calculateEMAFromCandles(candles, period);
+    // SMA
     const result = [];
     for (let i = period - 1; i < candles.length; i++) {
         let sum = 0;
@@ -1096,6 +1098,21 @@ function calculateMA(candles, period) {
             sum += candles[i - j].close;
         }
         result.push({ time: candles[i].time, value: sum / period });
+    }
+    return result;
+}
+
+function calculateEMAFromCandles(candles, period) {
+    if (candles.length < period) return [];
+    const k = 2 / (period + 1);
+    // 첫 EMA = 첫 period의 SMA
+    let sum = 0;
+    for (let i = 0; i < period; i++) sum += candles[i].close;
+    let ema = sum / period;
+    const result = [{ time: candles[period - 1].time, value: ema }];
+    for (let i = period; i < candles.length; i++) {
+        ema = candles[i].close * k + ema * (1 - k);
+        result.push({ time: candles[i].time, value: ema });
     }
     return result;
 }
@@ -1109,9 +1126,13 @@ function updateMALines(candles) {
     const ma2Show = document.getElementById('nq-ma2-show')?.checked !== false;
     const ma3Show = document.getElementById('nq-ma3-show')?.checked !== false;
     
-    if (window.ma1Series) window.ma1Series.setData(ma1Show ? calculateMA(candles, ma1P) : []);
-    if (window.ma2Series) window.ma2Series.setData(ma2Show ? calculateMA(candles, ma2P) : []);
-    if (window.ma3Series) window.ma3Series.setData(ma3Show ? calculateMA(candles, ma3P) : []);
+    const ma1Type = document.getElementById('nq-ma1-type')?.value || 'SMA';
+    const ma2Type = document.getElementById('nq-ma2-type')?.value || 'SMA';
+    const ma3Type = document.getElementById('nq-ma3-type')?.value || 'SMA';
+    
+    if (window.ma1Series) window.ma1Series.setData(ma1Show ? calculateMA(candles, ma1P, ma1Type) : []);
+    if (window.ma2Series) window.ma2Series.setData(ma2Show ? calculateMA(candles, ma2P, ma2Type) : []);
+    if (window.ma3Series) window.ma3Series.setData(ma3Show ? calculateMA(candles, ma3P, ma3Type) : []);
 }
 
 // MA 정보 표시
@@ -1145,11 +1166,15 @@ function applyMASettings() {
     if (window.ma2Series) window.ma2Series.applyOptions({ color: ma2Color, title: labelShow ? ma2Name : '', lastValueVisible: labelShow });
     if (window.ma3Series) window.ma3Series.applyOptions({ color: ma3Color, title: labelShow ? ma3Name : '', lastValueVisible: labelShow });
     
+    const ma1Type = document.getElementById('nq-ma1-type')?.value || 'SMA';
+    const ma2Type = document.getElementById('nq-ma2-type')?.value || 'SMA';
+    const ma3Type = document.getElementById('nq-ma3-type')?.value || 'SMA';
+    
     const settings = {
         nq: {
-            ma1: { color: ma1Color, name: ma1Name, period: ma1Period, show: ma1Show },
-            ma2: { color: ma2Color, name: ma2Name, period: ma2Period, show: ma2Show },
-            ma3: { color: ma3Color, name: ma3Name, period: ma3Period, show: ma3Show },
+            ma1: { color: ma1Color, name: ma1Name, period: ma1Period, show: ma1Show, type: ma1Type },
+            ma2: { color: ma2Color, name: ma2Name, period: ma2Period, show: ma2Show, type: ma2Type },
+            ma3: { color: ma3Color, name: ma3Name, period: ma3Period, show: ma3Show, type: ma3Type },
             labelShow: labelShow
         }
     };
@@ -1160,31 +1185,35 @@ function applyMASettings() {
     console.log('📈 MA 설정 적용 완료');
 }
 
-// localStorage에서 MA 설정 로드
+// localStorage에서 MA 설정 로드 (없으면 기본값 적용)
 function loadMASettings() {
     try {
         const raw = localStorage.getItem('crowny_ma_settings');
-        if (!raw) return;
+        if (!raw) {
+            // ★ 기본값 강제 적용 (새 기기/브라우저)
+            applyMASettings();
+            return;
+        }
         const s = JSON.parse(raw);
         
         if (s.nq) {
             if (s.nq.ma1) {
                 const el = document.getElementById('nq-ma1-color'); if (el) el.value = s.nq.ma1.color;
-                const n = document.getElementById('nq-ma1-name'); if (n) n.value = s.nq.ma1.name;
                 const p = document.getElementById('nq-ma1-period'); if (p) p.value = s.nq.ma1.period;
                 const sh = document.getElementById('nq-ma1-show'); if (sh) sh.checked = s.nq.ma1.show;
+                const tp = document.getElementById('nq-ma1-type'); if (tp && s.nq.ma1.type) tp.value = s.nq.ma1.type;
             }
             if (s.nq.ma2) {
                 const el = document.getElementById('nq-ma2-color'); if (el) el.value = s.nq.ma2.color;
-                const n = document.getElementById('nq-ma2-name'); if (n) n.value = s.nq.ma2.name;
                 const p = document.getElementById('nq-ma2-period'); if (p) p.value = s.nq.ma2.period;
                 const sh = document.getElementById('nq-ma2-show'); if (sh) sh.checked = s.nq.ma2.show;
+                const tp = document.getElementById('nq-ma2-type'); if (tp && s.nq.ma2.type) tp.value = s.nq.ma2.type;
             }
             if (s.nq.ma3) {
                 const el = document.getElementById('nq-ma3-color'); if (el) el.value = s.nq.ma3.color;
-                const n = document.getElementById('nq-ma3-name'); if (n) n.value = s.nq.ma3.name;
                 const p = document.getElementById('nq-ma3-period'); if (p) p.value = s.nq.ma3.period;
                 const sh = document.getElementById('nq-ma3-show'); if (sh) sh.checked = s.nq.ma3.show;
+                const tp = document.getElementById('nq-ma3-type'); if (tp && s.nq.ma3.type) tp.value = s.nq.ma3.type;
             }
             const lb = document.getElementById('nq-ma-label-show'); if (lb) lb.checked = s.nq.labelShow;
         }
