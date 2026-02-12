@@ -2,6 +2,7 @@
 
 const ORDER_STATUS_LABELS = { paid:t('mall.status_paid','💰 결제완료'), shipping:t('mall.status_shipping','🚚 배송중'), delivered:t('mall.status_delivered','✅ 배송완료'), cancelled:t('mall.status_cancelled','❌ 취소') };
 const ORDER_STATUS_COLORS = { paid:'#ff9800', shipping:'#2196f3', delivered:'#4CAF50', cancelled:'#cc0000' };
+const MALL_CATEGORIES = {'뷰티':'💄 뷰티','음향':'🔊 음향','헬스':'💪 헬스','생활':'☕ 생활','전자':'🔋 전자','패션':'👗 패션','식품':'🍽️ 식품','기타':'📦 기타'};
 
 function renderStars(rating, size='0.85rem') {
     let s = '';
@@ -43,7 +44,7 @@ async function loadMallProducts() {
                     <div style="height:140px; overflow:hidden; background:#f0f0f0;">${p.imageData ? `<img src="${p.imageData}" style="width:100%; height:100%; object-fit:cover;">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:#ccc;">🛒</div>`}</div>
                     <div style="padding:0.6rem;">
                         <div style="font-weight:600; font-size:0.85rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.title}</div>
-                        <div style="font-size:0.7rem; color:var(--accent);">${MALL_CATEGORIES[p.category] || ''} · ${p.sellerNickname || t('mall.seller','판매자')}</div>
+                        <div style="font-size:0.7rem; color:var(--accent);">${MALL_CATEGORIES[p.category] || p.category || ''} · ${p.sellerNickname || p.sellerEmail || t('mall.seller','판매자')}</div>
                         <div style="font-weight:700; color:#0066cc; margin-top:0.3rem;">${p.price} CRGC</div>
                         <div style="font-size:0.7rem; color:var(--accent);">재고: ${p.stock - (p.sold||0)}개</div>
                         ${ratingHtml}
@@ -103,7 +104,7 @@ async function viewProduct(id) {
         ${p.imageData ? `<img src="${p.imageData}" style="width:100%; border-radius:12px 12px 0 0; max-height:40vh; object-fit:contain; background:#f0f0f0;">` : `<div style="width:100%;height:200px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:4rem;color:#ccc;border-radius:12px 12px 0 0;">🛒</div>`}
         <div style="padding:1.2rem;">
             <h3>${p.title}</h3>
-            <p style="color:var(--accent); font-size:0.85rem; margin:0.5rem 0;">${MALL_CATEGORIES[p.category]} · 판매자: ${p.sellerNickname || p.sellerEmail}</p>
+            <p style="color:var(--accent); font-size:0.85rem; margin:0.5rem 0;">${[MALL_CATEGORIES[p.category], p.sellerNickname || p.sellerEmail ? '판매자: '+(p.sellerNickname||p.sellerEmail) : ''].filter(Boolean).join(' · ')}</p>
             ${ratingDisplay}
             ${p.description ? `<p style="font-size:0.9rem; margin-bottom:1rem;">${p.description}</p>` : ''}
             <div style="font-size:1.2rem; font-weight:700; color:#0066cc; margin-bottom:0.5rem;">${p.price} CRGC</div>

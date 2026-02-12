@@ -50,8 +50,15 @@ async function loadBooksGallery() {
     c.innerHTML = '<p style="text-align:center;color:var(--accent);padding:2rem;">로딩...</p>';
 
     try {
-        const snap = await db.collection('books').where('status', 'in', ['published', 'active', 'soldout'])
-            .orderBy('publishedAt', 'desc').limit(50).get();
+        let snap;
+        try {
+            snap = await db.collection('books').where('status', 'in', ['published', 'active', 'soldout'])
+                .orderBy('publishedAt', 'desc').limit(50).get();
+        } catch (indexErr) {
+            // fallback: createdAt 정렬 (publishedAt 인덱스 없을 때)
+            snap = await db.collection('books').where('status', 'in', ['published', 'active', 'soldout'])
+                .orderBy('createdAt', 'desc').limit(50).get();
+        }
 
         if (snap.empty) {
             c.innerHTML = '<p style="text-align:center;color:var(--accent);padding:2rem;">아직 등록된 책이 없습니다</p>';
