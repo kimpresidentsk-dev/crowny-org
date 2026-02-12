@@ -171,6 +171,7 @@
             <div class="nav-group-label">SOCIAL</div>
             <a href="#" onclick="showPage('messenger')" class="nav-item">💬 MESSENGER<span class="nav-sub" data-i18n="nav.messenger">메신저</span></a>
             <a href="#" onclick="showPage('social')" class="nav-item">📸 SOCIAL<span class="nav-sub" data-i18n="nav.social">소셜</span></a>
+            <a href="#" onclick="showPage('reels')" class="nav-item">🎬 REELS<span class="nav-sub" data-i18n="nav.reels">숏폼</span></a>
             <hr class="nav-divider">
             <div class="nav-group-label">FINANCE</div>
             <a href="#" onclick="showPage('wallet')" class="nav-item">💰 WALLET<span class="nav-sub" data-i18n="nav.wallet">지갑</span></a>
@@ -738,6 +739,15 @@
             </script>
         </section>
 
+        <!-- ========== REELS - 숏폼 영상 ========== -->
+        <section id="reels" class="page">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <h2 style="margin:0;" data-i18n="shortform.title">🎬 REELS</h2>
+                <button onclick="SHORTFORM.openUpload()" style="padding:0.5rem 1rem;border:none;border-radius:20px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;cursor:pointer;font-weight:600;font-size:0.85rem;">➕ 업로드</button>
+            </div>
+            <div id="reels-container" style="width:100%;height:calc(100vh - 120px);background:#000;border-radius:16px;overflow:hidden;position:relative;"></div>
+        </section>
+
         <!-- ========== ART v2.0 - 디지털 아트 거래소 + NFT ========== -->
         <section id="art" class="page">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
@@ -860,13 +870,12 @@
                             <option value="designers">👗 디자이너스</option>
                         </select>
                     </div>
-                    <div>
-                        <label style="font-size:0.7rem; color:var(--accent);">최소 가격</label>
-                        <input type="number" id="mall-filter-price-min" placeholder="0" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:6px; font-size:0.8rem; box-sizing:border-box;">
-                    </div>
-                    <div>
-                        <label style="font-size:0.7rem; color:var(--accent);">최대 가격</label>
-                        <input type="number" id="mall-filter-price-max" placeholder="∞" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:6px; font-size:0.8rem; box-sizing:border-box;">
+                    <div style="grid-column:1/-1;">
+                        <label style="font-size:0.7rem; color:var(--accent);">가격 범위: <span id="mall-price-range-label">0 ~ ∞ CRGC</span></label>
+                        <div style="display:flex;gap:0.5rem;align-items:center;margin-top:0.3rem;">
+                            <input type="range" id="mall-filter-price-min" min="0" max="10000" step="100" value="0" oninput="updatePriceRangeLabel()" style="flex:1;accent-color:#0066cc;">
+                            <input type="range" id="mall-filter-price-max" min="0" max="10000" step="100" value="10000" oninput="updatePriceRangeLabel()" style="flex:1;accent-color:#0066cc;">
+                        </div>
                     </div>
                     <div>
                         <label style="font-size:0.7rem; color:var(--accent);">최소 평점</label>
@@ -2074,6 +2083,7 @@
     <script src="js/slogans.js?v=1.0" defer></script>
     <script src="js/care.js?v=1.0"></script>
     <script src="js/ai-assistant.js?v=1.0"></script>
+    <script src="js/shortform.js?v=1.0"></script>
     <script src="js/pwa.js?v=1.1"></script>
 </body>
 </html>

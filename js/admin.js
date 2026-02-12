@@ -3734,7 +3734,8 @@ async function loadAdminReports() {
         const snap = await db.collection('reports').where('status', '==', 'pending').orderBy('createdAt', 'desc').limit(50).get();
         if (snap.empty) { c.innerHTML = '<p style="color:var(--accent);">대기 중인 신고가 없습니다 ✅</p>'; return; }
         c.innerHTML = '';
-        const REPORT_REASONS = { fake: '허위상품', inappropriate: '부적절', scam: '사기의심', other: '기타' };
+        const REPORT_REASONS = { fake: '허위상품', inappropriate: '부적절', scam: '사기의심', fraud: '사기', nondelivery: '미배송', fake_review: '허위 리뷰', spam: '스팸', other: '기타' };
+        const TARGET_TYPE_LABELS = { product: '📦 상품', review: '📝 리뷰', seller: '🏪 판매자' };
         snap.forEach(d => {
             const r = d.data();
             const dateStr = r.createdAt?.toDate ? r.createdAt.toDate().toLocaleDateString('ko-KR') : '';

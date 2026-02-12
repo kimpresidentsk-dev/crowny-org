@@ -27,6 +27,9 @@ function showPage(pageId) {
         if (typeof loadFriendsGrid === 'function') loadFriendsGrid();
         if (typeof loadFriendRequests === 'function') loadFriendRequests();
     }
+    if (pageId === 'reels') {
+        if (typeof SHORTFORM !== 'undefined' && SHORTFORM.initReels) SHORTFORM.initReels();
+    }
     if (pageId === 'messenger') {
         if (typeof loadMessages === 'function') loadMessages();
     }

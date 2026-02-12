@@ -50,9 +50,15 @@ async function loadMallProducts() {
         let items = [];
         docs.forEach(d => items.push({ id: d.id, ...d.data() }));
 
-        // 검색 필터
+        // 검색 필터 (상품명 + 설명 + 브랜드 + 카테고리 통합)
         const searchVal = (document.getElementById('mall-search')?.value || '').trim().toLowerCase();
-        if (searchVal) items = items.filter(p => p.title.toLowerCase().includes(searchVal) || (p.description||'').toLowerCase().includes(searchVal));
+        if (searchVal) items = items.filter(p =>
+            p.title.toLowerCase().includes(searchVal) ||
+            (p.description||'').toLowerCase().includes(searchVal) ||
+            (p.category||'').toLowerCase().includes(searchVal) ||
+            (MALL_CATEGORIES[p.category]||'').toLowerCase().includes(searchVal) ||
+            (p.sellerNickname||'').toLowerCase().includes(searchVal)
+        );
 
         // 고급 필터 적용
         if (typeof _mallFilters !== 'undefined') {
@@ -79,17 +85,24 @@ async function loadMallProducts() {
         // 검색 초기화
         if (typeof initMallSearch === 'function') initMallSearch();
         container.innerHTML = '';
+        // 검색 하이라이트 함수
+        const highlightText = (text, query) => {
+            if (!query || !text) return text;
+            const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            return text.replace(new RegExp(`(${escaped})`, 'gi'), '<mark style="background:#fff59d;padding:0 1px;border-radius:2px;">$1</mark>');
+        };
         items.forEach(p => {
             const thumb = getProductThumb(p);
             const imgCount = (p.images && p.images.length > 1) ? `<span style="position:absolute; top:6px; left:6px; background:rgba(0,0,0,0.6); color:white; font-size:0.6rem; padding:0.15rem 0.4rem; border-radius:4px;">📷 ${p.images.length}</span>` : '';
             const ratingHtml = p.avgRating ? `<div style="margin-top:0.2rem;">${renderStars(p.avgRating, '0.7rem')} <span style="font-size:0.65rem; color:var(--accent);">(${p.reviewCount||0})</span></div>` : '';
+            const displayTitle = searchVal ? highlightText(p.title, searchVal) : p.title;
             container.innerHTML += `
                 <div onclick="viewProduct('${p.id}')" style="background:white; border-radius:10px; overflow:hidden; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.08); position:relative;">
                     <button onclick="event.stopPropagation(); toggleWishlist('${p.id}')" style="position:absolute; top:6px; right:6px; background:rgba(255,255,255,0.85); border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; font-size:0.9rem; z-index:1;">🤍</button>
                     ${imgCount}
                     <div style="height:140px; overflow:hidden; background:#f0f0f0;">${thumb ? `<img src="${thumb}" style="width:100%; height:100%; object-fit:cover;">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:#ccc;">🛒</div>`}</div>
                     <div style="padding:0.6rem;">
-                        <div style="font-weight:600; font-size:0.85rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.title}</div>
+                        <div style="font-weight:600; font-size:0.85rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${displayTitle}</div>
                         <div style="font-size:0.7rem; color:var(--accent);">${MALL_CATEGORIES[p.category] || p.category || ''} · <a onclick="event.stopPropagation(); viewStore('${p.sellerId}')" style="cursor:pointer; text-decoration:underline; color:var(--accent);">${p.sellerNickname || p.sellerEmail || t('mall.seller','판매자')}</a></div>
                         <div style="font-weight:700; color:#0066cc; margin-top:0.3rem;">${p.price} CRGC</div>
                         <div style="font-size:0.7rem; color:var(--accent);">재고: ${p.stock - (p.sold||0)}개</div>
@@ -168,8 +181,9 @@ async function renderProductDetail(id) {
                         <div style="font-size:0.7rem; color:var(--accent); margin-top:0.1rem;">${dateStr}</div>
                         ${rv.comment ? `<p style="font-size:0.85rem; margin-top:0.3rem; color:#555;">${rv.comment}</p>` : ''}
                         ${rv.imageData ? `<img src="${rv.imageData}" style="width:100px;height:100px;object-fit:cover;border-radius:8px;margin-top:0.4rem;cursor:pointer;" onclick="window.open(this.src)">` : ''}
-                        <div style="margin-top:0.4rem;">
+                        <div style="margin-top:0.4rem;display:flex;gap:0.4rem;">
                             <button onclick="helpfulReview('${r.id}')" style="background:none;border:1px solid #ddd;border-radius:12px;padding:0.2rem 0.6rem;cursor:pointer;font-size:0.75rem;color:var(--accent);">👍 도움이 돼요 ${rv.helpful||0}</button>
+                            ${currentUser && rv.buyerId !== currentUser.uid ? `<button onclick="event.stopPropagation();reportReview('${r.id}')" style="background:none;border:1px solid #eee;border-radius:12px;padding:0.2rem 0.6rem;cursor:pointer;font-size:0.7rem;color:#cc0000;">🚨</button>` : ''}
                         </div>
                     </div>`;
                 });
@@ -2187,6 +2201,9 @@ async function checkoutCart(btn) {
     if (!currentUser) return;
     // 이중 클릭 방지
     if (btn) { btn.disabled = true; setTimeout(() => { if(btn) btn.disabled = false; }, 3000); }
+    // 동시 주문 방지
+    if (_orderInProgress) { showToast(t('mall.order_in_progress','주문 처리 중입니다. 잠시 기다려주세요.'), 'warning'); return; }
+    _orderInProgress = true;
     try {
         const snap = await db.collection('users').doc(currentUser.uid).collection('cart').get();
         if (snap.empty) { showToast('장바구니가 비어있습니다', 'warning'); return; }
@@ -2195,6 +2212,7 @@ async function checkoutCart(btn) {
         snap.forEach(d => { const it = d.data(); total += it.price * (it.qty || 1); items.push({ ...it, cartDocId: d.id }); });
         
         if (total <= 0 || !Number.isFinite(total)) { showToast('비정상 금액', 'error'); return; }
+        if (total > MAX_ORDER_AMOUNT) { showToast(t('mall.max_order_exceeded',`1회 최대 주문 금액은 ${MAX_ORDER_AMOUNT} CRGC입니다`), 'warning'); return; }
         if (!await showConfirmModal('일괄 결제', `장바구니 ${items.length}개 상품\n총 ${total} CRGC 결제하시겠습니까?`)) return;
         
         const shippingInfo = await showShippingModal();
@@ -2253,7 +2271,7 @@ async function checkoutCart(btn) {
         }
         showToast(`🎉 ${items.length}개 상품 결제 완료!`, 'success');
         loadCart(); updateCartBadge(); loadUserWallet();
-    } catch(e) { showToast('결제 실패: ' + e.message, 'error'); }
+    } catch(e) { showToast('결제 실패: ' + e.message, 'error'); } finally { _orderInProgress = false; }
 }
 
 // ========== WISHLIST (찜하기) ==========
@@ -2385,7 +2403,7 @@ async function renderStorePage(sellerId) {
                         </div>
                     </div>
                 </div>
-                ${isOwner ? `<button onclick="showStoreSettingsModal()" style="margin-top:0.8rem; background:#ff9800; color:white; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600;">⚙️ 스토어 설정</button>` : ''}
+                ${isOwner ? `<button onclick="showStoreSettingsModal()" style="margin-top:0.8rem; background:#ff9800; color:white; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600;">⚙️ 스토어 설정</button>` : (currentUser ? `<button onclick="reportSeller('${sellerId}')" style="margin-top:0.8rem; background:none; color:#cc0000; border:1px solid #cc0000; padding:0.4rem 0.8rem; border-radius:8px; cursor:pointer; font-size:0.8rem;">🚨 ${t('mall.report_seller','판매자 신고')}</button>` : '')}
             </div>
             <h3 style="margin-bottom:0.8rem;">📦 상품 목록</h3>
             <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:0.8rem;">
@@ -2961,25 +2979,33 @@ async function approveReturn(returnId) {
     try {
         const retDoc = await db.collection('returns').doc(returnId).get();
         const ret = retDoc.data();
-        // Refund buyer (restore offchain balance)
         const tk = (ret.token || 'CRGC').toLowerCase();
-        if (isOffchainToken(tk)) {
-            // Add back to buyer
-            const buyerDoc = await db.collection('users').doc(ret.buyerId).get();
-            const buyerBal = buyerDoc.data()?.offchainBalances || {};
-            await db.collection('users').doc(ret.buyerId).update({
-                [`offchainBalances.${tk}`]: (buyerBal[tk]||0) + ret.amount
+
+        // 원래 주문 금액 검증 후 트랜잭션으로 원자적 환불
+        await db.runTransaction(async (tx) => {
+            // 주문 원본 확인 — 환불 금액이 원래 주문 금액과 일치하는지 검증
+            const orderDoc = await tx.get(db.collection('orders').doc(ret.orderId));
+            if (!orderDoc.exists) throw new Error('원본 주문을 찾을 수 없습니다');
+            const order = orderDoc.data();
+            if (order.amount !== ret.amount) throw new Error(`환불 금액(${ret.amount})이 주문 금액(${order.amount})과 불일치`);
+            if (order.status === 'cancelled') throw new Error('이미 취소된 주문입니다');
+
+            if (typeof isOffchainToken === 'function' && isOffchainToken(tk)) {
+                const buyerDoc = await tx.get(db.collection('users').doc(ret.buyerId));
+                const buyerBal = buyerDoc.data()?.offchainBalances || {};
+                tx.update(db.collection('users').doc(ret.buyerId), {
+                    [`offchainBalances.${tk}`]: (buyerBal[tk]||0) + ret.amount
+                });
+                const sellerDoc = await tx.get(db.collection('users').doc(ret.sellerId));
+                const sellerBal = sellerDoc.data()?.offchainBalances || {};
+                tx.update(db.collection('users').doc(ret.sellerId), {
+                    [`offchainBalances.${tk}`]: Math.max(0, (sellerBal[tk]||0) - ret.amount)
+                });
+            }
+            tx.update(db.collection('returns').doc(returnId), { status:'completed', completedAt: new Date() });
+            tx.update(db.collection('orders').doc(ret.orderId), { status:'cancelled', cancelledAt: new Date(),
+                statusHistory: firebase.firestore.FieldValue.arrayUnion({status:'cancelled', at: new Date().toISOString(), reason:'반품환불'})
             });
-            // Deduct from seller
-            const sellerDoc = await db.collection('users').doc(ret.sellerId).get();
-            const sellerBal = sellerDoc.data()?.offchainBalances || {};
-            await db.collection('users').doc(ret.sellerId).update({
-                [`offchainBalances.${tk}`]: Math.max(0, (sellerBal[tk]||0) - ret.amount)
-            });
-        }
-        await db.collection('returns').doc(returnId).update({ status:'completed', completedAt: new Date() });
-        await db.collection('orders').doc(ret.orderId).update({ status:'cancelled', cancelledAt: new Date(),
-            statusHistory: firebase.firestore.FieldValue.arrayUnion({status:'cancelled', at: new Date().toISOString(), reason:'반품환불'})
         });
         if (typeof createNotification === 'function') {
             await createNotification(ret.buyerId, 'order_status', { message: `✅ "${ret.productTitle}" 반품이 승인되었습니다. 환불 완료!`, link: '#page=buyer-orders' });
@@ -3119,6 +3145,55 @@ async function reportProduct(productId) {
     });
 }
 
+// ========== 범용 신고 시스템 (리뷰/판매자) ==========
+
+async function reportReview(reviewId) {
+    if (!currentUser) { showToast(t('mall.login_required','로그인이 필요합니다'), 'warning'); return; }
+    return _showReportModal('review', reviewId, t('mall.report_review','리뷰 신고'));
+}
+
+async function reportSeller(sellerId) {
+    if (!currentUser) { showToast(t('mall.login_required','로그인이 필요합니다'), 'warning'); return; }
+    return _showReportModal('seller', sellerId, t('mall.report_seller','판매자 신고'));
+}
+
+function _showReportModal(targetType, targetId, title) {
+    return new Promise((resolve) => {
+        const REASONS = { product: {fake:t('mall.report_fake','허위상품'),inappropriate:t('mall.report_inappropriate','부적절'),scam:t('mall.report_scam','사기의심'),other:t('mall.report_other','기타')}, review: {fake:t('mall.report_fake_review','허위 리뷰'),inappropriate:t('mall.report_inappropriate','부적절'),spam:t('mall.report_spam','스팸'),other:t('mall.report_other','기타')}, seller: {fraud:t('mall.report_fraud','사기'),inappropriate:t('mall.report_inappropriate','부적절'),nondelivery:t('mall.report_nondelivery','미배송'),other:t('mall.report_other','기타')} };
+        const reasons = REASONS[targetType] || REASONS.product;
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99998;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); resolve(); } };
+        overlay.innerHTML = `<div style="background:white;padding:1.5rem;border-radius:12px;max-width:400px;width:100%;">
+            <h3 style="margin-bottom:1rem;">🚨 ${title}</h3>
+            <div style="display:grid;gap:0.8rem;">
+                <select id="report-reason-gen" style="padding:0.7rem;border:1px solid var(--border);border-radius:6px;">
+                    ${Object.entries(reasons).map(([k,v]) => `<option value="${k}">${v}</option>`).join('')}
+                </select>
+                <textarea id="report-detail-gen" rows="3" placeholder="${t('mall.report_detail_placeholder','상세 내용 (선택)')}" style="width:100%;padding:0.7rem;border:1px solid var(--border);border-radius:6px;resize:vertical;box-sizing:border-box;"></textarea>
+                <div style="display:flex;gap:0.5rem;">
+                    <button onclick="this.closest('div[style*=fixed]').remove()" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">${t('common.cancel','취소')}</button>
+                    <button id="report-submit-gen" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#cc0000;color:white;font-weight:700;">${t('mall.report_submit','신고')}</button>
+                </div>
+            </div>
+        </div>`;
+        document.body.appendChild(overlay);
+        overlay.querySelector('#report-submit-gen').onclick = async () => {
+            try {
+                await db.collection('reports').add({
+                    targetType, targetId,
+                    reporterId: currentUser.uid, reporterEmail: currentUser.email,
+                    reason: overlay.querySelector('#report-reason-gen').value,
+                    detail: overlay.querySelector('#report-detail-gen').value.trim(),
+                    status: 'pending', createdAt: new Date()
+                });
+                showToast(t('mall.report_submitted','🚨 신고가 접수되었습니다'), 'success');
+                overlay.remove(); resolve();
+            } catch(e) { showToast(t('mall.report_failed','신고 실패') + ': ' + e.message, 'error'); }
+        };
+    });
+}
+
 // ========== 검색 고도화 ==========
 
 let _mallSearchDebounce = null;
@@ -3173,7 +3248,7 @@ async function mallAutocomplete(query) {
         const matches = [];
         snap.forEach(d => {
             const p = d.data();
-            if (p.title.toLowerCase().includes(q)) matches.push(p.title);
+            if (p.title.toLowerCase().includes(q) || (p.description||'').toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q) || (MALL_CATEGORIES[p.category]||'').toLowerCase().includes(q)) matches.push(p.title);
         });
         const unique = [...new Set(matches)].slice(0, 8);
         if (unique.length === 0) { ac.style.display = 'none'; return; }
@@ -3229,10 +3304,19 @@ function toggleMallFilters() {
     panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
 }
 
+function updatePriceRangeLabel() {
+    const min = document.getElementById('mall-filter-price-min')?.value || '0';
+    const max = document.getElementById('mall-filter-price-max')?.value || '10000';
+    const label = document.getElementById('mall-price-range-label');
+    if (label) label.textContent = `${min} ~ ${max === '10000' ? '∞' : max} CRGC`;
+}
+
 function applyMallFilters() {
     _mallFilters.category = document.getElementById('mall-filter-category')?.value || '';
-    _mallFilters.priceMin = document.getElementById('mall-filter-price-min')?.value || '';
-    _mallFilters.priceMax = document.getElementById('mall-filter-price-max')?.value || '';
+    const minEl = document.getElementById('mall-filter-price-min');
+    const maxEl = document.getElementById('mall-filter-price-max');
+    _mallFilters.priceMin = (minEl && minEl.value !== '0') ? minEl.value : '';
+    _mallFilters.priceMax = (maxEl && maxEl.value !== '10000') ? maxEl.value : '';
     _mallFilters.ratingMin = document.getElementById('mall-filter-rating')?.value || '';
     _mallFilters.inStockOnly = document.getElementById('mall-filter-instock')?.checked || false;
     loadMallProducts();
