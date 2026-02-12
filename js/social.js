@@ -363,55 +363,110 @@ async function sendTokenWithMessage() {
         alert('채팅을 선택하세요');
         return;
     }
+    if (!userWallet || !currentWalletId) {
+        alert('지갑을 먼저 연결하세요');
+        return;
+    }
     
-    const amount = prompt('전송할 CRNY 수량:');
+    // 토큰 선택 (온체인 + 오프체인)
+    const tokenChoice = prompt(
+        '전송할 토큰을 선택하세요:\n\n' +
+        '온체인:\n1. CRNY (' + (userWallet.balances?.crny || 0).toFixed(2) + ')\n' +
+        '2. FNC (' + (userWallet.balances?.fnc || 0).toFixed(2) + ')\n' +
+        '3. CRFN (' + (userWallet.balances?.crfn || 0).toFixed(2) + ')\n\n' +
+        '오프체인:\n4. CRTD (' + (userWallet.offchainBalances?.crtd || 0) + ' pt)\n' +
+        '5. CRAC (' + (userWallet.offchainBalances?.crac || 0) + ' pt)\n' +
+        '6. CRGC (' + (userWallet.offchainBalances?.crgc || 0) + ' pt)\n' +
+        '7. CREB (' + (userWallet.offchainBalances?.creb || 0) + ' pt)\n\n번호:', '1');
+    if (!tokenChoice) return;
+    
+    const tokenMap = { '1':'crny', '2':'fnc', '3':'crfn', '4':'crtd', '5':'crac', '6':'crgc', '7':'creb' };
+    const tokenKey = tokenMap[tokenChoice];
+    if (!tokenKey) { alert('잘못된 선택'); return; }
+    
+    const isOffchain = isOffchainToken(tokenKey);
+    const tokenName = tokenKey.toUpperCase();
+    const balance = isOffchain 
+        ? (userWallet.offchainBalances?.[tokenKey] || 0) 
+        : (userWallet.balances?.[tokenKey] || 0);
+    
+    const amount = prompt(`전송할 ${tokenName} 수량:\n잔액: ${balance}`);
     if (!amount) return;
     
     const amountNum = parseFloat(amount);
-    if (amountNum <= 0 || amountNum > userWallet.balances.crny) {
-        alert(`잔액이 부족하거나 잘못된 수량입니다\n잔액: ${userWallet.balances.crny} CRNY`);
+    if (isNaN(amountNum) || amountNum <= 0 || amountNum > balance) {
+        alert(`잔액이 부족하거나 잘못된 수량입니다\n잔액: ${balance} ${tokenName}`);
         return;
     }
     
     const message = prompt('메시지 (선택):') || '';
     
-    // Update balances
-    await db.collection('users').doc(currentUser.uid).update({
-        'balances.crny': userWallet.balances.crny - amountNum
-    });
-    
-    const otherUser = await db.collection('users').doc(currentChatOtherId).get();
-    await db.collection('users').doc(currentChatOtherId).update({
-        'balances.crny': otherUser.data().balances.crny + amountNum
-    });
-    
-    // Send message with token
-    await db.collection('chats').doc(currentChat)
-        .collection('messages').add({
-            senderId: currentUser.uid,
-            text: message,
-            tokenAmount: amountNum,
-            tokenType: 'CRNY',
+    try {
+        if (isOffchain) {
+            // 오프체인: user doc의 offchainBalances 사용
+            const recipientDoc = await db.collection('users').doc(currentChatOtherId).get();
+            const recipientOff = recipientDoc.data()?.offchainBalances || {};
+            
+            // 발신자 차감
+            await db.collection('users').doc(currentUser.uid).update({
+                [`offchainBalances.${tokenKey}`]: balance - amountNum
+            });
+            userWallet.offchainBalances[tokenKey] = balance - amountNum;
+            
+            // 수신자 적립
+            await db.collection('users').doc(currentChatOtherId).update({
+                [`offchainBalances.${tokenKey}`]: (recipientOff[tokenKey] || 0) + amountNum
+            });
+        } else {
+            // 온체인: wallets subcollection 사용
+            await db.collection('users').doc(currentUser.uid)
+                .collection('wallets').doc(currentWalletId)
+                .update({ [`balances.${tokenKey}`]: balance - amountNum });
+            userWallet.balances[tokenKey] = balance - amountNum;
+            
+            // 수신자 지갑 (첫 번째 지갑)
+            const recipientWallets = await db.collection('users').doc(currentChatOtherId)
+                .collection('wallets').limit(1).get();
+            if (!recipientWallets.empty) {
+                const rBal = recipientWallets.docs[0].data().balances || {};
+                await recipientWallets.docs[0].ref.update({
+                    [`balances.${tokenKey}`]: (rBal[tokenKey] || 0) + amountNum
+                });
+            }
+        }
+        
+        // 채팅 메시지 기록
+        await db.collection('chats').doc(currentChat)
+            .collection('messages').add({
+                senderId: currentUser.uid,
+                text: message,
+                tokenAmount: amountNum,
+                tokenType: tokenName,
+                timestamp: new Date()
+            });
+        
+        await db.collection('chats').doc(currentChat).update({
+            lastMessage: `💰 ${amountNum} ${tokenName} 전송`,
+            lastMessageTime: new Date()
+        });
+        
+        // 트랜잭션 기록
+        await db.collection('transactions').add({
+            from: currentUser.uid,
+            to: currentChatOtherId,
+            amount: amountNum,
+            token: tokenName,
+            type: isOffchain ? 'messenger_offchain' : 'messenger_onchain',
+            message: message,
             timestamp: new Date()
         });
-    
-    await db.collection('chats').doc(currentChat).update({
-        lastMessage: `💰 ${amountNum} CRNY 전송`,
-        lastMessageTime: new Date()
-    });
-    
-    // Transaction record
-    await db.collection('transactions').add({
-        from: currentUser.uid,
-        to: currentChatOtherId,
-        amount: amountNum,
-        token: 'CRNY',
-        message: message,
-        timestamp: new Date()
-    });
-    
-    alert(`✅ ${amountNum} CRNY 전송 완료!`);
-    loadUserWallet();
+        
+        updateBalances();
+        alert(`✅ ${amountNum} ${tokenName} 전송 완료!`);
+    } catch (error) {
+        console.error('메신저 토큰 전송 실패:', error);
+        alert('전송 실패: ' + error.message);
+    }
 }
 
 // ========== SOCIAL FEED ==========

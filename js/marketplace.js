@@ -56,16 +56,35 @@ async function buyProduct(id) {
         const p = doc.data();
         if ((p.stock - (p.sold||0)) <= 0) { alert('품절입니다'); return; }
         const tk = p.priceToken.toLowerCase();
-        const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
-        const bal = wallets.docs[0]?.data()?.balances || {};
-        if ((bal[tk]||0) < p.price) { alert(`${p.priceToken} 잔액 부족`); return; }
+        
         if (!confirm(`"${p.title}"\n${p.price} ${p.priceToken}로 구매?`)) return;
-        await wallets.docs[0].ref.update({ [`balances.${tk}`]: bal[tk] - p.price });
-        const sellerW = await db.collection('users').doc(p.sellerId).collection('wallets').limit(1).get();
-        if (!sellerW.empty) { const sb = sellerW.docs[0].data().balances||{}; await sellerW.docs[0].ref.update({ [`balances.${tk}`]: (sb[tk]||0) + p.price }); }
+        
+        if (isOffchainToken(tk)) {
+            // 오프체인 토큰 결제
+            const success = await spendOffchainPoints(tk, p.price, `몰 구매: ${p.title}`);
+            if (!success) return;
+            // 판매자에게 적립
+            const sellerOff = (await db.collection('users').doc(p.sellerId).get()).data()?.offchainBalances || {};
+            await db.collection('users').doc(p.sellerId).update({
+                [`offchainBalances.${tk}`]: (sellerOff[tk] || 0) + p.price
+            });
+            // CRGC 구매 시 기부풀 자동 적립
+            if (tk === 'crgc' && typeof autoGivingPoolContribution === 'function') {
+                await autoGivingPoolContribution(p.price);
+            }
+        } else {
+            // 온체인 토큰 결제
+            const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
+            const bal = wallets.docs[0]?.data()?.balances || {};
+            if ((bal[tk]||0) < p.price) { alert(`${p.priceToken} 잔액 부족`); return; }
+            await wallets.docs[0].ref.update({ [`balances.${tk}`]: bal[tk] - p.price });
+            const sellerW = await db.collection('users').doc(p.sellerId).collection('wallets').limit(1).get();
+            if (!sellerW.empty) { const sb = sellerW.docs[0].data().balances||{}; await sellerW.docs[0].ref.update({ [`balances.${tk}`]: (sb[tk]||0) + p.price }); }
+        }
+        
         await db.collection('products').doc(id).update({ sold: (p.sold||0) + 1 });
         await db.collection('orders').add({ productId:id, productTitle:p.title, buyerId:currentUser.uid, buyerEmail:currentUser.email, sellerId:p.sellerId, amount:p.price, token:p.priceToken, status:'paid', createdAt:new Date() });
-        await distributeReferralReward(currentUser.uid, p.price, p.priceToken);
+        if (typeof distributeReferralReward === 'function') await distributeReferralReward(currentUser.uid, p.price, p.priceToken);
         alert(`🎉 "${p.title}" 구매 완료!`);
         document.getElementById('product-modal')?.remove();
         loadMallProducts(); loadUserWallet();
@@ -154,13 +173,24 @@ async function donateCampaign(id) {
         const doc = await db.collection('campaigns').doc(id).get();
         const camp = doc.data();
         const tk = camp.token.toLowerCase();
-        const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
-        const bal = wallets.docs[0]?.data()?.balances || {};
-        if ((bal[tk]||0) < amount) { alert('잔액 부족'); return; }
-        await wallets.docs[0].ref.update({ [`balances.${tk}`]: bal[tk] - amount });
+        
+        if (isOffchainToken(tk)) {
+            const success = await spendOffchainPoints(tk, amount, `기부: ${camp.title}`);
+            if (!success) return;
+            const creatorOff = (await db.collection('users').doc(camp.creatorId).get()).data()?.offchainBalances || {};
+            await db.collection('users').doc(camp.creatorId).update({
+                [`offchainBalances.${tk}`]: (creatorOff[tk] || 0) + amount
+            });
+        } else {
+            const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
+            const bal = wallets.docs[0]?.data()?.balances || {};
+            if ((bal[tk]||0) < amount) { alert('잔액 부족'); return; }
+            await wallets.docs[0].ref.update({ [`balances.${tk}`]: bal[tk] - amount });
+            const creatorW = await db.collection('users').doc(camp.creatorId).collection('wallets').limit(1).get();
+            if (!creatorW.empty) { const cb = creatorW.docs[0].data().balances||{}; await creatorW.docs[0].ref.update({ [`balances.${tk}`]: (cb[tk]||0) + amount }); }
+        }
+        
         await db.collection('campaigns').doc(id).update({ raised: camp.raised + amount, backers: camp.backers + 1 });
-        const creatorW = await db.collection('users').doc(camp.creatorId).collection('wallets').limit(1).get();
-        if (!creatorW.empty) { const cb = creatorW.docs[0].data().balances||{}; await creatorW.docs[0].ref.update({ [`balances.${tk}`]: (cb[tk]||0) + amount }); }
         await db.collection('transactions').add({ from:currentUser.uid, to:camp.creatorId, amount, token:camp.token, type:'donation', campaignId:id, timestamp:new Date() });
         alert(`💝 ${amount} ${camp.token} 기부 완료!`);
         loadCampaigns(); loadUserWallet();
@@ -187,17 +217,25 @@ async function loadEnergyProjects() {
 }
 
 async function investEnergy(id) {
-    const amount = parseFloat(prompt('투자 금액 (CRNY):'));
+    const tokenChoice = prompt('투자 토큰:\n1. CRNY\n2. CREB (에코·바이오)\n\n번호:', '1');
+    const tk = tokenChoice === '2' ? 'creb' : 'crny';
+    const tkName = tk.toUpperCase();
+    const amount = parseFloat(prompt(`투자 금액 (${tkName}):`));
     if (!amount || amount <= 0) return;
     try {
-        const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
-        const bal = wallets.docs[0]?.data()?.balances || {};
-        if ((bal.crny||0) < amount) { alert('CRNY 잔액 부족'); return; }
-        await wallets.docs[0].ref.update({ 'balances.crny': bal.crny - amount });
+        if (isOffchainToken(tk)) {
+            const success = await spendOffchainPoints(tk, amount, `에너지 투자: ${id}`);
+            if (!success) return;
+        } else {
+            const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
+            const bal = wallets.docs[0]?.data()?.balances || {};
+            if ((bal[tk]||0) < amount) { alert(`${tkName} 잔액 부족`); return; }
+            await wallets.docs[0].ref.update({ [`balances.${tk}`]: bal[tk] - amount });
+        }
         const doc = await db.collection('energy_projects').doc(id).get();
         await db.collection('energy_projects').doc(id).update({ invested: (doc.data().invested||0) + amount, investors: (doc.data().investors||0) + 1 });
-        await db.collection('energy_investments').add({ projectId:id, userId:currentUser.uid, amount, timestamp:new Date() });
-        alert(`☀️ ${amount} CRNY 투자 완료!`); loadEnergyProjects(); loadUserWallet();
+        await db.collection('energy_investments').add({ projectId:id, userId:currentUser.uid, amount, token:tkName, timestamp:new Date() });
+        alert(`☀️ ${amount} ${tkName} 투자 완료!`); loadEnergyProjects(); loadUserWallet();
     } catch (e) { alert('실패: ' + e.message); }
 }
 
@@ -286,19 +324,33 @@ async function loadArtistList() {
 }
 
 async function supportArtist(id) {
-    const amount = parseFloat(prompt('후원 금액 (CRNY):'));
+    const tokenChoice = prompt('후원 토큰:\n1. CRNY\n2. CRAC (아트·엔터)\n\n번호:', '1');
+    const tk = tokenChoice === '2' ? 'crac' : 'crny';
+    const tkName = tk.toUpperCase();
+    const amount = parseFloat(prompt(`후원 금액 (${tkName}):`));
     if (!amount || amount <= 0) return;
     try {
-        const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
-        const bal = wallets.docs[0]?.data()?.balances || {};
-        if ((bal.crny||0) < amount) { alert('CRNY 잔액 부족'); return; }
-        await wallets.docs[0].ref.update({ 'balances.crny': bal.crny - amount });
-        const doc = await db.collection('artists').doc(id).get(); const artist = doc.data();
-        const artistW = await db.collection('users').doc(artist.userId).collection('wallets').limit(1).get();
-        if (!artistW.empty) { const ab = artistW.docs[0].data().balances||{}; await artistW.docs[0].ref.update({ 'balances.crny': (ab.crny||0) + amount }); }
-        await db.collection('artists').doc(id).update({ totalSupport: (artist.totalSupport||0) + amount, fans: (artist.fans||0) + 1 });
-        await db.collection('transactions').add({ from:currentUser.uid, to:artist.userId, amount, token:'CRNY', type:'artist_support', artistId:id, timestamp:new Date() });
-        alert(`💖 ${artist.name}에게 ${amount} CRNY 후원!`); loadArtistList(); loadUserWallet();
+        if (isOffchainToken(tk)) {
+            const success = await spendOffchainPoints(tk, amount, `아티스트 후원: ${id}`);
+            if (!success) return;
+            const doc = await db.collection('artists').doc(id).get(); const artist = doc.data();
+            const artistOff = (await db.collection('users').doc(artist.userId).get()).data()?.offchainBalances || {};
+            await db.collection('users').doc(artist.userId).update({
+                [`offchainBalances.${tk}`]: (artistOff[tk] || 0) + amount
+            });
+        } else {
+            const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
+            const bal = wallets.docs[0]?.data()?.balances || {};
+            if ((bal[tk]||0) < amount) { alert(`${tkName} 잔액 부족`); return; }
+            await wallets.docs[0].ref.update({ [`balances.${tk}`]: bal[tk] - amount });
+            const doc = await db.collection('artists').doc(id).get(); const artist = doc.data();
+            const artistW = await db.collection('users').doc(artist.userId).collection('wallets').limit(1).get();
+            if (!artistW.empty) { const ab = artistW.docs[0].data().balances||{}; await artistW.docs[0].ref.update({ [`balances.${tk}`]: (ab[tk]||0) + amount }); }
+        }
+        const doc2 = await db.collection('artists').doc(id).get(); const artist2 = doc2.data();
+        await db.collection('artists').doc(id).update({ totalSupport: (artist2.totalSupport||0) + amount, fans: (artist2.fans||0) + 1 });
+        await db.collection('transactions').add({ from:currentUser.uid, to:artist2.userId, amount, token:tkName, type:'artist_support', artistId:id, timestamp:new Date() });
+        alert(`💖 ${artist2.name}에게 ${amount} ${tkName} 후원!`); loadArtistList(); loadUserWallet();
     } catch (e) { alert('실패: ' + e.message); }
 }
 
@@ -351,17 +403,26 @@ async function buyBook(id) {
     if (b.publisherId === currentUser?.uid) { alert('본인 책입니다'); return; }
     if (b.price <= 0) { alert(`📖 "${b.title}" — 무료 열람!`); return; }
     const tk = b.priceToken.toLowerCase();
-    const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
-    const bal = wallets.docs[0]?.data()?.balances || {};
-    if ((bal[tk]||0) < b.price) { alert('잔액 부족'); return; }
     if (!confirm(`"${b.title}"\n${b.price} ${b.priceToken}로 구매?`)) return;
     try {
-        await wallets.docs[0].ref.update({ [`balances.${tk}`]: bal[tk] - b.price });
-        const pubW = await db.collection('users').doc(b.publisherId).collection('wallets').limit(1).get();
-        if (!pubW.empty) { const pb = pubW.docs[0].data().balances||{}; await pubW.docs[0].ref.update({ [`balances.${tk}`]: (pb[tk]||0) + b.price }); }
+        if (isOffchainToken(tk)) {
+            const success = await spendOffchainPoints(tk, b.price, `책 구매: ${b.title}`);
+            if (!success) return;
+            const pubOff = (await db.collection('users').doc(b.publisherId).get()).data()?.offchainBalances || {};
+            await db.collection('users').doc(b.publisherId).update({
+                [`offchainBalances.${tk}`]: (pubOff[tk] || 0) + b.price
+            });
+        } else {
+            const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
+            const bal = wallets.docs[0]?.data()?.balances || {};
+            if ((bal[tk]||0) < b.price) { alert('잔액 부족'); return; }
+            await wallets.docs[0].ref.update({ [`balances.${tk}`]: bal[tk] - b.price });
+            const pubW = await db.collection('users').doc(b.publisherId).collection('wallets').limit(1).get();
+            if (!pubW.empty) { const pb = pubW.docs[0].data().balances||{}; await pubW.docs[0].ref.update({ [`balances.${tk}`]: (pb[tk]||0) + b.price }); }
+        }
         await db.collection('books').doc(id).update({ sold: (b.sold||0) + 1 });
         await db.collection('transactions').add({ from:currentUser.uid, to:b.publisherId, amount:b.price, token:b.priceToken, type:'book_purchase', bookId:id, timestamp:new Date() });
-        await distributeReferralReward(currentUser.uid, b.price, b.priceToken);
+        if (typeof distributeReferralReward === 'function') await distributeReferralReward(currentUser.uid, b.price, b.priceToken);
         alert(`📖 "${b.title}" 구매 완료!`); loadUserWallet();
     } catch (e) { alert('실패: ' + e.message); }
 }
@@ -423,20 +484,38 @@ async function loadPumasiList() {
 }
 
 async function contributePumasi(id) {
-    const amount = parseFloat(prompt('도와줄 금액 (CRNY):'));
+    const tokenChoice = prompt('도와줄 토큰:\n1. CRNY\n2. 오프체인 토큰\n\n번호:', '1');
+    let tk = 'crny';
+    if (tokenChoice === '2') {
+        const offChoice = prompt('4. CRTD\n5. CRAC\n6. CRGC\n7. CREB\n\n번호:', '4');
+        const offMap = { '4':'crtd', '5':'crac', '6':'crgc', '7':'creb' };
+        tk = offMap[offChoice] || 'crtd';
+    }
+    const tkName = tk.toUpperCase();
+    const amount = parseFloat(prompt(`도와줄 금액 (${tkName}):`));
     if (!amount || amount <= 0) return;
     try {
-        const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
-        const bal = wallets.docs[0]?.data()?.balances || {};
-        if ((bal.crny||0) < amount) { alert('CRNY 잔액 부족'); return; }
-        await wallets.docs[0].ref.update({ 'balances.crny': bal.crny - amount });
-        const doc = await db.collection('pumasi_requests').doc(id).get(); const req = doc.data();
-        // 요청자에게 지급
-        const reqW = await db.collection('users').doc(req.requesterId).collection('wallets').limit(1).get();
-        if (!reqW.empty) { const rb = reqW.docs[0].data().balances||{}; await reqW.docs[0].ref.update({ 'balances.crny': (rb.crny||0) + amount }); }
-        await db.collection('pumasi_requests').doc(id).update({ raised: req.raised + amount, backers: req.backers + 1 });
-        await db.collection('transactions').add({ from:currentUser.uid, to:req.requesterId, amount, token:'CRNY', type:'pumasi', pumasiId:id, timestamp:new Date() });
-        alert(`🤝 ${amount} CRNY 도움 완료!`); loadPumasiList(); loadUserWallet();
+        if (isOffchainToken(tk)) {
+            const success = await spendOffchainPoints(tk, amount, `품앗이 기여: ${id}`);
+            if (!success) return;
+            const doc = await db.collection('pumasi_requests').doc(id).get(); const req = doc.data();
+            const reqOff = (await db.collection('users').doc(req.requesterId).get()).data()?.offchainBalances || {};
+            await db.collection('users').doc(req.requesterId).update({
+                [`offchainBalances.${tk}`]: (reqOff[tk] || 0) + amount
+            });
+        } else {
+            const wallets = await db.collection('users').doc(currentUser.uid).collection('wallets').limit(1).get();
+            const bal = wallets.docs[0]?.data()?.balances || {};
+            if ((bal[tk]||0) < amount) { alert(`${tkName} 잔액 부족`); return; }
+            await wallets.docs[0].ref.update({ [`balances.${tk}`]: bal[tk] - amount });
+            const doc = await db.collection('pumasi_requests').doc(id).get(); const req = doc.data();
+            const reqW = await db.collection('users').doc(req.requesterId).collection('wallets').limit(1).get();
+            if (!reqW.empty) { const rb = reqW.docs[0].data().balances||{}; await reqW.docs[0].ref.update({ [`balances.${tk}`]: (rb[tk]||0) + amount }); }
+        }
+        const doc2 = await db.collection('pumasi_requests').doc(id).get(); const req2 = doc2.data();
+        await db.collection('pumasi_requests').doc(id).update({ raised: req2.raised + amount, backers: req2.backers + 1 });
+        await db.collection('transactions').add({ from:currentUser.uid, to:req2.requesterId, amount, token:tkName, type:'pumasi', pumasiId:id, timestamp:new Date() });
+        alert(`🤝 ${amount} ${tkName} 도움 완료!`); loadPumasiList(); loadUserWallet();
     } catch (e) { alert('실패: ' + e.message); }
 }
 

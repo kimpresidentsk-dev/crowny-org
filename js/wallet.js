@@ -223,35 +223,40 @@ async function deleteCurrentWallet() {
     }
 }
 
-// Load Real Balances from Massive
+// Load Real Balances from Polygon (온체인 조회 → 별도 저장)
 async function loadRealBalances() {
     if (!userWallet) return;
     
     try {
         const address = userWallet.walletAddress;
+        console.log('Loading onchain balances for:', address);
         
-        console.log('Loading balances for:', address);
+        // 온체인 잔액 조회
+        const onchain = await getAllOnchainBalances(address);
         
-        // 공통 함수로 온체인 잔액 조회
-        const balances = await getAllOnchainBalances(address);
-        userWallet.balances.crny = balances.crny;
-        userWallet.balances.fnc = balances.fnc;
-        userWallet.balances.crfn = balances.crfn;
+        // 온체인 잔액은 별도 필드에 저장 (브릿지 잔액 보존)
+        userWallet.onchainBalances = { crny: onchain.crny, fnc: onchain.fnc, crfn: onchain.crfn };
         
-        console.log('CRNY:', balances.crny, 'FNC:', balances.fnc, 'CRFN:', balances.crfn);
+        // Firestore의 플랫폼 잔액(balances)이 없으면 온체인 값으로 초기화
+        if (!userWallet.balances || (userWallet.balances.crny === 0 && userWallet.balances.fnc === 0 && userWallet.balances.crfn === 0)) {
+            userWallet.balances.crny = onchain.crny;
+            userWallet.balances.fnc = onchain.fnc;
+            userWallet.balances.crfn = onchain.crfn;
+        }
         
-        // Update Firestore wallet subcollection
+        // onchainBalances만 Firestore에 별도 저장 (balances는 덮어쓰지 않음)
         await db.collection('users').doc(currentUser.uid)
             .collection('wallets').doc(currentWalletId).update({
-                'balances.crny': userWallet.balances.crny,
-                'balances.fnc': userWallet.balances.fnc,
-                'balances.crfn': userWallet.balances.crfn
+                'onchainBalances.crny': onchain.crny,
+                'onchainBalances.fnc': onchain.fnc,
+                'onchainBalances.crfn': onchain.crfn
             });
         
-        console.log('✅ Real balances loaded:', userWallet.balances);
+        console.log('✅ Onchain:', onchain, '| Platform:', userWallet.balances);
     } catch (error) {
         console.error('❌ Balance load error:', error);
-        alert('잔액 조회 실패: ' + error.message);
+        // 에러 시 기존 Firestore 잔액 유지 (덮어쓰기 안 함)
+        console.log('⚠️ 온체인 조회 실패 — 플랫폼 잔액 유지');
     }
 }
 

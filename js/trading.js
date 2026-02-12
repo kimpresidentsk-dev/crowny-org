@@ -823,6 +823,7 @@ async function fetchLiveTick() {
         updateLivePriceDisplay(data);
         updateLiveCandleChart();
         updateNQPriceDisplay();
+        checkPendingOrders();
         updateOpenPositions();
         updateLivePnL();
         updateLiveStatus(true);
@@ -2607,4 +2608,93 @@ async function fetchMassiveHistory() {
     }
     
     return null;
+}
+
+// ========== PENDING ORDER EXECUTION ==========
+// 지정가/스탑/스탑리밋 주문 체결 로직 (매 틱마다 호출)
+async function checkPendingOrders() {
+    if (!myParticipation || !myParticipation.trades || !currentPrice || currentPrice < 1000) return;
+    
+    let filled = false;
+    
+    for (let i = 0; i < myParticipation.trades.length; i++) {
+        const trade = myParticipation.trades[i];
+        if (trade.status !== 'pending') continue;
+        
+        let shouldFill = false;
+        let fillPrice = trade.entryPrice;
+        
+        switch (trade.orderType) {
+            case 'LIMIT':
+                if (trade.side === 'BUY' && currentPrice <= trade.entryPrice) {
+                    shouldFill = true;
+                    fillPrice = trade.entryPrice;
+                } else if (trade.side === 'SELL' && currentPrice >= trade.entryPrice) {
+                    shouldFill = true;
+                    fillPrice = trade.entryPrice;
+                }
+                break;
+                
+            case 'STOP':
+                if (trade.side === 'BUY' && currentPrice >= trade.entryPrice) {
+                    shouldFill = true;
+                    fillPrice = currentPrice; // 스탑은 시장가로 체결
+                } else if (trade.side === 'SELL' && currentPrice <= trade.entryPrice) {
+                    shouldFill = true;
+                    fillPrice = currentPrice;
+                }
+                break;
+                
+            case 'STOP_LIMIT':
+                // stopPrice 도달 시 리밋 주문으로 전환
+                const stopPrice = trade._stopPrice || trade.entryPrice;
+                const limitPrice = trade._limitPrice || trade.entryPrice;
+                
+                if (!trade._stopTriggered) {
+                    // 스탑 트리거 체크
+                    if (trade.side === 'BUY' && currentPrice >= stopPrice) {
+                        trade._stopTriggered = true;
+                        trade.entryPrice = limitPrice; // 리밋가로 전환
+                        console.log(`⚡ STOP_LIMIT 트리거: BUY @ ${limitPrice.toFixed(2)}`);
+                    } else if (trade.side === 'SELL' && currentPrice <= stopPrice) {
+                        trade._stopTriggered = true;
+                        trade.entryPrice = limitPrice;
+                        console.log(`⚡ STOP_LIMIT 트리거: SELL @ ${limitPrice.toFixed(2)}`);
+                    }
+                } else {
+                    // 리밋 체결 체크
+                    if (trade.side === 'BUY' && currentPrice <= limitPrice) {
+                        shouldFill = true;
+                        fillPrice = limitPrice;
+                    } else if (trade.side === 'SELL' && currentPrice >= limitPrice) {
+                        shouldFill = true;
+                        fillPrice = limitPrice;
+                    }
+                }
+                break;
+        }
+        
+        if (shouldFill) {
+            trade.status = 'open';
+            trade.entryPrice = fillPrice;
+            trade.currentPrice = currentPrice;
+            trade.filledAt = new Date();
+            filled = true;
+            
+            console.log(`✅ 주문 체결: ${trade.side} ${trade.contract} ×${trade.contracts} @ ${fillPrice.toFixed(2)} (${trade.orderType})`);
+            alert(`✅ ${trade.orderType} 주문 체결!\n\n${trade.side} ${trade.contract} ×${trade.contracts}\n체결가: ${fillPrice.toFixed(2)}`);
+        }
+    }
+    
+    if (filled) {
+        try {
+            await db.collection('prop_challenges').doc(myParticipation.challengeId)
+                .collection('participants').doc(myParticipation.participantId)
+                .update({ trades: myParticipation.trades });
+        } catch (e) { console.error('주문 체결 저장 실패:', e); }
+        
+        updateTradingUI();
+        updateOpenPositions();
+        drawPositionLinesLW();
+    }
 }
