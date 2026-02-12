@@ -1,4 +1,4 @@
-// ===== social.js - 유저데이터, 레퍼럴, 메신저, 소셜피드 (v14.0 Major Upgrade) =====
+// ===== social.js - 유저데이터, 레퍼럴, 메신저, 소셜피드 (v16.0 - 숏폼+크로스서비스) =====
 
 // Truncate wallet addresses (0x...) in text
 function truncateWalletAddresses(text) {
@@ -1073,14 +1073,52 @@ async function loadSocialFeed() {
             return;
         }
 
+        // Collect video posts for shorts viewer
+        _shortsVideoPosts = [];
+
         for (const doc of sortedPosts) {
             const post = doc.data();
+
+            // Apply filter (shorts tab)
+            const currentFilter = document.querySelector('.social-filter-tab.active')?.dataset?.filter;
+            if (currentFilter === 'shorts' && !post.videoUrl) continue;
+
             const userInfo = await getUserDisplayInfo(post.userId);
             const timeAgo = getTimeAgo(post.timestamp.toDate());
             const likedByMe = post.likedBy && post.likedBy.includes(currentUser.uid);
             const likeCount = post.likes || 0;
             const commentCount = post.commentCount || 0;
             const isMyPost = post.userId === currentUser.uid;
+
+            if (post.videoUrl) {
+                _shortsVideoPosts.push({ id: doc.id, data: post, nickname: userInfo.nickname });
+            }
+
+            // Media HTML (image or video)
+            let mediaHTML = '';
+            if (post.videoUrl) {
+                const filterStyle = post.videoFilter ? `filter:${post.videoFilter};` : '';
+                const textOverlay = post.videoTextOverlay || '';
+                const textPos = post.videoTextPosition || 'bottom';
+                const textColor = post.videoTextColor || '#ffffff';
+                const posCSS = textPos === 'top' ? 'top:10%' : textPos === 'center' ? 'top:45%' : 'bottom:10%';
+                mediaHTML = `<div style="margin:0 -1.2rem;position:relative;background:#000;cursor:pointer;" onclick="openShortsViewer('${doc.id}')">
+                    <video src="${post.videoUrl}" style="width:100%;display:block;max-height:400px;object-fit:contain;${filterStyle}" muted playsinline preload="metadata" onmouseenter="this.play().catch(()=>{})" onmouseleave="this.pause();this.currentTime=0;"></video>
+                    ${textOverlay ? `<div style="position:absolute;left:0;right:0;text-align:center;${posCSS};font-size:1.1rem;font-weight:700;color:${textColor};text-shadow:0 2px 4px rgba(0,0,0,0.8);pointer-events:none;">${textOverlay}</div>` : ''}
+                    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.4);border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;pointer-events:none;"><span style="color:white;font-size:1.5rem;margin-left:4px;">▶</span></div>
+                    ${post.duration ? `<span style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.7);color:white;padding:2px 6px;border-radius:4px;font-size:0.7rem;">${Math.floor(post.duration)}s</span>` : ''}
+                </div>`;
+            } else if (post.imageUrl) {
+                mediaHTML = `<div style="margin:0 -1.2rem;"><img src="${post.imageUrl}" style="width:100%;display:block;" loading="lazy"></div>`;
+            }
+
+            // Service link HTML
+            let serviceLinkHTML = '';
+            if (post.serviceLink) {
+                const sl = post.serviceLink;
+                const cfg = SERVICE_LINK_CONFIG[sl.type] || {};
+                serviceLinkHTML = `<div style="margin:0.5rem 0;"><button onclick="navigateServiceLink('${sl.type}','${sl.id}')" style="width:100%;padding:0.6rem;border:none;border-radius:10px;background:${cfg.color || '#333'};color:white;font-weight:700;font-size:0.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.4rem;">${cfg.action || sl.action} — ${sl.title || ''}</button></div>`;
+            }
 
             const postEl = document.createElement('div');
             postEl.className = 'post';
@@ -1093,10 +1131,12 @@ async function loadSocialFeed() {
                     </div>
                     ${isMyPost ? `<button onclick="deletePost('${doc.id}')" style="background:none;border:none;cursor:pointer;font-size:1rem;color:#999;" title="삭제">⋯</button>` : ''}
                 </div>
-                ${post.imageUrl ? `<div style="margin:0 -1.2rem;"><img src="${post.imageUrl}" style="width:100%;display:block;" loading="lazy"></div>` : ''}
+                ${mediaHTML}
+                ${serviceLinkHTML}
                 <div class="post-actions-bar" style="display:flex;align-items:center;gap:1.2rem;padding:0.6rem 0;">
                     <button onclick="toggleLike('${doc.id}', ${likedByMe})" class="post-action-btn" style="background:none;border:none;cursor:pointer;font-size:1.3rem;padding:0;line-height:1;display:flex;align-items:center;gap:0.3rem;transition:transform 0.15s;" onmousedown="this.style.transform='scale(1.1)'" onmouseup="this.style.transform='scale(1)'">${likedByMe ? '❤️' : '🤍'}<span style="font-size:0.85rem;color:var(--text);font-weight:600;">${likeCount || ''}</span></button>
                     <button onclick="toggleComments('${doc.id}')" class="post-action-btn" style="background:none;border:none;cursor:pointer;font-size:1.2rem;padding:0;line-height:1;display:flex;align-items:center;gap:0.3rem;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span style="font-size:0.85rem;color:var(--text);font-weight:600;">${commentCount || ''}</span></button>
+                    <button onclick="sharePost('${doc.id}')" class="post-action-btn" style="background:none;border:none;cursor:pointer;font-size:1.2rem;padding:0;line-height:1;display:flex;align-items:center;gap:0.3rem;">📤<span style="font-size:0.85rem;color:var(--text);font-weight:600;">${post.shareCount || ''}</span></button>
                 </div>
                 <div style="font-size:0.85rem;">
                     ${likeCount > 0 ? `<div style="font-weight:700;margin-bottom:0.2rem;cursor:pointer;" onclick="showLikedUsers('${doc.id}')">${t('social.likes','좋아요')} ${likeCount}${t('social.count','개')}</div>` : ''}
@@ -1202,33 +1242,470 @@ function getTimeAgo(date) {
     return `${Math.floor(seconds / 604800)}${t('social.week_ago','주 전')}`;
 }
 
+// ========== VIDEO EDITOR STATE ==========
+let _videoEditorState = { trimStart: 0, trimEnd: 0, filter: 'none', textOverlay: '', textPosition: 'bottom', textColor: '#ffffff' };
+let _pendingServiceLink = null;
+
+// ========== SERVICE LINK CONFIG ==========
+const SERVICE_LINK_CONFIG = {
+    artist:   { action: '💖 후원하기', color: '#E91E63', collection: 'artists', nameField: 'name', nav: (id) => { showPage('artist'); viewArtistDetail(id); } },
+    campaign: { action: '💝 모금하기', color: '#4CAF50', collection: 'campaigns', nameField: 'title', nav: (id) => { showPage('fundraise'); showCampaignDetail(id); } },
+    business: { action: '💰 투자하기', color: '#0066cc', collection: 'businesses', nameField: 'name', nav: (id) => { showPage('business'); viewBusinessDetail(id); } },
+    art:      { action: '🎨 작품 구매', color: '#9C27B0', collection: 'artworks', nameField: 'title', nav: (id) => showPage('art') },
+    book:     { action: '📚 책 구매', color: '#FF9800', collection: 'books', nameField: 'title', nav: (id) => showPage('books') },
+    product:  { action: '🛒 상품 구매', color: '#2196F3', collection: 'products', nameField: 'name', nav: (id) => { showPage('product-detail'); renderProductDetail(id); } }
+};
+
+// ========== SERVICE LINK MODAL ==========
+async function showServiceLinkModal() {
+    const overlay = document.createElement('div');
+    overlay.id = 'service-link-modal';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+    overlay.innerHTML = `
+    <div style="background:white;padding:1.5rem;border-radius:16px;max-width:480px;width:100%;max-height:80vh;overflow-y:auto;">
+        <h3 style="margin-bottom:1rem;">🔗 서비스 연결</h3>
+        <p style="font-size:0.85rem;color:#666;margin-bottom:1rem;">게시물에 연결할 서비스를 선택하세요</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1rem;">
+            ${Object.entries(SERVICE_LINK_CONFIG).map(([type, cfg]) => `
+                <button onclick="selectServiceType('${type}')" style="padding:0.8rem;border:2px solid #eee;border-radius:12px;cursor:pointer;background:white;font-size:0.85rem;font-weight:600;text-align:center;transition:all 0.2s;" onmouseover="this.style.borderColor='${cfg.color}';this.style.background='${cfg.color}11'" onmouseout="this.style.borderColor='#eee';this.style.background='white'">
+                    ${cfg.action}
+                </button>
+            `).join('')}
+        </div>
+        <div id="service-link-search" style="display:none;">
+            <div style="display:flex;gap:0.5rem;margin-bottom:0.8rem;">
+                <input type="text" id="service-link-query" placeholder="검색..." style="flex:1;padding:0.6rem;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;">
+                <button onclick="searchServiceItems()" style="padding:0.6rem 1rem;border:none;border-radius:8px;background:#1a1a2e;color:white;cursor:pointer;">검색</button>
+            </div>
+            <div id="service-link-results" style="max-height:250px;overflow-y:auto;"></div>
+        </div>
+        <div style="margin-top:1rem;text-align:right;">
+            <button onclick="document.getElementById('service-link-modal').remove()" style="padding:0.5rem 1rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">취소</button>
+        </div>
+    </div>`;
+    document.body.appendChild(overlay);
+}
+
+let _selectedServiceType = null;
+
+async function selectServiceType(type) {
+    _selectedServiceType = type;
+    const searchDiv = document.getElementById('service-link-search');
+    searchDiv.style.display = 'block';
+    document.getElementById('service-link-query').value = '';
+    document.getElementById('service-link-query').focus();
+    // Auto-load first items
+    await searchServiceItems();
+}
+
+async function searchServiceItems() {
+    const type = _selectedServiceType;
+    if (!type) return;
+    const cfg = SERVICE_LINK_CONFIG[type];
+    const query = document.getElementById('service-link-query').value.trim();
+    const results = document.getElementById('service-link-results');
+    results.innerHTML = '<p style="text-align:center;color:var(--accent);">로딩...</p>';
+
+    try {
+        let snap;
+        if (query) {
+            snap = await db.collection(cfg.collection).where(cfg.nameField, '>=', query).where(cfg.nameField, '<=', query + '\uf8ff').limit(10).get();
+        } else {
+            snap = await db.collection(cfg.collection).limit(10).get();
+        }
+        results.innerHTML = '';
+        if (snap.empty) {
+            results.innerHTML = '<p style="text-align:center;color:#999;font-size:0.85rem;">결과 없음</p>';
+            return;
+        }
+        snap.forEach(doc => {
+            const data = doc.data();
+            const name = data[cfg.nameField] || doc.id;
+            const el = document.createElement('div');
+            el.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:0.6rem;border-bottom:1px solid #eee;cursor:pointer;';
+            el.onmouseover = () => el.style.background = '#f9f9f9';
+            el.onmouseout = () => el.style.background = 'white';
+            el.innerHTML = `<span style="font-size:0.9rem;">${name}</span><button style="padding:0.3rem 0.6rem;border:none;border-radius:6px;background:${cfg.color};color:white;font-size:0.8rem;cursor:pointer;">선택</button>`;
+            el.onclick = () => {
+                _pendingServiceLink = { type, id: doc.id, title: name, action: cfg.action.replace(/[^\w가-힣\s]/g, '').trim() };
+                document.getElementById('service-link-modal').remove();
+                // Show preview
+                const preview = document.getElementById('post-service-link-preview');
+                preview.style.display = 'block';
+                preview.innerHTML = `<div style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem;background:${cfg.color}11;border:1px solid ${cfg.color}44;border-radius:8px;">
+                    <span style="font-size:0.85rem;flex:1;">${cfg.action} - ${name}</span>
+                    <button onclick="_pendingServiceLink=null;this.parentElement.parentElement.style.display='none';" style="background:none;border:none;cursor:pointer;font-size:1rem;">✕</button>
+                </div>`;
+            };
+            results.appendChild(el);
+        });
+    } catch (e) {
+        results.innerHTML = `<p style="color:red;text-align:center;font-size:0.85rem;">${e.message}</p>`;
+    }
+}
+
+// ========== VIDEO EDITOR ==========
+function openVideoEditor() {
+    const videoInput = document.getElementById('post-video');
+    if (!videoInput.files[0]) return;
+    const url = URL.createObjectURL(videoInput.files[0]);
+
+    const overlay = document.createElement('div');
+    overlay.id = 'video-editor-modal';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:99998;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem;';
+    overlay.innerHTML = `
+    <div style="width:100%;max-width:400px;">
+        <div style="position:relative;margin-bottom:1rem;">
+            <video id="editor-video" src="${url}" style="width:100%;border-radius:12px;max-height:50vh;" playsinline></video>
+            <div id="editor-text-overlay" style="position:absolute;left:0;right:0;text-align:center;font-size:1.2rem;font-weight:700;text-shadow:0 2px 4px rgba(0,0,0,0.8);pointer-events:none;"></div>
+        </div>
+        <div style="background:white;border-radius:12px;padding:1rem;">
+            <h4 style="margin:0 0 0.8rem;">✂️ 영상 편집</h4>
+            <!-- Trim -->
+            <div style="margin-bottom:0.8rem;">
+                <label style="font-size:0.8rem;color:#666;">트리밍 (구간 선택)</label>
+                <div style="display:flex;gap:0.5rem;align-items:center;">
+                    <span style="font-size:0.75rem;">시작</span>
+                    <input type="range" id="trim-start" min="0" max="60" value="0" step="0.1" style="flex:1;" oninput="updateTrimPreview()">
+                    <span id="trim-start-val" style="font-size:0.75rem;min-width:30px;">0s</span>
+                </div>
+                <div style="display:flex;gap:0.5rem;align-items:center;">
+                    <span style="font-size:0.75rem;">끝</span>
+                    <input type="range" id="trim-end" min="0" max="60" value="60" step="0.1" style="flex:1;" oninput="updateTrimPreview()">
+                    <span id="trim-end-val" style="font-size:0.75rem;min-width:30px;">60s</span>
+                </div>
+            </div>
+            <!-- Filters -->
+            <div style="margin-bottom:0.8rem;">
+                <label style="font-size:0.8rem;color:#666;">필터</label>
+                <div style="display:flex;gap:0.5rem;margin-top:0.3rem;">
+                    <button onclick="setVideoFilter('none')" class="vfilter-btn active" style="padding:0.3rem 0.6rem;border:2px solid #1a1a2e;border-radius:8px;font-size:0.75rem;cursor:pointer;background:white;">원본</button>
+                    <button onclick="setVideoFilter('grayscale(100%)')" class="vfilter-btn" style="padding:0.3rem 0.6rem;border:2px solid #ddd;border-radius:8px;font-size:0.75rem;cursor:pointer;background:white;">흑백</button>
+                    <button onclick="setVideoFilter('sepia(40%) saturate(1.4)')" class="vfilter-btn" style="padding:0.3rem 0.6rem;border:2px solid #ddd;border-radius:8px;font-size:0.75rem;cursor:pointer;background:white;">따뜻한</button>
+                    <button onclick="setVideoFilter('saturate(0.8) hue-rotate(20deg)')" class="vfilter-btn" style="padding:0.3rem 0.6rem;border:2px solid #ddd;border-radius:8px;font-size:0.75rem;cursor:pointer;background:white;">시원한</button>
+                </div>
+            </div>
+            <!-- Text overlay -->
+            <div style="margin-bottom:0.8rem;">
+                <label style="font-size:0.8rem;color:#666;">텍스트 오버레이</label>
+                <input type="text" id="editor-text-input" placeholder="텍스트 입력" maxlength="50" style="width:100%;padding:0.5rem;border:1px solid #ddd;border-radius:8px;font-size:0.85rem;margin-top:0.3rem;box-sizing:border-box;" oninput="updateTextOverlay()">
+                <div style="display:flex;gap:0.5rem;margin-top:0.3rem;align-items:center;">
+                    <select id="editor-text-pos" style="padding:0.3rem;border:1px solid #ddd;border-radius:6px;font-size:0.8rem;" onchange="updateTextOverlay()">
+                        <option value="top">상단</option><option value="center">중앙</option><option value="bottom" selected>하단</option>
+                    </select>
+                    <input type="color" id="editor-text-color" value="#ffffff" style="width:30px;height:30px;border:none;cursor:pointer;" onchange="updateTextOverlay()">
+                </div>
+            </div>
+            <div style="display:flex;gap:0.5rem;">
+                <button onclick="document.getElementById('video-editor-modal').remove()" style="flex:1;padding:0.6rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">취소</button>
+                <button onclick="applyVideoEdits()" style="flex:1;padding:0.6rem;border:none;border-radius:8px;cursor:pointer;background:#1a1a2e;color:white;font-weight:700;">✅ 적용</button>
+            </div>
+        </div>
+    </div>`;
+    document.body.appendChild(overlay);
+
+    const video = document.getElementById('editor-video');
+    video.onloadedmetadata = () => {
+        const dur = Math.min(video.duration, 60);
+        document.getElementById('trim-end').max = dur;
+        document.getElementById('trim-start').max = dur;
+        document.getElementById('trim-end').value = dur;
+        document.getElementById('trim-end-val').textContent = dur.toFixed(1) + 's';
+        _videoEditorState.trimEnd = dur;
+        video.play().catch(() => {});
+    };
+}
+
+function updateTrimPreview() {
+    const s = parseFloat(document.getElementById('trim-start').value);
+    const e = parseFloat(document.getElementById('trim-end').value);
+    document.getElementById('trim-start-val').textContent = s.toFixed(1) + 's';
+    document.getElementById('trim-end-val').textContent = e.toFixed(1) + 's';
+    _videoEditorState.trimStart = s;
+    _videoEditorState.trimEnd = e;
+    const v = document.getElementById('editor-video');
+    if (v) v.currentTime = s;
+}
+
+function setVideoFilter(filter) {
+    _videoEditorState.filter = filter;
+    const v = document.getElementById('editor-video');
+    if (v) v.style.filter = filter;
+    document.querySelectorAll('.vfilter-btn').forEach(b => { b.classList.remove('active'); b.style.borderColor = '#ddd'; });
+    event.target.classList.add('active');
+    event.target.style.borderColor = '#1a1a2e';
+}
+
+function updateTextOverlay() {
+    const text = document.getElementById('editor-text-input').value;
+    const pos = document.getElementById('editor-text-pos').value;
+    const color = document.getElementById('editor-text-color').value;
+    _videoEditorState.textOverlay = text;
+    _videoEditorState.textPosition = pos;
+    _videoEditorState.textColor = color;
+    const overlay = document.getElementById('editor-text-overlay');
+    overlay.textContent = text;
+    overlay.style.color = color;
+    overlay.style.top = pos === 'top' ? '10%' : pos === 'center' ? '45%' : '';
+    overlay.style.bottom = pos === 'bottom' ? '10%' : '';
+}
+
+function applyVideoEdits() {
+    document.getElementById('video-editor-modal').remove();
+    showToast('✅ 편집 적용됨', 'success');
+}
+
+// ========== THUMBNAIL EXTRACTION ==========
+function extractVideoThumbnail(file) {
+    return new Promise((resolve) => {
+        const video = document.createElement('video');
+        video.preload = 'metadata';
+        video.muted = true;
+        video.src = URL.createObjectURL(file);
+        video.onloadeddata = () => {
+            video.currentTime = Math.min(2, video.duration * 0.1);
+        };
+        video.onseeked = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.min(video.videoWidth, 480);
+            canvas.height = (canvas.width / video.videoWidth) * video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const thumb = canvas.toDataURL('image/jpeg', 0.7);
+            URL.revokeObjectURL(video.src);
+            resolve({ thumbnailData: thumb, duration: video.duration });
+        };
+        video.onerror = () => resolve({ thumbnailData: null, duration: 0 });
+    });
+}
+
+// ========== CREATE POST (with video + service link support) ==========
 async function createPost() {
     const textarea = document.getElementById('post-text');
     const fileInput = document.getElementById('post-image');
+    const videoInput = document.getElementById('post-video');
     const text = textarea.value.trim();
-    if (!text && !fileInput.files[0]) { showToast(t('social.enter_content','내용 또는 이미지를 입력하세요'), 'warning'); return; }
+    const hasImage = fileInput.files[0];
+    const hasVideo = videoInput.files[0];
+    if (!text && !hasImage && !hasVideo) { showToast(t('social.enter_content','내용 또는 이미지/영상을 입력하세요'), 'warning'); return; }
 
     try {
         showLoading(t('social.posting','게시 중...'));
         let imageUrl = null;
-        if (fileInput.files[0]) {
+        let videoUrl = null;
+        let thumbnailData = null;
+        let duration = 0;
+
+        if (hasImage) {
             const dataUrl = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(fileInput.files[0]); });
             imageUrl = await resizeImage(dataUrl, 1080);
         }
-        await db.collection('posts').add({
-            userId: currentUser.uid, text, imageUrl, likes: 0, likedBy: [], commentCount: 0, timestamp: new Date()
-        });
+
+        if (hasVideo) {
+            // Extract thumbnail first
+            const thumbInfo = await extractVideoThumbnail(videoInput.files[0]);
+            thumbnailData = thumbInfo.thumbnailData;
+            duration = thumbInfo.duration;
+
+            // Upload video to Firebase Storage
+            const storageRef = firebase.storage().ref();
+            const videoRef = storageRef.child(`videos/${currentUser.uid}/${Date.now()}.mp4`);
+            
+            // Show upload progress
+            const uploadTask = videoRef.put(videoInput.files[0]);
+            await new Promise((resolve, reject) => {
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                        showLoading(`📤 영상 업로드 중... ${progress}%`);
+                    },
+                    reject,
+                    async () => {
+                        videoUrl = await uploadTask.snapshot.ref.getDownloadURL();
+                        resolve();
+                    }
+                );
+            });
+        }
+
+        const postData = {
+            userId: currentUser.uid, text, imageUrl, likes: 0, likedBy: [], commentCount: 0, shareCount: 0, timestamp: new Date()
+        };
+
+        if (videoUrl) {
+            postData.videoUrl = videoUrl;
+            postData.thumbnailData = thumbnailData;
+            postData.duration = duration;
+            // Save editor metadata
+            if (_videoEditorState.trimStart > 0 || _videoEditorState.trimEnd < duration) {
+                postData.trimStart = _videoEditorState.trimStart;
+                postData.trimEnd = _videoEditorState.trimEnd;
+            }
+            if (_videoEditorState.filter !== 'none') postData.videoFilter = _videoEditorState.filter;
+            if (_videoEditorState.textOverlay) {
+                postData.videoTextOverlay = _videoEditorState.textOverlay;
+                postData.videoTextPosition = _videoEditorState.textPosition;
+                postData.videoTextColor = _videoEditorState.textColor;
+            }
+        }
+
+        if (_pendingServiceLink) {
+            postData.serviceLink = _pendingServiceLink;
+        }
+
+        await db.collection('posts').add(postData);
+
+        // Reset state
         textarea.value = '';
         fileInput.value = '';
+        videoInput.value = '';
         document.getElementById('post-image-name').textContent = '';
+        document.getElementById('post-video-preview').style.display = 'none';
+        document.getElementById('post-service-link-preview').style.display = 'none';
+        _pendingServiceLink = null;
+        _videoEditorState = { trimStart: 0, trimEnd: 0, filter: 'none', textOverlay: '', textPosition: 'bottom', textColor: '#ffffff' };
+
         hideLoading();
         await loadSocialFeed();
         showToast(t('social.post_done','✅ 게시 완료!'), 'success');
     } catch (error) {
         hideLoading();
         console.error('Post error:', error);
-        showToast(t('social.post_fail','게시 실패'), 'error');
+        showToast(t('social.post_fail','게시 실패') + ': ' + error.message, 'error');
     }
+}
+
+// ========== SHARE POST ==========
+async function sharePost(postId) {
+    const shareUrl = `https://crowny-org.vercel.app/#post=${postId}`;
+    try {
+        if (navigator.share) {
+            await navigator.share({ title: 'Crowny', text: '크라우니에서 공유된 게시물', url: shareUrl });
+        } else {
+            await navigator.clipboard.writeText(shareUrl);
+            showToast('📋 링크가 복사되었습니다', 'success');
+        }
+        // Increment share count
+        await db.collection('posts').doc(postId).update({ shareCount: firebase.firestore.FieldValue.increment(1) });
+    } catch (e) {
+        if (e.name !== 'AbortError') {
+            try { await navigator.clipboard.writeText(shareUrl); showToast('📋 링크가 복사되었습니다', 'success'); } catch (_) {}
+        }
+    }
+}
+
+// ========== SHORTS FULLSCREEN VIEWER ==========
+let _shortsVideoPosts = [];
+let _shortsCurrentIndex = 0;
+
+function openShortsViewer(startPostId) {
+    _shortsCurrentIndex = _shortsVideoPosts.findIndex(p => p.id === startPostId) || 0;
+    renderShortsViewer();
+}
+
+function renderShortsViewer() {
+    if (_shortsVideoPosts.length === 0) return;
+    const post = _shortsVideoPosts[_shortsCurrentIndex];
+    if (!post) return;
+
+    let overlay = document.getElementById('shorts-viewer');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'shorts-viewer';
+        document.body.appendChild(overlay);
+    }
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:#000;z-index:99999;display:flex;align-items:center;justify-content:center;';
+
+    const filterCSS = post.data.videoFilter || '';
+    const textOverlay = post.data.videoTextOverlay || '';
+    const textPos = post.data.videoTextPosition || 'bottom';
+    const textColor = post.data.videoTextColor || '#ffffff';
+    const posStyle = textPos === 'top' ? 'top:10%' : textPos === 'center' ? 'top:45%' : 'bottom:10%';
+
+    const sl = post.data.serviceLink;
+    let serviceLinkHTML = '';
+    if (sl) {
+        const cfg = SERVICE_LINK_CONFIG[sl.type] || {};
+        serviceLinkHTML = `<button onclick="event.stopPropagation();navigateServiceLink('${sl.type}','${sl.id}')" style="position:absolute;bottom:80px;left:50%;transform:translateX(-50%);padding:0.7rem 1.5rem;border:none;border-radius:24px;background:${cfg.color || '#333'};color:white;font-weight:700;font-size:0.95rem;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.3);z-index:10;white-space:nowrap;">${cfg.action || sl.action}</button>`;
+    }
+
+    overlay.innerHTML = `
+    <div style="position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;" id="shorts-container">
+        <video id="shorts-video" src="${post.data.videoUrl}" style="max-width:100%;max-height:100%;object-fit:contain;${filterCSS ? 'filter:'+filterCSS+';' : ''}" playsinline loop muted autoplay
+            ${post.data.trimStart ? `data-trim-start="${post.data.trimStart}"` : ''} ${post.data.trimEnd ? `data-trim-end="${post.data.trimEnd}"` : ''}></video>
+        ${textOverlay ? `<div style="position:absolute;left:0;right:0;text-align:center;${posStyle};font-size:1.4rem;font-weight:700;color:${textColor};text-shadow:0 2px 6px rgba(0,0,0,0.8);pointer-events:none;padding:0 1rem;">${textOverlay}</div>` : ''}
+        
+        <!-- Close -->
+        <button onclick="closeShortsViewer()" style="position:absolute;top:16px;right:16px;background:rgba(0,0,0,0.5);color:white;border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1.2rem;z-index:10;">✕</button>
+        
+        <!-- Info overlay -->
+        <div style="position:absolute;bottom:20px;left:16px;right:80px;color:white;z-index:5;">
+            <strong style="font-size:0.95rem;">${post.nickname || '사용자'}</strong>
+            <p style="font-size:0.85rem;margin:0.2rem 0;opacity:0.9;">${(post.data.text || '').substring(0, 100)}</p>
+        </div>
+
+        <!-- Side actions -->
+        <div style="position:absolute;right:12px;bottom:100px;display:flex;flex-direction:column;gap:1rem;align-items:center;z-index:5;">
+            <button onclick="event.stopPropagation();toggleLike('${post.id}',${(post.data.likedBy||[]).includes(currentUser?.uid)})" style="background:none;border:none;cursor:pointer;color:white;text-align:center;">
+                <div style="font-size:1.5rem;">${(post.data.likedBy||[]).includes(currentUser?.uid) ? '❤️' : '🤍'}</div>
+                <div style="font-size:0.75rem;">${post.data.likes || 0}</div>
+            </button>
+            <button onclick="event.stopPropagation();closeShortsViewer();toggleComments('${post.id}')" style="background:none;border:none;cursor:pointer;color:white;text-align:center;">
+                <div style="font-size:1.5rem;">💬</div>
+                <div style="font-size:0.75rem;">${post.data.commentCount || 0}</div>
+            </button>
+            <button onclick="event.stopPropagation();sharePost('${post.id}')" style="background:none;border:none;cursor:pointer;color:white;text-align:center;">
+                <div style="font-size:1.5rem;">📤</div>
+                <div style="font-size:0.75rem;">${post.data.shareCount || 0}</div>
+            </button>
+        </div>
+
+        ${serviceLinkHTML}
+
+        <!-- Nav arrows -->
+        ${_shortsCurrentIndex > 0 ? `<button onclick="event.stopPropagation();navigateShorts(-1)" style="position:absolute;top:50%;left:8px;transform:translateY(-50%);background:rgba(255,255,255,0.2);border:none;border-radius:50%;width:40px;height:40px;cursor:pointer;color:white;font-size:1.2rem;z-index:10;">▲</button>` : ''}
+        ${_shortsCurrentIndex < _shortsVideoPosts.length - 1 ? `<button onclick="event.stopPropagation();navigateShorts(1)" style="position:absolute;top:50%;right:8px;transform:translateY(-50%);background:rgba(255,255,255,0.2);border:none;border-radius:50%;width:40px;height:40px;cursor:pointer;color:white;font-size:1.2rem;z-index:10;">▼</button>` : ''}
+    </div>`;
+
+    // Toggle mute on tap
+    const video = document.getElementById('shorts-video');
+    overlay.querySelector('#shorts-container').onclick = () => { video.muted = !video.muted; };
+
+    // Handle trim
+    if (post.data.trimStart) video.currentTime = post.data.trimStart;
+    video.ontimeupdate = () => {
+        if (post.data.trimEnd && video.currentTime >= post.data.trimEnd) {
+            video.currentTime = post.data.trimStart || 0;
+        }
+    };
+
+    // Swipe support
+    let touchStartY = 0;
+    overlay.ontouchstart = (e) => { touchStartY = e.touches[0].clientY; };
+    overlay.ontouchend = (e) => {
+        const diff = touchStartY - e.changedTouches[0].clientY;
+        if (Math.abs(diff) > 60) navigateShorts(diff > 0 ? 1 : -1);
+    };
+}
+
+function navigateShorts(dir) {
+    const next = _shortsCurrentIndex + dir;
+    if (next >= 0 && next < _shortsVideoPosts.length) {
+        _shortsCurrentIndex = next;
+        renderShortsViewer();
+    }
+}
+
+function closeShortsViewer() {
+    const v = document.getElementById('shorts-viewer');
+    if (v) v.remove();
+}
+
+function navigateServiceLink(type, id) {
+    closeShortsViewer();
+    const cfg = SERVICE_LINK_CONFIG[type];
+    if (cfg && cfg.nav) cfg.nav(id);
 }
 
 // ========== Contact management ==========
@@ -1241,6 +1718,42 @@ async function editContact(contactDocId, currentName) {
         loadContacts();
     } catch (error) { showToast('변경 실패: ' + error.message, 'error'); }
 }
+
+// ========== SOCIAL FEED FILTER ==========
+function setSocialFilter(filter) {
+    document.querySelectorAll('.social-filter-tab').forEach(b => {
+        b.classList.remove('active');
+        b.style.color = '#999';
+        b.style.borderBottomColor = 'transparent';
+    });
+    const btn = document.querySelector(`.social-filter-tab[data-filter="${filter}"]`);
+    if (btn) {
+        btn.classList.add('active');
+        btn.style.color = 'var(--text)';
+        btn.style.borderBottomColor = 'var(--text)';
+    }
+    loadSocialFeed();
+}
+
+// ========== DEEP LINK: #post={id} ==========
+function handlePostDeepLink() {
+    const hash = window.location.hash;
+    const match = hash.match(/post=([^&]+)/);
+    if (match) {
+        const postId = match[1];
+        showPage('social');
+        // Scroll to post or open shorts if video
+        setTimeout(async () => {
+            const doc = await db.collection('posts').doc(postId).get();
+            if (doc.exists && doc.data().videoUrl) {
+                _shortsVideoPosts = [{ id: postId, data: doc.data(), nickname: '' }];
+                openShortsViewer(postId);
+            }
+        }, 1000);
+    }
+}
+window.addEventListener('hashchange', handlePostDeepLink);
+window.addEventListener('load', () => setTimeout(handlePostDeepLink, 2000));
 
 async function deleteContact(contactDocId, contactName) {
     if (!await showConfirmModal(t('social.delete_contact','연락처 삭제'), `"${contactName}" ${t('social.confirm_delete_contact','연락처를 삭제하시겠습니까?')}`)) return;

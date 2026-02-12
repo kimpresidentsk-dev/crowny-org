@@ -613,22 +613,61 @@
                 <button class="social-filter-tab active" data-filter="all" onclick="setSocialFilter('all')" style="background:none;border:none;padding:0.4rem 0.8rem;cursor:pointer;font-size:0.85rem;font-weight:600;color:var(--text);border-bottom:2px solid transparent;">전체</button>
                 <button class="social-filter-tab" data-filter="following" onclick="setSocialFilter('following')" style="background:none;border:none;padding:0.4rem 0.8rem;cursor:pointer;font-size:0.85rem;font-weight:600;color:#999;border-bottom:2px solid transparent;">팔로잉</button>
                 <button class="social-filter-tab" data-filter="saved" onclick="setSocialFilter('saved')" style="background:none;border:none;padding:0.4rem 0.8rem;cursor:pointer;font-size:0.85rem;font-weight:600;color:#999;border-bottom:2px solid transparent;">🔖 저장됨</button>
+                <button class="social-filter-tab" data-filter="shorts" onclick="setSocialFilter('shorts')" style="background:none;border:none;padding:0.4rem 0.8rem;cursor:pointer;font-size:0.85rem;font-weight:600;color:#999;border-bottom:2px solid transparent;">🎬 숏폼</button>
             </div>
             
             <div class="post-create">
                 <textarea id="post-text" placeholder="무슨 생각을 하고 계신가요? #해시태그 @멘션 가능" data-i18n-placeholder="social.post_placeholder" style="border:1px solid var(--border); border-radius:12px; padding:0.8rem; font-size:0.95rem; line-height:1.5; resize:none; min-height:60px; width:100%; margin-bottom:0.5rem;"></textarea>
-                <div style="display:flex; align-items:center; gap:0.5rem;">
+                <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
                     <label for="post-image" style="display:flex; align-items:center; gap:0.3rem; padding:0.4rem 0.8rem; background:var(--bg); border-radius:20px; cursor:pointer; font-size:0.85rem; border:1px solid var(--border);" data-i18n="social.photo">📷 사진</label>
                     <input type="file" id="post-image" accept="image/*" multiple style="display:none;">
+                    <label for="post-video" style="display:flex; align-items:center; gap:0.3rem; padding:0.4rem 0.8rem; background:var(--bg); border-radius:20px; cursor:pointer; font-size:0.85rem; border:1px solid var(--border);">🎬 영상</label>
+                    <input type="file" id="post-video" accept="video/mp4,video/quicktime,video/webm" style="display:none;">
+                    <button onclick="showServiceLinkModal()" style="display:flex; align-items:center; gap:0.3rem; padding:0.4rem 0.8rem; background:var(--bg); border-radius:20px; cursor:pointer; font-size:0.85rem; border:1px solid var(--border);">🔗 서비스 연결</button>
                     <span id="post-image-name" style="font-size:0.75rem; color:var(--accent); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></span>
                     <button onclick="createPost()" class="btn-primary" style="padding:0.5rem 1.2rem; border-radius:20px; font-size:0.85rem;" data-i18n="social.post_btn">게시</button>
                 </div>
+                <div id="post-video-preview" style="display:none; margin-top:0.5rem;"></div>
+                <div id="post-service-link-preview" style="display:none; margin-top:0.5rem;"></div>
             </div>
             <div class="feed" id="social-feed"></div>
             <script>
                 document.getElementById('post-image').addEventListener('change', function() {
                     const count = this.files.length;
                     document.getElementById('post-image-name').textContent = count > 1 ? `${count}장 선택됨` : (this.files[0] ? this.files[0].name : '');
+                    // Clear video if image selected
+                    if (this.files.length > 0) {
+                        document.getElementById('post-video').value = '';
+                        document.getElementById('post-video-preview').style.display = 'none';
+                    }
+                });
+                document.getElementById('post-video').addEventListener('change', function() {
+                    const file = this.files[0];
+                    const preview = document.getElementById('post-video-preview');
+                    if (!file) { preview.style.display = 'none'; return; }
+                    // Validate size (50MB)
+                    if (file.size > 50 * 1024 * 1024) {
+                        showToast('영상은 50MB 이하만 가능합니다', 'warning');
+                        this.value = '';
+                        preview.style.display = 'none';
+                        return;
+                    }
+                    // Clear image if video selected
+                    document.getElementById('post-image').value = '';
+                    document.getElementById('post-image-name').textContent = '';
+                    // Show preview & open editor
+                    const url = URL.createObjectURL(file);
+                    preview.style.display = 'block';
+                    preview.innerHTML = `<div style="position:relative;display:inline-block;"><video src="${url}" style="max-width:200px;max-height:150px;border-radius:8px;" muted></video><button onclick="document.getElementById('post-video').value='';document.getElementById('post-video-preview').style.display='none';" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.6);color:white;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:14px;">✕</button><button onclick="openVideoEditor()" style="position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,0.6);color:white;border:none;border-radius:12px;padding:2px 8px;cursor:pointer;font-size:12px;">✂️ 편집</button></div>`;
+                    // Validate duration
+                    const v = preview.querySelector('video');
+                    v.onloadedmetadata = () => {
+                        if (v.duration > 60) {
+                            showToast('영상은 60초 이하만 가능합니다', 'warning');
+                            document.getElementById('post-video').value = '';
+                            preview.style.display = 'none';
+                        }
+                    };
                 });
             </script>
         </section>
@@ -1823,7 +1862,7 @@
     <script src="js/auth.js?v=9.5"></script>
     <script src="js/wallet.js?v=11.0"></script>
     <script src="js/offchain.js?v=10.0"></script>
-    <script src="js/social.js?v=15.1"></script>
+    <script src="js/social.js?v=16.0"></script>
     <script src="js/friends.js?v=1.0"></script>
     <script src="js/group-chat.js?v=1.0"></script>
     <script src="js/send.js?v=9.5"></script>

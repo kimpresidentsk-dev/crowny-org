@@ -308,38 +308,74 @@ async function writeReview(productId) {
     });
 }
 
-async function buyProduct(id) {
+async function buyProduct(id, btn) {
     if (!currentUser) return;
+    // 이중 클릭 방지
+    if (btn) { btn.disabled = true; setTimeout(() => { if(btn) btn.disabled = false; }, 3000); }
     try {
-        const doc = await db.collection('products').doc(id).get();
-        const p = doc.data();
-        if ((p.stock - (p.sold||0)) <= 0) { showToast(t('mall.sold_out','품절'), 'warning'); return; }
         const tk = 'crgc';
         
-        if (!await showConfirmModal(t('mall.confirm_buy','구매 확인'), `"${p.title}"\n${p.price} CRGC로 구매하시겠습니까?`)) return;
+        // 1차 확인
+        const doc = await db.collection('products').doc(id).get();
+        const p = doc.data();
+        if (!p || p.status !== 'active') { showToast('상품을 구매할 수 없습니다', 'warning'); return; }
+        const price = p.price;
+        if (!price || price <= 0 || !Number.isFinite(price)) { showToast('비정상 가격', 'error'); return; }
+        if ((p.stock - (p.sold||0)) <= 0) { showToast(t('mall.sold_out','품절'), 'warning'); return; }
+        
+        if (!await showConfirmModal(t('mall.confirm_buy','구매 확인'), `"${p.title}"\n${price} CRGC로 구매하시겠습니까?`)) return;
         
         // 배송지 입력
         const shippingInfo = await showShippingModal();
-        if (!shippingInfo) return; // 취소
+        if (!shippingInfo) return;
         
-        if (isOffchainToken(tk)) {
-            const success = await spendOffchainPoints(tk, p.price, `몰 구매: ${p.title}`);
-            if (!success) return;
-            const sellerOff = (await db.collection('users').doc(p.sellerId).get()).data()?.offchainBalances || {};
-            await db.collection('users').doc(p.sellerId).update({
-                [`offchainBalances.${tk}`]: (sellerOff[tk] || 0) + p.price
+        // Firestore 트랜잭션으로 원자적 처리 (잔액 차감 + 재고 감소)
+        const orderRef = db.collection('orders').doc(); // pre-generate ID
+        await db.runTransaction(async (tx) => {
+            // 실시간 잔액 재확인
+            const buyerDoc = await tx.get(db.collection('users').doc(currentUser.uid));
+            const buyerBal = buyerDoc.data()?.offchainBalances || {};
+            if ((buyerBal[tk] || 0) < price) throw new Error('CRGC 잔액이 부족합니다');
+            
+            // 재고 재확인
+            const prodDoc = await tx.get(db.collection('products').doc(id));
+            const pNow = prodDoc.data();
+            if ((pNow.stock - (pNow.sold||0)) <= 0) throw new Error('품절된 상품입니다');
+            
+            // 잔액 차감
+            tx.update(db.collection('users').doc(currentUser.uid), {
+                [`offchainBalances.${tk}`]: (buyerBal[tk] || 0) - price
             });
-            if (typeof autoGivingPoolContribution === 'function') {
-                await autoGivingPoolContribution(p.price);
-            }
-        } else {
-            // MALL은 CRGC(오프체인) 전용이므로 온체인 경로 불필요
-            showToast('CRGC 잔액 부족', 'error'); return;
+            
+            // 판매자에게 지급
+            const sellerDoc = await tx.get(db.collection('users').doc(pNow.sellerId));
+            const sellerBal = sellerDoc.data()?.offchainBalances || {};
+            tx.update(db.collection('users').doc(pNow.sellerId), {
+                [`offchainBalances.${tk}`]: (sellerBal[tk] || 0) + price
+            });
+            
+            // 재고 감소
+            tx.update(db.collection('products').doc(id), { sold: (pNow.sold||0) + 1 });
+            
+            // 주문 생성
+            tx.set(orderRef, {
+                productId:id, productTitle:pNow.title, productImage: getProductThumb(pNow),
+                buyerId:currentUser.uid, buyerEmail:currentUser.email,
+                sellerId:pNow.sellerId, sellerEmail:pNow.sellerEmail||'',
+                amount:price, qty:1, token:'CRGC', status:'paid', shippingInfo,
+                statusHistory:[{status:'paid', at:new Date().toISOString()}], createdAt:new Date()
+            });
+        });
+        
+        // 트랜잭션 성공 후 부가 처리
+        if (typeof autoGivingPoolContribution === 'function') await autoGivingPoolContribution(price);
+        if (typeof distributeReferralReward === 'function') await distributeReferralReward(currentUser.uid, price, 'CRGC');
+        
+        // 판매자 알림
+        if (typeof createNotification === 'function') {
+            await createNotification(p.sellerId, 'order_status', { message: `🛒 새 주문! "${p.title}" (${price} CRGC)`, link: '#page=my-shop' });
         }
         
-        await db.collection('products').doc(id).update({ sold: (p.sold||0) + 1 });
-        await db.collection('orders').add({ productId:id, productTitle:p.title, productImage: getProductThumb(p), buyerId:currentUser.uid, buyerEmail:currentUser.email, sellerId:p.sellerId, sellerEmail:p.sellerEmail||'', amount:p.price, qty:1, token:'CRGC', status:'paid', shippingInfo, statusHistory:[{status:'paid', at:new Date().toISOString()}], createdAt:new Date() });
-        if (typeof distributeReferralReward === 'function') await distributeReferralReward(currentUser.uid, p.price, 'CRGC');
         showToast(`🎉 "${p.title}" 구매 완료!`, 'success');
         document.getElementById('product-modal')?.remove();
         loadMallProducts(); loadUserWallet();
@@ -1883,8 +1919,10 @@ async function removeFromCart(cartDocId) {
     } catch(e) { showToast('실패: ' + e.message, 'error'); }
 }
 
-async function checkoutCart() {
+async function checkoutCart(btn) {
     if (!currentUser) return;
+    // 이중 클릭 방지
+    if (btn) { btn.disabled = true; setTimeout(() => { if(btn) btn.disabled = false; }, 3000); }
     try {
         const snap = await db.collection('users').doc(currentUser.uid).collection('cart').get();
         if (snap.empty) { showToast('장바구니가 비어있습니다', 'warning'); return; }
@@ -1892,42 +1930,61 @@ async function checkoutCart() {
         const items = [];
         snap.forEach(d => { const it = d.data(); total += it.price * (it.qty || 1); items.push({ ...it, cartDocId: d.id }); });
         
+        if (total <= 0 || !Number.isFinite(total)) { showToast('비정상 금액', 'error'); return; }
         if (!await showConfirmModal('일괄 결제', `장바구니 ${items.length}개 상품\n총 ${total} CRGC 결제하시겠습니까?`)) return;
         
-        // 배송지 입력
         const shippingInfo = await showShippingModal();
         if (!shippingInfo) return;
         
         const tk = 'crgc';
-        if (isOffchainToken(tk)) {
-            const success = await spendOffchainPoints(tk, total, `장바구니 일괄 구매 (${items.length}건)`);
-            if (!success) return;
-        } else { showToast('CRGC 잔액 부족', 'error'); return; }
+        
+        // 트랜잭션으로 잔액 확인 + 차감
+        await db.runTransaction(async (tx) => {
+            const buyerDoc = await tx.get(db.collection('users').doc(currentUser.uid));
+            const buyerBal = buyerDoc.data()?.offchainBalances || {};
+            if ((buyerBal[tk] || 0) < total) throw new Error('CRGC 잔액이 부족합니다');
+            tx.update(db.collection('users').doc(currentUser.uid), {
+                [`offchainBalances.${tk}`]: (buyerBal[tk] || 0) - total
+            });
+        });
 
-        // Process each item
+        // Process each item (seller payment + order creation)
         for (const item of items) {
             const pDoc = await db.collection('products').doc(item.productId).get();
             if (!pDoc.exists) continue;
             const p = pDoc.data();
             const qty = item.qty || 1;
-            // Transfer to seller
-            if (isOffchainToken(tk)) {
-                const sellerOff = (await db.collection('users').doc(p.sellerId).get()).data()?.offchainBalances || {};
-                await db.collection('users').doc(p.sellerId).update({
-                    [`offchainBalances.${tk}`]: (sellerOff[tk] || 0) + item.price * qty
+            const subtotal = item.price * qty;
+            
+            // 재고 재확인 + 판매자 지급
+            await db.runTransaction(async (tx) => {
+                const prodDoc = await tx.get(db.collection('products').doc(item.productId));
+                const pNow = prodDoc.data();
+                if ((pNow.stock - (pNow.sold||0)) < qty) throw new Error(`"${item.title}" 재고 부족`);
+                tx.update(db.collection('products').doc(item.productId), { sold: (pNow.sold||0) + qty });
+                
+                const sellerDoc = await tx.get(db.collection('users').doc(p.sellerId));
+                const sellerBal = sellerDoc.data()?.offchainBalances || {};
+                tx.update(db.collection('users').doc(p.sellerId), {
+                    [`offchainBalances.${tk}`]: (sellerBal[tk] || 0) + subtotal
                 });
-            }
-            await db.collection('products').doc(item.productId).update({ sold: (p.sold||0) + qty });
+            });
+            
             await db.collection('orders').add({
                 productId: item.productId, productTitle: item.title, productImage: getProductThumb(p),
                 buyerId: currentUser.uid, buyerEmail: currentUser.email,
                 sellerId: p.sellerId, sellerEmail: p.sellerEmail || '',
-                amount: item.price * qty, qty, token: 'CRGC', status: 'paid', shippingInfo,
+                amount: subtotal, qty, token: 'CRGC', status: 'paid', shippingInfo,
                 statusHistory:[{status:'paid', at:new Date().toISOString()}], createdAt: new Date()
             });
-            if (typeof autoGivingPoolContribution === 'function') await autoGivingPoolContribution(item.price * qty);
-            if (typeof distributeReferralReward === 'function') await distributeReferralReward(currentUser.uid, item.price * qty, 'CRGC');
-            // Remove from cart
+            
+            // 판매자 알림
+            if (typeof createNotification === 'function') {
+                await createNotification(p.sellerId, 'order_status', { message: `🛒 새 주문! "${item.title}" (${subtotal} CRGC)`, link: '#page=my-shop' });
+            }
+            
+            if (typeof autoGivingPoolContribution === 'function') await autoGivingPoolContribution(subtotal);
+            if (typeof distributeReferralReward === 'function') await distributeReferralReward(currentUser.uid, subtotal, 'CRGC');
             await db.collection('users').doc(currentUser.uid).collection('cart').doc(item.cartDocId).delete();
         }
         showToast(`🎉 ${items.length}개 상품 결제 완료!`, 'success');

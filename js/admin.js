@@ -890,6 +890,7 @@ const ADMIN_TAB_CONFIG = [
     { id: 'rate',      icon: '⚖️', label: t('admin.tab.rate','비율'),      minLevel: 6 },
     { id: 'log',       icon: '📋', label: t('admin.tab.log','로그'),      minLevel: 3 },
     { id: 'coupon',    icon: '🎟️', label: t('admin.tab.coupon','쿠폰'),      minLevel: 3 },
+    { id: 'products',  icon: '📦', label: t('admin.tab.products','상품승인'),  minLevel: 2 },
     { id: 'superwall', icon: '🏦', label: t('admin.tab.superwall','계좌관리'),  minLevel: 6 }
 ];
 
@@ -975,6 +976,7 @@ function switchAdminTab(tabId) {
     if (tabId === 'referral') loadReferralRewardConfig();
     if (tabId === 'rate') loadExchangeRate();
     if (tabId === 'coupon') loadCouponList();
+    if (tabId === 'products') { loadAdminPendingProducts(); loadAdminReports(); }
     if (tabId === 'superwall') loadSuperAdminWallets();
 }
 
@@ -2828,7 +2830,7 @@ async function registerProduct() {
             imageData: images[0], // 하위 호환: 첫번째 이미지
             sellerId: currentUser.uid, sellerEmail: currentUser.email,
             sellerNickname: userDoc.data()?.nickname || '',
-            sold: 0, status: 'active', createdAt: new Date()
+            sold: 0, status: (currentUser.email === 'kim.president.sk@gmail.com') ? 'active' : 'pending', createdAt: new Date()
         });
         
         showToast(`🛒 "${title}" 등록 완료!`, 'success');
@@ -3655,5 +3657,114 @@ function renderDashboardStats(stats) {
         const cacheTime = _dashboardCacheTime ? new Date(_dashboardCacheTime).toLocaleTimeString('ko-KR') : '';
         cacheInfoEl.textContent = cacheTime ? `캐시: ${cacheTime}` : '';
     }
+}
+
+// ========== 상품 승인 관리 (admin-tab-products) ==========
+
+async function loadAdminPendingProducts() {
+    const c = document.getElementById('admin-pending-products');
+    if (!c) return;
+    c.innerHTML = '로딩...';
+    try {
+        const snap = await db.collection('products').where('status', '==', 'pending').orderBy('createdAt', 'desc').limit(50).get();
+        if (snap.empty) { c.innerHTML = '<p style="color:var(--accent);">대기 중인 상품이 없습니다 ✅</p>'; return; }
+        c.innerHTML = '';
+        snap.forEach(d => {
+            const p = d.data();
+            const thumb = p.images?.[0] || p.imageData || '';
+            const dateStr = p.createdAt?.toDate ? p.createdAt.toDate().toLocaleDateString('ko-KR') : '';
+            c.innerHTML += `<div style="background:var(--bg);padding:0.8rem;border-radius:8px;margin-bottom:0.5rem;border-left:4px solid #ff9800;">
+                <div style="display:flex;gap:0.8rem;align-items:center;">
+                    <div style="width:60px;height:60px;border-radius:8px;overflow:hidden;background:#f0f0f0;flex-shrink:0;">
+                        ${thumb ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover;">` : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#ccc;">🛒</div>'}
+                    </div>
+                    <div style="flex:1;">
+                        <div style="font-weight:700;">${p.title}</div>
+                        <div style="font-size:0.8rem;color:var(--accent);">${p.sellerNickname || p.sellerEmail} · ${p.price} CRGC · 재고 ${p.stock} · ${dateStr}</div>
+                        ${p.description ? `<div style="font-size:0.8rem;color:#555;margin-top:0.2rem;">${p.description.slice(0,80)}${p.description.length>80?'...':''}</div>` : ''}
+                    </div>
+                </div>
+                <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+                    <button onclick="approveProduct('${d.id}')" style="flex:1;background:#4CAF50;color:white;border:none;padding:0.5rem;border-radius:6px;cursor:pointer;font-weight:600;">✅ 승인</button>
+                    <button onclick="rejectProduct('${d.id}')" style="flex:1;background:#f44336;color:white;border:none;padding:0.5rem;border-radius:6px;cursor:pointer;font-weight:600;">❌ 거부</button>
+                </div>
+            </div>`;
+        });
+    } catch(e) { c.innerHTML = `<p style="color:red;">${e.message}</p>`; }
+}
+
+async function approveProduct(productId) {
+    try {
+        await db.collection('products').doc(productId).update({ status: 'active', approvedAt: new Date(), approvedBy: currentUser.uid });
+        // 판매자에게 알림
+        const pDoc = await db.collection('products').doc(productId).get();
+        const p = pDoc.data();
+        if (typeof createNotification === 'function') {
+            await createNotification(p.sellerId, 'order_status', { message: `✅ "${p.title}" 상품이 승인되었습니다!`, link: `#page=product-detail&id=${productId}` });
+        }
+        showToast('✅ 상품 승인 완료', 'success');
+        loadAdminPendingProducts();
+    } catch(e) { showToast('실패: ' + e.message, 'error'); }
+}
+
+async function rejectProduct(productId) {
+    const reason = await showPromptModal('거부 사유', '거부 사유를 입력하세요', '');
+    if (!reason) return;
+    try {
+        await db.collection('products').doc(productId).update({ status: 'rejected', rejectedAt: new Date(), rejectedBy: currentUser.uid, rejectReason: reason });
+        const pDoc = await db.collection('products').doc(productId).get();
+        const p = pDoc.data();
+        if (typeof createNotification === 'function') {
+            await createNotification(p.sellerId, 'order_status', { message: `❌ "${p.title}" 상품이 거부되었습니다. 사유: ${reason}`, link: '' });
+        }
+        showToast('상품 거부 완료', 'info');
+        loadAdminPendingProducts();
+    } catch(e) { showToast('실패: ' + e.message, 'error'); }
+}
+
+// ========== 신고 관리 ==========
+
+async function loadAdminReports() {
+    const c = document.getElementById('admin-reports-list');
+    if (!c) return;
+    c.innerHTML = '로딩...';
+    try {
+        const snap = await db.collection('reports').where('status', '==', 'pending').orderBy('createdAt', 'desc').limit(50).get();
+        if (snap.empty) { c.innerHTML = '<p style="color:var(--accent);">대기 중인 신고가 없습니다 ✅</p>'; return; }
+        c.innerHTML = '';
+        const REPORT_REASONS = { fake: '허위상품', inappropriate: '부적절', scam: '사기의심', other: '기타' };
+        snap.forEach(d => {
+            const r = d.data();
+            const dateStr = r.createdAt?.toDate ? r.createdAt.toDate().toLocaleDateString('ko-KR') : '';
+            c.innerHTML += `<div style="background:#fff3e0;padding:0.8rem;border-radius:8px;margin-bottom:0.5rem;border-left:4px solid #f44336;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div>
+                        <strong>🚨 ${REPORT_REASONS[r.reason] || r.reason}</strong>
+                        <span style="font-size:0.75rem;color:var(--accent);margin-left:0.5rem;">${dateStr}</span>
+                    </div>
+                    <span style="font-size:0.8rem;color:var(--accent);">${r.targetType}: ${r.targetId?.slice(0,8)}...</span>
+                </div>
+                <div style="font-size:0.8rem;color:#555;margin:0.3rem 0;">신고자: ${r.reporterEmail || r.reporterId?.slice(0,8)}</div>
+                ${r.detail ? `<div style="font-size:0.8rem;color:#555;">상세: ${r.detail}</div>` : ''}
+                <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+                    <button onclick="handleReport('${d.id}','confirmed')" style="flex:1;background:#f44336;color:white;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-size:0.8rem;">🗑️ 삭제조치</button>
+                    <button onclick="handleReport('${d.id}','dismissed')" style="flex:1;background:#999;color:white;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-size:0.8rem;">무시</button>
+                </div>
+            </div>`;
+        });
+    } catch(e) { c.innerHTML = `<p style="color:red;">${e.message}</p>`; }
+}
+
+async function handleReport(reportId, action) {
+    try {
+        const rDoc = await db.collection('reports').doc(reportId).get();
+        const r = rDoc.data();
+        await db.collection('reports').doc(reportId).update({ status: action, handledBy: currentUser.uid, handledAt: new Date() });
+        if (action === 'confirmed' && r.targetType === 'product' && r.targetId) {
+            await db.collection('products').doc(r.targetId).update({ status: 'removed', removedAt: new Date(), removedReason: '신고 확인' });
+        }
+        showToast(action === 'confirmed' ? '🗑️ 신고 확인 및 삭제 조치' : '신고 무시 처리', action === 'confirmed' ? 'warning' : 'info');
+        loadAdminReports();
+    } catch(e) { showToast('실패: ' + e.message, 'error'); }
 }
 
