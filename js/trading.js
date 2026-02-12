@@ -753,8 +753,8 @@ async function initTradingViewChart() {
         
         const candleSeries = chart.addCandlestickSeries({
             upColor: '#0066cc', downColor: '#cc0000',
+            wickUpColor: '#888888', wickDownColor: '#888888',
             borderUpColor: '#0066cc', borderDownColor: '#cc0000',
-            wickUpColor: '#0066cc', wickDownColor: '#cc0000',
         });
         
         window.liveChart = chart;
@@ -1062,6 +1062,17 @@ function updateLiveCandleChart() {
     }
     
     if (candles.length > 0) {
+        // ★ 추세 약한 캔들 (도지/팽이) 회색 처리
+        for (const c of candles) {
+            const body = Math.abs(c.close - c.open);
+            const range = c.high - c.low;
+            if (range > 0 && body / range < 0.2) {
+                // body가 전체 범위의 20% 미만 → 회색 (도지/팽이)
+                c.color = '#666666';
+                c.borderColor = '#888888';
+                c.wickColor = '#888888';
+            }
+        }
         window.liveCandleSeries.setData(candles);
         
         const volData = candles.map(c => ({
