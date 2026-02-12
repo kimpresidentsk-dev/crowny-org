@@ -576,6 +576,7 @@ const ADMIN_TAB_CONFIG = [
     { id: 'challenge', icon: '📊', label: '챌린지',    minLevel: 3 },
     { id: 'users',     icon: '👥', label: '관리자',    minLevel: 3 },
     { id: 'giving',    icon: '🎁', label: '기부풀',    minLevel: 3 },
+    { id: 'rate',      icon: '⚖️', label: '비율',      minLevel: 6 },
     { id: 'log',       icon: '📋', label: '로그',      minLevel: 3 }
 ];
 
@@ -657,6 +658,7 @@ function switchAdminTab(tabId) {
     if (tabId === 'users') loadAdminUserList();
     if (tabId === 'challenge') loadAdminParticipants();
     if (tabId === 'giving') adminLoadGivingPool();
+    if (tabId === 'rate') loadExchangeRate();
 }
 
 // ═══════════════════════════════════════════════════════
@@ -2318,5 +2320,129 @@ async function registerProduct() {
         document.getElementById('product-image').value = '';
         loadMallProducts();
     } catch (e) { alert('등록 실패: ' + e.message); }
+}
+
+// ========== 오프체인/CRNY 비율 관리 (수퍼관리자) ==========
+
+// 현재 비율 로드
+async function loadExchangeRate() {
+    try {
+        const doc = await db.collection('admin_config').doc('exchange_rate').get();
+        if (doc.exists) {
+            const data = doc.data();
+            window.OFFCHAIN_RATE = data.rate || 100;
+            
+            // UI 업데이트
+            const rateEl = document.getElementById('admin-rate-current');
+            if (rateEl) rateEl.textContent = `현재 비율: ${window.OFFCHAIN_RATE} 포인트 = 1 CRNY`;
+            
+            const inputEl = document.getElementById('admin-rate-input');
+            if (inputEl) inputEl.value = window.OFFCHAIN_RATE;
+            
+            // 변경 이력 표시
+            if (data.history && data.history.length > 0) {
+                const histEl = document.getElementById('admin-rate-history');
+                if (histEl) {
+                    histEl.innerHTML = data.history.slice(-10).reverse().map(h => {
+                        const date = h.timestamp?.toDate ? h.timestamp.toDate().toLocaleString('ko-KR') : new Date(h.timestamp).toLocaleString('ko-KR');
+                        return `<div style="padding:0.5rem; background:var(--bg); border-radius:6px; margin-bottom:0.3rem; font-size:0.8rem;">
+                            <div style="display:flex; justify-content:space-between;">
+                                <strong>${h.oldRate} → ${h.newRate}</strong>
+                                <span style="color:var(--accent);">${date}</span>
+                            </div>
+                            <div style="color:var(--accent); font-size:0.75rem;">${h.adminEmail} · 사유: ${h.reason || '-'}</div>
+                        </div>`;
+                    }).join('');
+                }
+            }
+        }
+    } catch (e) {
+        console.warn('비율 로드 실패:', e);
+    }
+}
+
+// 비율 변경 요청 (컨펌 단계)
+async function requestRateChange() {
+    if (!isSuperAdmin()) { alert('수퍼관리자만 변경 가능합니다'); return; }
+    
+    const newRate = parseInt(document.getElementById('admin-rate-input')?.value);
+    if (!newRate || newRate < 1 || newRate > 10000) {
+        alert('유효한 비율을 입력하세요 (1 ~ 10,000)');
+        return;
+    }
+    
+    const currentRate = window.OFFCHAIN_RATE || 100;
+    if (newRate === currentRate) {
+        alert('현재 비율과 동일합니다');
+        return;
+    }
+    
+    const reason = prompt(`비율 변경 사유:\n\n현재: ${currentRate} pt = 1 CRNY\n변경: ${newRate} pt = 1 CRNY\n\n사유를 입력하세요:`);
+    if (!reason) { alert('사유는 필수입니다'); return; }
+    
+    // 영향도 계산
+    const direction = newRate > currentRate ? '오프체인 가치 하락 ↓' : '오프체인 가치 상승 ↑';
+    const changePercent = Math.abs(((newRate - currentRate) / currentRate) * 100).toFixed(1);
+    
+    const confirmMsg = `⚠️ 비율 변경 최종 확인\n\n` +
+        `현재: ${currentRate} pt = 1 CRNY\n` +
+        `변경: ${newRate} pt = 1 CRNY\n` +
+        `변동: ${changePercent}% (${direction})\n\n` +
+        `사유: ${reason}\n\n` +
+        `이 변경은 모든 브릿지 거래에 즉시 적용됩니다.\n정말 변경하시겠습니까?`;
+    
+    if (!confirm(confirmMsg)) return;
+    
+    // 2차 확인
+    const code = prompt(`보안 확인: "RATE${newRate}" 을 정확히 입력하세요:`);
+    if (code !== `RATE${newRate}`) {
+        alert('확인 코드가 일치하지 않습니다. 변경이 취소되었습니다.');
+        return;
+    }
+    
+    try {
+        // 현재 문서 로드
+        const doc = await db.collection('admin_config').doc('exchange_rate').get();
+        const existingHistory = doc.exists ? (doc.data().history || []) : [];
+        
+        // 이력 추가
+        existingHistory.push({
+            oldRate: currentRate,
+            newRate: newRate,
+            reason: reason,
+            adminEmail: currentUser.email,
+            adminLevel: currentUserLevel,
+            timestamp: new Date()
+        });
+        
+        // 저장
+        await db.collection('admin_config').doc('exchange_rate').set({
+            rate: newRate,
+            lastChangedBy: currentUser.email,
+            lastChangedAt: new Date(),
+            history: existingHistory
+        });
+        
+        // 로그 저장
+        await db.collection('admin_log').add({
+            action: 'exchange_rate_change',
+            adminEmail: currentUser.email,
+            adminLevel: currentUserLevel,
+            oldRate: currentRate,
+            newRate: newRate,
+            reason: reason,
+            timestamp: new Date()
+        });
+        
+        // 즉시 적용
+        window.OFFCHAIN_RATE = newRate;
+        
+        alert(`✅ 비율 변경 완료!\n\n${currentRate} → ${newRate} pt = 1 CRNY\n\n모든 브릿지 거래에 즉시 적용됩니다.`);
+        
+        loadExchangeRate();
+        
+    } catch (e) {
+        alert('비율 변경 실패: ' + e.message);
+    }
 }
 

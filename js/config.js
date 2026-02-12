@@ -403,6 +403,9 @@ auth.onAuthStateChanged(async (user) => {
         // ★ 동적 토큰 레지스트리 로드
         if (typeof loadTokenRegistry === 'function') await loadTokenRegistry();
         
+        // ★ 비율 로드
+        if (typeof loadExchangeRate === 'function') await loadExchangeRate();
+        
         // 관리자 메뉴 표시 (레벨 1 이상)
         if (currentUserLevel >= 1) {
             const adminNav = document.getElementById('admin-nav-item');
