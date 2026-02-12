@@ -577,7 +577,8 @@ const ADMIN_TAB_CONFIG = [
     { id: 'users',     icon: '👥', label: '관리자',    minLevel: 3 },
     { id: 'giving',    icon: '🎁', label: '기부풀',    minLevel: 3 },
     { id: 'rate',      icon: '⚖️', label: '비율',      minLevel: 6 },
-    { id: 'log',       icon: '📋', label: '로그',      minLevel: 3 }
+    { id: 'log',       icon: '📋', label: '로그',      minLevel: 3 },
+    { id: 'coupon',    icon: '🎟️', label: '쿠폰',      minLevel: 3 }
 ];
 
 let activeAdminTab = null;
@@ -659,6 +660,7 @@ function switchAdminTab(tabId) {
     if (tabId === 'challenge') loadAdminParticipants();
     if (tabId === 'giving') adminLoadGivingPool();
     if (tabId === 'rate') loadExchangeRate();
+    if (tabId === 'coupon') loadCouponList();
 }
 
 // ═══════════════════════════════════════════════════════
@@ -2443,6 +2445,97 @@ async function requestRateChange() {
         
     } catch (e) {
         alert('비율 변경 실패: ' + e.message);
+    }
+}
+
+// ═══════════════════════════════════════════════════════
+// 쿠폰 관리 (admin-tab-coupon)
+// ═══════════════════════════════════════════════════════
+
+async function createCoupon() {
+    const code = (document.getElementById('coupon-code').value || '').trim().toUpperCase();
+    const tokenKey = document.getElementById('coupon-token').value;
+    const amount = parseInt(document.getElementById('coupon-amount').value);
+    const maxUses = parseInt(document.getElementById('coupon-max-uses').value) || 0;
+    const expiryVal = document.getElementById('coupon-expiry').value;
+    const description = (document.getElementById('coupon-desc').value || '').trim();
+
+    if (!code || code.length < 3) { alert('쿠폰 코드는 3자 이상 입력하세요'); return; }
+    if (!tokenKey) { alert('토큰을 선택하세요'); return; }
+    if (!amount || amount <= 0) { alert('유효한 수량을 입력하세요'); return; }
+
+    try {
+        const existing = await db.collection('coupons').where('code', '==', code).get();
+        if (!existing.empty) { alert('이미 존재하는 쿠폰 코드입니다'); return; }
+
+        await db.collection('coupons').add({
+            code: code,
+            tokenKey: tokenKey,
+            amount: amount,
+            maxUses: maxUses,
+            usedCount: 0,
+            expiresAt: expiryVal ? firebase.firestore.Timestamp.fromDate(new Date(expiryVal)) : null,
+            createdBy: currentUser.uid,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            enabled: true,
+            description: description
+        });
+
+        alert('✅ 쿠폰 생성 완료: ' + code);
+        document.getElementById('coupon-code').value = '';
+        document.getElementById('coupon-amount').value = '';
+        document.getElementById('coupon-desc').value = '';
+        loadCouponList();
+    } catch (e) {
+        alert('쿠폰 생성 실패: ' + e.message);
+    }
+}
+
+async function loadCouponList() {
+    const listEl = document.getElementById('coupon-list');
+    if (!listEl) return;
+    listEl.innerHTML = '<p>로딩 중...</p>';
+
+    try {
+        const snap = await db.collection('coupons').orderBy('createdAt', 'desc').get();
+        if (snap.empty) { listEl.innerHTML = '<p style="color:#999;">생성된 쿠폰이 없습니다</p>'; return; }
+
+        const tokenNames = { crtd: 'CRTD', crac: 'CRAC', crgc: 'CRGC', creb: 'CREB' };
+        let html = '<table style="width:100%; border-collapse:collapse; font-size:0.8rem;"><tr style="background:#f5f5f5;"><th style="padding:0.5rem; text-align:left;">코드</th><th>토큰</th><th>수량</th><th>사용</th><th>상태</th><th>관리</th></tr>';
+
+        snap.forEach(doc => {
+            const c = doc.data();
+            const expiry = c.expiresAt ? c.expiresAt.toDate().toLocaleDateString('ko-KR') : '무제한';
+            const usageText = c.maxUses > 0 ? `${c.usedCount}/${c.maxUses}` : `${c.usedCount}/∞`;
+            const statusColor = c.enabled ? '#2e7d32' : '#c62828';
+            const statusText = c.enabled ? '활성' : '비활성';
+            html += `<tr style="border-bottom:1px solid #eee;">
+                <td style="padding:0.5rem; font-weight:700;">${c.code}</td>
+                <td style="text-align:center;">${tokenNames[c.tokenKey] || c.tokenKey}</td>
+                <td style="text-align:center;">${c.amount.toLocaleString()}</td>
+                <td style="text-align:center;">${usageText}</td>
+                <td style="text-align:center; color:${statusColor}; font-weight:600;">${statusText}</td>
+                <td style="text-align:center;">
+                    <button onclick="toggleCoupon('${doc.id}', ${!c.enabled})" style="padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; font-size:0.75rem; background:${c.enabled ? '#ffcdd2' : '#c8e6c9'}; color:${c.enabled ? '#c62828' : '#2e7d32'};">${c.enabled ? '비활성화' : '활성화'}</button>
+                </td>
+            </tr>`;
+            if (c.description) {
+                html += `<tr><td colspan="6" style="padding:0.2rem 0.5rem; font-size:0.75rem; color:#999;">📝 ${c.description} | 만료: ${expiry}</td></tr>`;
+            }
+        });
+        html += '</table>';
+        listEl.innerHTML = html;
+    } catch (e) {
+        listEl.innerHTML = '<p style="color:red;">로드 실패: ' + e.message + '</p>';
+    }
+}
+
+async function toggleCoupon(couponId, enabled) {
+    try {
+        await db.collection('coupons').doc(couponId).update({ enabled: enabled });
+        loadCouponList();
+    } catch (e) {
+        alert('상태 변경 실패: ' + e.message);
     }
 }
 

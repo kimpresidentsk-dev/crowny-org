@@ -414,6 +414,16 @@
                     <button onclick="executeBridge()" style="width:100%; padding:0.7rem; background:linear-gradient(135deg,#1565c0,#7B1FA2); color:white; border:none; border-radius:8px; cursor:pointer; font-weight:700; margin-top:0.5rem;">🔄 브릿지 실행</button>
                 </div>
             </div>
+
+            <!-- 쿠폰 사용 -->
+            <div style="background:linear-gradient(135deg,#fff8e1,#fff3e0); padding:1rem; border-radius:12px; margin-top:1rem; border:1px solid #ffcc80;">
+                <h4 style="margin:0 0 0.5rem; font-size:0.9rem;">🎟️ 쿠폰 사용</h4>
+                <div style="display:flex; gap:0.5rem;">
+                    <input type="text" id="coupon-code-input" placeholder="쿠폰 코드 입력" style="flex:1; padding:0.6rem; border:1px solid var(--border); border-radius:6px; font-size:0.85rem; text-transform:uppercase;">
+                    <button onclick="redeemCoupon()" style="padding:0.6rem 1rem; background:linear-gradient(135deg,#FF6D00,#FF9800); color:white; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.85rem;">사용</button>
+                </div>
+                <div id="coupon-result" style="font-size:0.8rem; margin-top:0.4rem; color:#e65100;"></div>
+            </div>
             
             <!-- 소개자(레퍼럴) 시스템 -->
             <div style="background:white; padding:1.5rem; border-radius:12px; margin-top:1rem;">
@@ -1687,6 +1697,38 @@
                         <h3 style="margin-bottom:1rem;">📋 관리자 활동 로그</h3>
                         <button onclick="loadAdminLog()" class="btn-primary" style="margin-bottom:1rem;">🔄 로그 새로고침</button>
                         <div id="admin-log-list"></div>
+                    </div>
+                </div>
+
+                <!-- 쿠폰 관리 탭 -->
+                <div id="admin-tab-coupon" class="admin-tab-content" style="display:none;">
+                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                        <h3 style="margin-bottom:1rem;">🎟️ 쿠폰 관리</h3>
+                        <div style="display:grid; gap:0.8rem;">
+                            <div style="display:flex; gap:0.5rem;">
+                                <input type="text" id="coupon-code" placeholder="쿠폰 코드 (영문/숫자)" style="flex:1; padding:0.6rem; border:1px solid #ddd; border-radius:6px; text-transform:uppercase;">
+                                <select id="coupon-token" style="padding:0.6rem; border:1px solid #ddd; border-radius:6px;">
+                                    <option value="crtd">CRTD</option>
+                                    <option value="crac">CRAC</option>
+                                    <option value="crgc">CRGC</option>
+                                    <option value="creb">CREB</option>
+                                </select>
+                            </div>
+                            <div style="display:flex; gap:0.5rem;">
+                                <input type="number" id="coupon-amount" placeholder="지급 수량" style="flex:1; padding:0.6rem; border:1px solid #ddd; border-radius:6px;">
+                                <input type="number" id="coupon-max-uses" placeholder="최대 사용 (0=무제한)" value="0" style="flex:1; padding:0.6rem; border:1px solid #ddd; border-radius:6px;">
+                            </div>
+                            <div style="display:flex; gap:0.5rem;">
+                                <input type="datetime-local" id="coupon-expiry" style="flex:1; padding:0.6rem; border:1px solid #ddd; border-radius:6px;">
+                                <input type="text" id="coupon-desc" placeholder="설명 (선택)" style="flex:1; padding:0.6rem; border:1px solid #ddd; border-radius:6px;">
+                            </div>
+                            <button onclick="createCoupon()" class="btn-primary">🎟️ 쿠폰 생성</button>
+                        </div>
+                    </div>
+                    <div style="background:white; padding:1.5rem; border-radius:12px;">
+                        <h3 style="margin-bottom:1rem;">📋 쿠폰 목록</h3>
+                        <button onclick="loadCouponList()" class="btn-primary" style="margin-bottom:1rem;">🔄 새로고침</button>
+                        <div id="coupon-list"></div>
                     </div>
                 </div>
             </div>

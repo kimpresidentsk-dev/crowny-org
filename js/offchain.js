@@ -372,4 +372,39 @@ async function swapTokens() {
     } catch (e) { alert('환전 실패: ' + e.message); }
 }
 
+// 쿠폰 사용
+async function redeemCoupon() {
+    if (!currentUser || !userWallet) { showToast('지갑을 먼저 연결하세요', 'error'); return; }
+    const codeInput = document.getElementById('coupon-code-input');
+    const resultEl = document.getElementById('coupon-result');
+    const code = (codeInput.value || '').trim().toUpperCase();
+    if (!code) { resultEl.textContent = '쿠폰 코드를 입력하세요'; return; }
+    
+    try {
+        showLoading('쿠폰 확인 중...');
+        const coupons = await db.collection('coupons').where('code', '==', code).where('enabled', '==', true).get();
+        if (coupons.empty) { hideLoading(); resultEl.textContent = '❌ 유효하지 않은 쿠폰 코드입니다'; return; }
+        const couponDoc = coupons.docs[0];
+        const coupon = couponDoc.data();
+        if (coupon.expiresAt && coupon.expiresAt.toDate() < new Date()) { hideLoading(); resultEl.textContent = '❌ 만료된 쿠폰입니다'; return; }
+        if (coupon.maxUses > 0 && coupon.usedCount >= coupon.maxUses) { hideLoading(); resultEl.textContent = '❌ 쿠폰 사용 한도 초과'; return; }
+        const existing = await db.collection('coupon_redemptions').where('couponCode', '==', code).where('userId', '==', currentUser.uid).get();
+        if (!existing.empty) { hideLoading(); resultEl.textContent = '❌ 이미 사용한 쿠폰입니다'; return; }
+        const success = await earnOffchainPoints(coupon.tokenKey, coupon.amount, '쿠폰 사용: ' + code);
+        if (!success) { hideLoading(); resultEl.textContent = '❌ 포인트 적립 실패'; return; }
+        await db.collection('coupons').doc(couponDoc.id).update({ usedCount: firebase.firestore.FieldValue.increment(1) });
+        await db.collection('coupon_redemptions').add({ couponId: couponDoc.id, couponCode: code, userId: currentUser.uid, userEmail: currentUser.email, tokenKey: coupon.tokenKey, amount: coupon.amount, redeemedAt: firebase.firestore.FieldValue.serverTimestamp() });
+        hideLoading();
+        const tokenInfo = getTokenInfo(coupon.tokenKey);
+        resultEl.innerHTML = '✅ <strong>' + coupon.amount.toLocaleString() + ' ' + tokenInfo.name + '</strong> 적립 완료!';
+        resultEl.style.color = '#2e7d32';
+        codeInput.value = '';
+        showToast('🎟️ ' + coupon.amount.toLocaleString() + ' ' + tokenInfo.name + ' 쿠폰 적립!', 'success');
+    } catch (e) {
+        hideLoading();
+        console.error('Coupon redeem error:', e);
+        resultEl.textContent = '❌ 오류: ' + e.message;
+    }
+}
+
 // Load User Data (Messages, Posts)
