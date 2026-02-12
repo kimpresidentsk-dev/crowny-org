@@ -417,6 +417,15 @@ async function loadTradingDashboard() {
         applyTradingPermissions();
         updateCRTDDisplay();
         
+        // ★ BUY/SELL 버튼 강제 활성화 (dailyLocked가 아닌 한)
+        if (!myParticipation.dailyLocked) {
+            ['btn-buy','btn-sell','btn-chart-buy','btn-chart-sell'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; btn.style.pointerEvents = 'auto'; }
+            });
+            console.log('✅ BUY/SELL 버튼 강제 활성화');
+        }
+        
         // display:block 후 DOM이 레이아웃을 잡도록 딜레이
         setTimeout(() => {
             initTradingViewChart();
@@ -2545,7 +2554,328 @@ function drawPositionLinesLW() {
     });
     
     console.log(`📊 ${tabSymbol} ${openTrades.length}개 포지션 라인 표시`);
+    
+    // 드래그 핸들 업데이트
+    updateDragHandles(openTrades);
 }
+
+// ─── SL/TP 드래그 이동 시스템 ───
+(function initDragSystem() {
+    let _dragState = null; // { handle, type, tradeIndex, startY, startPrice }
+    
+    window._sltpDragHandles = [];
+    
+    function getChartContainer() {
+        return document.getElementById('live-candle-chart');
+    }
+    
+    function coordToPrice(y) {
+        if (!window.candleSeries) return null;
+        const container = getChartContainer();
+        if (!container) return null;
+        const rect = container.getBoundingClientRect();
+        const relY = y - rect.top;
+        try {
+            return window.candleSeries.coordinateToPrice(relY);
+        } catch(e) { return null; }
+    }
+    
+    function priceToCoord(price) {
+        if (!window.candleSeries) return null;
+        try {
+            const coord = window.candleSeries.priceToCoordinate(price);
+            return coord;
+        } catch(e) { return null; }
+    }
+    
+    function roundPrice(p) {
+        return Math.round(p * 4) / 4; // 0.25 단위
+    }
+    
+    function createHandle(type, trade, tradeIdx) {
+        const container = getChartContainer();
+        if (!container) return null;
+        
+        const price = type === 'sl' ? trade.stopLoss : trade.takeProfit;
+        if (!price) return null;
+        
+        const y = priceToCoord(price);
+        if (y === null || y === undefined) return null;
+        
+        const handle = document.createElement('div');
+        handle.className = 'sltp-drag-handle';
+        handle.dataset.type = type;
+        handle.dataset.tradeIndex = tradeIdx;
+        
+        const color = type === 'sl' ? '#ff0000' : '#00cc00';
+        const isTrailing = type === 'sl' && trade.trailingStop?.activated;
+        const displayColor = isTrailing ? '#ff9800' : color;
+        
+        Object.assign(handle.style, {
+            position: 'absolute',
+            right: '0px',
+            top: (y - 12) + 'px',
+            width: '60px',
+            height: '24px',
+            background: displayColor + '33',
+            border: `1px solid ${displayColor}`,
+            borderRadius: '4px',
+            cursor: 'ns-resize',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '10px',
+            fontFamily: 'Consolas, Monaco, monospace',
+            fontWeight: '700',
+            color: displayColor,
+            zIndex: '100',
+            userSelect: 'none',
+            touchAction: 'none',
+            transition: 'none',
+        });
+        handle.textContent = price.toFixed(2);
+        handle.title = `드래그하여 ${type.toUpperCase()} 이동`;
+        
+        container.style.position = 'relative';
+        container.appendChild(handle);
+        
+        return handle;
+    }
+    
+    window.updateDragHandles = function(openTrades) {
+        // 기존 핸들 제거
+        window._sltpDragHandles.forEach(h => h.remove());
+        window._sltpDragHandles = [];
+        
+        if (!openTrades || !window.candleSeries) return;
+        
+        openTrades.forEach(trade => {
+            const actualIndex = myParticipation.trades.indexOf(trade);
+            
+            const slHandle = createHandle('sl', trade, actualIndex);
+            if (slHandle) window._sltpDragHandles.push(slHandle);
+            
+            const tpHandle = createHandle('tp', trade, actualIndex);
+            if (tpHandle) window._sltpDragHandles.push(tpHandle);
+        });
+    };
+    
+    // 드래그 중 가격 라벨 (툴팁)
+    let _dragLabel = null;
+    function showDragLabel(container, y, price, type) {
+        if (!_dragLabel) {
+            _dragLabel = document.createElement('div');
+            Object.assign(_dragLabel.style, {
+                position: 'absolute',
+                right: '65px',
+                padding: '3px 8px',
+                borderRadius: '3px',
+                fontSize: '11px',
+                fontFamily: 'Consolas, Monaco, monospace',
+                fontWeight: '700',
+                zIndex: '101',
+                pointerEvents: 'none',
+                whiteSpace: 'nowrap',
+            });
+            container.appendChild(_dragLabel);
+        }
+        const color = type === 'sl' ? '#ff0000' : '#00cc00';
+        _dragLabel.style.top = (y - 10) + 'px';
+        _dragLabel.style.background = '#000';
+        _dragLabel.style.border = `1px solid ${color}`;
+        _dragLabel.style.color = color;
+        _dragLabel.textContent = `${type.toUpperCase()}: ${price.toFixed(2)}`;
+        _dragLabel.style.display = 'block';
+    }
+    function hideDragLabel() {
+        if (_dragLabel) { _dragLabel.style.display = 'none'; }
+    }
+    
+    function onDragStart(e) {
+        const handle = e.target.closest('.sltp-drag-handle');
+        if (!handle) return;
+        
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const type = handle.dataset.type;
+        const tradeIndex = parseInt(handle.dataset.tradeIndex);
+        const trade = myParticipation.trades[tradeIndex];
+        const startPrice = type === 'sl' ? trade.stopLoss : trade.takeProfit;
+        
+        _dragState = { handle, type, tradeIndex, startY: clientY, startPrice, currentPrice: startPrice };
+        
+        // 차트 스크롤/크로스헤어 비활성화
+        if (window.lwChart) {
+            window.lwChart.applyOptions({ handleScroll: false, handleScale: false });
+        }
+        
+        handle.style.opacity = '0.9';
+        handle.style.boxShadow = '0 0 8px ' + (type === 'sl' ? '#ff000088' : '#00cc0088');
+    }
+    
+    function onDragMove(e) {
+        if (!_dragState) return;
+        
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const newPrice = coordToPrice(clientY);
+        if (newPrice === null) return;
+        
+        const rounded = roundPrice(newPrice);
+        _dragState.currentPrice = rounded;
+        
+        const container = getChartContainer();
+        const rect = container.getBoundingClientRect();
+        const relY = clientY - rect.top;
+        
+        // 핸들 위치 업데이트
+        _dragState.handle.style.top = (relY - 12) + 'px';
+        _dragState.handle.textContent = rounded.toFixed(2);
+        
+        // 라벨 표시
+        showDragLabel(container, relY, rounded, _dragState.type);
+        
+        // 실시간으로 priceLine 업데이트
+        updateDraggedPriceLine(_dragState.type, _dragState.tradeIndex, rounded);
+    }
+    
+    function updateDraggedPriceLine(type, tradeIndex, newPrice) {
+        const trade = myParticipation.trades[tradeIndex];
+        if (!trade || !window.candleSeries) return;
+        
+        // 임시로 가격 변경 후 라인 다시 그리기 (성능을 위해 해당 라인만)
+        if (type === 'sl') trade.stopLoss = newPrice;
+        else trade.takeProfit = newPrice;
+        
+        // 전체 라인 다시 그리기 (간단하게)
+        if (window.positionLines) {
+            window.positionLines.forEach(line => {
+                try { window.candleSeries.removePriceLine(line); } catch(e) {}
+            });
+        }
+        window.positionLines = [];
+        
+        const tabSymbol = getActiveTabSymbol();
+        const openTrades = myParticipation.trades.filter(t => t.status === 'open' && t.contract === tabSymbol);
+        openTrades.forEach(t => {
+            const entryLine = window.candleSeries.createPriceLine({
+                price: t.entryPrice,
+                color: t.side === 'BUY' ? '#0066cc' : '#cc0000',
+                lineWidth: 2, lineStyle: LightweightCharts.LineStyle.Solid,
+                axisLabelVisible: true,
+                title: `${t.side} ${t.contract} ${t.contracts}`,
+            });
+            window.positionLines.push(entryLine);
+            if (t.stopLoss) {
+                const isTrailing = t.trailingStop?.activated;
+                window.positionLines.push(window.candleSeries.createPriceLine({
+                    price: t.stopLoss,
+                    color: isTrailing ? '#ff9800' : '#ff0000',
+                    lineWidth: 2,
+                    lineStyle: isTrailing ? LightweightCharts.LineStyle.SparseDotted : LightweightCharts.LineStyle.Dashed,
+                    axisLabelVisible: true, title: isTrailing ? '🔄 TRAIL' : 'SL',
+                }));
+            }
+            if (t.takeProfit) {
+                window.positionLines.push(window.candleSeries.createPriceLine({
+                    price: t.takeProfit,
+                    color: '#00cc00', lineWidth: 2,
+                    lineStyle: LightweightCharts.LineStyle.Dashed,
+                    axisLabelVisible: true, title: 'TP',
+                }));
+            }
+        });
+    }
+    
+    async function onDragEnd(e) {
+        if (!_dragState) return;
+        
+        e.preventDefault();
+        
+        const { type, tradeIndex, startPrice, currentPrice } = _dragState;
+        const handle = _dragState.handle;
+        
+        // 차트 인터랙션 복원
+        if (window.lwChart) {
+            window.lwChart.applyOptions({ handleScroll: true, handleScale: true });
+        }
+        
+        handle.style.opacity = '1';
+        handle.style.boxShadow = 'none';
+        hideDragLabel();
+        
+        _dragState = null;
+        
+        // 가격이 변경되었으면 Firestore 저장
+        if (currentPrice !== startPrice && currentPrice > 0) {
+            try {
+                if (type === 'sl') {
+                    await updateTradeStopLoss(tradeIndex, currentPrice);
+                    showToast(`✅ SL → ${currentPrice.toFixed(2)}`, 'success');
+                } else {
+                    await updateTradeTakeProfit(tradeIndex, currentPrice);
+                    showToast(`✅ TP → ${currentPrice.toFixed(2)}`, 'success');
+                }
+                // UI 갱신
+                drawPositionLinesLW();
+                updateOpenPositions();
+            } catch(err) {
+                console.error('SL/TP 저장 실패:', err);
+                // 원래 값 복원
+                const trade = myParticipation.trades[tradeIndex];
+                if (type === 'sl') trade.stopLoss = startPrice;
+                else trade.takeProfit = startPrice;
+                drawPositionLinesLW();
+                showToast(`❌ ${type.toUpperCase()} 저장 실패`, 'error');
+            }
+        } else {
+            // 변경 없음 - 라인 원복
+            drawPositionLinesLW();
+        }
+    }
+    
+    // 이벤트 등록 (document 레벨)
+    document.addEventListener('mousedown', onDragStart, { passive: false });
+    document.addEventListener('mousemove', onDragMove, { passive: false });
+    document.addEventListener('mouseup', onDragEnd, { passive: false });
+    document.addEventListener('touchstart', onDragStart, { passive: false });
+    document.addEventListener('touchmove', onDragMove, { passive: false });
+    document.addEventListener('touchend', onDragEnd, { passive: false });
+    
+    // 차트 크기 변경 시 핸들 위치 업데이트
+    window.addEventListener('resize', () => {
+        if (window._sltpDragHandles.length > 0) {
+            drawPositionLinesLW();
+        }
+    });
+    
+    // crosshairMove로도 핸들 위치 싱크 (스크롤/줌 시)
+    let _syncTimer = null;
+    const origDrawPositionLines = window.drawPositionLinesLW || drawPositionLinesLW;
+    // 차트 스크롤 시 핸들 위치 업데이트를 위해 주기적 체크
+    setInterval(() => {
+        if (!_dragState && window._sltpDragHandles.length > 0 && window.candleSeries) {
+            window._sltpDragHandles.forEach(h => {
+                const idx = parseInt(h.dataset.tradeIndex);
+                const type = h.dataset.type;
+                const trade = myParticipation?.trades?.[idx];
+                if (!trade) return;
+                const price = type === 'sl' ? trade.stopLoss : trade.takeProfit;
+                if (!price) return;
+                const y = priceToCoord(price);
+                if (y !== null && y !== undefined) {
+                    h.style.top = (y - 12) + 'px';
+                }
+            });
+        }
+    }, 200);
+    
+    console.log('🎯 SL/TP 드래그 시스템 초기화 완료');
+})();
 
 // 거래 제한 확인
 function checkTradingLimits(contracts, contract) {

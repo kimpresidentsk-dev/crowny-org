@@ -20,7 +20,15 @@ function showPage(pageId) {
     }
     if (pageId === 'prop-trading') {
         loadPropTrading();
-        loadTradingDashboard();
+        // 자동 로드 + retry (auth 타이밍 문제 대응)
+        loadTradingDashboard().then(() => {
+            if (!myParticipation && currentUser) {
+                // 1초 후 재시도
+                setTimeout(() => loadTradingDashboard(), 1000);
+            }
+            // 버튼 상태 강제 갱신
+            if (typeof updateTradeButtonState === 'function') updateTradeButtonState();
+        });
     }
     if (pageId === 'admin') {
         // Admin is now a separate page
