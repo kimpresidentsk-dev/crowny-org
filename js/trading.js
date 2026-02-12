@@ -14,25 +14,42 @@ async function reloadTradingSystem() {
     try {
         // 1) 참가 데이터 재로드
         myParticipation = null;
+        if (statusEl) statusEl.textContent = '⏳ 참가 데이터 로드...';
         await loadTradingDashboard();
         
         // 2) 가격 피드 재시작
-        if (typeof startLiveDataFeed === 'function') {
-            startLiveDataFeed();
+        if (statusEl) statusEl.textContent = '⏳ 가격 피드 연결...';
+        if (typeof connectPriceWebSocket === 'function') {
+            connectPriceWebSocket();
         }
         
         // 3) 차트 재초기화
-        if (typeof initTradingViewChart === 'function') {
-            await initTradingViewChart();
-        }
+        if (statusEl) statusEl.textContent = '⏳ 차트 초기화...';
+        try {
+            if (typeof initTradingViewChart === 'function') {
+                initTradingViewChart();
+            }
+        } catch(chartErr) { console.warn('차트 초기화 경고:', chartErr); }
         
         // 버튼 상태 업데이트
         if (typeof updateTradeButtonState === 'function') updateTradeButtonState();
         
-        const ok = !!myParticipation && currentPrice > 0;
+        // 가격 수신 대기 (최대 5초)
+        if (myParticipation && currentPrice < 1000) {
+            if (statusEl) statusEl.textContent = '⏳ 가격 수신 대기...';
+            await new Promise(r => {
+                let waited = 0;
+                const iv = setInterval(() => {
+                    waited += 500;
+                    if (currentPrice > 1000 || waited >= 5000) { clearInterval(iv); r(); }
+                }, 500);
+            });
+        }
+        
+        const ok = !!myParticipation && currentPrice > 1000;
         if (statusEl) statusEl.textContent = ok 
-            ? `✅ 완료! 참가: ${myParticipation?.participantId?.slice(0,8)}…, 가격: $${currentPrice.toFixed(2)}`
-            : `⚠️ ${!myParticipation ? '참가 데이터 없음' : '가격 수신 대기 중...'}`;
+            ? `✅ 완료! ${myParticipation?.participantId?.slice(0,8)}… $${currentPrice.toFixed(2)}`
+            : `⚠️ ${!myParticipation ? '참가 데이터 없음 — 챌린지 참가 필요' : '가격 수신 대기 중 (곧 연결)'}`;
         if (statusEl) statusEl.style.color = ok ? '#00cc66' : '#ff6600';
     } catch (e) {
         console.error('❌ reloadTradingSystem:', e);
