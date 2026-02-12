@@ -449,6 +449,16 @@ body {
     flex-direction: column;
 }
 
+.nav-sub {
+    display: block;
+    font-size: 0.6rem;
+    opacity: 0.5;
+    font-weight: 400;
+    margin-top: 1px;
+    letter-spacing: 0;
+}
+html[lang="en"] .nav-sub { display: none; }
+
 .nav-item {
     padding: 0.5rem 1rem;
     text-decoration: none;

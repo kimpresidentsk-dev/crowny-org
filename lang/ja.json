@@ -790,5 +790,21 @@
   "wallet.upgrade_security": "セキュリティアップグレード",
   "wallet.wallet_label": "ウォレット",
   "wallet.wallet_name_label": "ウォレット名：",
-  "wallet.wrong_encryption_password": "暗号化パスワードが正しくありません"
+  "wallet.wrong_encryption_password": "暗号化パスワードが正しくありません",
+  "nav.dashboard": "ダッシュボード",
+  "nav.today": "トゥデイ",
+  "nav.messenger": "メッセンジャー",
+  "nav.social": "ソーシャル",
+  "nav.wallet": "ウォレット",
+  "nav.trading": "先物取引",
+  "nav.credit": "クレジット",
+  "nav.mall": "ショッピング",
+  "nav.art": "作品",
+  "nav.books": "ブックス",
+  "nav.artist": "アーティスト",
+  "nav.energy": "エネルギー",
+  "nav.business": "ビジネス",
+  "nav.fundraise": "募金",
+  "nav.admin": "管理者",
+  "nav.settings": "設定"
 }

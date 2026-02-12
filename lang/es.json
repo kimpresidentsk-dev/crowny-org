@@ -790,5 +790,21 @@
   "wallet.upgrade_security": "Actualizar seguridad",
   "wallet.wallet_label": "Billetera",
   "wallet.wallet_name_label": "Nombre de billetera:",
-  "wallet.wrong_encryption_password": "Contraseña de cifrado incorrecta"
+  "wallet.wrong_encryption_password": "Contraseña de cifrado incorrecta",
+  "nav.dashboard": "Panel",
+  "nav.today": "Hoy",
+  "nav.messenger": "Mensajero",
+  "nav.social": "Social",
+  "nav.wallet": "Billetera",
+  "nav.trading": "Trading",
+  "nav.credit": "Crédito",
+  "nav.mall": "Tienda",
+  "nav.art": "Arte",
+  "nav.books": "Libros",
+  "nav.artist": "Artistas",
+  "nav.energy": "Energía",
+  "nav.business": "Negocio",
+  "nav.fundraise": "Recaudación",
+  "nav.admin": "Admin",
+  "nav.settings": "Ajustes"
 }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CROWNY PLATFORM</title>
-    <link rel="stylesheet" href="style.css?v=15.1">
+    <link rel="stylesheet" href="style.css?v=15.2">
     
     <!-- Firebase SDK -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-app-compat.min.js"></script>
@@ -155,31 +155,31 @@
         </div>
         
         <nav class="nav">
-            <a href="#" onclick="showPage('dashboard')" class="nav-item" data-i18n="section.dashboard">📊 DASHBOARD</a>
-            <a href="#" onclick="showPage('today')" class="nav-item active" data-i18n="section.today">🏠 TODAY</a>
+            <a href="#" onclick="showPage('dashboard')" class="nav-item">📊 DASHBOARD<span class="nav-sub" data-i18n="nav.dashboard">대시보드</span></a>
+            <a href="#" onclick="showPage('today')" class="nav-item active">🏠 TODAY<span class="nav-sub" data-i18n="nav.today">투데이</span></a>
             <hr class="nav-divider">
             <div class="nav-group-label">SOCIAL</div>
-            <a href="#" onclick="showPage('messenger')" class="nav-item" data-i18n="section.messenger">💬 MESSENGER</a>
-            <a href="#" onclick="showPage('social')" class="nav-item" data-i18n="section.social">📸 SOCIAL</a>
+            <a href="#" onclick="showPage('messenger')" class="nav-item">💬 MESSENGER<span class="nav-sub" data-i18n="nav.messenger">메신저</span></a>
+            <a href="#" onclick="showPage('social')" class="nav-item">📸 SOCIAL<span class="nav-sub" data-i18n="nav.social">소셜</span></a>
             <hr class="nav-divider">
             <div class="nav-group-label">FINANCE</div>
-            <a href="#" onclick="showPage('wallet')" class="nav-item" data-i18n="section.wallet">💰 WALLET</a>
-            <a href="#" onclick="showPage('prop-trading')" class="nav-item" data-i18n="section.prop_trading">📈 TRADING</a>
-            <a href="#" onclick="showPage('credit')" class="nav-item" data-i18n="section.credit">💳 CREDIT</a>
+            <a href="#" onclick="showPage('wallet')" class="nav-item">💰 WALLET<span class="nav-sub" data-i18n="nav.wallet">지갑</span></a>
+            <a href="#" onclick="showPage('prop-trading')" class="nav-item">📈 PROP TRADING<span class="nav-sub" data-i18n="nav.trading">선물 거래</span></a>
+            <a href="#" onclick="showPage('credit')" class="nav-item">💳 CREDIT<span class="nav-sub" data-i18n="nav.credit">신용</span></a>
             <hr class="nav-divider">
             <div class="nav-group-label">MARKETPLACE</div>
-            <a href="#" onclick="showPage('mall')" class="nav-item" data-i18n="section.mall">🛒 MALL</a>
-            <a href="#" onclick="showPage('art')" class="nav-item" data-i18n="section.art">🎨 ART</a>
-            <a href="#" onclick="showPage('books')" class="nav-item" data-i18n="section.books">📚 BOOKS</a>
-            <a href="#" onclick="showPage('artist')" class="nav-item" data-i18n="section.artist">🌟 ARTIST</a>
+            <a href="#" onclick="showPage('mall')" class="nav-item">🛒 MALL<span class="nav-sub" data-i18n="nav.mall">쇼핑몰</span></a>
+            <a href="#" onclick="showPage('art')" class="nav-item">🎨 ART<span class="nav-sub" data-i18n="nav.art">작품</span></a>
+            <a href="#" onclick="showPage('books')" class="nav-item">📚 BOOKS<span class="nav-sub" data-i18n="nav.books">도서</span></a>
+            <a href="#" onclick="showPage('artist')" class="nav-item">🌟 ARTIST<span class="nav-sub" data-i18n="nav.artist">아티스트</span></a>
             <hr class="nav-divider">
             <div class="nav-group-label">ECOSYSTEM</div>
-            <a href="#" onclick="showPage('energy')" class="nav-item" data-i18n="section.energy">⚡ ENERGY</a>
-            <a href="#" onclick="showPage('business')" class="nav-item" data-i18n="section.business">🏢 BUSINESS</a>
-            <a href="#" onclick="showPage('fundraise')" class="nav-item" data-i18n="section.fundraise">💝 FUNDRAISE</a>
+            <a href="#" onclick="showPage('energy')" class="nav-item">⚡ ENERGY<span class="nav-sub" data-i18n="nav.energy">에너지</span></a>
+            <a href="#" onclick="showPage('business')" class="nav-item">🏢 BUSINESS<span class="nav-sub" data-i18n="nav.business">사업</span></a>
+            <a href="#" onclick="showPage('fundraise')" class="nav-item">💝 FUNDRAISE<span class="nav-sub" data-i18n="nav.fundraise">모금</span></a>
             <hr class="nav-divider">
-            <a href="admin.html" class="nav-item" id="admin-nav-item" style="display:none; color:#e94560;" data-i18n="section.admin">🔐 ADMIN</a>
-            <a href="#" onclick="showPage('settings')" class="nav-item" style="margin-top:auto;" data-i18n="section.settings">⚙️ SETTINGS</a>
+            <a href="admin.html" class="nav-item" id="admin-nav-item" style="display:none; color:#e94560;">🔐 ADMIN<span class="nav-sub" data-i18n="nav.admin">관리자</span></a>
+            <a href="#" onclick="showPage('settings')" class="nav-item" style="margin-top:auto;">⚙️ SETTINGS<span class="nav-sub" data-i18n="nav.settings">설정</span></a>
         </nav>
     </aside>
 
@@ -1736,7 +1736,7 @@
     </script>
     
     <!-- ===== i18n 국제화 ===== -->
-    <script src="js/i18n.js?v=1.0"></script>
+    <script src="js/i18n.js?v=1.1"></script>
     
     <!-- ===== CROWNY v9.5 모듈화 JS (로드 순서 중요!) ===== -->
     <script src="js/config.js?v=12.4"></script>

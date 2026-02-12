@@ -26,6 +26,7 @@ async function loadLanguage(lang) {
         langData = await res.json();
         currentLang = lang;
         localStorage.setItem('crowny_lang', lang);
+        document.documentElement.lang = lang;
         i18nReady = true;
         console.log(`🌐 [i18n] Loaded: ${lang} (${Object.keys(langData).length} keys)`);
     } catch (e) {

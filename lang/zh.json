@@ -821,5 +821,21 @@
   "wallet.upgrade_security": "升级安全",
   "wallet.wallet_label": "钱包",
   "wallet.wallet_name_label": "钱包名称：",
-  "wallet.wrong_encryption_password": "加密密码不正确"
+  "wallet.wrong_encryption_password": "加密密码不正确",
+  "nav.dashboard": "仪表板",
+  "nav.today": "今天",
+  "nav.messenger": "消息",
+  "nav.social": "社交",
+  "nav.wallet": "钱包",
+  "nav.trading": "期货交易",
+  "nav.credit": "信用",
+  "nav.mall": "商城",
+  "nav.art": "作品",
+  "nav.books": "图书",
+  "nav.artist": "艺术家",
+  "nav.energy": "能源",
+  "nav.business": "企业",
+  "nav.fundraise": "筹款",
+  "nav.admin": "管理员",
+  "nav.settings": "设置"
 }

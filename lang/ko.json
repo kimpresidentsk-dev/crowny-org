@@ -965,5 +965,21 @@
   "wallet.upgrade_security": "보안 업그레이드",
   "wallet.wallet_label": "지갑",
   "wallet.wallet_name_label": "지갑 이름:",
-  "wallet.wrong_encryption_password": "암호화 비밀번호가 올바르지 않습니다"
+  "wallet.wrong_encryption_password": "암호화 비밀번호가 올바르지 않습니다",
+  "nav.dashboard": "대시보드",
+  "nav.today": "투데이",
+  "nav.messenger": "메신저",
+  "nav.social": "소셜",
+  "nav.wallet": "지갑",
+  "nav.trading": "선물 거래",
+  "nav.credit": "신용",
+  "nav.mall": "쇼핑몰",
+  "nav.art": "작품",
+  "nav.books": "도서",
+  "nav.artist": "아티스트",
+  "nav.energy": "에너지",
+  "nav.business": "사업",
+  "nav.fundraise": "모금",
+  "nav.admin": "관리자",
+  "nav.settings": "설정"
 }
