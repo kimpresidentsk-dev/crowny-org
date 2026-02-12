@@ -2710,3 +2710,69 @@ input:checked + .notif-toggle-slider::before {
         padding: 0.8rem !important;
     }
 }
+
+/* ========== BOOKS PLATFORM CSS ========== */
+
+/* Scroll rows */
+.book-scroll-row { scrollbar-width: thin; -webkit-overflow-scrolling: touch; }
+.book-scroll-row::-webkit-scrollbar { height: 4px; }
+.book-scroll-row::-webkit-scrollbar-thumb { background: #ccc; border-radius: 2px; }
+
+/* Snow effect */
+@keyframes snowfall {
+    0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0.3; }
+}
+
+/* Rain effect */
+@keyframes rainfall {
+    0% { transform: translateY(-5vh); opacity: 0.8; }
+    100% { transform: translateY(110vh); opacity: 0; }
+}
+
+/* Cherry blossom */
+@keyframes cherryfall {
+    0% { transform: translateY(-10vh) rotate(0deg) translateX(0); opacity: 1; }
+    50% { transform: translateY(50vh) rotate(180deg) translateX(30px); opacity: 0.8; }
+    100% { transform: translateY(110vh) rotate(360deg) translateX(-20px); opacity: 0.2; }
+}
+
+/* Firefly glow */
+@keyframes fireflyGlow {
+    0% { opacity: 0.2; transform: translate(0, 0); }
+    50% { opacity: 1; }
+    100% { opacity: 0.2; transform: translate(20px, -15px); }
+}
+
+/* Star twinkle */
+@keyframes starTwinkle {
+    0% { opacity: 0.2; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Bounce in for treasure modal */
+@keyframes bounceIn {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.05); }
+    70% { transform: scale(0.95); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Reader page turn transition */
+#reader-content {
+    transition: opacity 0.3s ease;
+}
+
+/* Treasure word - no visual hint by default */
+.book-treasure-word {
+    cursor: text;
+    transition: background 0.3s;
+}
+.book-treasure-word:active {
+    background: rgba(255, 215, 0, 0.3);
+    border-radius: 4px;
+}
+
+.book-word {
+    cursor: text;
+}

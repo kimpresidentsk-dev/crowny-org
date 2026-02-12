@@ -829,26 +829,28 @@
             <div id="artist-list" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:0.8rem;"></div>
         </section>
 
-        <!-- ========== BOOKS - 출판 ========== -->
+        <!-- ========== BOOKS - 인터랙티브 출판 플랫폼 ========== -->
         <section id="books" class="page">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                 <h2 style="margin:0;" data-i18n="books.title">📚 BOOKS</h2>
-                <button class="admin-register-btn" id="books-register-btn" onclick="openRegisterModal('books')" data-i18n="books.register">➕ 책 등록</button>
+                <div style="display:flex;gap:0.5rem;">
+                    <button onclick="showMyLibrary()" style="background:#ff9800;color:white;border:none;padding:0.5rem 0.8rem;border-radius:8px;cursor:pointer;font-size:0.8rem;font-weight:700;">📚 내 서재</button>
+                    <button onclick="showBookCreator()" style="background:#4CAF50;color:white;border:none;padding:0.5rem 0.8rem;border-radius:8px;cursor:pointer;font-size:0.8rem;font-weight:700;">✍️ 집필하기</button>
+                </div>
             </div>
             
-            <div class="section-banner" id="books-banner" style="background:linear-gradient(135deg, #3e2723, #795548);">
-                <h3 data-i18n="books.banner_title">📚 BOOKS — 지식의 생태계</h3>
-                <p data-i18n="books.banner_desc">디지털 전자책(PDF) — 보유하면 가치 상승 · 작가의 네임밸류와 함께 성장</p>
+            <div class="section-banner" id="books-banner" style="background:linear-gradient(135deg, #1a1a2e, #16213e);">
+                <h3 data-i18n="books.banner_title">📚 BOOKS — 인터랙티브 디지털 출판</h3>
+                <p data-i18n="books.banner_desc">한정판 발행 · CSS 효과 · TTS 읽기 · 보물찾기 · 다국어 번역 — CRGC 전용</p>
             </div>
             
-            <div id="books-list" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:0.8rem;"></div>
-            
-            <!-- 읽고 싶은 책 -->
-            <div style="background:white; padding:1.5rem; border-radius:12px; margin-top:1.5rem;">
-                <h3 style="margin-bottom:0.5rem;" data-i18n="books.reading_list">📚 읽고 싶은 책</h3>
-                <button onclick="loadReadingList()" style="background:#ff9800; color:white; border:none; padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; font-size:0.8rem; margin-bottom:0.5rem;" data-i18n="common.refresh">🔄 새로고침</button>
-                <div id="reading-list"><p style="color:var(--accent); font-size:0.85rem;">목록을 불러오려면 새로고침을 누르세요</p></div>
+            <div id="books-gallery-content" style="margin-top:1rem;">
+                <p style="text-align:center;color:var(--accent);">로딩 중...</p>
             </div>
+            
+            <!-- 하위 호환: 기존 books-list (숨김) -->
+            <div id="books-list" style="display:none;"></div>
+            <div id="reading-list" style="display:none;"></div>
         </section>
 
         <!-- ========== CREDIT - P2P 크레딧 ========== -->
@@ -1707,6 +1709,7 @@
     <script src="js/send.js?v=9.5"></script>
     <script src="js/admin.js?v=13.0"></script>
     <script src="js/marketplace.js?v=13.0"></script>
+    <script src="js/books.js?v=1.0"></script>
     <script src="js/trading.js?v=13.5"></script>
     <script src="js/mentor-learning.js?v=1.0"></script>
     <script src="js/mentors.js?v=2.2"></script>
