@@ -107,7 +107,80 @@ const AI_ASSISTANT = (() => {
         }
     };
 
-    const CHAR_ORDER = ['kps', 'hansun', 'michael', 'matthew', 'crownygirl'];
+    // ── 6번째 캐릭터: 개인 AI 튜터 ──
+    const TUTOR_GOALS = {
+        english: { icon: '🇬🇧', label: '영어', labelEn: 'English' },
+        trading: { icon: '📈', label: '트레이딩', labelEn: 'Trading' },
+        beauty: { icon: '💄', label: '뷰티/스킨케어', labelEn: 'Beauty/Skincare' },
+        coding: { icon: '💻', label: '프로그래밍', labelEn: 'Programming' },
+        business: { icon: '💼', label: '비즈니스', labelEn: 'Business' },
+        music: { icon: '🎵', label: '음악', labelEn: 'Music' },
+        cooking: { icon: '🍳', label: '요리', labelEn: 'Cooking' },
+        fitness: { icon: '💪', label: '운동/건강', labelEn: 'Fitness/Health' },
+        growth: { icon: '🌱', label: '자기개발', labelEn: 'Self-development' }
+    };
+    const TUTOR_STYLES = {
+        friendly: { label: '친근한', labelEn: 'Friendly' },
+        professional: { label: '전문적인', labelEn: 'Professional' },
+        strict: { label: '엄격한', labelEn: 'Strict' },
+        humorous: { label: '유머러스한', labelEn: 'Humorous' }
+    };
+    const TUTOR_LEVELS = {
+        beginner: { label: '초급', labelEn: 'Beginner' },
+        intermediate: { label: '중급', labelEn: 'Intermediate' },
+        advanced: { label: '고급', labelEn: 'Advanced' }
+    };
+
+    let tutorProfile = null; // loaded from Firestore or localStorage
+
+    function buildTutorSystemPrompt() {
+        if (!tutorProfile || !tutorProfile.goals || tutorProfile.goals.length === 0) {
+            return '당신은 개인 맞춤 AI 튜터입니다. 사용자의 학습 목표를 먼저 물어보고, 맞춤형 레슨을 제공하세요.';
+        }
+        const goalNames = tutorProfile.goals.map(g => TUTOR_GOALS[g]?.label || g).join(', ');
+        const levelName = TUTOR_LEVELS[tutorProfile.level]?.label || '초급';
+        const styleName = TUTOR_STYLES[tutorProfile.style]?.label || '친근한';
+        const customGoal = tutorProfile.customGoal ? `\n추가 학습 목표: ${tutorProfile.customGoal}` : '';
+
+        return `당신은 크라우니의 개인 맞춤 AI 튜터입니다.
+
+학습자 프로필:
+- 학습 목표: ${goalNames}${customGoal}
+- 수준: ${levelName}
+- 선호 스타일: ${styleName}
+
+교육 원칙:
+1. ${styleName} 말투로 일관되게 대화합니다.
+2. ${levelName} 수준에 맞춘 설명을 합니다.
+3. 매 대화마다 학습 포인트를 1~2개 포함합니다.
+4. 퀴즈 요청 시 선택형/단답형 문제를 출제합니다.
+5. 진도 요약 요청 시 지금까지 다룬 주제를 정리합니다.
+6. 격려와 동기부여를 잊지 않습니다.
+7. 한국어로 대화하되, 영어 학습 시에는 영어를 적절히 섞습니다.
+
+오늘의 레슨 요청 시: ${goalNames} 중 하나를 골라 5~10분 분량의 미니 레슨을 구성합니다.`;
+    }
+
+    CHARACTERS['tutor'] = {
+        id: 'tutor',
+        emoji: '🎓',
+        name: t('panel.name_tutor', 'My Tutor'),
+        nameKo: '나만의 튜터 (My Tutor)',
+        role: '개인 맞춤 AI 선생님',
+        roleI18n: 'panel.role_tutor',
+        color: '#00BCD4',
+        bgGradient: 'linear-gradient(135deg, #00BCD4, #0097A7)',
+        get systemPrompt() { return buildTutorSystemPrompt(); },
+        greeting: '안녕하세요! 저는 당신만을 위한 AI 튜터예요 🎓 무엇을 배워볼까요?',
+        quickQuestions: [
+            { icon: '📚', text: '오늘의 레슨 시작' },
+            { icon: '🧪', text: '퀴즈 내줘' },
+            { icon: '💬', text: '자유 대화' },
+            { icon: '📊', text: '내 학습 진도' }
+        ]
+    };
+
+    const CHAR_ORDER = ['kps', 'hansun', 'michael', 'matthew', 'crownygirl', 'tutor'];
 
     // ── Lounge System Prompt ──
     const LOUNGE_SYSTEM_PROMPT = `당신은 크라우니 라운지의 5인 AI 캐릭터를 동시에 연기합니다.
@@ -138,6 +211,141 @@ delay: 첫 번째 0~500, 이후 +800~2000씩 증가 (자연스러운 타이밍)`
     function renderCharAvatar(c, style) {
         if (c.avatarImg) return `<img src="${c.avatarImg}" class="panel-avatar-img" style="${style || ''}">`;
         return c.emoji;
+    }
+
+    // ── Tutor Profile Load/Save ──
+    async function loadTutorProfile() {
+        try {
+            const local = localStorage.getItem('crowny_tutor_profile');
+            if (local) tutorProfile = JSON.parse(local);
+        } catch(_) {}
+        if (!currentUser) return;
+        try {
+            const doc = await db.collection('users').doc(currentUser.uid).collection('ai_tutor_profile').doc('config').get();
+            if (doc.exists) {
+                tutorProfile = doc.data();
+                localStorage.setItem('crowny_tutor_profile', JSON.stringify(tutorProfile));
+            }
+        } catch(e) { console.warn('Tutor profile load fail:', e); }
+    }
+
+    async function saveTutorProfile(profile) {
+        tutorProfile = profile;
+        localStorage.setItem('crowny_tutor_profile', JSON.stringify(profile));
+        if (!currentUser) return;
+        try {
+            await db.collection('users').doc(currentUser.uid).collection('ai_tutor_profile').doc('config').set(profile, { merge: true });
+        } catch(e) { console.warn('Tutor profile save fail:', e); }
+    }
+
+    async function saveTutorProgress(type) {
+        if (!currentUser) return;
+        const key = `crowny_tutor_streak_${currentUser.uid}`;
+        let progress = {};
+        try { progress = JSON.parse(localStorage.getItem(key) || '{}'); } catch(_) {}
+        const today = new Date().toISOString().slice(0,10);
+        if (!progress.lastDate) progress = { lessons: 0, quizzes: 0, streak: 0, lastDate: '' };
+        if (type === 'lesson') progress.lessons++;
+        if (type === 'quiz') progress.quizzes++;
+        if (progress.lastDate !== today) {
+            const yesterday = new Date(Date.now()-86400000).toISOString().slice(0,10);
+            progress.streak = progress.lastDate === yesterday ? progress.streak + 1 : 1;
+            progress.lastDate = today;
+        }
+        localStorage.setItem(key, JSON.stringify(progress));
+        try {
+            await db.collection('users').doc(currentUser.uid).collection('tutor_progress').doc('stats').set(progress, { merge: true });
+        } catch(_) {}
+    }
+
+    function getTutorProgress() {
+        if (!currentUser) return { lessons: 0, quizzes: 0, streak: 0 };
+        try {
+            return JSON.parse(localStorage.getItem(`crowny_tutor_streak_${currentUser.uid}`) || '{}');
+        } catch(_) { return { lessons: 0, quizzes: 0, streak: 0 }; }
+    }
+
+    // ── Tutor Setup UI ──
+    function renderTutorSetup() {
+        const container = document.getElementById('ai-chat-messages');
+        const inputBar = document.querySelector('.ai-input-bar');
+        if (!container) return;
+        if (inputBar) inputBar.style.display = 'none';
+
+        const header = document.querySelector('#ai-assistant .section-header');
+        if (header) {
+            header.innerHTML = `<div class="panel-chat-header-left">
+                <button class="panel-back-btn" onclick="AI_ASSISTANT.backToSelect()">←</button>
+                <div class="panel-chat-avatar" style="background:linear-gradient(135deg,#00BCD4,#0097A7);">🎓</div>
+                <div><div class="panel-chat-name">My Tutor 설정</div><div class="panel-chat-role">학습 프로필 설정</div></div>
+            </div><div></div>`;
+        }
+
+        const goalBtns = Object.entries(TUTOR_GOALS).map(([k, v]) => {
+            const sel = tutorProfile?.goals?.includes(k) ? 'tutor-goal-selected' : '';
+            return `<button class="tutor-goal-btn ${sel}" data-goal="${k}" onclick="AI_ASSISTANT._toggleGoal(this)">${v.icon} ${v.label}</button>`;
+        }).join('');
+
+        const levelBtns = Object.entries(TUTOR_LEVELS).map(([k, v]) => {
+            const sel = (tutorProfile?.level || 'beginner') === k ? 'tutor-opt-selected' : '';
+            return `<button class="tutor-opt-btn ${sel}" data-level="${k}" onclick="AI_ASSISTANT._selectLevel(this)">${v.label}</button>`;
+        }).join('');
+
+        const styleBtns = Object.entries(TUTOR_STYLES).map(([k, v]) => {
+            const sel = (tutorProfile?.style || 'friendly') === k ? 'tutor-opt-selected' : '';
+            return `<button class="tutor-opt-btn ${sel}" data-style="${k}" onclick="AI_ASSISTANT._selectStyle(this)">${v.label}</button>`;
+        }).join('');
+
+        container.innerHTML = `<div class="tutor-setup">
+            <div class="tutor-setup-icon">🎓</div>
+            <h3>나만의 AI 튜터 설정</h3>
+            <p style="color:var(--text-muted,#888);margin-bottom:1.5rem;">학습 목표와 스타일을 설정하면 맞춤형 레슨을 받을 수 있어요</p>
+
+            <div class="tutor-section">
+                <h4>📚 학습 목표 (복수 선택 가능)</h4>
+                <div class="tutor-goal-grid">${goalBtns}</div>
+                <input type="text" id="tutor-custom-goal" placeholder="기타 목표 직접 입력..." value="${tutorProfile?.customGoal || ''}" class="tutor-custom-input">
+            </div>
+
+            <div class="tutor-section">
+                <h4>📊 현재 수준</h4>
+                <div class="tutor-opt-row">${levelBtns}</div>
+            </div>
+
+            <div class="tutor-section">
+                <h4>🎭 선호 스타일</h4>
+                <div class="tutor-opt-row">${styleBtns}</div>
+            </div>
+
+            <button class="tutor-save-btn" onclick="AI_ASSISTANT._saveTutorSetup()">✅ 설정 완료 — 튜터 시작!</button>
+        </div>`;
+    }
+
+    function _toggleGoal(btn) {
+        btn.classList.toggle('tutor-goal-selected');
+    }
+    function _selectLevel(btn) {
+        btn.parentElement.querySelectorAll('.tutor-opt-btn').forEach(b => b.classList.remove('tutor-opt-selected'));
+        btn.classList.add('tutor-opt-selected');
+    }
+    function _selectStyle(btn) {
+        btn.parentElement.querySelectorAll('.tutor-opt-btn').forEach(b => b.classList.remove('tutor-opt-selected'));
+        btn.classList.add('tutor-opt-selected');
+    }
+    async function _saveTutorSetup() {
+        const goals = Array.from(document.querySelectorAll('.tutor-goal-btn.tutor-goal-selected')).map(b => b.dataset.goal);
+        const level = document.querySelector('.tutor-opt-btn.tutor-opt-selected[data-level]')?.dataset.level || 'beginner';
+        const style = document.querySelector('.tutor-opt-btn.tutor-opt-selected[data-style]')?.dataset.style || 'friendly';
+        const customGoal = document.getElementById('tutor-custom-goal')?.value?.trim() || '';
+
+        if (goals.length === 0 && !customGoal) {
+            showToast('학습 목표를 최소 1개 선택해주세요!', 'warning');
+            return;
+        }
+
+        await saveTutorProfile({ goals, level, style, customGoal, updatedAt: new Date().toISOString() });
+        showToast('🎓 튜터 설정 완료!', 'success');
+        selectCharacter('tutor');
     }
 
     // ── Settings Load ──
@@ -648,6 +856,13 @@ delay: 첫 번째 0~500, 이후 +800~2000씩 증가 (자연스러운 타이밍)`
     // ── Public API ──
     function selectCharacter(charId) {
         loungeMode = false;
+        // 튜터 선택 시 프로필 미설정이면 셋업 화면
+        if (charId === 'tutor' && (!tutorProfile || !tutorProfile.goals || tutorProfile.goals.length === 0)) {
+            if (!tutorProfile?.customGoal) {
+                renderTutorSetup();
+                return;
+            }
+        }
         currentCharId = charId;
         if (!chatHistories[charId]) loadHistory(charId);
         renderChat();
@@ -719,6 +934,7 @@ delay: 첫 번째 0~500, 이후 +800~2000씩 증가 (자연스러운 타이밍)`
         CHAR_ORDER.forEach(id => loadHistory(id));
         loadLoungeHistory();
         await loadSettings();
+        await loadTutorProfile();
         renderSelectScreen();
 
         const inputEl = document.querySelector('.ai-input-bar input');
@@ -790,6 +1006,9 @@ delay: 첫 번째 0~500, 이후 +800~2000씩 증가 (자연스러운 타이밍)`
         selectCharacter, backToSelect,
         enterLounge, loungeInvite, resetLounge,
         saveAdminSettings, loadAdminSettings, DEFAULT_SYSTEM_PROMPT,
-        CHARACTERS, CHAR_ORDER
+        CHARACTERS, CHAR_ORDER,
+        // Tutor
+        renderTutorSetup, _toggleGoal, _selectLevel, _selectStyle, _saveTutorSetup,
+        saveTutorProgress, getTutorProgress
     };
 })();

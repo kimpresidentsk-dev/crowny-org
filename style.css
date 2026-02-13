@@ -5246,3 +5246,24 @@ td {
     .landing-proof-number{font-size:4rem}
     .landing-cta{position:static;background:none}
 }
+
+/* ============================================================
+   AI TUTOR SETUP
+   ============================================================ */
+.tutor-setup { padding:1.5rem; text-align:center; max-width:500px; margin:0 auto; }
+.tutor-setup-icon { font-size:3rem; margin-bottom:0.5rem; }
+.tutor-setup h3 { font-size:1.3rem; margin-bottom:0.3rem; color:var(--text,#f0f0f0); }
+.tutor-section { text-align:left; margin-bottom:1.5rem; }
+.tutor-section h4 { margin-bottom:0.6rem; font-size:0.95rem; color:var(--text,#f0f0f0); }
+.tutor-goal-grid { display:flex; flex-wrap:wrap; gap:0.4rem; }
+.tutor-goal-btn { padding:0.5rem 0.8rem; border:1px solid var(--border,#333); border-radius:20px; background:var(--card-bg,#1a1a2e); color:var(--text,#f0f0f0); font-size:0.85rem; cursor:pointer; transition:all 0.2s; }
+.tutor-goal-btn:hover { border-color:#00BCD4; }
+.tutor-goal-btn.tutor-goal-selected { background:#00BCD4; color:white; border-color:#00BCD4; }
+.tutor-opt-row { display:flex; gap:0.4rem; flex-wrap:wrap; }
+.tutor-opt-btn { padding:0.5rem 1rem; border:1px solid var(--border,#333); border-radius:20px; background:var(--card-bg,#1a1a2e); color:var(--text,#f0f0f0); font-size:0.85rem; cursor:pointer; transition:all 0.2s; }
+.tutor-opt-btn:hover { border-color:#00BCD4; }
+.tutor-opt-btn.tutor-opt-selected { background:#00BCD4; color:white; border-color:#00BCD4; }
+.tutor-custom-input { width:100%; margin-top:0.5rem; padding:0.6rem 0.8rem; border:1px solid var(--border,#333); border-radius:10px; background:var(--card-bg,#1a1a2e); color:var(--text,#f0f0f0); font-size:0.85rem; outline:none; box-sizing:border-box; }
+.tutor-custom-input:focus { border-color:#00BCD4; }
+.tutor-save-btn { width:100%; padding:0.9rem; border:none; border-radius:12px; background:linear-gradient(135deg,#00BCD4,#0097A7); color:white; font-size:1rem; font-weight:700; cursor:pointer; margin-top:1rem; transition:opacity 0.2s; }
+.tutor-save-btn:hover { opacity:0.9; }
