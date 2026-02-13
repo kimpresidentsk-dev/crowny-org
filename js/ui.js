@@ -80,6 +80,12 @@ function showPage(pageId) {
     if (pageId === 'beauty-manager') {
         if (typeof BEAUTY !== 'undefined') BEAUTY.init();
     }
+    if (pageId === 'brain') {
+        if (typeof BRAIN !== 'undefined') BRAIN.init();
+    }
+    if (pageId === 'movement') {
+        if (typeof MOVEMENT !== 'undefined') MOVEMENT.init();
+    }
     if (pageId === 'art') {
         loadArtGallery();
     }

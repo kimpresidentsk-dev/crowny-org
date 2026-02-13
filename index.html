@@ -215,6 +215,8 @@
             <a href="#" onclick="showPage('ai-assistant')" class="nav-item">👑 CROWNY PANEL<span class="nav-sub" data-i18n="nav.crowny_panel">크라우니 패널</span></a>
             <a href="#" onclick="showPage('care')" class="nav-item">💝 CARE<span class="nav-sub" data-i18n="nav.care">크라우니케어</span></a>
             <a href="#" onclick="showPage('beauty-manager')" class="nav-item">✨ BEAUTY<span class="nav-sub">뷰티매니저</span></a>
+            <a href="#" onclick="showPage('brain')" class="nav-item">🧠 BRAIN<span class="nav-sub">크라우니브레인</span></a>
+            <a href="#" onclick="showPage('movement')" class="nav-item">💪 MOVEMENT<span class="nav-sub">크라우니무브먼트</span></a>
             <hr class="nav-divider">
             <a href="admin.html" class="nav-item" id="admin-nav-item" style="display:none; color:#e94560;">🔐 ADMIN<span class="nav-sub" data-i18n="nav.admin">관리자</span></a>
             <a href="#" onclick="showPage('settings')" class="nav-item" style="margin-top:auto;">⚙️ SETTINGS<span class="nav-sub" data-i18n="nav.settings">설정</span></a>
@@ -304,6 +306,14 @@
                 <div class="service-card" onclick="showPage('beauty-manager')">
                     <span class="icon">✨</span>
                     <h3>BEAUTY</h3>
+                </div>
+                <div class="service-card" onclick="showPage('brain')">
+                    <span class="icon">🧠</span>
+                    <h3>BRAIN</h3>
+                </div>
+                <div class="service-card" onclick="showPage('movement')">
+                    <span class="icon">💪</span>
+                    <h3>MOVEMENT</h3>
                 </div>
                 <div class="service-card" onclick="showPage('ai-assistant')" style="border:2px solid var(--gold, #D4AF37);">
                     <span class="icon">👑</span>
@@ -1698,6 +1708,34 @@
             </div>
         </section>
 
+        <!-- BRAIN -->
+        <section id="brain" class="page">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <h2 style="margin:0;">🧠 크라우니브레인</h2>
+            </div>
+            <div class="section-banner" style="background:linear-gradient(135deg, #667eea, #764ba2);">
+                <h3>🧠 크라우니브레인 — 나를 발견하는 3단계</h3>
+                <p>4기질 → 243유형(애니어그램) → 8,192유형(브레인OS)</p>
+            </div>
+            <div id="brain-content" style="margin-top:1rem;">
+                <p style="text-align:center;color:var(--accent);padding:2rem;">로딩 중...</p>
+            </div>
+        </section>
+
+        <!-- MOVEMENT -->
+        <section id="movement" class="page">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <h2 style="margin:0;">💪 크라우니무브먼트</h2>
+            </div>
+            <div class="section-banner" style="background:linear-gradient(135deg, #E17055, #FDCB6E);">
+                <h3>💪 크라우니무브먼트 — 500회 프로세스</h3>
+                <p>프레시전 → 액티브 → 코어 무브먼트</p>
+            </div>
+            <div id="movement-content" style="margin-top:1rem;">
+                <p style="text-align:center;color:var(--accent);padding:2rem;">로딩 중...</p>
+            </div>
+        </section>
+
         <!-- BEAUTY MANAGER -->
         <section id="beauty-manager" class="page">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
@@ -2146,6 +2184,8 @@
     <script src="js/ai-assistant.js?v=3.6" defer></script>
     <script src="js/ai-social.js?v=1.0" defer></script>
     <script src="js/beauty-manager.js?v=1.0" defer></script>
+    <script src="js/brain.js?v=1.0" defer></script>
+    <script src="js/movement.js?v=1.0" defer></script>
     <script src="js/shortform.js?v=21.0" defer></script>
     <script src="js/landing.js?v=1.0" defer></script>
     <script src="js/invite.js?v=21.0" defer></script>
