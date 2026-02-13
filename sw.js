@@ -1,5 +1,5 @@
 // ===== CROWNY Service Worker v1.0 =====
-const CACHE_VERSION = 'crowny-v1.0';
+const CACHE_VERSION = 'crowny-v1.1';
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -26,6 +26,15 @@ const APP_SHELL = [
   '/js/settings.js',
   '/js/slogans.js',
   '/js/i18n.js',
+  '/js/ai-assistant.js',
+  '/js/care.js',
+  '/js/e2e-crypto.js',
+  '/js/explore.js',
+  '/js/invite.js',
+  '/js/landing.js',
+  '/js/pwa.js',
+  '/js/shortform.js',
+  '/js/stories.js',
   '/img/icons/icon-192x192.png',
   '/img/icons/icon-512x512.png',
   '/manifest.json'
