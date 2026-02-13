@@ -4459,6 +4459,9 @@ label { color: var(--dark-muted) !important; }
     height: 100dvh !important;
     border-radius: 0 !important;
     margin: -1.5rem -1.5rem 0 !important;
+    overflow: hidden;
+    overscroll-behavior: none;
+    touch-action: pan-x;
 }
 @media (max-width: 768px) {
     #reels-container {

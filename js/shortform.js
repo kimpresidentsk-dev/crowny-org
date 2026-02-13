@@ -239,15 +239,29 @@
     function generateThumbnail(videoFile) {
         return new Promise((resolve) => {
             const video = document.createElement('video');
-            video.preload = 'metadata';
+            video.preload = 'auto';
             video.muted = true;
             video.playsInline = true;
+            video.setAttribute('playsinline', '');
+            video.setAttribute('webkit-playsinline', '');
             const url = URL.createObjectURL(videoFile);
             video.src = url;
+            
+            // 모바일 호환: play() 후 seek
             video.onloadeddata = () => {
-                video.currentTime = Math.min(1, video.duration / 2);
+                video.play().then(() => {
+                    video.pause();
+                    video.currentTime = Math.min(1, video.duration / 2);
+                }).catch(() => {
+                    video.currentTime = Math.min(1, video.duration / 2);
+                });
             };
+            
+            // 5초 타임아웃 (모바일에서 안 불릴 경우)
+            const timeout = setTimeout(() => { URL.revokeObjectURL(url); resolve(null); }, 5000);
+            
             video.onseeked = () => {
+                clearTimeout(timeout);
                 const canvas = document.createElement('canvas');
                 canvas.width = THUMB_W;
                 canvas.height = THUMB_H;
@@ -344,8 +358,13 @@
             if (location.hash.includes('page=reels')) loadReelsFeed(true);
         } catch (e) {
             console.error('Shortform upload error:', e);
-            showToast(t('shortform.upload_fail','업로드 실패: ') + e.message, 'error');
+            let errMsg = e.message;
+            if (e.code === 'storage/unauthorized') errMsg = t('shortform.err_auth','로그인이 필요합니다');
+            else if (e.code === 'storage/canceled') errMsg = t('shortform.err_canceled','업로드가 취소되었습니다');
+            else if (e.code === 'storage/unknown') errMsg = t('shortform.err_network','네트워크 오류. 다시 시도해주세요');
+            showToast(t('shortform.upload_fail','업로드 실패: ') + errMsg, 'error');
             document.getElementById('sf-submit-btn').disabled = false;
+            document.getElementById('sf-progress').style.display = 'none';
         }
     }
 
