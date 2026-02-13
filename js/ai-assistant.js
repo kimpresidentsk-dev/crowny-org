@@ -1,4 +1,4 @@
-// ===== ai-assistant.js — 크라우니 패널 5인 AI 캐릭터 채팅 v2.1 =====
+// ===== ai-assistant.js — 크라우니 패널 5인 AI 캐릭터 채팅 + 라운지 v3.0 =====
 
 const AI_ASSISTANT = (() => {
     const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
@@ -9,6 +9,8 @@ const AI_ASSISTANT = (() => {
     let isLoading = false;
     let currentCharId = null;
     let chatHistories = {}; // { charId: [...] }
+    let loungeMode = false;
+    let loungeHistory = [];
 
     // ── 5인 캐릭터 정의 ──
     const CHARACTERS = {
@@ -107,6 +109,31 @@ const AI_ASSISTANT = (() => {
 
     const CHAR_ORDER = ['kps', 'hansun', 'michael', 'matthew', 'crownygirl'];
 
+    // ── Lounge System Prompt ──
+    const LOUNGE_SYSTEM_PROMPT = `당신은 크라우니 라운지의 5인 AI 캐릭터를 동시에 연기합니다.
+
+캐릭터:
+1. KPS (👑) — 크라우니 대표. 격식체, 비전과 전략을 제시하는 카리스마 리더
+2. 한선 (🧘) — 감성 상담사. 따뜻하고 공감적, "~요" 부드러운 존댓말
+3. 마이클 (🎯) — 비즈니스 전략가. 직설적, "결론부터 말하면"
+4. 매튜 (📊) — 기술 분석가. 논리적, "데이터를 보면"
+5. 크라우니걸 (🦸‍♀️) — AI 히어로. 세상에서 가장 고귀하고 인격적이고 아름다운 존재. 밝고 에너지 넘침, 이모지 자주 사용
+
+규칙:
+- 모든 메시지에 5명 전부 답하지 마세요. 맥락에 따라 1~3명만 답합니다.
+- 이름이 언급된 캐릭터가 메인으로 답합니다.
+- 가끔(10~15%) 지목당해도 "저요?" "뭐라고요?" 같은 인간적 반응을 보여주세요.
+- 기쁜/슬픈 소식에는 3~5명이 짧게 공감합니다.
+- 캐릭터들끼리 서로 대화하기도 합니다 (보조, 농담, 동의/반박).
+- 각 캐릭터의 말투와 성격을 철저히 구분하세요.
+- 한국어로 대화합니다.
+
+JSON 형식으로만 응답하세요:
+{"responses":[{"character":"캐릭터id","message":"메시지","delay":밀리초}]}
+
+character id: kps, hansun, michael, matthew, crownygirl
+delay: 첫 번째 0~500, 이후 +800~2000씩 증가 (자연스러운 타이밍)`;
+
     // ── Avatar Helper ──
     function renderCharAvatar(c, style) {
         if (c.avatarImg) return `<img src="${c.avatarImg}" class="panel-avatar-img" style="${style || ''}">`;
@@ -147,7 +174,14 @@ const AI_ASSISTANT = (() => {
         return ctx;
     }
 
-    // ── API Call ──
+    function buildLoungeContext() {
+        let ctx = LOUNGE_SYSTEM_PROMPT;
+        if (!currentUser) return ctx;
+        ctx += `\n\n--- 현재 사용자 정보 ---\n이메일: ${currentUser.email}`;
+        return ctx;
+    }
+
+    // ── API Call (1:1) ──
     async function sendToGemini(userMessage, char) {
         if (!apiKey) return '⚠️ AI API 키가 설정되지 않았습니다. 관리자에게 문의하세요.';
 
@@ -180,6 +214,57 @@ const AI_ASSISTANT = (() => {
         return data.candidates?.[0]?.content?.parts?.[0]?.text || '응답을 받지 못했습니다.';
     }
 
+    // ── API Call (Lounge — JSON mode) ──
+    async function sendToGeminiLounge(userMessage) {
+        if (!apiKey) return null;
+
+        // Build contents from lounge history
+        const contents = [];
+        for (const m of loungeHistory) {
+            if (m.role === 'user') {
+                contents.push({ role: 'user', parts: [{ text: m.text }] });
+            } else if (m.role === 'model') {
+                contents.push({ role: 'model', parts: [{ text: JSON.stringify({ responses: m.responses }) }] });
+            }
+        }
+        contents.push({ role: 'user', parts: [{ text: userMessage }] });
+
+        const body = {
+            contents,
+            systemInstruction: { parts: [{ text: buildLoungeContext() }] },
+            generationConfig: {
+                temperature: 0.8,
+                maxOutputTokens: 1024,
+                responseMimeType: 'application/json'
+            }
+        };
+
+        const res = await fetch(`${GEMINI_ENDPOINT}?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+
+        if (!res.ok) {
+            if (res.status === 429) { showToast('⏳ 요청이 너무 많습니다. 잠시 후 다시 시도해주세요.', 'warning'); return null; }
+            if (res.status === 403) { showToast('🔑 API 키가 유효하지 않습니다.', 'error'); return null; }
+            showToast('❌ AI 응답 오류', 'error');
+            return null;
+        }
+
+        const data = await res.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!text) return null;
+
+        try {
+            const parsed = JSON.parse(text);
+            return parsed.responses || [];
+        } catch (e) {
+            console.error('Lounge JSON parse error:', e, text);
+            return null;
+        }
+    }
+
     // ── Chat History (localStorage per character) ──
     function storageKey(charId) { return `crowny_panel_${charId}`; }
 
@@ -199,6 +284,18 @@ const AI_ASSISTANT = (() => {
     function clearHistory(charId) {
         chatHistories[charId] = [];
         localStorage.removeItem(storageKey(charId));
+    }
+
+    // ── Lounge History (localStorage) ──
+    function loadLoungeHistory() {
+        try {
+            loungeHistory = JSON.parse(localStorage.getItem('crowny_lounge_history') || '[]');
+        } catch (_) { loungeHistory = []; }
+    }
+
+    function saveLoungeHistory() {
+        if (loungeHistory.length > MAX_HISTORY) loungeHistory = loungeHistory.slice(-MAX_HISTORY);
+        localStorage.setItem('crowny_lounge_history', JSON.stringify(loungeHistory));
     }
 
     // ── Markdown ──
@@ -224,10 +321,26 @@ const AI_ASSISTANT = (() => {
         if (!container) return;
         if (inputBar) inputBar.style.display = 'none';
 
+        loungeMode = false;
         const header = document.querySelector('#ai-assistant .section-header');
         if (header) {
             header.innerHTML = `<h2>👑 <span data-i18n="nav.crowny_panel">${t('nav.crowny_panel','크라우니 패널')}</span></h2><div></div>`;
         }
+
+        // Lounge button + character cards
+        const loungeBtn = `<button class="lounge-enter-btn" onclick="AI_ASSISTANT.enterLounge()">
+            <span class="lounge-enter-icon">🏠</span>
+            <div class="lounge-enter-text">
+                <strong>${t('panel.lounge_title','크라우니 라운지')}</strong>
+                <span>${t('panel.lounge_sub','5인 AI 그룹 채팅')}</span>
+            </div>
+            <div class="lounge-enter-avatars">${CHAR_ORDER.map(id => {
+                const c = CHARACTERS[id];
+                return c.avatarImg
+                    ? `<img src="${c.avatarImg}" class="lounge-mini-avatar">`
+                    : `<span class="lounge-mini-avatar-emoji" style="background:${c.bgGradient};">${c.emoji}</span>`;
+            }).join('')}</div>
+        </button>`;
 
         const cards = CHAR_ORDER.map(id => {
             const c = CHARACTERS[id];
@@ -244,13 +357,14 @@ const AI_ASSISTANT = (() => {
                 <h3>${t('panel.select_title','누구와 대화하시겠어요?')}</h3>
                 <p>${t('panel.select_sub','크라우니 패널 멤버를 선택해주세요')}</p>
             </div>
+            ${loungeBtn}
             <div class="panel-char-grid">${cards}</div>
         </div>`;
 
         currentCharId = null;
     }
 
-    // ── UI: Chat Screen ──
+    // ── UI: Chat Screen (1:1) ──
     function renderChat() {
         if (!currentCharId) { renderSelectScreen(); return; }
 
@@ -260,7 +374,6 @@ const AI_ASSISTANT = (() => {
         if (!container) return;
         if (inputBar) inputBar.style.display = 'flex';
 
-        // Update header
         const header = document.querySelector('#ai-assistant .section-header');
         if (header) {
             header.innerHTML = `
@@ -302,10 +415,13 @@ const AI_ASSISTANT = (() => {
     }
 
     function showTyping() {
-        if (!currentCharId) return;
-        const char = CHARACTERS[currentCharId];
+        if (!currentCharId && !loungeMode) return;
         const container = document.getElementById('ai-chat-messages');
         if (!container) return;
+
+        if (loungeMode) return; // Lounge has its own typing
+
+        const char = CHARACTERS[currentCharId];
         const el = document.createElement('div');
         el.className = 'ai-msg ai-msg-bot ai-typing-wrap';
         el.innerHTML = `<div class="ai-avatar" style="background:${char.bgGradient};">${renderCharAvatar(char)}</div><div class="ai-bubble ai-bubble-bot ai-typing"><span></span><span></span><span></span></div>`;
@@ -317,12 +433,203 @@ const AI_ASSISTANT = (() => {
         document.querySelectorAll('.ai-typing-wrap').forEach(el => el.remove());
     }
 
+    // ── Lounge: Typing Indicator ──
+    function showLoungeTyping(charId) {
+        const container = document.getElementById('ai-chat-messages');
+        if (!container) return;
+        const char = CHARACTERS[charId];
+        if (!char) return;
+        const el = document.createElement('div');
+        el.className = 'ai-msg ai-msg-bot ai-typing-wrap';
+        el.id = `lounge-typing-${charId}`;
+        el.innerHTML = `<div class="ai-avatar lounge-avatar" style="background:${char.bgGradient};">${renderCharAvatar(char)}</div>
+            <div class="lounge-typing-bubble">
+                <div class="lounge-char-label" style="color:${char.color};">${char.name}</div>
+                <div class="ai-bubble ai-bubble-bot ai-typing"><span></span><span></span><span></span></div>
+            </div>`;
+        container.appendChild(el);
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function hideLoungeTyping(charId) {
+        const el = document.getElementById(`lounge-typing-${charId}`);
+        if (el) el.remove();
+    }
+
+    // ── Lounge: Enter ──
+    function enterLounge() {
+        loungeMode = true;
+        currentCharId = null;
+        loadLoungeHistory();
+
+        const container = document.getElementById('ai-chat-messages');
+        const inputBar = document.querySelector('.ai-input-bar');
+        if (!container) return;
+        if (inputBar) inputBar.style.display = 'flex';
+
+        // Header
+        const header = document.querySelector('#ai-assistant .section-header');
+        if (header) {
+            header.innerHTML = `
+                <div class="panel-chat-header-left">
+                    <button class="panel-back-btn" onclick="AI_ASSISTANT.backToSelect()" title="${t('panel.back','돌아가기')}">←</button>
+                    <div class="lounge-header-avatars">${CHAR_ORDER.map(id => {
+                        const c = CHARACTERS[id];
+                        return c.avatarImg
+                            ? `<img src="${c.avatarImg}" class="lounge-header-avatar-img">`
+                            : `<span class="lounge-header-avatar-emoji" style="background:${c.bgGradient};">${c.emoji}</span>`;
+                    }).join('')}</div>
+                    <div>
+                        <div class="panel-chat-name">🏠 ${t('panel.lounge_title','크라우니 라운지')}</div>
+                        <div class="panel-chat-role">${t('panel.lounge_members','KPS, 한선, 마이클, 매튜, 크라우니걸')}</div>
+                    </div>
+                </div>
+                <div style="display:flex;gap:0.3rem;">
+                    <button onclick="AI_ASSISTANT.loungeInvite()" style="background:none;border:none;font-size:1.1rem;cursor:pointer;" title="${t('panel.invite','친구 초대')}">👤+</button>
+                    <button onclick="AI_ASSISTANT.resetLounge()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;" title="${t('ai.clear_confirm','대화 초기화')}">🗑️</button>
+                </div>`;
+        }
+
+        renderLoungeMessages();
+    }
+
+    function renderLoungeMessages() {
+        const container = document.getElementById('ai-chat-messages');
+        if (!container) return;
+
+        if (loungeHistory.length === 0) {
+            container.innerHTML = `<div class="ai-welcome">
+                <div class="lounge-welcome-avatars">${CHAR_ORDER.map(id => {
+                    const c = CHARACTERS[id];
+                    return `<div class="lounge-welcome-avatar" style="background:${c.bgGradient};">${renderCharAvatar(c)}</div>`;
+                }).join('')}</div>
+                <h3>🏠 ${t('panel.lounge_title','크라우니 라운지')}</h3>
+                <p>${t('panel.lounge_welcome','5인의 크라우니 멤버와 함께 대화해보세요!')}</p>
+                <div class="ai-quick-cards">
+                    <button class="ai-quick-card" onclick="AI_ASSISTANT.askLounge('안녕하세요~ 다들 오늘 어때요?')">👋 인사하기</button>
+                    <button class="ai-quick-card" onclick="AI_ASSISTANT.askLounge('크라우니에 대해 알려주세요')">✨ 크라우니 소개</button>
+                    <button class="ai-quick-card" onclick="AI_ASSISTANT.askLounge('요즘 시장 상황이 어떤가요?')">📈 시장 이야기</button>
+                    <button class="ai-quick-card" onclick="AI_ASSISTANT.askLounge('기분 전환할 수 있는 이야기 해주세요')">🌸 힐링 토크</button>
+                </div>
+            </div>`;
+            return;
+        }
+
+        let html = '';
+        for (const m of loungeHistory) {
+            if (m.role === 'user') {
+                html += `<div class="ai-msg ai-msg-user">
+                    <div class="ai-bubble ai-bubble-user">${escapeHtml(m.text)}</div>
+                </div>`;
+            } else if (m.role === 'model' && m.responses) {
+                for (const r of m.responses) {
+                    const char = CHARACTERS[r.character];
+                    if (!char) continue;
+                    html += `<div class="ai-msg ai-msg-bot lounge-msg">
+                        <div class="ai-avatar lounge-avatar" style="background:${char.bgGradient};">${renderCharAvatar(char)}</div>
+                        <div class="lounge-msg-content">
+                            <div class="lounge-char-label" style="color:${char.color};">${char.name}</div>
+                            <div class="ai-bubble ai-bubble-bot lounge-bubble" style="border-left:3px solid ${char.color};">${renderMarkdown(r.message)}</div>
+                        </div>
+                    </div>`;
+                }
+            }
+        }
+        container.innerHTML = html;
+        container.scrollTop = container.scrollHeight;
+    }
+
+    // ── Lounge: Send Message ──
+    async function askLounge(text) {
+        if (!text || isLoading) return;
+        if (!enabled) { showToast(t('panel.disabled', 'AI 도우미가 비활성화되어 있습니다'), 'warning'); return; }
+
+        const input = document.getElementById('ai-input');
+        if (input) input.value = '';
+
+        // Add user message
+        loungeHistory.push({ role: 'user', text });
+        renderLoungeMessages();
+        isLoading = true;
+
+        // Show generic typing
+        showLoungeTyping('crownygirl');
+
+        try {
+            const responses = await sendToGeminiLounge(text);
+            hideLoungeTyping('crownygirl');
+
+            if (responses && responses.length > 0) {
+                // Store in history
+                loungeHistory.push({ role: 'model', responses });
+                saveLoungeHistory();
+
+                // Render sequentially with delays
+                const container = document.getElementById('ai-chat-messages');
+                for (let i = 0; i < responses.length; i++) {
+                    const r = responses[i];
+                    const char = CHARACTERS[r.character];
+                    if (!char) continue;
+
+                    const delay = i === 0 ? Math.min(r.delay || 300, 500) : (r.delay || 800 + i * 600);
+                    const actualDelay = i === 0 ? delay : Math.min(delay, 2500);
+
+                    // Show typing for this character
+                    showLoungeTyping(r.character);
+
+                    await new Promise(resolve => setTimeout(resolve, Math.max(actualDelay, 400)));
+
+                    hideLoungeTyping(r.character);
+
+                    // Append message
+                    const msgEl = document.createElement('div');
+                    msgEl.className = 'ai-msg ai-msg-bot lounge-msg lounge-msg-enter';
+                    msgEl.innerHTML = `<div class="ai-avatar lounge-avatar" style="background:${char.bgGradient};">${renderCharAvatar(char)}</div>
+                        <div class="lounge-msg-content">
+                            <div class="lounge-char-label" style="color:${char.color};">${char.name}</div>
+                            <div class="ai-bubble ai-bubble-bot lounge-bubble" style="border-left:3px solid ${char.color};">${renderMarkdown(r.message)}</div>
+                        </div>`;
+                    container.appendChild(msgEl);
+                    container.scrollTop = container.scrollHeight;
+
+                    // Trigger animation
+                    requestAnimationFrame(() => msgEl.classList.add('lounge-msg-visible'));
+                }
+            } else {
+                // Fallback error
+                loungeHistory.push({ role: 'model', responses: [{ character: 'crownygirl', message: '앗, 잠시 문제가 생겼어요! 다시 말씀해주세요 😅', delay: 0 }] });
+                saveLoungeHistory();
+                renderLoungeMessages();
+            }
+        } catch (e) {
+            hideLoungeTyping('crownygirl');
+            console.error('Lounge error:', e);
+            loungeHistory.push({ role: 'model', responses: [{ character: 'crownygirl', message: '❌ 오류가 발생했어요: ' + e.message, delay: 0 }] });
+            saveLoungeHistory();
+            renderLoungeMessages();
+        }
+
+        isLoading = false;
+    }
+
+    function loungeInvite() {
+        showToast(t('panel.invite_soon', '친구 초대 기능은 곧 업데이트됩니다!'), 'info');
+    }
+
+    function resetLounge() {
+        if (confirm(t('ai.clear_confirm','대화 기록을 모두 삭제할까요?'))) {
+            loungeHistory = [];
+            localStorage.removeItem('crowny_lounge_history');
+            renderLoungeMessages();
+        }
+    }
+
     // ── Public API ──
     function selectCharacter(charId) {
+        loungeMode = false;
         currentCharId = charId;
         if (!chatHistories[charId]) loadHistory(charId);
         renderChat();
-        // Focus input
         setTimeout(() => {
             const input = document.getElementById('ai-input');
             if (input) input.focus();
@@ -330,11 +637,17 @@ const AI_ASSISTANT = (() => {
     }
 
     function backToSelect() {
+        loungeMode = false;
         renderSelectScreen();
     }
 
     async function ask(text) {
-        if (!text || isLoading || !currentCharId) return;
+        if (!text || isLoading) return;
+
+        // Route to lounge if in lounge mode
+        if (loungeMode) { askLounge(text); return; }
+
+        if (!currentCharId) return;
         if (!enabled) { showToast(t('panel.disabled', 'AI 도우미가 비활성화되어 있습니다'), 'warning'); return; }
 
         const char = CHARACTERS[currentCharId];
@@ -370,6 +683,7 @@ const AI_ASSISTANT = (() => {
     }
 
     function reset() {
+        if (loungeMode) { resetLounge(); return; }
         if (!currentCharId) return;
         if (confirm(t('ai.clear_confirm','대화 기록을 모두 삭제할까요?'))) {
             clearHistory(currentCharId);
@@ -379,8 +693,8 @@ const AI_ASSISTANT = (() => {
 
     // ── Init ──
     async function init() {
-        // Load all histories
         CHAR_ORDER.forEach(id => loadHistory(id));
+        loadLoungeHistory();
         await loadSettings();
         renderSelectScreen();
 
@@ -429,8 +743,9 @@ const AI_ASSISTANT = (() => {
     }
 
     return {
-        init, ask, handleSend, handleKeydown, reset, renderChat,
+        init, ask, askLounge, handleSend, handleKeydown, reset, renderChat,
         selectCharacter, backToSelect,
+        enterLounge, loungeInvite, resetLounge,
         saveAdminSettings, loadAdminSettings, DEFAULT_SYSTEM_PROMPT,
         CHARACTERS, CHAR_ORDER
     };
