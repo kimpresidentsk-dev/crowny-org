@@ -709,7 +709,27 @@ delay: 첫 번째 0~500, 이후 +800~2000씩 증가 (자연스러운 타이밍)`
         const inputEl = document.querySelector('.ai-input-bar input');
         if (inputEl) {
             inputEl.addEventListener('focus', () => {
-                setTimeout(() => inputEl.scrollIntoView({ block: 'end', behavior: 'smooth' }), 300);
+                // 모바일 키보드 올라올 때 입력바 보이게
+                setTimeout(() => {
+                    const container = document.getElementById('ai-chat-messages');
+                    if (container) container.scrollTop = container.scrollHeight;
+                    // visualViewport API로 키보드 대응
+                    if (window.visualViewport) {
+                        const handler = () => {
+                            const inputBar = document.querySelector('.ai-input-bar');
+                            if (inputBar) {
+                                const offset = window.innerHeight - window.visualViewport.height;
+                                inputBar.style.paddingBottom = `max(0.8rem, ${offset}px)`;
+                            }
+                        };
+                        window.visualViewport.addEventListener('resize', handler);
+                        inputEl.addEventListener('blur', () => {
+                            window.visualViewport.removeEventListener('resize', handler);
+                            const inputBar = document.querySelector('.ai-input-bar');
+                            if (inputBar) inputBar.style.paddingBottom = '';
+                        }, { once: true });
+                    }
+                }, 300);
             });
         }
     }
