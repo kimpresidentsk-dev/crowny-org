@@ -173,6 +173,11 @@
     async function showInviteModal() {
         if (!currentUser) { showToast(t('common.login_required', '로그인이 필요합니다'), 'warning'); return; }
 
+        // 초대 코드 없으면 생성
+        if (!userReferralCode) {
+            await ensureReferralCode();
+        }
+
         // 초대 현황 로드
         let completedCount = 0;
         let earnedCRTD = 0;
