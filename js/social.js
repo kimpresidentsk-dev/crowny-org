@@ -1599,8 +1599,8 @@ async function loadSocialFeed() {
     feed.innerHTML = Array(3).fill(`<div class="skeleton-post"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><div class="skeleton skeleton-circle" style="width:36px;height:36px;"></div><div style="flex:1"><div class="skeleton skeleton-text medium"></div><div class="skeleton skeleton-text short"></div></div></div><div class="skeleton skeleton-image" style="margin-bottom:10px;"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text medium"></div></div>`).join('');
 
     try {
-        const posts = await db.collection('posts').limit(50).get();
-        const sortedPosts = posts.docs.sort((a, b) => (b.data().timestamp?.toMillis?.() || 0) - (a.data().timestamp?.toMillis?.() || 0));
+        const posts = await db.collection('posts').orderBy('timestamp', 'desc').limit(50).get();
+        const sortedPosts = posts.docs;
         feed.innerHTML = '';
 
         if (sortedPosts.length === 0) {

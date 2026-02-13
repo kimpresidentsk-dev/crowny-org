@@ -100,7 +100,7 @@ async function loadMallProducts() {
                 <div onclick="viewProduct('${p.id}')" style="background:white; border-radius:10px; overflow:hidden; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.08); position:relative;">
                     <button onclick="event.stopPropagation(); toggleWishlist('${p.id}')" style="position:absolute; top:6px; right:6px; background:rgba(255,255,255,0.85); border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; font-size:0.9rem; z-index:1;">🤍</button>
                     ${imgCount}
-                    <div style="height:140px; overflow:hidden; background:#f0f0f0;">${thumb ? `<img src="${thumb}" style="width:100%; height:100%; object-fit:cover;">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:#ccc;">🛒</div>`}</div>
+                    <div style="height:140px; overflow:hidden; background:#f0f0f0;">${thumb ? `<img src="${thumb}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:#ccc;">🛒</div>`}</div>
                     <div style="padding:0.6rem;">
                         <div style="font-weight:600; font-size:0.85rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${displayTitle}</div>
                         <div style="font-size:0.7rem; color:var(--accent);">${MALL_CATEGORIES[p.category] || p.category || ''} · <a onclick="event.stopPropagation(); viewStore('${p.sellerId}')" style="cursor:pointer; text-decoration:underline; color:var(--accent);">${p.sellerNickname || p.sellerEmail || t('mall.seller','판매자')}</a></div>
@@ -631,7 +631,7 @@ async function loadCampaigns() {
             const isCreator = currentUser?.uid === x.creatorId;
             c.innerHTML += `
                 <div style="background:white; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.08); cursor:pointer;" onclick="showCampaignDetail('${d.id}')">
-                    ${x.imageData ? `<img src="${x.imageData}" style="width:100%; height:180px; object-fit:cover;">` : ''}
+                    ${x.imageData ? `<img src="${x.imageData}" loading="lazy" style="width:100%; height:180px; object-fit:cover;">` : ''}
                     <div style="padding:1rem;">
                         <h4 style="margin-bottom:0.3rem;">${x.title}</h4>
                         <p style="font-size:0.85rem; color:var(--accent); margin-bottom:0.5rem;">${x.creatorNickname || x.creatorEmail} · ${x.backerCount || x.backers || 0}명 참여</p>
@@ -945,7 +945,7 @@ async function loadBusinessList() {
         c.innerHTML = '';
         docs.forEach(d => { const x = d.data();
             c.innerHTML += `<div onclick="viewBusinessDetail('${d.id}')" style="background:white; padding:1rem; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.08); display:flex; gap:1rem; align-items:center; cursor:pointer;">
-                ${x.imageData ? `<img src="${x.imageData}" style="width:70px; height:70px; border-radius:8px; object-fit:cover;">` : `<div style="width:70px; height:70px; background:var(--bg); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.5rem;">${BIZ_CATS[x.category]||'🏢'}</div>`}
+                ${x.imageData ? `<img src="${x.imageData}" loading="lazy" style="width:70px; height:70px; border-radius:8px; object-fit:cover;">` : `<div style="width:70px; height:70px; background:var(--bg); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.5rem;">${BIZ_CATS[x.category]||'🏢'}</div>`}
                 <div style="flex:1;"><h4>${x.name}</h4><p style="font-size:0.8rem; color:var(--accent);">${[BIZ_CATS[x.category], x.country, x.ownerNickname || x.ownerEmail].filter(Boolean).join(' · ')}</p>
                 ${x.description ? `<p style="font-size:0.85rem; margin-top:0.3rem;">${x.description.slice(0,80)}${x.description.length>80?'...':''}</p>` : ''}
                 <div style="font-size:0.75rem; color:var(--accent); margin-top:0.3rem;">⭐ ${x.reviews > 0 ? (x.rating/x.reviews).toFixed(1) : '-'} · ${x.reviews||0}개 리뷰</div></div></div>`; });
@@ -985,7 +985,7 @@ async function loadArtistList() {
         docs.forEach(d => { const x = d.data();
             c.innerHTML += `<div onclick="viewArtistDetail('${d.id}')" style="background:white; border-radius:10px; overflow:hidden; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.08); cursor:pointer;">
                 <div style="height:160px; overflow:hidden; background:linear-gradient(135deg,#9C27B0,#E91E63);">
-                ${x.imageData ? `<img src="${x.imageData}" style="width:100%; height:100%; object-fit:cover;">` : `<div style="height:100%; display:flex; align-items:center; justify-content:center; font-size:3rem; color:white;">${GENRES[x.genre]||'🌟'}</div>`}</div>
+                ${x.imageData ? `<img src="${x.imageData}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : `<div style="height:100%; display:flex; align-items:center; justify-content:center; font-size:3rem; color:white;">${GENRES[x.genre]||'🌟'}</div>`}</div>
                 <div style="padding:0.6rem;"><div style="font-weight:700;">${x.name}</div>
                 <div style="font-size:0.75rem; color:var(--accent);">${GENRES[x.genre]||''} · 팬 ${x.fans}명</div>
                 <button onclick="event.stopPropagation(); supportArtist('${d.id}')" style="background:#E91E63; color:white; border:none; padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; margin-top:0.4rem; font-size:0.8rem;">${t('artist.support_btn','💖 후원')}</button>
@@ -1063,7 +1063,7 @@ async function loadBooksList() {
         docs.forEach(d => { const x = d.data();
             c.innerHTML += `<div onclick="viewBookDetail('${d.id}')" style="background:white; border-radius:10px; overflow:hidden; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
                 <div style="height:180px; overflow:hidden; background:#f5f0e8;">
-                ${x.imageData ? `<img src="${x.imageData}" style="width:100%; height:100%; object-fit:contain;">` : `<div style="height:100%; display:flex; align-items:center; justify-content:center; font-size:3rem;">${GENRES[x.genre]||'📚'}</div>`}</div>
+                ${x.imageData ? `<img src="${x.imageData}" loading="lazy" style="width:100%; height:100%; object-fit:contain;">` : `<div style="height:100%; display:flex; align-items:center; justify-content:center; font-size:3rem;">${GENRES[x.genre]||'📚'}</div>`}</div>
                 <div style="padding:0.5rem;"><div style="font-weight:600; font-size:0.8rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${x.title}</div>
                 <div style="font-size:0.7rem; color:var(--accent);">${x.author||'저자 미상'}</div>
                 <div style="font-weight:700; color:#0066cc; font-size:0.85rem; margin-top:0.2rem;">${x.price>0 ? x.price+' CRGC' : '무료'}</div></div></div>`; });
@@ -1311,7 +1311,7 @@ async function viewBusinessDetail(id) {
     modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     modal.innerHTML = `<div style="background:white; border-radius:12px; max-width:500px; width:100%; max-height:90vh; overflow-y:auto;">
-        ${b.imageData ? `<img src="${b.imageData}" style="width:100%; border-radius:12px 12px 0 0; max-height:200px; object-fit:cover;">` : ''}
+        ${b.imageData ? `<img src="${b.imageData}" loading="lazy" style="width:100%; border-radius:12px 12px 0 0; max-height:200px; object-fit:cover;">` : ''}
         <div style="padding:1.2rem;">
             <h3>${b.name}</h3>
             <p style="color:var(--accent); font-size:0.85rem; margin:0.3rem 0;">${[BIZ_CATS[b.category], b.country, b.ownerNickname || b.ownerEmail].filter(Boolean).join(' · ')}</p>
@@ -1417,7 +1417,7 @@ async function viewArtistDetail(id) {
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     modal.innerHTML = `<div style="background:white; border-radius:12px; max-width:500px; width:100%; max-height:90vh; overflow-y:auto;">
         <div style="height:200px; background:linear-gradient(135deg,#9C27B0,#E91E63); position:relative;">
-            ${a.imageData ? `<img src="${a.imageData}" style="width:100%; height:100%; object-fit:cover; border-radius:12px 12px 0 0;">` : ''}
+            ${a.imageData ? `<img src="${a.imageData}" loading="lazy" style="width:100%; height:100%; object-fit:cover; border-radius:12px 12px 0 0;">` : ''}
         </div>
         <div style="padding:1.2rem;">
             <h3>${a.name}</h3>
@@ -1448,7 +1448,7 @@ async function viewBookDetail(id) {
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     modal.innerHTML = `<div style="background:white; border-radius:12px; max-width:500px; width:100%; max-height:90vh; overflow-y:auto;">
         <div style="height:250px; background:#f5f0e8; display:flex; align-items:center; justify-content:center;">
-            ${b.imageData ? `<img src="${b.imageData}" style="max-width:100%; max-height:100%; object-fit:contain;">` : `<span style="font-size:4rem;">${GENRES[b.genre]?.charAt(0) || '📚'}</span>`}
+            ${b.imageData ? `<img src="${b.imageData}" loading="lazy" style="max-width:100%; max-height:100%; object-fit:contain;">` : `<span style="font-size:4rem;">${GENRES[b.genre]?.charAt(0) || '📚'}</span>`}
         </div>
         <div style="padding:1.2rem;">
             <h3>${b.title}</h3>
@@ -2072,7 +2072,7 @@ async function showCampaignDetail(id) {
                 <h3 style="margin:0;">${camp.title}</h3>
                 <button onclick="document.getElementById('campaign-detail-modal').style.display='none'" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">✕</button>
             </div>
-            ${camp.imageData ? `<img src="${camp.imageData}" style="width:100%; border-radius:8px; max-height:250px; object-fit:cover; margin-bottom:1rem;">` : ''}
+            ${camp.imageData ? `<img src="${camp.imageData}" loading="lazy" style="width:100%; border-radius:8px; max-height:250px; object-fit:cover; margin-bottom:1rem;">` : ''}
             <p style="font-size:0.85rem; color:var(--accent); margin-bottom:0.5rem;">${camp.creatorNickname || camp.creatorEmail} · ${camp.category || ''}</p>
             ${camp.description ? `<p style="margin-bottom:1rem; font-size:0.9rem;">${camp.description}</p>` : ''}
             <div style="background:#f5f5f5; padding:1rem; border-radius:8px; margin-bottom:1rem;">
@@ -2155,7 +2155,7 @@ async function loadCart() {
             total += subtotal;
             c.innerHTML += `<div style="background:white; padding:0.8rem; border-radius:10px; margin-bottom:0.6rem; display:flex; gap:0.8rem; align-items:center; box-shadow:0 1px 4px rgba(0,0,0,0.06);">
                 <div style="width:60px; height:60px; border-radius:8px; overflow:hidden; flex-shrink:0; background:#f0f0f0; display:flex; align-items:center; justify-content:center;">
-                    ${item.imageData ? `<img src="${item.imageData}" style="width:100%; height:100%; object-fit:cover;">` : '<span style="font-size:1.5rem; color:#ccc;">🛒</span>'}
+                    ${item.imageData ? `<img src="${item.imageData}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : '<span style="font-size:1.5rem; color:#ccc;">🛒</span>'}
                 </div>
                 <div style="flex:1; min-width:0;">
                     <div style="font-weight:600; font-size:0.85rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.title}</div>
@@ -2317,7 +2317,7 @@ async function loadWishlist() {
             const item = d.data();
             c.innerHTML += `<div style="background:white; padding:0.8rem; border-radius:10px; margin-bottom:0.6rem; display:flex; gap:0.8rem; align-items:center; box-shadow:0 1px 4px rgba(0,0,0,0.06); cursor:pointer;" onclick="viewProduct('${item.productId}')">
                 <div style="width:60px; height:60px; border-radius:8px; overflow:hidden; flex-shrink:0; background:#f0f0f0; display:flex; align-items:center; justify-content:center;">
-                    ${item.imageData ? `<img src="${item.imageData}" style="width:100%; height:100%; object-fit:cover;">` : '<span style="font-size:1.5rem; color:#ccc;">🛒</span>'}
+                    ${item.imageData ? `<img src="${item.imageData}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : '<span style="font-size:1.5rem; color:#ccc;">🛒</span>'}
                 </div>
                 <div style="flex:1; min-width:0;">
                     <div style="font-weight:600; font-size:0.85rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.title}</div>
@@ -2374,7 +2374,7 @@ async function renderStorePage(sellerId) {
             totalSold += (p.sold || 0);
             const thumb = getProductThumb(p);
             productsHtml += `<div onclick="viewProduct('${d.id}')" style="background:white; border-radius:10px; overflow:hidden; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-                <div style="height:130px; overflow:hidden; background:#f0f0f0;">${thumb ? `<img src="${thumb}" style="width:100%; height:100%; object-fit:cover;">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:#ccc;">🛒</div>`}</div>
+                <div style="height:130px; overflow:hidden; background:#f0f0f0;">${thumb ? `<img src="${thumb}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:#ccc;">🛒</div>`}</div>
                 <div style="padding:0.5rem;">
                     <div style="font-weight:600; font-size:0.8rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.title}</div>
                     <div style="font-weight:700; color:#0066cc; font-size:0.85rem;">${p.price} CRGC</div>

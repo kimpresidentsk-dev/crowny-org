@@ -70,7 +70,7 @@ function previewStoryMedia(input, type) {
             showToast('사진은 10MB 이하만 가능합니다', 'warning');
             return;
         }
-        area.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">`;
+        area.innerHTML = `<img src="${url}" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">`;
         document.getElementById('story-upload-btn').disabled = false;
     }
 }

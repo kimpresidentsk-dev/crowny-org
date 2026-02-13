@@ -485,7 +485,7 @@
             <!-- Author + caption -->
             <div style="position:absolute;bottom:20px;left:16px;right:80px;color:white;z-index:5;">
                 <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.3rem;">
-                    ${reel.authorPhoto ? `<img src="${reel.authorPhoto}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">` : ''}
+                    ${reel.authorPhoto ? `<img src="${reel.authorPhoto}" loading="lazy" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">` : ''}
                     <strong style="font-size:0.95rem;">${reel.authorName}</strong>
                 </div>
                 <p style="font-size:0.85rem;margin:0;opacity:0.9;">${(reel.caption || '').substring(0, 120)}</p>

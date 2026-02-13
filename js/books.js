@@ -115,7 +115,7 @@ function _renderBookCard(b) {
     const supply = b.totalSupply || 0;
     const isSoldOut = b.status === 'soldout' || (b.edition === 'limited' && supply > 0 && sold >= supply);
     const coverBg = b.coverImage || b.imageData
-        ? `<img src="${b.coverImage || b.imageData}" style="width:100%;height:100%;object-fit:cover;">`
+        ? `<img src="${b.coverImage || b.imageData}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">`
         : `<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;background:#f5f0e8;">${(BOOK_GENRES[b.genre] || '📚').charAt(0)}</div>`;
 
     return `<div onclick="viewBookDetailV2('${b.id}')" style="min-width:130px;max-width:150px;background:white;border-radius:10px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.08);flex-shrink:0;position:relative;">
@@ -195,7 +195,7 @@ async function viewBookDetailV2(id) {
 
     modal.innerHTML = `<div style="background:white;border-radius:16px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;">
         <div style="height:280px;background:#f5f0e8;display:flex;align-items:center;justify-content:center;position:relative;">
-            ${b.coverImage || b.imageData ? `<img src="${b.coverImage || b.imageData}" style="max-width:100%;max-height:100%;object-fit:contain;">` : `<span style="font-size:5rem;">${(BOOK_GENRES[b.genre] || '📚').charAt(0)}</span>`}
+            ${b.coverImage || b.imageData ? `<img src="${b.coverImage || b.imageData}" loading="lazy" style="max-width:100%;max-height:100%;object-fit:contain;">` : `<span style="font-size:5rem;">${(BOOK_GENRES[b.genre] || '📚').charAt(0)}</span>`}
             ${b.edition === 'limited' ? `<div style="position:absolute;top:12px;left:12px;background:gold;color:#333;padding:4px 10px;border-radius:6px;font-weight:700;font-size:0.8rem;">🏆 한정판 ${sold}/${supply}</div>` : ''}
             ${isSoldOut ? `<div style="position:absolute;top:12px;right:12px;background:red;color:white;padding:4px 10px;border-radius:6px;font-weight:700;font-size:0.8rem;">SOLD OUT</div>` : ''}
         </div>
@@ -399,7 +399,7 @@ function _renderCreatorStep1() {
         
         <div><label style="font-size:0.85rem;font-weight:600;">표지 이미지</label>
         <input type="file" id="bc-cover" accept="image/*" onchange="_handleCoverUpload(this)" style="padding:0.5rem;border:1px solid var(--border);border-radius:8px;width:100%;box-sizing:border-box;">
-        ${d.coverImage ? `<img src="${d.coverImage}" style="height:100px;margin-top:0.5rem;border-radius:8px;">` : ''}</div>
+        ${d.coverImage ? `<img src="${d.coverImage}" loading="lazy" style="height:100px;margin-top:0.5rem;border-radius:8px;">` : ''}</div>
         
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
             <div><label style="font-size:0.85rem;font-weight:600;">에디션</label>
@@ -474,7 +474,7 @@ function _renderCreatorStep2() {
                         <input type="file" accept="image/*" onchange="_handleSceneImage(this,${ci},${si})" style="font-size:0.7rem;width:120px;">
                     </label>
                 </div>
-                ${sc.imageUrl ? `<img src="${sc.imageUrl}" style="height:60px;margin-top:0.3rem;border-radius:4px;">` : ''}
+                ${sc.imageUrl ? `<img src="${sc.imageUrl}" loading="lazy" style="height:60px;margin-top:0.3rem;border-radius:4px;">` : ''}
             </div>`;
         });
 
@@ -616,7 +616,7 @@ function _previewScene(dir) {
 
     if (contentEl) {
         contentEl.innerHTML = `<div style="font-size:0.8rem;color:#888;margin-bottom:1rem;">${sc.chapterTitle}</div>
-            ${sc.imageUrl ? `<img src="${sc.imageUrl}" style="max-width:100%;border-radius:8px;margin-bottom:1rem;">` : ''}
+            ${sc.imageUrl ? `<img src="${sc.imageUrl}" loading="lazy" style="max-width:100%;border-radius:8px;margin-bottom:1rem;">` : ''}
             <div style="white-space:pre-wrap;">${sc.content || '(내용 없음)'}</div>`;
     }
     if (infoEl) infoEl.textContent = `${_previewSceneIndex + 1} / ${allScenes.length}`;
@@ -788,7 +788,7 @@ function _renderBookReader() {
             <div id="reader-effects-layer" style="position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;overflow:hidden;z-index:1;"></div>
             <div id="reader-content" style="position:relative;z-index:2;padding:1.5rem;color:#e0e0e0;font-size:${s.fontSize}rem;line-height:1.8;max-width:700px;margin:0 auto;" onclick="_handleReaderClick(event)">
                 <div style="font-size:0.75rem;color:#666;margin-bottom:1rem;">${sc.chapterTitle || ''}</div>
-                ${sc.imageUrl ? `<img src="${sc.imageUrl}" style="max-width:100%;border-radius:8px;margin-bottom:1rem;">` : ''}
+                ${sc.imageUrl ? `<img src="${sc.imageUrl}" loading="lazy" style="max-width:100%;border-radius:8px;margin-bottom:1rem;">` : ''}
                 <div id="reader-text">${_renderSceneText(sc)}</div>
             </div>
         </div>
