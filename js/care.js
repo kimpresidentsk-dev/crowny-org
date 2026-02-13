@@ -789,7 +789,7 @@ window.CARE = (function() {
             sosSirenInterval = null;
         }
         if (sosAudioCtx) {
-            try { sosAudioCtx.close(); } catch(e) {}
+            try { sosAudioCtx.close(); } catch(e) { console.warn("[catch]", e); }
             sosAudioCtx = null;
         }
     }
@@ -1346,7 +1346,7 @@ window.CARE = (function() {
                 const m = d.data();
                 return `<div class="care-board-msg">${m.senderName}: ${m.text}</div>`;
             }).join('');
-        } catch(e) {}
+        } catch(e) { console.warn("[catch]", e); }
     }
 
     async function loadBoardSchedule() {
@@ -1360,7 +1360,7 @@ window.CARE = (function() {
                 const s = d.data();
                 return `<div class="care-board-sched">${s.time} ${s.icon || '📌'} ${s.title}</div>`;
             }).join('');
-        } catch(e) {}
+        } catch(e) { console.warn("[catch]", e); }
     }
 
     function exitSmartBoard() {

@@ -127,24 +127,32 @@ async function sendOffchainPoints(recipientEmail, amount, tokenKey) {
         const senderBal = userWallet.offchainBalances[tokenKey] || 0;
         if (amount > senderBal) { alert(`${t('offchain.insufficient_balance', '❌ 잔액 부족')} (${senderBal} ${tokenName})`); return; }
 
+        // Firestore batch로 원자적 전송 (발신자 차감 + 수신자 적립 + 로그)
+        const batch = db.batch();
+        
         // 발신자 차감
-        await db.collection('users').doc(currentUser.uid).update({
+        const senderRef = db.collection('users').doc(currentUser.uid);
+        batch.update(senderRef, {
             [`offchainBalances.${tokenKey}`]: senderBal - amount
         });
-        userWallet.offchainBalances[tokenKey] = senderBal - amount;
 
         // 수신자 적립
-        await db.collection('users').doc(recipientDoc.id).update({
+        const recipientRef = db.collection('users').doc(recipientDoc.id);
+        batch.update(recipientRef, {
             [`offchainBalances.${tokenKey}`]: (recipientOff[tokenKey] || 0) + amount
         });
 
         // 트랜잭션 로그
-        await db.collection('offchain_transactions').add({
+        const txRef = db.collection('offchain_transactions').doc();
+        batch.set(txRef, {
             from: currentUser.uid, fromEmail: currentUser.email,
             to: recipientDoc.id, toEmail: recipientEmail,
             token: tokenKey, amount, type: 'transfer',
             timestamp: firebase.firestore.FieldValue.serverTimestamp(), status: 'completed'
         });
+
+        await batch.commit();
+        userWallet.offchainBalances[tokenKey] = senderBal - amount;
 
         updateBalances();
         alert(`✅ ${amount.toLocaleString()} ${tokenName} ${t('offchain.send_success', '전송 완료!')}\n→ ${recipientEmail}\n${t('offchain.zero_gas', '⚡ 가스비 0원 (오프체인)')}`);

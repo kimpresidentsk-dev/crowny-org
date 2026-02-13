@@ -27,21 +27,21 @@ async function loadDashboard() {
             .where('userId', '==', currentUser.uid)
             .orderBy('createdAt', 'desc').limit(5).get();
         recentTx = txSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    } catch(e) {}
+    } catch(e) { console.warn("[catch]", e); }
     
     try {
         const orderSnap = await db.collection('orders')
             .where('buyerId', '==', currentUser.uid)
             .orderBy('createdAt', 'desc').limit(3).get();
         recentOrders = orderSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    } catch(e) {}
+    } catch(e) { console.warn("[catch]", e); }
     
     try {
         const socialSnap = await db.collection('social_notifications')
             .where('targetUid', '==', currentUser.uid)
             .orderBy('createdAt', 'desc').limit(5).get();
         recentSocial = socialSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    } catch(e) {}
+    } catch(e) { console.warn("[catch]", e); }
     
     // 4. Notifications
     const unread = (typeof unreadCount !== 'undefined') ? unreadCount : 0;
@@ -57,7 +57,7 @@ async function loadDashboard() {
             totalUsers = s.totalUsers || '—';
             totalTx = s.totalTransactions || '—';
         }
-    } catch(e) {}
+    } catch(e) { console.warn("[catch]", e); }
     
     // 6. Trading positions
     let positionSummary = '';
@@ -208,7 +208,7 @@ function getShortcuts() {
     try {
         const saved = localStorage.getItem('crowny_shortcuts');
         if (saved) return JSON.parse(saved);
-    } catch(e) {}
+    } catch(e) { console.warn("[catch]", e); }
     return DEFAULT_SHORTCUTS;
 }
 

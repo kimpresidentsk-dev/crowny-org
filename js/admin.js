@@ -1542,7 +1542,7 @@ async function loadAdminUserList() {
         let configDoc = null;
         try {
             configDoc = await db.collection('admin_config').doc('settings').get();
-        } catch(e) {}
+        } catch(e) { console.warn("[catch]", e); }
         const quotas = configDoc?.exists ? (configDoc.data().quotas || {}) : {};
         
         // ★ 수퍼관리자: 쿼터 설정 UI
@@ -3507,7 +3507,7 @@ async function loadAdminDashboardStats(forceRefresh = false) {
             const artSnap = await db.collection('artworks').get();
             artCount = artSnap.size;
             artSnap.forEach(doc => { artSold += doc.data().sold || 0; });
-        } catch(e) {}
+        } catch(e) { console.warn("[catch]", e); }
         sections.art = { icon: '🎭', label: 'ART', items: [
             { label: t('admin.dash.total_artworks','총 작품'), value: artCount },
             { label: t('admin.dash.total_art_sold','총 판매'), value: artSold }
@@ -3519,7 +3519,7 @@ async function loadAdminDashboardStats(forceRefresh = false) {
             const bookSnap = await db.collection('books').get();
             bookCount = bookSnap.size;
             bookSnap.forEach(doc => { bookSold += doc.data().sold || 0; });
-        } catch(e) {}
+        } catch(e) { console.warn("[catch]", e); }
         sections.books = { icon: '📚', label: 'BOOKS', items: [
             { label: t('admin.dash.total_books','총 등록 책'), value: bookCount },
             { label: t('admin.dash.total_book_sold','총 판매'), value: bookSold }
@@ -3533,7 +3533,7 @@ async function loadAdminDashboardStats(forceRefresh = false) {
             for (const doc of chSnap.docs) {
                 totalParticipants += doc.data().participants || 0;
             }
-        } catch(e) {}
+        } catch(e) { console.warn("[catch]", e); }
         sections.trading = { icon: '📊', label: 'TRADING', items: [
             { label: t('admin.dash.active_challenges','활성 챌린지'), value: activeChallenges },
             { label: t('admin.dash.participants','참가자'), value: totalParticipants }
@@ -3550,7 +3550,7 @@ async function loadAdminDashboardStats(forceRefresh = false) {
                 commentCount += comments.size;
                 if (commentCount > 500) break; // 성능 보호
             }
-        } catch(e) {}
+        } catch(e) { console.warn("[catch]", e); }
         sections.social = { icon: '💬', label: 'SOCIAL', items: [
             { label: t('admin.dash.total_posts','총 게시물'), value: postCount },
             { label: t('admin.dash.total_comments','총 댓글'), value: commentCount > 500 ? '500+' : commentCount }
@@ -3799,14 +3799,14 @@ async function loadRewardSettingsTab() {
         ]);
         if (rwDoc.exists) rs = { ...rs, ...rwDoc.data() };
         if (invDoc.exists) is = invDoc.data();
-    } catch(e) {}
+    } catch(e) { console.warn("[catch]", e); }
 
     // 최근 로그
     let logs = [];
     try {
         const logSnap = await db.collection('reward_logs').orderBy('createdAt','desc').limit(50).get();
         logs = logSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    } catch(e) {}
+    } catch(e) { console.warn("[catch]", e); }
 
     const tiersHTML = (rs.signupTiers || []).map((tier, i) => `
         <div style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.4rem;" data-tier-idx="${i}">

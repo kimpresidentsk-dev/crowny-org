@@ -189,7 +189,7 @@ async function renderProductDetail(id) {
                 });
                 reviewsHtml += '</div>';
             }
-        } catch(e) {}
+        } catch(e) { console.warn("[catch]", e); }
 
         // Review button for delivered orders
         let reviewBtnHtml = '';
@@ -202,7 +202,7 @@ async function renderProductDetail(id) {
                         reviewBtnHtml = `<button onclick="writeReview('${id}')" style="background:#ff9800; color:white; border:none; padding:0.7rem; border-radius:8px; cursor:pointer; font-weight:600; width:100%; margin-top:0.5rem;">⭐ 리뷰 작성</button>`;
                     }
                 }
-            } catch(e) {}
+            } catch(e) { console.warn("[catch]", e); }
         }
 
         const ratingDisplay = p.avgRating ? `<div style="margin:0.5rem 0;">${renderStars(p.avgRating, '1rem')} <span style="font-size:0.9rem; color:var(--accent);">${p.avgRating.toFixed(1)} (${p.reviewCount||0}개)</span></div>` : '';
@@ -825,7 +825,7 @@ async function openProjectDetail(projectId) {
                     return `<div style="padding:0.5rem; background:var(--bg); border-radius:6px; margin-bottom:0.4rem;"><div style="font-size:0.75rem; color:var(--accent);">${cd.nickname || '익명'} · ${date}</div><div style="font-size:0.85rem;">${cd.text}</div></div>`;
                 }).join('');
             }
-        } catch(e) {}
+        } catch(e) { console.warn("[catch]", e); }
 
         // Load investors
         let investorsHtml = '';
@@ -837,7 +837,7 @@ async function openProjectDetail(projectId) {
                     return `<div style="font-size:0.8rem; padding:0.2rem 0;">익명 · ${id.amount} CREB</div>`;
                 }).join('')}</div>`;
             }
-        } catch(e) {}
+        } catch(e) { console.warn("[catch]", e); }
 
         const modalHtml = `<div id="creb-project-modal" style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); z-index:10000; display:flex; align-items:center; justify-content:center; padding:1rem;" onclick="if(event.target===this)this.remove();">
             <div style="background:white; border-radius:12px; max-width:550px; width:100%; max-height:90vh; overflow-y:auto; padding:1.5rem;">
@@ -2666,7 +2666,7 @@ async function showShippingModal() {
         try {
             const addrSnap = await db.collection('users').doc(currentUser.uid).collection('addresses').orderBy('usedAt', 'desc').limit(1).get();
             if (!addrSnap.empty) lastAddr = addrSnap.docs[0].data();
-        } catch(e) {}
+        } catch(e) { console.warn("[catch]", e); }
     }
 
     return new Promise((resolve) => {
@@ -2703,7 +2703,7 @@ async function showShippingModal() {
             if (document.getElementById('ship-save').checked && currentUser) {
                 try {
                     await db.collection('users').doc(currentUser.uid).collection('addresses').add({ ...info, usedAt: new Date() });
-                } catch(e) {}
+                } catch(e) { console.warn("[catch]", e); }
             }
             document.body.removeChild(overlay);
             resolve(info);

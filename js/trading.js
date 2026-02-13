@@ -1178,7 +1178,7 @@ function applyMASettings() {
             labelShow: labelShow
         }
     };
-    try { localStorage.setItem('crowny_ma_settings', JSON.stringify(settings)); } catch(e) {}
+    try { localStorage.setItem('crowny_ma_settings', JSON.stringify(settings)); } catch(e) { console.warn("[catch]", e); }
     
     // 현재 탭 설정으로 MA 재계산
     updateLiveCandleChart();
@@ -1218,7 +1218,7 @@ function loadMASettings() {
             const lb = document.getElementById('nq-ma-label-show'); if (lb) lb.checked = s.nq.labelShow;
         }
         // console.log('📈 MA 설정 로드 완료');
-    } catch(e) {}
+    } catch(e) { console.warn("[catch]", e); }
 }
 
 // 틱 데이터를 캔들로 집계 (거래량 포함)
@@ -1382,15 +1382,23 @@ function updatePriceFromChart(chart) {
     });
 }
 
+let priceFetchFailCount = 0;
+
 function connectPriceWebSocket() {
-    // NQ 선물 가격 - Yahoo Finance API 사용 (무료, 15분 지연)
-    // 실시간은 유료이므로 모의 데이터 생성
     updateNQPrice();
     
-    // 5초마다 가격 업데이트 (모의)
     if (window.nqPriceInterval) clearInterval(window.nqPriceInterval);
-    
     window.nqPriceInterval = setInterval(updateNQPrice, 5000);
+}
+
+// 가격 서버 장애 시 interval 늘리기
+function adjustPriceInterval() {
+    if (priceFetchFailCount >= 5) {
+        clearInterval(window.nqPriceInterval);
+        const backoffMs = Math.min(5000 * Math.pow(2, priceFetchFailCount - 4), 60000);
+        window.nqPriceInterval = setInterval(updateNQPrice, backoffMs);
+        console.warn(`⚠️ 가격 서버 연속 실패 ${priceFetchFailCount}회 — ${backoffMs/1000}초 간격으로 조정`);
+    }
 }
 
 async function updateNQPrice() {
@@ -1402,7 +1410,11 @@ async function updateNQPrice() {
         
         if (data && data.price) {
             currentPrice = data.price;
-            // console.log(`📊 NQ 가격: ${currentPrice.toFixed(2)} (${data.source}) bid:${data.bid} ask:${data.ask}`);
+            if (priceFetchFailCount > 0) {
+                priceFetchFailCount = 0;
+                clearInterval(window.nqPriceInterval);
+                window.nqPriceInterval = setInterval(updateNQPrice, 5000);
+            }
         } else {
             if (!currentPrice) {
                 currentPrice = 25400;
@@ -1413,9 +1425,11 @@ async function updateNQPrice() {
         updateNQPriceDisplay();
         
     } catch (error) {
-        console.error('Price fetch error:', error);
+        priceFetchFailCount++;
+        console.error(`Price fetch error (#${priceFetchFailCount}):`, error.message);
         if (!currentPrice) currentPrice = 25400;
         updateNQPriceDisplay();
+        adjustPriceInterval();
     }
 }
 
@@ -2980,7 +2994,7 @@ function drawPositionLinesLW() {
         // 전체 라인 다시 그리기 (간단하게)
         if (window.positionLines) {
             window.positionLines.forEach(line => {
-                try { window.candleSeries.removePriceLine(line); } catch(e) {}
+                try { window.candleSeries.removePriceLine(line); } catch(e) { console.warn("[catch]", e); }
             });
         }
         window.positionLines = [];
@@ -3165,6 +3179,8 @@ async function processEOD() {
 // ========== POLYGON.IO 실시간 CME 데이터 ==========
 
 let polygonWS = null;
+let massiveReconnectAttempts = 0;
+const MASSIVE_MAX_RECONNECT_DELAY = 60000; // 최대 60초
 
 // Massive WebSocket 연결
 function connectMassiveRealtime() {
@@ -3183,7 +3199,8 @@ function connectMassiveRealtime() {
     polygonWS = new WebSocket('wss://socket.polygon.io/futures');
     
     polygonWS.onopen = () => {
-        // console.log('📡 Massive 연결 중...');
+        massiveReconnectAttempts = 0; // 연결 성공 시 리셋
+        console.log('📡 Massive 연결 성공');
         
         // 인증
         polygonWS.send(JSON.stringify({
@@ -3220,9 +3237,10 @@ function connectMassiveRealtime() {
     };
     
     polygonWS.onclose = () => {
-        // console.log('🔌 Massive 연결 종료');
-        // 재연결
-        setTimeout(() => connectMassiveRealtime(), 5000);
+        massiveReconnectAttempts++;
+        const delay = Math.min(1000 * Math.pow(2, massiveReconnectAttempts), MASSIVE_MAX_RECONNECT_DELAY);
+        console.warn(`🔌 Massive 연결 종료 — ${delay/1000}초 후 재연결 (시도 #${massiveReconnectAttempts})`);
+        setTimeout(() => connectMassiveRealtime(), delay);
     };
 }
 
