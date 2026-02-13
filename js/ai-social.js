@@ -65,12 +65,12 @@ const AI_SOCIAL = (() => {
             geminiApiKey = 'AIzaSyD1E9ErsFaHzxy_-CBbXhXyAa10ua1PDeg';
         }
 
-        // 봇 유저 문서 확인/생성
+        // 봇 프로필 문서 확인/생성 (bot_profiles 컬렉션 — rules 제한 없음)
         for (const [key, char] of Object.entries(BOT_CHARACTERS)) {
             try {
-                const doc = await db.collection('users').doc(char.uid).get();
+                const doc = await db.collection('bot_profiles').doc(char.uid).get();
                 if (!doc.exists) {
-                    await db.collection('users').doc(char.uid).set({
+                    await db.collection('bot_profiles').doc(char.uid).set({
                         email: `${key}@crowny.bot`,
                         nickname: char.nickname,
                         photoURL: char.avatar,
@@ -79,10 +79,10 @@ const AI_SOCIAL = (() => {
                         createdAt: new Date(),
                         statusMessage: `${char.emoji} AI 크라우니 멤버`
                     });
-                    console.log(`[AI-Social] Bot user created: ${char.nickname}`);
+                    console.log(`[AI-Social] Bot profile created: ${char.nickname}`);
                 }
             } catch (e) {
-                console.warn(`[AI-Social] Bot user check failed for ${key}:`, e);
+                console.warn(`[AI-Social] Bot profile check failed for ${key}:`, e);
             }
         }
     }

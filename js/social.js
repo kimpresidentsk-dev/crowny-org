@@ -47,7 +47,11 @@ function startPresenceHeartbeat() {
 // Get user display info (nickname + photo)
 async function getUserDisplayInfo(uid) {
     try {
-        const doc = await db.collection('users').doc(uid).get();
+        let doc = await db.collection('users').doc(uid).get();
+        // 봇 유저면 bot_profiles에서 조회
+        if (!doc.exists && uid.startsWith('bot_')) {
+            doc = await db.collection('bot_profiles').doc(uid).get();
+        }
         if (!doc.exists) return { nickname: t('social.unknown','알 수 없음'), photoURL: '', email: '', isOnline: false, lastSeen: null };
         const data = doc.data();
         return {
