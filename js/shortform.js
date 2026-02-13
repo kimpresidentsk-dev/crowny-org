@@ -385,7 +385,70 @@
         const container = document.getElementById('reels-container');
         if (!container) return;
         if (reelsData.length === 0) return;
-        renderSingleReel(reelsIndex);
+        
+        // Build snap-scroll container
+        container.className = 'reels-fullscreen';
+        container.innerHTML = '';
+        
+        reelsData.forEach((reel, idx) => {
+            const isLiked = reel.likedBy && window.currentUser && reel.likedBy.includes(window.currentUser.uid);
+            const filterStyle = reel.filter ? `filter:${reel.filter};` : '';
+            
+            const item = document.createElement('div');
+            item.className = 'reel-item';
+            item.dataset.index = idx;
+            item.innerHTML = `
+                <video src="${reel.videoUrl}" style="${filterStyle}" playsinline loop muted preload="metadata"></video>
+                <button class="reel-mute-toggle" onclick="SHORTFORM._toggleMute()">${reelsMuted?'🔇':'🔊'}</button>
+                <div class="reel-overlay-bottom">
+                    <div class="reel-author">
+                        ${reel.authorPhoto ? `<img src="${reel.authorPhoto}">` : ''}
+                        <span class="reel-author-name">${reel.authorName}</span>
+                    </div>
+                    <div class="reel-caption">${(reel.caption || '').substring(0, 120)}</div>
+                    ${reel.hashtags?.length ? `<div class="reel-tags">${reel.hashtags.join(' ')}</div>` : ''}
+                </div>
+                <div class="reel-side-actions">
+                    ${reel.authorPhoto ? `<button class="reel-action-btn"><img class="reel-profile-pic" src="${reel.authorPhoto}"></button>` : ''}
+                    <button class="reel-action-btn" onclick="SHORTFORM._toggleLike('${reel.id}')">
+                        <span class="action-icon">${isLiked ? '❤️' : '🤍'}</span>
+                        <span class="action-count">${reel.likes || 0}</span>
+                    </button>
+                    <button class="reel-action-btn" onclick="SHORTFORM._openComments('${reel.id}')">
+                        <span class="action-icon">💬</span>
+                        <span class="action-count">${reel.commentCount || 0}</span>
+                    </button>
+                    <button class="reel-action-btn" onclick="SHORTFORM._shareReel('${reel.id}')">
+                        <span class="action-icon">↗️</span>
+                    </button>
+                </div>
+            `;
+            container.appendChild(item);
+        });
+        
+        // Intersection observer for autoplay
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const video = entry.target.querySelector('video');
+                if (!video) return;
+                if (entry.isIntersecting) {
+                    video.play().catch(()=>{});
+                    video.muted = reelsMuted;
+                    // Increment views
+                    const idx = parseInt(entry.target.dataset.index);
+                    if (reelsData[idx]) {
+                        reelsIndex = idx;
+                        db.collection(COLLECTION).doc(reelsData[idx].id).update({ views: firebase.firestore.FieldValue.increment(1) }).catch(()=>{});
+                    }
+                    // Prefetch next
+                    if (idx >= reelsData.length - 3 && !loading) loadReelsFeed(false);
+                } else {
+                    video.pause();
+                }
+            });
+        }, { threshold: 0.7 });
+        
+        container.querySelectorAll('.reel-item').forEach(item => observer.observe(item));
     }
 
     function renderSingleReel(idx) {

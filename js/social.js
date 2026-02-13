@@ -1595,7 +1595,8 @@ async function loadSocialFeed() {
     if (!currentUser) return;
     const feed = document.getElementById('social-feed');
     if (!feed) return;
-    feed.innerHTML = '<p style="text-align:center; padding:2rem; color:var(--accent);">📸 게시물 로딩 중...</p>';
+    // Skeleton loading
+    feed.innerHTML = Array(3).fill(`<div class="skeleton-post"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><div class="skeleton skeleton-circle" style="width:36px;height:36px;"></div><div style="flex:1"><div class="skeleton skeleton-text medium"></div><div class="skeleton skeleton-text short"></div></div></div><div class="skeleton skeleton-image" style="margin-bottom:10px;"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text medium"></div></div>`).join('');
 
     try {
         const posts = await db.collection('posts').limit(50).get();
@@ -1631,63 +1632,67 @@ async function loadSocialFeed() {
                 _shortsVideoPosts.push({ id: doc.id, data: post, nickname: userInfo.nickname });
             }
 
-            // Media HTML (image or video)
+            // Media HTML (Instagram-style)
             let mediaHTML = '';
             if (post.videoUrl) {
                 const filterStyle = post.videoFilter ? `filter:${post.videoFilter};` : '';
                 const textOverlay = post.videoTextOverlay || '';
-                const textPos = post.videoTextPosition || 'bottom';
                 const textColor = post.videoTextColor || '#ffffff';
+                const textPos = post.videoTextPosition || 'bottom';
                 const posCSS = textPos === 'top' ? 'top:10%' : textPos === 'center' ? 'top:45%' : 'bottom:10%';
-                mediaHTML = `<div style="margin:0 -1.2rem;position:relative;background:#000;cursor:pointer;" onclick="openShortsViewer('${doc.id}')">
-                    <video src="${post.videoUrl}" style="width:100%;display:block;max-height:400px;object-fit:contain;${filterStyle}" muted playsinline preload="metadata" onmouseenter="this.play().catch(()=>{})" onmouseleave="this.pause();this.currentTime=0;"></video>
+                mediaHTML = `<div class="post-media-wrap" style="position:relative;cursor:pointer;" onclick="openShortsViewer('${doc.id}')">
+                    <video src="${post.videoUrl}" style="width:100%;display:block;max-height:500px;object-fit:contain;${filterStyle}" muted playsinline preload="metadata" onmouseenter="this.play().catch(()=>{})" onmouseleave="this.pause();this.currentTime=0;"></video>
                     ${textOverlay ? `<div style="position:absolute;left:0;right:0;text-align:center;${posCSS};font-size:1.1rem;font-weight:700;color:${textColor};text-shadow:0 2px 4px rgba(0,0,0,0.8);pointer-events:none;">${textOverlay}</div>` : ''}
                     <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.4);border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;pointer-events:none;"><span style="color:white;font-size:1.5rem;margin-left:4px;">▶</span></div>
-                    ${post.duration ? `<span style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.7);color:white;padding:2px 6px;border-radius:4px;font-size:0.7rem;">${Math.floor(post.duration)}s</span>` : ''}
                 </div>`;
             } else if (post.imageUrl) {
-                mediaHTML = `<div style="margin:0 -1.2rem;position:relative;" onclick="handlePostDoubleTap('${doc.id}',this)"><img src="${post.imageUrl}" style="width:100%;display:block;" loading="lazy"></div>`;
+                mediaHTML = `<div class="post-media-wrap" style="position:relative;" onclick="handlePostDoubleTap('${doc.id}',this)"><img src="${post.imageUrl}" style="width:100%;display:block;" loading="lazy"></div>`;
             }
 
-            // Service link HTML
+            // Caption truncation
+            const captionText = post.text || '';
+            const captionTruncated = captionText.length > 100;
+            const captionDisplay = captionTruncated ? truncateWalletAddresses(captionText.substring(0, 100)) : truncateWalletAddresses(captionText);
+
+            // Service link
             let serviceLinkHTML = '';
             if (post.serviceLink) {
                 const sl = post.serviceLink;
                 const cfg = SERVICE_LINK_CONFIG[sl.type] || {};
-                serviceLinkHTML = `<div style="margin:0.5rem 0;"><button onclick="navigateServiceLink('${sl.type}','${sl.id}')" style="width:100%;padding:0.6rem;border:none;border-radius:10px;background:${cfg.color || '#333'};color:white;font-weight:700;font-size:0.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.4rem;">${cfg.action || sl.action} — ${sl.title || ''}</button></div>`;
+                serviceLinkHTML = `<div style="padding:0 14px 4px;"><button onclick="navigateServiceLink('${sl.type}','${sl.id}')" style="width:100%;padding:0.5rem;border:none;border-radius:8px;background:${cfg.color || '#333'};color:white;font-weight:700;font-size:0.85rem;cursor:pointer;">${cfg.action || sl.action} — ${sl.title || ''}</button></div>`;
             }
 
             const postEl = document.createElement('div');
             postEl.className = 'post';
+            postEl.id = `post-${doc.id}`;
             postEl.setAttribute('data-post-id', doc.id);
             postEl.innerHTML = `
-                <div class="post-header">
-                    ${avatarHTML(userInfo.photoURL, userInfo.nickname, 36)}
-                    <div class="post-info" style="flex:1;">
-                        <strong>${userInfo.nickname}</strong>
-                        <span>${timeAgo}</span>
+                <div class="post-header" style="display:flex;align-items:center;gap:10px;padding:10px 14px;">
+                    <div onclick="showUserProfile('${post.userId}')" style="cursor:pointer;">${avatarHTML(userInfo.photoURL, userInfo.nickname, 36)}</div>
+                    <div style="flex:1;min-width:0;">
+                        <strong onclick="showUserProfile('${post.userId}')" style="cursor:pointer;font-size:0.9rem;">${userInfo.nickname}</strong>
+                        ${post.location ? `<span style="font-size:0.75rem;color:var(--dark-muted,#888);display:block;">${post.location}</span>` : ''}
                     </div>
-                    ${isMyPost ? `<button onclick="deletePost('${doc.id}')" style="background:none;border:none;cursor:pointer;font-size:1rem;color:#999;" title="삭제">⋯</button>` : ''}
+                    <button onclick="showPostMenu('${doc.id}',${isMyPost})" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--dark-muted,#888);padding:4px;">⋯</button>
                 </div>
                 ${mediaHTML}
-                ${serviceLinkHTML}
-                <div class="post-actions-bar" style="display:flex;align-items:center;gap:1.2rem;padding:0.6rem 0;">
-                    <button onclick="toggleLike('${doc.id}', ${likedByMe})" class="post-action-btn" style="background:none;border:none;cursor:pointer;font-size:1.3rem;padding:0;line-height:1;display:flex;align-items:center;gap:0.3rem;transition:transform 0.15s;" onmousedown="this.style.transform='scale(1.1)'" onmouseup="this.style.transform='scale(1)'">${likedByMe ? '❤️' : '🤍'}<span style="font-size:0.85rem;color:var(--text);font-weight:600;">${likeCount || ''}</span></button>
-                    <button onclick="toggleComments('${doc.id}')" class="post-action-btn" style="background:none;border:none;cursor:pointer;font-size:1.2rem;padding:0;line-height:1;display:flex;align-items:center;gap:0.3rem;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span style="font-size:0.85rem;color:var(--text);font-weight:600;">${commentCount || ''}</span></button>
-                    <button onclick="sharePostWebAPI('${doc.id}')" class="post-action-btn" style="background:none;border:none;cursor:pointer;font-size:1.2rem;padding:0;line-height:1;display:flex;align-items:center;gap:0.3rem;">📤<span style="font-size:0.85rem;color:var(--text);font-weight:600;">${post.shareCount || ''}</span></button>
+                <div class="post-actions-bar" style="display:flex;align-items:center;gap:16px;padding:8px 14px;">
+                    <button onclick="toggleLike('${doc.id}', ${likedByMe})" style="background:none;border:none;cursor:pointer;font-size:1.4rem;padding:0;transition:transform 0.15s;" onmousedown="this.style.transform='scale(1.2)'" onmouseup="this.style.transform='scale(1)'">${likedByMe ? '❤️' : '🤍'}</button>
+                    <button onclick="toggleComments('${doc.id}')" style="background:none;border:none;cursor:pointer;padding:0;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+                    <button onclick="sharePostWebAPI('${doc.id}')" style="background:none;border:none;cursor:pointer;font-size:1.2rem;padding:0;">↗️</button>
                     <span style="flex:1;"></span>
-                    <button onclick="toggleSavePost('${doc.id}')" class="post-action-btn" style="background:none;border:none;cursor:pointer;font-size:1.2rem;padding:0;line-height:1;">🔖</button>
+                    <button onclick="toggleSavePost('${doc.id}')" style="background:none;border:none;cursor:pointer;font-size:1.2rem;padding:0;">🔖</button>
                 </div>
-                <div style="font-size:0.85rem;">
-                    ${likeCount > 0 ? `<div style="font-weight:700;margin-bottom:0.2rem;cursor:pointer;" onclick="showLikedUsers('${doc.id}')">${t('social.likes','좋아요')} ${likeCount}${t('social.count','개')}</div>` : ''}
-                    ${post.text ? `<div><strong style="margin-right:0.3rem;">${userInfo.nickname}</strong>${truncateWalletAddresses(post.text)}</div>` : ''}
-                    ${commentCount > 0 ? `<div style="color:var(--accent);margin-top:0.2rem;cursor:pointer;" onclick="toggleComments('${doc.id}')">${t('social.view_comments','댓글')} ${commentCount}${t('social.count','개')} ${t('social.view_all','모두 보기')}</div>` : ''}
-                </div>
-                <div id="comments-${doc.id}" style="display:none; margin-top:0.8rem; border-top:1px solid var(--border); padding-top:0.6rem;">
+                ${likeCount > 0 ? `<div style="padding:0 14px;font-weight:700;font-size:0.85rem;margin-bottom:4px;cursor:pointer;" onclick="showLikedUsers('${doc.id}')">${t('social.likes','좋아요')} ${likeCount}${t('social.count','개')}</div>` : ''}
+                ${captionText ? `<div style="padding:0 14px 4px;font-size:0.9rem;line-height:1.5;"><strong style="margin-right:4px;">${userInfo.nickname}</strong>${captionDisplay}${captionTruncated ? ' <span style="color:var(--dark-muted,#888);cursor:pointer;" onclick="this.parentElement.textContent=\'\'" >더 보기</span>' : ''}</div>` : ''}
+                ${serviceLinkHTML}
+                ${commentCount > 0 ? `<div onclick="toggleComments('${doc.id}')" style="padding:0 14px;color:var(--dark-muted,#888);font-size:0.85rem;cursor:pointer;margin-bottom:4px;">댓글 ${commentCount}개 모두 보기</div>` : ''}
+                <div style="padding:0 14px 12px;font-size:0.7rem;color:var(--dark-muted,#888);text-transform:uppercase;">${timeAgo}</div>
+                <div id="comments-${doc.id}" style="display:none;border-top:1px solid var(--dark-border,#2a2a4a);padding:8px 14px;">
                     <div id="comment-list-${doc.id}"></div>
-                    <div style="display:flex; gap:0.5rem; margin-top:0.5rem; align-items:center;">
-                        <input type="text" id="comment-input-${doc.id}" placeholder="${t('social.add_comment','댓글 달기...')}" style="flex:1; padding:0.5rem; border:none; border-bottom:1px solid var(--border); font-size:0.85rem; outline:none;" onkeypress="if(event.key==='Enter')addComment('${doc.id}')">
-                        <button onclick="addComment('${doc.id}')" style="background:none;border:none;color:#0066cc;font-weight:700;cursor:pointer;font-size:0.85rem;">${t('social.post','게시')}</button>
+                    <div style="display:flex;gap:0.5rem;margin-top:6px;align-items:center;">
+                        <input type="text" id="comment-input-${doc.id}" placeholder="${t('social.add_comment','댓글 달기...')}" style="flex:1;padding:8px;border:none;border-bottom:1px solid var(--dark-border,#2a2a4a);font-size:0.85rem;outline:none;background:transparent;" onkeypress="if(event.key==='Enter')addComment('${doc.id}')">
+                        <button onclick="addComment('${doc.id}')" style="background:none;border:none;color:#0095f6;font-weight:700;cursor:pointer;font-size:0.85rem;">${t('social.post','게시')}</button>
                     </div>
                 </div>`;
             feed.appendChild(postEl);
@@ -2311,17 +2316,24 @@ function setSocialFilter(filter) {
     if (notifContent) notifContent.style.display = 'none';
     if (profileContent) profileContent.style.display = 'none';
 
+    // Update new tab bar
+    document.querySelectorAll('.social-tab-item').forEach(b => b.classList.remove('active'));
+    const btn = document.querySelector(`.social-tab-item[data-filter="${filter}"]`);
+    if (btn) btn.classList.add('active');
+
+    // Legacy support
     document.querySelectorAll('.social-filter-tab').forEach(b => {
         b.classList.remove('active');
         b.style.color = '#999';
         b.style.borderBottomColor = 'transparent';
     });
-    const btn = document.querySelector(`.social-filter-tab[data-filter="${filter}"]`);
-    if (btn) {
-        btn.classList.add('active');
-        btn.style.color = 'var(--text)';
-        btn.style.borderBottomColor = 'var(--text)';
+    const legacyBtn = document.querySelector(`.social-filter-tab[data-filter="${filter}"]`);
+    if (legacyBtn) {
+        legacyBtn.classList.add('active');
+        legacyBtn.style.color = 'var(--text)';
+        legacyBtn.style.borderBottomColor = 'var(--text)';
     }
+    window._currentSocialFilter = filter;
     loadSocialFeed();
 }
 
@@ -2642,44 +2654,42 @@ async function showFullProfile(uid) {
         const userData = userDoc.data() || {};
 
         let html = `
-        <div style="text-align:center;padding:1rem 0;">
-            ${avatarHTML(info.photoURL, info.nickname, 80)}
-            <h3 style="margin:0.5rem 0 0.2rem;">${info.nickname}</h3>
-            ${info.statusMessage ? `<p style="font-size:0.85rem;color:#666;margin:0;">${info.statusMessage}</p>` : ''}
-            ${userData.bio ? `<p style="font-size:0.85rem;color:#444;margin:0.3rem 0;">${userData.bio}</p>` : ''}
-            ${userData.profileLink ? `<a href="${userData.profileLink}" target="_blank" style="font-size:0.8rem;color:#0066cc;">${userData.profileLink}</a>` : ''}
-        </div>
-        <div class="profile-stats">
-            <div><div class="stat-num">${postsSnap.size}</div><div class="stat-label">게시물</div></div>
-            <div onclick="showFollowList('${uid}','followers')"><div class="stat-num">${followCounts.followers}</div><div class="stat-label">팔로워</div></div>
-            <div onclick="showFollowList('${uid}','following')"><div class="stat-num">${followCounts.following}</div><div class="stat-label">팔로잉</div></div>
-        </div>
-        <div style="display:flex;gap:0.5rem;padding:0.8rem 0;">
-            ${isMe ? `<button onclick="showProfileEdit()" style="flex:1;padding:0.6rem;border:1px solid var(--border);border-radius:8px;background:white;cursor:pointer;font-weight:600;font-size:0.85rem;">✏️ 프로필 편집</button>`
-                : `<button onclick="followUser('${uid}');showFullProfile('${uid}')" style="flex:1;padding:0.6rem;border:none;border-radius:8px;background:${amFollowing ? 'white' : '#0095f6'};color:${amFollowing ? 'var(--text)' : 'white'};${amFollowing ? 'border:1px solid var(--border);' : ''}cursor:pointer;font-weight:600;font-size:0.85rem;">${amFollowing ? '팔로잉 ✓' : '팔로우'}</button>
-                   <button onclick="startChatFromProfile('${uid}')" style="flex:1;padding:0.6rem;border:1px solid var(--border);border-radius:8px;background:white;cursor:pointer;font-weight:600;font-size:0.85rem;">💬 메시지</button>`}
+        <div class="insta-profile">
+            <div class="insta-profile-top">
+                ${info.photoURL ? `<img class="insta-profile-pic" src="${info.photoURL}">` : `<div class="insta-profile-pic-placeholder">${(info.nickname||"?").charAt(0).toUpperCase()}</div>`}
+                <div class="insta-profile-stats">
+                    <div class="insta-stat"><div class="insta-stat-num">${postsSnap.size}</div><div class="insta-stat-label">게시물</div></div>
+                    <div class="insta-stat" onclick="showFollowList('${uid}','followers')"><div class="insta-stat-num">${followCounts.followers}</div><div class="insta-stat-label">팔로워</div></div>
+                    <div class="insta-stat" onclick="showFollowList('${uid}','following')"><div class="insta-stat-num">${followCounts.following}</div><div class="insta-stat-label">팔로잉</div></div>
+                </div>
+            </div>
+            <div class="insta-profile-name">${info.nickname}</div>
+            ${info.statusMessage ? `<div class="insta-profile-bio">${info.statusMessage}</div>` : ""}
+            ${userData.bio ? `<div class="insta-profile-bio">${userData.bio}</div>` : ""}
+            <div class="insta-profile-actions">
+                ${isMe ? `<button class="insta-btn-edit" onclick="showProfileEdit()">프로필 편집</button><button class="insta-btn-edit" onclick="copyShareURL('user','${uid}')">공유</button>` : `<button class="${amFollowing ? 'insta-btn-following' : 'insta-btn-follow'}" onclick="followUser('${uid}');showFullProfile('${uid}')">${amFollowing ? "팔로잉" : "팔로우"}</button><button class="insta-btn-edit" onclick="startChatFromProfile('${uid}')">메시지</button>`}
+            </div>
+        // Profile tabs (Instagram-style)
+        html += `<div class="insta-profile-tabs">
+            <button class="insta-profile-tab active" onclick="switchProfileTab('posts','${uid}')">📷</button>
+            <button class="insta-profile-tab" onclick="switchProfileTab('shorts','${uid}')">🎬</button>
+            <button class="insta-profile-tab" onclick="switchProfileTab('saved','${uid}')">🔖</button>
         </div>`;
 
-        // Profile tabs
-        html += `<div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:0.5rem;">
-            <button class="profile-tab-btn active" onclick="switchProfileTab('posts','${uid}')">📷 게시물</button>
-            <button class="profile-tab-btn" onclick="switchProfileTab('shorts','${uid}')">🎬 숏폼</button>
-            <button class="profile-tab-btn" onclick="switchProfileTab('saved','${uid}')">🔖 저장됨</button>
-        </div>`;
-
-        // Posts grid
-        html += '<div id="profile-posts-grid" class="profile-grid">';
+        // Posts grid (Instagram 3-col)
+        html += '<div id="profile-posts-grid" class="insta-grid">';
         const allPosts = postsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
         const regularPosts = allPosts.filter(p => !p.videoUrl);
         for (const post of regularPosts) {
             if (post.imageUrl) {
-                html += `<div class="profile-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><img src="${post.imageUrl}" loading="lazy"></div>`;
+                html += `<div class="insta-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><img src="${post.imageUrl}" loading="lazy"></div>`;
             } else {
-                html += `<div class="profile-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><div style="width:100%;height:100%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;padding:0.5rem;"><span style="color:white;font-size:0.7rem;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;">${(post.text || '').substring(0, 60)}</span></div></div>`;
+                html += `<div class="insta-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><div style="width:100%;height:100%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;padding:0.5rem;"><span style="color:white;font-size:0.7rem;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;">${(post.text || '').substring(0, 60)}</span></div></div>`;
             }
         }
         html += '</div>';
 
+        html += '</div>'; // close insta-profile
         profileContent.innerHTML = html;
     } catch (e) {
         profileContent.innerHTML = `<p style="color:red;text-align:center;">${e.message}</p>`;
@@ -2699,12 +2709,12 @@ async function switchProfileTab(tab, uid) {
             const snap = await db.collection('posts').where('userId', '==', uid).orderBy('timestamp', 'desc').get();
             const posts = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(p => !p.videoUrl);
             grid.innerHTML = '';
-            grid.className = 'profile-grid';
+            grid.className = 'insta-grid';
             for (const post of posts) {
                 if (post.imageUrl) {
-                    grid.innerHTML += `<div class="profile-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><img src="${post.imageUrl}" loading="lazy"></div>`;
+                    grid.innerHTML += `<div class="insta-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><img src="${post.imageUrl}" loading="lazy"></div>`;
                 } else {
-                    grid.innerHTML += `<div class="profile-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><div style="width:100%;height:100%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;padding:0.5rem;"><span style="color:white;font-size:0.7rem;">${(post.text || '').substring(0, 60)}</span></div></div>`;
+                    grid.innerHTML += `<div class="insta-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><div style="width:100%;height:100%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;padding:0.5rem;"><span style="color:white;font-size:0.7rem;">${(post.text || '').substring(0, 60)}</span></div></div>`;
                 }
             }
             if (posts.length === 0) grid.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--accent);">게시물이 없습니다</p>';
@@ -2712,25 +2722,25 @@ async function switchProfileTab(tab, uid) {
             const snap = await db.collection('posts').where('userId', '==', uid).orderBy('timestamp', 'desc').get();
             const videos = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(p => p.videoUrl);
             grid.innerHTML = '';
-            grid.className = 'profile-grid';
+            grid.className = 'insta-grid';
             for (const post of videos) {
-                grid.innerHTML += `<div class="profile-grid-item" onclick="openShortsViewer('${post.id}')"><video src="${post.videoUrl}" muted preload="metadata" style="width:100%;height:100%;object-fit:cover;"></video><span style="position:absolute;top:4px;right:4px;color:white;font-size:0.8rem;text-shadow:0 1px 3px rgba(0,0,0,0.8);">🎬</span></div>`;
+                grid.innerHTML += `<div class="insta-grid-item" onclick="openShortsViewer('${post.id}')"><video src="${post.videoUrl}" muted preload="metadata" style="width:100%;height:100%;object-fit:cover;"></video><span style="position:absolute;top:4px;right:4px;color:white;font-size:0.8rem;text-shadow:0 1px 3px rgba(0,0,0,0.8);">🎬</span></div>`;
             }
             if (videos.length === 0) grid.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--accent);">숏폼이 없습니다</p>';
         } else if (tab === 'saved') {
             const savedSnap = await db.collection('users').doc(uid).collection('savedPosts').orderBy('savedAt', 'desc').get();
             grid.innerHTML = '';
-            grid.className = 'profile-grid';
+            grid.className = 'insta-grid';
             for (const doc of savedSnap.docs) {
                 const postDoc = await db.collection('posts').doc(doc.id).get();
                 if (!postDoc.exists) continue;
                 const post = postDoc.data();
                 if (post.imageUrl) {
-                    grid.innerHTML += `<div class="profile-grid-item" onclick="scrollToPostOrOpen('${doc.id}')"><img src="${post.imageUrl}" loading="lazy"></div>`;
+                    grid.innerHTML += `<div class="insta-grid-item" onclick="scrollToPostOrOpen('${doc.id}')"><img src="${post.imageUrl}" loading="lazy"></div>`;
                 } else if (post.videoUrl) {
-                    grid.innerHTML += `<div class="profile-grid-item" onclick="openShortsViewer('${doc.id}')"><video src="${post.videoUrl}" muted preload="metadata" style="width:100%;height:100%;object-fit:cover;"></video></div>`;
+                    grid.innerHTML += `<div class="insta-grid-item" onclick="openShortsViewer('${doc.id}')"><video src="${post.videoUrl}" muted preload="metadata" style="width:100%;height:100%;object-fit:cover;"></video></div>`;
                 } else {
-                    grid.innerHTML += `<div class="profile-grid-item"><div style="width:100%;height:100%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;"><span style="font-size:0.7rem;">${(post.text || '').substring(0, 40)}</span></div></div>`;
+                    grid.innerHTML += `<div class="insta-grid-item"><div style="width:100%;height:100%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;"><span style="font-size:0.7rem;">${(post.text || '').substring(0, 40)}</span></div></div>`;
                 }
             }
             if (savedSnap.empty) grid.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--accent);">저장된 게시물이 없습니다</p>';
@@ -2941,4 +2951,39 @@ if (_origLoadUserData) {
         await _origLoadUserData();
         initSocialEnhancements();
     };
+}
+
+// ========== POST MENU (Bottom Sheet) ==========
+function showPostMenu(postId, isMyPost) {
+    // Remove existing
+    document.querySelectorAll('.bottom-sheet-overlay,.bottom-sheet').forEach(el => el.remove());
+    
+    const overlay = document.createElement('div');
+    overlay.className = 'bottom-sheet-overlay active';
+    overlay.onclick = () => closeBottomSheet();
+    
+    const sheet = document.createElement('div');
+    sheet.className = 'bottom-sheet active';
+    
+    let menuItems = '';
+    if (isMyPost) {
+        menuItems += `<button onclick="deletePost('${postId}');closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:#ff4444;font-size:0.95rem;font-weight:600;cursor:pointer;text-align:left;">🗑️ 삭제</button>`;
+    }
+    menuItems += `<button onclick="copyShareURL('post','${postId}');closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:var(--dark-text,#f0f0f0);font-size:0.95rem;cursor:pointer;text-align:left;">🔗 링크 복사</button>`;
+    menuItems += `<button onclick="repostPost('${postId}');closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:var(--dark-text,#f0f0f0);font-size:0.95rem;cursor:pointer;text-align:left;">🔄 리포스트</button>`;
+    menuItems += `<button onclick="closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:var(--dark-muted,#888);font-size:0.95rem;cursor:pointer;text-align:left;">취소</button>`;
+    
+    sheet.innerHTML = `
+        <div class="bottom-sheet-handle"></div>
+        <div style="padding:8px 0;">${menuItems}</div>`;
+    
+    document.body.appendChild(overlay);
+    document.body.appendChild(sheet);
+}
+
+function closeBottomSheet() {
+    document.querySelectorAll('.bottom-sheet-overlay,.bottom-sheet').forEach(el => {
+        el.classList.remove('active');
+        setTimeout(() => el.remove(), 300);
+    });
 }

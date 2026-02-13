@@ -20,7 +20,7 @@
     <meta property="og:url" content="https://crowny-org.vercel.app">
     <meta property="og:type" content="website">
     
-    <link rel="stylesheet" href="style.css?v=15.7">
+    <link rel="stylesheet" href="style.css?v=16.0">
     
     <!-- Firebase SDK -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-app-compat.min.js"></script>
@@ -656,8 +656,12 @@
         </section>
 
         <section id="social" class="page">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-                <h2 style="margin:0;" data-i18n="social.title">📸 SOCIAL</h2>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;">
+                <h2 style="margin:0;font-size:1.5rem;font-weight:800;color:var(--dark-gold,#D4AF37);" data-i18n="social.title">Crowny</h2>
+                <div style="display:flex;gap:12px;">
+                    <button onclick="SHORTFORM.openUpload()" style="background:none;border:none;cursor:pointer;font-size:1.3rem;color:var(--dark-text,#f0f0f0);">➕</button>
+                    <button onclick="showPage('messenger')" style="background:none;border:none;cursor:pointer;font-size:1.3rem;color:var(--dark-text,#f0f0f0);">💬</button>
+                </div>
             </div>
             
             <!-- Friend Requests -->
@@ -669,16 +673,15 @@
             <!-- Friends Grid (Instagram stories style) -->
             <div id="friends-grid" class="friends-grid"></div>
             
-            <!-- Feed Filter Tabs -->
-            <div style="display:flex;gap:0.5rem;margin-bottom:0.8rem;border-bottom:1px solid var(--border);padding-bottom:0.5rem;overflow-x:auto;">
-                <button class="social-filter-tab active" data-filter="all" onclick="showExploreTab(false);setSocialFilter('all')" style="background:none;border:none;padding:0.4rem 0.8rem;cursor:pointer;font-size:0.85rem;font-weight:600;color:var(--text);border-bottom:2px solid transparent;white-space:nowrap;">전체</button>
-                <button class="social-filter-tab" data-filter="following" onclick="showExploreTab(false);setSocialFilter('following')" style="background:none;border:none;padding:0.4rem 0.8rem;cursor:pointer;font-size:0.85rem;font-weight:600;color:#999;border-bottom:2px solid transparent;white-space:nowrap;">팔로잉</button>
-                <button class="social-filter-tab" data-filter="explore" onclick="showExploreTab(true)" style="background:none;border:none;padding:0.4rem 0.8rem;cursor:pointer;font-size:0.85rem;font-weight:600;color:#999;border-bottom:2px solid transparent;white-space:nowrap;">🔍 탐색</button>
-                <button class="social-filter-tab" data-filter="notifications" onclick="showExploreTab(false);showSocialNotifications()" style="background:none;border:none;padding:0.4rem 0.8rem;cursor:pointer;font-size:0.85rem;font-weight:600;color:#999;border-bottom:2px solid transparent;white-space:nowrap;position:relative;">🔔 알림<span id="social-notif-badge" style="display:none;position:absolute;top:0;right:0;background:#ff4444;color:white;font-size:0.6rem;border-radius:50%;width:14px;height:14px;line-height:14px;text-align:center;">0</span></button>
-                <button class="social-filter-tab" data-filter="saved" onclick="showExploreTab(false);setSocialFilter('saved')" style="background:none;border:none;padding:0.4rem 0.8rem;cursor:pointer;font-size:0.85rem;font-weight:600;color:#999;border-bottom:2px solid transparent;white-space:nowrap;">🔖 저장됨</button>
-                <button class="social-filter-tab" data-filter="shorts" onclick="showExploreTab(false);setSocialFilter('shorts')" style="background:none;border:none;padding:0.4rem 0.8rem;cursor:pointer;font-size:0.85rem;font-weight:600;color:#999;border-bottom:2px solid transparent;white-space:nowrap;">🎬 숏폼</button>
-                <button class="social-filter-tab" data-filter="profile" onclick="showExploreTab(false);showFullProfile()" style="background:none;border:none;padding:0.4rem 0.8rem;cursor:pointer;font-size:0.85rem;font-weight:600;color:#999;border-bottom:2px solid transparent;white-space:nowrap;">👤 프로필</button>
+            <!-- Feed Filter Tabs (Icon-based) -->
+            <div class="social-tab-bar">
+                <button class="social-tab-item active" data-filter="all" onclick="showExploreTab(false);setSocialFilter('all')">전체</button>
+                <button class="social-tab-item" data-filter="following" onclick="showExploreTab(false);setSocialFilter('following')">팔로잉</button>
+                <button class="social-tab-item" data-filter="explore" onclick="showExploreTab(true)">🔍</button>
+                <button class="social-tab-item" data-filter="notifications" onclick="showExploreTab(false);showSocialNotifications()" style="position:relative;">🔔<span id="social-notif-badge" class="tab-badge">0</span></button>
+                <button class="social-tab-item" data-filter="saved" onclick="showExploreTab(false);setSocialFilter('saved')">🔖</button>
             </div>
+            <!-- Old filter tabs hidden by CSS -->
             
             <!-- Explore Content (hidden by default) -->
             <div id="explore-content" style="display:none;"></div>
@@ -2098,5 +2101,45 @@
     <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakNGPyeA" crossorigin="anonymous"></script>
     <!-- Facebook SDK -->
     <script async defer crossorigin="anonymous" src="https://connect.facebook.net/ko_KR/sdk.js"></script>
+    <!-- ===== BOTTOM TAB BAR (Mobile) ===== -->
+    <nav class="bottom-tab-bar" id="bottom-tab-bar">
+        <div class="bottom-tab-bar-inner">
+            <button class="bottom-tab-item active" onclick="showPage('social');updateBottomTab(this)" data-page="social">
+                <span class="tab-icon">🏠</span>
+                <span>홈</span>
+            </button>
+            <button class="bottom-tab-item" onclick="showPage('explore-page');updateBottomTab(this)" data-page="explore">
+                <span class="tab-icon">🔍</span>
+                <span>탐색</span>
+            </button>
+            <button class="bottom-tab-item create-btn" onclick="showCreatePostModal()" data-page="create">
+                <span class="tab-icon">＋</span>
+                <span></span>
+            </button>
+            <button class="bottom-tab-item" onclick="showPage('reels');updateBottomTab(this)" data-page="reels">
+                <span class="tab-icon">🎬</span>
+                <span>릴스</span>
+            </button>
+            <button class="bottom-tab-item" onclick="showFullProfile();showPage('social');updateBottomTab(this)" data-page="profile">
+                <span class="tab-icon">👤</span>
+                <span>프로필</span>
+            </button>
+        </div>
+    </nav>
+    <script>
+    function updateBottomTab(el) {
+        document.querySelectorAll('.bottom-tab-item').forEach(b => b.classList.remove('active'));
+        if (el) el.classList.add('active');
+    }
+    function showCreatePostModal() {
+        // Focus on post textarea
+        showPage('social');
+        setSocialFilter('all');
+        setTimeout(() => {
+            const ta = document.getElementById('post-text');
+            if (ta) { ta.focus(); ta.scrollIntoView({ behavior:'smooth', block:'center' }); }
+        }, 200);
+    }
+    </script>
 </body>
 </html>
