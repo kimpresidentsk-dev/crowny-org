@@ -913,6 +913,7 @@ function cancelReply() {
 
 // ===== Send message =====
 async function sendMessage() {
+    console.log('[sendMessage] called. currentChat:', currentChat, 'currentChannel:', currentChannel, 'currentUser:', currentUser?.uid);
     // Channel mode
     if (currentChannel) {
         const input = document.getElementById('message-input');
