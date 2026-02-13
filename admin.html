@@ -630,6 +630,14 @@
                     <div style="background:white; padding:1.5rem; border-radius:12px;">
                         <h3 style="margin-bottom:1rem;">🔧 기능 관리 (Feature Flags)</h3>
                         <p style="color:#666; font-size:0.85rem; margin-bottom:1rem;">일반 유저에게 보이는 메뉴를 관리합니다. 수퍼관리자는 항상 모든 메뉴를 볼 수 있습니다.</p>
+                        
+                        <!-- Seed Data Button -->
+                        <div style="background:#fff3e0;border:1px solid #ffcc02;border-radius:8px;padding:1rem;margin-bottom:1rem;">
+                            <p style="font-size:0.85rem;margin-bottom:0.5rem;"><strong>🌱 초기 데이터 시드</strong></p>
+                            <p style="font-size:0.75rem;color:#666;margin-bottom:0.8rem;">아티스트, 사업체, 캠페인, AI 봇 프로필 등 초기 데이터를 생성합니다. 이미 있는 데이터는 건드리지 않습니다.</p>
+                            <button onclick="seedAll().then(r=>document.getElementById('seed-result').textContent=r)" style="padding:0.6rem 1.2rem;background:#ff9800;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;">🌱 시드 데이터 실행</button>
+                            <pre id="seed-result" style="margin-top:0.5rem;font-size:0.75rem;color:#333;white-space:pre-wrap;"></pre>
+                        </div>
                         <div id="feature-flags-list" style="display:grid; gap:0.8rem;"></div>
                         <script>
                         (function(){
@@ -768,6 +776,7 @@
     }
     </script>
     <script src="js/admin.js?v=21.2"></script>
+    <script src="js/seed-data.js?v=1.0"></script>
     <script>
     // showToast polyfill for admin.html
     if (typeof showToast === 'undefined') {
