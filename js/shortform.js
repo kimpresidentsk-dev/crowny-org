@@ -573,9 +573,125 @@
     }
 
     function _openComments(id) {
-        // Reuse existing comment system if available
-        if (typeof toggleComments === 'function') { toggleComments(id); return; }
-        showToast(t('shortform.comments_coming','댓글 기능 준비 중'), 'info');
+        if (!currentUser) { showToast(t('common.login_required','로그인이 필요합니다'), 'warning'); return; }
+        
+        // Bottom sheet 댓글 패널
+        let overlay = document.getElementById('reel-comments-overlay');
+        if (overlay) overlay.remove();
+        
+        overlay = document.createElement('div');
+        overlay.id = 'reel-comments-overlay';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:99998;display:flex;align-items:flex-end;justify-content:center;';
+        overlay.innerHTML = `
+            <div id="reel-comments-sheet" style="width:100%;max-width:500px;max-height:70vh;background:var(--dark-card,#1e1e3a);border-radius:16px 16px 0 0;display:flex;flex-direction:column;overflow:hidden;">
+                <div style="padding:12px 16px;border-bottom:1px solid var(--dark-border,#2a2a4a);display:flex;align-items:center;justify-content:space-between;">
+                    <h4 style="margin:0;font-size:1rem;">💬 ${t('shortform.comments','댓글')}</h4>
+                    <button onclick="document.getElementById('reel-comments-overlay').remove()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--text);">✕</button>
+                </div>
+                <div id="reel-comment-list" style="flex:1;overflow-y:auto;padding:12px 16px;min-height:100px;">
+                    <p style="text-align:center;color:var(--accent);font-size:0.85rem;">로딩 중...</p>
+                </div>
+                <div style="padding:8px 12px;border-top:1px solid var(--dark-border,#2a2a4a);display:flex;gap:8px;">
+                    <input type="text" id="reel-comment-input" placeholder="${t('social.add_comment','댓글 달기...')}" style="flex:1;padding:8px 12px;border:1px solid var(--dark-border,#2a2a4a);border-radius:20px;font-size:0.9rem;outline:none;background:var(--dark-bg,#12122a);color:var(--text);">
+                    <button onclick="SHORTFORM._submitComment('${id}')" style="background:#0095f6;color:white;border:none;border-radius:20px;padding:8px 16px;font-weight:700;cursor:pointer;font-size:0.85rem;">${t('social.post','게시')}</button>
+                </div>
+            </div>`;
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+        document.body.appendChild(overlay);
+        
+        // Enter키 지원
+        document.getElementById('reel-comment-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') SHORTFORM._submitComment(id);
+        });
+        
+        // 댓글 로드
+        _loadReelComments(id);
+    }
+
+    async function _loadReelComments(videoId) {
+        const list = document.getElementById('reel-comment-list');
+        if (!list) return;
+        try {
+            const snap = await db.collection(COLLECTION).doc(videoId)
+                .collection('comments').orderBy('createdAt', 'asc').get();
+            
+            if (snap.empty) {
+                list.innerHTML = `<p style="text-align:center;color:var(--accent);font-size:0.85rem;padding:2rem 0;">${t('social.first_comment','첫 댓글을 남겨보세요!')}</p>`;
+                return;
+            }
+            
+            let html = '';
+            for (const doc of snap.docs) {
+                const c = doc.data();
+                const timeAgo = _timeAgo(c.createdAt?.toDate?.() || new Date());
+                html += `<div style="display:flex;gap:10px;margin-bottom:12px;">
+                    <div style="width:32px;height:32px;border-radius:50%;background:var(--dark-border,#2a2a4a);display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0;">${c.photoURL ? `<img src="${c.photoURL}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : '👤'}</div>
+                    <div style="flex:1;">
+                        <span style="font-weight:600;font-size:0.85rem;">${_esc(c.nickname || '사용자')}</span>
+                        <span style="font-size:0.75rem;color:var(--accent);margin-left:6px;">${timeAgo}</span>
+                        <p style="margin:2px 0 0;font-size:0.9rem;line-height:1.4;">${_esc(c.text)}</p>
+                    </div>
+                </div>`;
+            }
+            list.innerHTML = html;
+            list.scrollTop = list.scrollHeight;
+        } catch(e) {
+            console.error('Reel comments load error:', e);
+            list.innerHTML = '<p style="color:#f44336;text-align:center;">댓글 로드 실패</p>';
+        }
+    }
+
+    async function _submitComment(videoId) {
+        const input = document.getElementById('reel-comment-input');
+        if (!input) return;
+        const text = input.value.trim();
+        if (!text) return;
+        
+        input.disabled = true;
+        try {
+            const userDoc = await db.collection('users').doc(currentUser.uid).get();
+            const userData = userDoc.exists ? userDoc.data() : {};
+            
+            await db.collection(COLLECTION).doc(videoId).collection('comments').add({
+                uid: currentUser.uid,
+                nickname: userData.nickname || currentUser.email?.split('@')[0] || '사용자',
+                photoURL: userData.photoURL || '',
+                text: text,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            // 댓글 수 증가
+            await db.collection(COLLECTION).doc(videoId).update({
+                commentCount: firebase.firestore.FieldValue.increment(1)
+            });
+            
+            input.value = '';
+            await _loadReelComments(videoId);
+            
+            // 릴 데이터 업데이트
+            const reel = reelsData.find(r => r.id === videoId);
+            if (reel) reel.commentCount = (reel.commentCount || 0) + 1;
+            
+        } catch(e) {
+            console.error('Comment submit error:', e);
+            showToast(t('shortform.comment_fail','댓글 등록 실패'), 'error');
+        }
+        input.disabled = false;
+    }
+
+    function _timeAgo(date) {
+        const diff = (Date.now() - date.getTime()) / 1000;
+        if (diff < 60) return '방금';
+        if (diff < 3600) return `${Math.floor(diff/60)}분`;
+        if (diff < 86400) return `${Math.floor(diff/3600)}시간`;
+        if (diff < 604800) return `${Math.floor(diff/86400)}일`;
+        return date.toLocaleDateString('ko');
+    }
+
+    function _esc(str) {
+        const div = document.createElement('div');
+        div.textContent = str || '';
+        return div.innerHTML;
     }
 
     async function _shareReel(id) {
@@ -644,6 +760,7 @@
         _toggleLike: _toggleLike,
         _toggleMute: _toggleMute,
         _openComments: _openComments,
+        _submitComment: _submitComment,
         _shareReel: _shareReel,
         _navigateCTA: _navigateCTA,
         _nav: _nav,
