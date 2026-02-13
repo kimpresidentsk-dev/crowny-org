@@ -2675,9 +2675,14 @@ async function submitCreateChallenge() {
 }
 
 async function joinChallenge(challengeId, tierKey) {
-    if (!currentUser) { alert('로그인이 필요합니다'); return; }
+    console.log('🎯 joinChallenge called:', challengeId, tierKey);
+    showToast('⏳ 참가 처리 중...', 'info', 2000);
     
+    if (!currentUser) { showToast('❌ 로그인이 필요합니다', 'error'); return; }
+    
+    try {
     const challenge = await db.collection('prop_challenges').doc(challengeId).get();
+    if (!challenge.exists) { showToast('❌ 챌린지를 찾을 수 없습니다', 'error'); return; }
     const data = challenge.data();
     
     // ★ 티어 정보 로드
@@ -2688,7 +2693,7 @@ async function joinChallenge(challengeId, tierKey) {
     const existing = await db.collection('prop_challenges').doc(challengeId)
         .collection('participants').where('userId', '==', currentUser.uid).where('status', '==', 'active').get();
     if (!existing.empty) {
-        alert('이미 이 챌린지에 참가 중입니다.');
+        showToast('⚠️ 이미 이 챌린지에 참가 중입니다', 'warning');
         return;
     }
     
@@ -2701,7 +2706,7 @@ async function joinChallenge(challengeId, tierKey) {
     console.log('🔍 joinChallenge 잔고체크:', { uid: currentUser.uid, offchain, crtdBalance, required: tier.deposit });
     
     if (crtdBalance < tier.deposit) {
-        alert(`CRTD 잔액 부족 — 필요: ${tier.deposit}, 보유: ${crtdBalance}`);
+        showToast(`❌ CRTD 잔액 부족 — 필요: ${tier.deposit}, 보유: ${crtdBalance}`, 'error', 5000);
         return;
     }
     
@@ -2777,14 +2782,7 @@ async function joinChallenge(challengeId, tierKey) {
             timestamp: new Date()
         });
         
-        alert(
-            `✅ 챌린지 참가 완료! (${tierKey}군)\n\n` +
-            `💎 ${tier.deposit} CRTD 차감\n` +
-            `💰 가상 계좌 $${tier.account.toLocaleString()} 지급\n\n` +
-            `💀 -$${tier.liquidation.toLocaleString()} 청산\n` +
-            `📈 +$${tier.profitThreshold.toLocaleString()}~ → CRTD 변환\n` +
-            `💰 ${tier.withdrawUnit.toLocaleString()} CRTD 단위 인출`
-        );
+        showToast(`✅ ${tierKey}군 참가 완료! ${tier.deposit} CRTD 차감`, 'success', 5000);
         
         // [v13] 챌린지 참가 시 소개자 수수료 제거 — 회원가입 보상으로 통합
         // await distributeReferralReward(currentUser.uid, Math.floor(tier.deposit * 0.1), 'CRTD');
@@ -2794,7 +2792,11 @@ async function joinChallenge(challengeId, tierKey) {
         loadTradingDashboard();
     } catch (error) {
         console.error('Join error:', error);
-        alert('참가 실패: ' + error.message);
+        showToast('❌ 참가 실패: ' + error.message, 'error', 5000);
+    }
+    } catch (outerError) {
+        console.error('joinChallenge outer error:', outerError);
+        showToast('❌ 오류: ' + outerError.message, 'error', 5000);
     }
 }
 
