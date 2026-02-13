@@ -112,10 +112,10 @@ function showPage(pageId) {
         filterCrebCategory('all');
     }
     if (pageId === 'business') {
-        loadBusinessList();
+        if (typeof loadBusinesses === 'function') loadBusinesses();
     }
     if (pageId === 'artist') {
-        loadArtistList();
+        if (typeof loadArtists === 'function') loadArtists();
     }
     if (pageId === 'books') {
         loadBooksList();
