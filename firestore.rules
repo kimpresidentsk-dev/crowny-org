@@ -205,6 +205,13 @@ service cloud.firestore {
       allow create: if request.auth != null;
     }
 
+    // stories
+    match /stories/{storyId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth.uid == resource.data.userId;
+    }
+
     // translation_requests, book_translators 등 기타
     match /translation_requests/{docId} {
       allow read, create: if request.auth != null;
