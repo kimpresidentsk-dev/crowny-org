@@ -529,7 +529,8 @@ async function loadMessages() {
 
     for (const doc of cachedChatDocs) {
         const chat = doc.data();
-        const otherId = chat.participants.find(id => id !== currentUser.uid);
+        const otherId = chat.participants.find(id => id !== currentUser.uid) || '';
+        if (!otherId) continue; // 셀프 채팅 스킵
         const info = await getUserDisplayInfo(otherId);
         const unread = (chat.unreadCount && chat.unreadCount[currentUser.uid]) || 0;
         const lastTime = chat.lastMessageTime?.toDate?.();
@@ -936,6 +937,7 @@ async function sendMessage() {
     const input = document.getElementById('message-input');
     const text = input.value.trim();
     if (!text) return;
+    console.log('[sendMessage] sending to chat:', currentChat, 'other:', currentChatOtherId);
 
     setTyping(false);
     clearTimeout(typingTimeout);
@@ -995,7 +997,7 @@ async function sendMessage() {
         await db.collection('chats').doc(currentChat).update(updateData);
 
         // Notification for recipient (1:1 only)
-        if (currentChatOtherId) {
+        if (currentChatOtherId && currentChatOtherId.length > 0) {
             try {
                 const myInfo = await getUserDisplayInfo(currentUser.uid);
                 await db.collection('users').doc(currentChatOtherId).collection('notifications').add({
