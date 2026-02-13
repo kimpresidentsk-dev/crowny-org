@@ -441,10 +441,10 @@ async function searchAndShowProfile(nickname) {
 
 // ========== DEEP LINKS / ANCHOR URLs ==========
 function generateShareURL(type, id) {
-    const base = window.location.origin + window.location.pathname;
-    if (type === 'post') return `${base}?page=social&post=${id}`;
-    if (type === 'user') return `${base}?page=social&user=${id}`;
-    if (type === 'page') return `${base}?page=${id}`;
+    const base = 'https://crowny-org.vercel.app';
+    if (type === 'post') return `${base}/#page=social&post=${id}`;
+    if (type === 'user') return `${base}/#page=social&user=${id}`;
+    if (type === 'page') return `${base}/#page=${id}`;
     return base;
 }
 

@@ -2196,7 +2196,7 @@ async function createPost() {
 
 // ========== SHARE POST ==========
 async function sharePost(postId) {
-    const shareUrl = `https://crowny-org.vercel.app/#post=${postId}`;
+    const shareUrl = `https://crowny-org.vercel.app/#page=social&post=${postId}`;
     try {
         if (navigator.share) {
             await navigator.share({ title: 'Crowny', text: '크라우니에서 공유된 게시물', url: shareUrl });
@@ -2373,18 +2373,25 @@ function setSocialFilter(filter) {
 // ========== DEEP LINK: #post={id} ==========
 function handlePostDeepLink() {
     const hash = window.location.hash;
-    const match = hash.match(/post=([^&]+)/);
-    if (match) {
-        const postId = match[1];
+    const postMatch = hash.match(/post=([^&]+)/);
+    const userMatch = hash.match(/user=([^&]+)/);
+    if (postMatch) {
+        const postId = postMatch[1];
         showPage('social');
-        // Scroll to post or open shorts if video
         setTimeout(async () => {
+            const el = document.querySelector(`[data-post-id="${postId}"]`);
+            if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
             const doc = await db.collection('posts').doc(postId).get();
             if (doc.exists && doc.data().videoUrl) {
                 _shortsVideoPosts = [{ id: postId, data: doc.data(), nickname: '' }];
                 openShortsViewer(postId);
             }
         }, 1000);
+    }
+    if (userMatch) {
+        const userId = userMatch[1];
+        showPage('social');
+        setTimeout(() => { if (typeof showFullProfile === 'function') showFullProfile(userId); }, 500);
     }
 }
 window.addEventListener('hashchange', handlePostDeepLink);
