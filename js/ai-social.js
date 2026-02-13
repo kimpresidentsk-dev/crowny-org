@@ -65,24 +65,26 @@ const AI_SOCIAL = (() => {
             geminiApiKey = 'AIzaSyD1E9ErsFaHzxy_-CBbXhXyAa10ua1PDeg';
         }
 
-        // 봇 프로필 문서 확인/생성 (bot_profiles 컬렉션 — rules 제한 없음)
-        for (const [key, char] of Object.entries(BOT_CHARACTERS)) {
-            try {
-                const doc = await db.collection('bot_profiles').doc(char.uid).get();
-                if (!doc.exists) {
-                    await db.collection('bot_profiles').doc(char.uid).set({
-                        email: `${key}@crowny.bot`,
-                        nickname: char.nickname,
-                        photoURL: char.avatar,
-                        isBot: true,
-                        botCharacter: key,
-                        createdAt: new Date(),
-                        statusMessage: `${char.emoji} AI 크라우니 멤버`
-                    });
-                    console.log(`[AI-Social] Bot profile created: ${char.nickname}`);
+        // 봇 프로필 문서 확인/생성 — 관리자 로그인 상태에서만
+        if (typeof currentUser !== 'undefined' && currentUser) {
+            for (const [key, char] of Object.entries(BOT_CHARACTERS)) {
+                try {
+                    const doc = await db.collection('bot_profiles').doc(char.uid).get();
+                    if (!doc.exists) {
+                        await db.collection('bot_profiles').doc(char.uid).set({
+                            email: `${key}@crowny.bot`,
+                            nickname: char.nickname,
+                            photoURL: char.avatar,
+                            isBot: true,
+                            botCharacter: key,
+                            createdAt: new Date(),
+                            statusMessage: `${char.emoji} AI 크라우니 멤버`
+                        });
+                        console.log(`[AI-Social] Bot profile created: ${char.nickname}`);
+                    }
+                } catch (e) {
+                    console.warn(`[AI-Social] Bot profile skip for ${key} (will use local data):`, e.message);
                 }
-            } catch (e) {
-                console.warn(`[AI-Social] Bot profile check failed for ${key}:`, e);
             }
         }
     }
@@ -130,6 +132,22 @@ ${lang !== 'ko' ? `\n언어: ${langNames[lang] || lang}로 작성하세요.` : '
                     generationConfig: { temperature: 0.9, maxOutputTokens: 300 }
                 })
             });
+            if (!res.ok) {
+                const errText = await res.text();
+                console.error(`[AI-Social] Gemini ${res.status}:`, errText);
+                // 403이면 DB에서 다른 키 시도
+                if (res.status === 403 && geminiApiKey === 'AIzaSyD1E9ErsFaHzxy_-CBbXhXyAa10ua1PDeg') {
+                    try {
+                        const s = await db.collection('admin_config').doc('ai_settings').get();
+                        const d = s.data() || {};
+                        if (d.apiKey && d.apiKey.length > 10 && d.apiKey !== geminiApiKey) {
+                            geminiApiKey = d.apiKey;
+                            return await generatePost(charKey); // retry with DB key
+                        }
+                    } catch(e2) {}
+                }
+                return null;
+            }
             const data = await res.json();
             return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || null;
         } catch (e) {
