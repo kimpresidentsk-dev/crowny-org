@@ -1064,11 +1064,25 @@ h2 {
     }
     
     .chat-sidebar {
-        height: 40vh;
+        height: 70vh;
     }
     
-    .chat-window {
-        height: 40vh;
+    .messenger-container:not(.chat-open) .chat-window {
+        display: none !important;
+    }
+    
+    .messenger-container:not(.chat-open) .chat-sidebar {
+        display: flex !important;
+    }
+    
+    .messenger-container.chat-open .chat-sidebar {
+        display: none !important;
+    }
+    
+    .messenger-container.chat-open .chat-window {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 80vh !important;
     }
 }
 
@@ -1776,15 +1790,8 @@ h2 {
     }
 
     .chat-sidebar {
-        height: auto !important;
-        max-height: 45vh !important;
         border-right: none !important;
         border-bottom: 1px solid var(--border) !important;
-    }
-
-    .chat-window {
-        height: 50vh !important;
-        min-height: 350px !important;
     }
 }
 
