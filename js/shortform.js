@@ -206,7 +206,7 @@
         if (!cfg) return;
         const q = document.getElementById('sf-svc-query').value.trim();
         const results = document.getElementById('sf-svc-results');
-        results.innerHTML = '<p style="text-align:center;font-size:0.8rem;color:#999;">로딩...</p>';
+        results.innerHTML = '<p style="text-align:center;font-size:0.8rem;color:var(--text-muted,#888);">로딩...</p>';
         try {
             let query = db.collection(cfg.collection).limit(10);
             const snap = await query.get();
@@ -217,7 +217,7 @@
                 if (q && !name.toLowerCase().includes(q.toLowerCase())) return;
                 html += `<div onclick="SHORTFORM._pickService('${_selectedServiceType}','${doc.id}','${name.replace(/'/g,"\\'")}')" style="padding:0.5rem;border-bottom:1px solid var(--border,#eee);cursor:pointer;font-size:0.85rem;display:flex;justify-content:space-between;align-items:center;"><span>${name}</span><span style="color:${CTA_MAP[_selectedServiceType].color};font-size:0.75rem;">${CTA_MAP[_selectedServiceType].label}</span></div>`;
             });
-            results.innerHTML = html || '<p style="text-align:center;font-size:0.8rem;color:#999;">결과 없음</p>';
+            results.innerHTML = html || '<p style="text-align:center;font-size:0.8rem;color:var(--text-muted,#888);">결과 없음</p>';
         } catch(e) { results.innerHTML = '<p style="color:red;font-size:0.8rem;">검색 실패</p>'; }
     }
 
@@ -359,7 +359,7 @@
             if (lastDoc) q = q.startAfter(lastDoc);
             const snap = await q.get();
             if (snap.empty && reelsData.length === 0) {
-                document.getElementById('reels-container').innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:80vh;color:#999;"><div style="font-size:3rem;margin-bottom:1rem;">🎬</div><p>${t('shortform.no_videos','아직 영상이 없습니다')}</p><button onclick="SHORTFORM.openUpload()" style="margin-top:1rem;padding:0.6rem 1.2rem;border:none;border-radius:8px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;cursor:pointer;font-weight:600;">${t('shortform.first_upload','첫 영상 올리기')}</button></div>`;
+                document.getElementById('reels-container').innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:80vh;color:var(--text-muted,#888);"><div style="font-size:3rem;margin-bottom:1rem;">🎬</div><p>${t('shortform.no_videos','아직 영상이 없습니다')}</p><button onclick="SHORTFORM.openUpload()" style="margin-top:1rem;padding:0.6rem 1.2rem;border:none;border-radius:8px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;cursor:pointer;font-weight:600;">${t('shortform.first_upload','첫 영상 올리기')}</button></div>`;
                 loading = false; return;
             }
             const newItems = [];

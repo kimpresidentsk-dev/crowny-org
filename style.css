@@ -7,21 +7,35 @@
 :root {
     --primary: #1a1a2e;
     --primary-light: #16213e;
-    --gold: #FFD700;
+    --gold: #D4AF37;
     --gold-dark: #B8860B;
     --cream: #FFF8F0;
     --cream-dark: #F5E6D3;
-    --bg: #f8f8f8;
-    --text: #1a1a2e;
-    --text-light: #666;
-    --white: #FFFFFF;
-    --accent: #999;
-    --border: #e0e0e0;
-    --card-bg: #ffffff;
+    --bg: #0a0a1a;
+    --bg-card: #1a1a2e;
+    --bg-card-alt: #1e1e3a;
+    --text: #f0f0f0;
+    --text-light: #aaa;
+    --text-muted: #888;
+    --white: #1a1a2e;
+    --accent: #D4AF37;
+    --border: #2a2a3e;
+    --card-bg: #1a1a2e;
     --success: #4CAF50;
     --warning: #ff9800;
-    --error: #cc0000;
+    --error: #ff4444;
+    --danger: #ff4444;
     --info: #2196f3;
+
+    /* Legacy aliases */
+    --dark-bg: #0a0a1a;
+    --dark-card: #1a1a2e;
+    --dark-card-alt: #1e1e3a;
+    --dark-border: #2a2a3e;
+    --dark-text: #f0f0f0;
+    --dark-muted: #888;
+    --dark-gold: #D4AF37;
+    --dark-cream: #FFF8F0;
 }
 
 body {
@@ -49,11 +63,13 @@ body {
 }
 
 .modal-content {
-    background: var(--white);
+    background: var(--bg-card);
     padding: 2rem;
     border-radius: 12px;
     max-width: 400px;
     width: 90%;
+    border: 1px solid var(--border);
+    color: var(--text);
 }
 
 .modal-content h2 {
@@ -111,13 +127,14 @@ body {
     top: 0.5rem;
     left: 0.5rem;
     z-index: 1001;
-    background: var(--white);
+    background: var(--bg-card);
     border: 1px solid var(--border);
     padding: 0.5rem 0.7rem;
     border-radius: 8px;
     font-size: 1.2rem;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    color: var(--text);
 }
 
 @media (max-width: 768px) {
@@ -649,16 +666,17 @@ h2 {
     align-items: center;
     gap: 1rem;
     padding: 1.5rem;
-    background: var(--white);
+    background: var(--bg-card);
     border: 2px solid var(--border);
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
     font-size: 1.1rem;
     transition: all 0.2s;
+    color: var(--text);
 }
 
 .wallet-btn:hover {
-    border-color: var(--text);
+    border-color: var(--gold);
     transform: translateY(-2px);
 }
 
@@ -667,9 +685,9 @@ h2 {
 }
 
 .wallet-info {
-    background: var(--white);
+    background: var(--bg-card);
     padding: 2rem;
-    border-radius: 8px;
+    border-radius: 12px;
     border: 1px solid var(--border);
 }
 
@@ -697,7 +715,7 @@ h2 {
 }
 
 .btn-secondary {
-    background: transparent;
+    background: var(--bg-card-alt);
     color: var(--text);
     border: 1px solid var(--border);
     padding: 0.6rem 1.2rem;
@@ -708,8 +726,8 @@ h2 {
 }
 
 .btn-secondary:hover {
-    background: var(--text);
-    color: var(--white);
+    background: var(--border);
+    color: var(--text);
 }
 
 .token-balances {
@@ -737,13 +755,13 @@ h2 {
 }
 
 .token-card.selected {
-    border-color: var(--text);
-    background: var(--white);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-color: var(--gold);
+    background: var(--bg-card);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 .token-card.secondary {
-    background: var(--white);
+    background: var(--bg-card);
 }
 
 .token-icon {
@@ -840,8 +858,8 @@ h2 {
 
 /* Buttons */
 .btn-primary {
-    background: var(--primary);
-    color: var(--white);
+    background: var(--gold);
+    color: #000;
     border: none;
     padding: 1rem 2rem;
     border-radius: 6px;
@@ -852,8 +870,8 @@ h2 {
 }
 
 .btn-primary:hover {
-    background: var(--gold);
-    color: var(--primary);
+    background: #e6c040;
+    color: #000;
 }
 
 .btn-buy {
@@ -874,9 +892,9 @@ h2 {
 
 /* Credit */
 .credit-header {
-    background: var(--white);
+    background: var(--bg-card);
     padding: 2rem;
-    border-radius: 8px;
+    border-radius: 12px;
     text-align: center;
     margin-bottom: 2rem;
     border: 1px solid var(--border);
@@ -899,11 +917,12 @@ h2 {
 }
 
 .product-card {
-    background: var(--white);
+    background: var(--bg-card);
     padding: 1.5rem;
-    border-radius: 8px;
+    border-radius: 12px;
     text-align: center;
     border: 1px solid var(--border);
+    color: var(--text);
 }
 
 .product-image {
@@ -929,9 +948,9 @@ h2 {
 
 /* Trading */
 .trading-header {
-    background: var(--white);
+    background: var(--bg-card);
     padding: 1.5rem;
-    border-radius: 8px;
+    border-radius: 12px;
     margin-bottom: 2rem;
     border: 1px solid var(--border);
 }
@@ -943,9 +962,9 @@ h2 {
 }
 
 .trading-panel {
-    background: var(--white);
+    background: var(--bg-card);
     padding: 2rem;
-    border-radius: 8px;
+    border-radius: 12px;
     max-width: 500px;
     margin: 0 auto;
     border: 1px solid var(--border);
@@ -961,17 +980,18 @@ h2 {
     flex: 1;
     padding: 1rem;
     border: 2px solid var(--border);
-    background: var(--white);
+    background: var(--bg-card-alt);
     border-radius: 6px;
     cursor: pointer;
     font-weight: 600;
     transition: all 0.2s;
+    color: var(--text);
 }
 
 .tab-btn.active {
-    background: var(--text);
-    color: var(--white);
-    border-color: var(--text);
+    background: var(--gold);
+    color: #000;
+    border-color: var(--gold);
 }
 
 .input {
@@ -981,6 +1001,8 @@ h2 {
     border-radius: 6px;
     font-size: 1rem;
     margin-bottom: 1rem;
+    background: var(--bg-card-alt);
+    color: var(--text);
 }
 
 .trade-info {
@@ -1637,7 +1659,7 @@ h2 {
 }
 
 .chat-window {
-    background: #faf8f5;
+    background: var(--bg);
     display: flex;
     flex-direction: column;
 }
@@ -1774,17 +1796,18 @@ h2 {
 
 /* Card grid items */
 .grid-card {
-    background: white;
+    background: var(--bg-card);
     border-radius: 12px;
     overflow: hidden;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid var(--border);
 }
 
 .grid-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
 }
 
 /* Empty state */
@@ -2043,7 +2066,7 @@ h2 {
     display: flex;
 }
 .register-modal-content {
-    background: white;
+    background: var(--bg-card);
     border-radius: 16px;
     max-width: 520px;
     width: 100%;
@@ -2052,6 +2075,8 @@ h2 {
     padding: 1.5rem;
     position: relative;
     animation: modalSlideIn 0.25s ease;
+    color: var(--text);
+    border: 1px solid var(--border);
 }
 @keyframes modalSlideIn {
     from { transform: translateY(30px); opacity: 0; }
@@ -2065,11 +2090,11 @@ h2 {
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    color: #999;
+    color: var(--text-muted);
     line-height: 1;
 }
 .register-modal-content .modal-close-btn:hover {
-    color: #333;
+    color: var(--text);
 }
 
 /* Admin register button */
@@ -3703,17 +3728,7 @@ a:not(.nav-item) {
    MEGA UI UPGRADE — Instagram + YouTube Level
    ============================================================ */
 
-/* ===== DARK MODE DEFAULTS ===== */
-:root {
-    --dark-bg: #0a0a1a;
-    --dark-card: #1a1a2e;
-    --dark-card-alt: #1e1e3a;
-    --dark-border: #2a2a4a;
-    --dark-text: #f0f0f0;
-    --dark-muted: #888;
-    --dark-gold: #D4AF37;
-    --dark-cream: #FFF8F0;
-}
+/* ===== DARK MODE DEFAULTS (merged into :root) ===== */
 
 body {
     background: var(--dark-bg) !important;
@@ -3802,8 +3817,8 @@ input, textarea, select {
     bottom: 0;
     left: 0;
     right: 0;
-    background: var(--white, #ffffff);
-    border-top: 1px solid var(--border, #e0e0e0);
+    background: var(--bg-card, #1a1a2e);
+    border-top: 1px solid var(--border, #2a2a3e);
     z-index: 999;
     padding-bottom: env(safe-area-inset-bottom);
 }
@@ -3823,7 +3838,7 @@ input, textarea, select {
     padding: 4px 12px;
     border: none;
     background: none;
-    color: var(--accent, #999);
+    color: var(--text-muted, #888);
     font-size: 0.6rem;
     font-weight: 600;
     transition: color 0.15s;
@@ -3836,7 +3851,7 @@ input, textarea, select {
     line-height: 1;
 }
 .bottom-tab-item.active {
-    color: var(--text, #1a1a2e);
+    color: var(--gold);
 }
 .bottom-tab-item.create-btn .tab-icon {
     background: linear-gradient(135deg, var(--gold, #FFD700), #e6c040);
@@ -4422,4 +4437,271 @@ label { color: var(--dark-muted) !important; }
     #reels.active {
         padding: 0 !important;
     }
+}
+
+/* ===== UNIFIED UI COMPONENTS (v21) ===== */
+
+/* Toast messages */
+.notif-toast, .toast-message {
+    background: var(--bg-card, #1a1a2e) !important;
+    color: var(--text, #f0f0f0) !important;
+    border: 1px solid var(--border, #2a2a3e) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4) !important;
+    font-size: 0.9rem !important;
+}
+
+/* Loading spinner - gold */
+.loading-spinner, .spinner {
+    border-color: var(--border, #2a2a3e) !important;
+    border-top-color: var(--gold, #D4AF37) !important;
+}
+
+/* Empty state unified */
+.empty-state, .art-empty-state, .chat-empty-state {
+    color: var(--text-muted, #888) !important;
+}
+.empty-state .icon, .art-empty-state .icon {
+    opacity: 0.6;
+}
+
+/* Post create "게시" button gold */
+.post-create .btn-primary {
+    background: var(--gold, #D4AF37) !important;
+    color: #000 !important;
+    font-weight: 700;
+}
+
+/* Input fields unified */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
+textarea, select {
+    background: var(--bg-card-alt, #1e1e3a) !important;
+    color: var(--text, #f0f0f0) !important;
+    border-color: var(--border, #2a2a3e) !important;
+}
+input:focus, textarea:focus, select:focus {
+    border-color: var(--gold, #D4AF37) !important;
+    outline: none;
+}
+
+/* Modal overlay unified */
+.modal, .register-modal-overlay, .bottom-sheet-overlay {
+    background: rgba(0,0,0,0.7) !important;
+}
+
+/* Sidebar unified */
+.sidebar {
+    background: var(--bg-card, #1a1a2e) !important;
+}
+
+/* Menu toggle dark */
+.menu-toggle {
+    background: var(--bg-card, #1a1a2e) !important;
+    color: var(--text, #f0f0f0) !important;
+    border-color: var(--border, #2a2a3e) !important;
+}
+
+/* Unified secondary buttons */
+.btn-secondary {
+    background: var(--bg-card-alt, #1e1e3a) !important;
+    color: var(--text, #f0f0f0) !important;
+    border-color: var(--border, #2a2a3e) !important;
+}
+
+/* Profile modals dark */
+#profile-edit-modal > div,
+#add-contact-modal > div,
+.group-member-select-modal {
+    background: var(--bg-card, #1a1a2e) !important;
+    color: var(--text, #f0f0f0) !important;
+}
+#profile-edit-modal input,
+#add-contact-modal input {
+    background: var(--bg-card-alt, #1e1e3a) !important;
+    color: var(--text, #f0f0f0) !important;
+    border-color: var(--border, #2a2a3e) !important;
+}
+
+/* Service card hover gold */
+.service-card:hover {
+    border-color: var(--gold, #D4AF37) !important;
+}
+
+/* Search overlay dark */
+.search-overlay-content {
+    background: var(--bg-card, #1a1a2e) !important;
+    color: var(--text, #f0f0f0) !important;
+}
+
+/* Settings dark */
+.settings-card {
+    background: var(--bg-card, #1a1a2e) !important;
+    color: var(--text, #f0f0f0) !important;
+}
+.settings-btn {
+    background: var(--bg-card-alt, #1e1e3a) !important;
+    color: var(--text, #f0f0f0) !important;
+    border-color: var(--border, #2a2a3e) !important;
+}
+
+/* Comment bottom sheet dark */
+.bottom-sheet {
+    background: var(--bg-card, #1a1a2e) !important;
+    color: var(--text, #f0f0f0) !important;
+}
+
+/* Link preview dark */
+.link-preview-card {
+    background: var(--bg-card-alt, #1e1e3a) !important;
+    border-color: var(--border, #2a2a3e) !important;
+    color: var(--text, #f0f0f0) !important;
+}
+
+/* All hardcoded white backgrounds → dark */
+.wallet-btn, .product-card, .credit-header, .trading-panel,
+.trading-header, .balance-item {
+    background: var(--bg-card, #1a1a2e) !important;
+    color: var(--text, #f0f0f0) !important;
+    border-color: var(--border, #2a2a3e) !important;
+}
+
+/* Social post dropdown dark */
+.post-dropdown-menu {
+    background: var(--bg-card, #1a1a2e) !important;
+    border-color: var(--border, #2a2a3e) !important;
+}
+.post-dropdown-menu div:hover {
+    background: var(--bg-card-alt, #1e1e3a) !important;
+}
+
+/* Reaction picker dark */
+.reaction-picker-popup {
+    background: var(--bg-card, #1a1a2e) !important;
+    border-color: var(--border, #2a2a3e) !important;
+}
+
+/* Sticker/GIF panel dark */
+.sticker-gif-panel {
+    background: var(--bg-card, #1a1a2e) !important;
+    border-color: var(--border, #2a2a3e) !important;
+    color: var(--text, #f0f0f0) !important;
+}
+
+/* Attach menu dark */
+.attach-menu-popup {
+    background: var(--bg-card, #1a1a2e) !important;
+    border-color: var(--border, #2a2a3e) !important;
+    color: var(--text, #f0f0f0) !important;
+}
+
+/* Chat menu dark */
+.chat-menu-dropdown {
+    background: var(--bg-card, #1a1a2e) !important;
+    border-color: var(--border, #2a2a3e) !important;
+}
+.chat-menu-item {
+    color: var(--text, #f0f0f0) !important;
+}
+.chat-menu-item:hover {
+    background: var(--bg-card-alt, #1e1e3a) !important;
+}
+
+/* Friend request item dark */
+.friend-request-item {
+    border-color: var(--border, #2a2a3e) !important;
+}
+
+/* Group info panel dark */
+.group-info-panel {
+    background: var(--bg-card, #1a1a2e) !important;
+    color: var(--text, #f0f0f0) !important;
+    border-color: var(--border, #2a2a3e) !important;
+}
+
+/* Msg bubble colors fix for dark */
+.msg-actions-bar {
+    background: var(--bg-card, #1a1a2e) !important;
+    border-color: var(--border, #2a2a3e) !important;
+}
+
+/* Reply preview bar dark */
+.reply-preview-bar {
+    background: var(--bg-card-alt, #1e1e3a) !important;
+    border-color: var(--gold, #D4AF37) !important;
+    color: var(--text, #f0f0f0) !important;
+}
+
+/* Pinned message dark */
+.pinned-message-banner {
+    background: var(--bg-card-alt, #1e1e3a) !important;
+    border-color: var(--gold, #D4AF37) !important;
+    color: var(--text, #f0f0f0) !important;
+}
+
+/* Dashboard shortcuts dark */
+.dash-shortcut-btn {
+    background: var(--bg-card-alt, #1e1e3a) !important;
+    color: var(--text, #f0f0f0) !important;
+    border-color: var(--border, #2a2a3e) !important;
+}
+
+/* Tab buttons dark */
+.tab-btn {
+    background: var(--bg-card-alt, #1e1e3a) !important;
+    color: var(--text, #f0f0f0) !important;
+    border-color: var(--border, #2a2a3e) !important;
+}
+.tab-btn.active {
+    background: var(--gold, #D4AF37) !important;
+    color: #000 !important;
+    border-color: var(--gold, #D4AF37) !important;
+}
+
+/* Scrollbar dark */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg, #0a0a1a); }
+::-webkit-scrollbar-thumb { background: var(--border, #2a2a3e); border-radius: 2px; }
+
+/* Contact/chat item border dark */
+.contact-item, .chat-item {
+    border-color: var(--border, #2a2a3e) !important;
+}
+
+/* System message dark */
+.system-message {
+    background: var(--bg-card-alt, #1e1e3a) !important;
+    color: var(--text-muted, #888) !important;
+}
+
+/* AI Assistant dark */
+.ai-input-bar {
+    background: var(--bg-card, #1a1a2e) !important;
+    border-color: var(--border, #2a2a3e) !important;
+}
+.ai-bubble-bot {
+    background: var(--bg-card-alt, #1e1e3a) !important;
+    color: var(--text, #f0f0f0) !important;
+}
+.ai-quick-card {
+    background: var(--bg-card-alt, #1e1e3a) !important;
+    color: var(--text, #f0f0f0) !important;
+    border-color: var(--border, #2a2a3e) !important;
+}
+
+/* Date separator dark */
+.date-separator span {
+    background: var(--bg-card, #1a1a2e) !important;
+    color: var(--text-muted, #888) !important;
+}
+
+/* Message highlight dark */
+.msg-highlight {
+    background: rgba(212, 175, 55, 0.3) !important;
+}
+
+/* Msg reaction chip dark */
+.msg-reaction-chip {
+    background: var(--bg-card-alt, #1e1e3a) !important;
+    border-color: var(--border, #2a2a3e) !important;
+    color: var(--text, #f0f0f0) !important;
 }

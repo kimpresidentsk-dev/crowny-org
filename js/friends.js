@@ -141,7 +141,7 @@ async function loadFriendRequests() {
                 ${avatarHTML(info.photoURL, info.nickname, 36)}
                 <span style="flex:1;font-size:0.85rem;font-weight:600;">${info.nickname}</span>
                 <button onclick="acceptFriendRequest('${doc.id}','${req.from}')" class="btn-primary" style="padding:0.3rem 0.6rem;font-size:0.75rem;border-radius:6px;">수락</button>
-                <button onclick="rejectFriendRequest('${doc.id}')" style="padding:0.3rem 0.6rem;font-size:0.75rem;border-radius:6px;border:1px solid #ddd;background:white;cursor:pointer;">거절</button>
+                <button onclick="rejectFriendRequest('${doc.id}')" style="padding:0.3rem 0.6rem;font-size:0.75rem;border-radius:6px;border:1px solid var(--border,#2a2a3e);background:var(--bg-card,#1a1a2e);cursor:pointer;">거절</button>
             </div>`;
         }
         container.innerHTML = html;
@@ -157,10 +157,10 @@ async function showFriendSearchModal() {
     overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     overlay.innerHTML = `
-    <div style="background:white;padding:1.5rem;border-radius:16px;max-width:420px;width:100%;max-height:80vh;overflow-y:auto;">
+    <div style="background:var(--bg-card,#1a1a2e);padding:1.5rem;border-radius:16px;max-width:420px;width:100%;max-height:80vh;overflow-y:auto;">
         <h3 style="margin-bottom:1rem;">👥 ${t('friends.search', '친구 찾기')}</h3>
         <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
-            <input type="text" id="friend-search-input" placeholder="${t('friends.search_placeholder', '닉네임 또는 이메일로 검색')}" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;">
+            <input type="text" id="friend-search-input" placeholder="${t('friends.search_placeholder', '닉네임 또는 이메일로 검색')}" style="flex:1;padding:0.7rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;font-size:0.9rem;">
             <button onclick="searchFriends()" class="btn-primary" style="padding:0.7rem 1rem;border-radius:8px;font-size:0.85rem;">🔍</button>
         </div>
         <div id="friend-search-results"></div>
@@ -176,7 +176,7 @@ async function searchFriends() {
     const query = document.getElementById('friend-search-input').value.trim().toLowerCase();
     const results = document.getElementById('friend-search-results');
     if (!query) return;
-    results.innerHTML = '<p style="text-align:center;color:#999;">검색 중...</p>';
+    results.innerHTML = '<p style="text-align:center;color:var(--text-muted,#888);">검색 중...</p>';
     
     try {
         // Search by email
@@ -186,7 +186,7 @@ async function searchFriends() {
             users = await db.collection('users').orderBy('nickname').startAt(query).endAt(query + '\uf8ff').limit(10).get();
         }
         if (users.empty) {
-            results.innerHTML = `<p style="text-align:center;color:#999;">${t('friends.no_results', '검색 결과가 없습니다')}</p>`;
+            results.innerHTML = `<p style="text-align:center;color:var(--text-muted,#888);">${t('friends.no_results', '검색 결과가 없습니다')}</p>`;
             return;
         }
         let html = '';
@@ -199,13 +199,13 @@ async function searchFriends() {
                 ${avatarHTML(info.photoURL, info.nickname, 40)}
                 <div style="flex:1;min-width:0;">
                     <div style="font-weight:600;font-size:0.9rem;">${info.nickname}</div>
-                    <div style="font-size:0.75rem;color:#999;">${data.statusMessage || ''}</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted,#888);">${data.statusMessage || ''}</div>
                 </div>
                 ${isFriend ? `<span style="font-size:0.75rem;color:#4CAF50;">✅ 친구</span>` :
                 `<button onclick="sendFriendRequest('${doc.id}');this.textContent='요청됨';this.disabled=true;" class="btn-primary" style="padding:0.3rem 0.8rem;font-size:0.8rem;border-radius:6px;">친구 추가</button>`}
             </div>`;
         }
-        results.innerHTML = html || `<p style="text-align:center;color:#999;">${t('friends.no_results', '검색 결과가 없습니다')}</p>`;
+        results.innerHTML = html || `<p style="text-align:center;color:var(--text-muted,#888);">${t('friends.no_results', '검색 결과가 없습니다')}</p>`;
     } catch (e) {
         results.innerHTML = `<p style="color:red;">검색 오류: ${e.message}</p>`;
     }
@@ -285,26 +285,26 @@ async function showUserProfile(uid) {
         overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
         overlay.innerHTML = `
-        <div style="background:white;padding:1.5rem;border-radius:16px;max-width:400px;width:100%;">
+        <div style="background:var(--bg-card,#1a1a2e);padding:1.5rem;border-radius:16px;max-width:400px;width:100%;">
             <div style="text-align:center;margin-bottom:1rem;">
                 ${avatarHTML(info.photoURL, info.nickname, 80)}
                 <h3 style="margin-top:0.5rem;margin-bottom:0.2rem;">${info.nickname}</h3>
-                ${info.statusMessage ? `<p style="font-size:0.85rem;color:#666;">${info.statusMessage}</p>` : ''}
+                ${info.statusMessage ? `<p style="font-size:0.85rem;color:var(--text-muted,#888);">${info.statusMessage}</p>` : ''}
             </div>
-            <div style="display:flex;justify-content:space-around;text-align:center;margin-bottom:1rem;padding:0.8rem 0;border-top:1px solid #eee;border-bottom:1px solid #eee;">
-                <div><div style="font-weight:700;font-size:1.1rem;">${postCount}</div><div style="font-size:0.75rem;color:#999;">게시물</div></div>
-                <div><div style="font-weight:700;font-size:1.1rem;">${friendCount}</div><div style="font-size:0.75rem;color:#999;">친구</div></div>
-                <div><div style="font-weight:700;font-size:1.1rem;">${followCounts.followers}</div><div style="font-size:0.75rem;color:#999;">팔로워</div></div>
-                <div><div style="font-weight:700;font-size:1.1rem;">${followCounts.following}</div><div style="font-size:0.75rem;color:#999;">팔로잉</div></div>
+            <div style="display:flex;justify-content:space-around;text-align:center;margin-bottom:1rem;padding:0.8rem 0;border-top:1px solid #eee;border-bottom:1px solid var(--border,#2a2a3e);">
+                <div><div style="font-weight:700;font-size:1.1rem;">${postCount}</div><div style="font-size:0.75rem;color:var(--text-muted,#888);">게시물</div></div>
+                <div><div style="font-weight:700;font-size:1.1rem;">${friendCount}</div><div style="font-size:0.75rem;color:var(--text-muted,#888);">친구</div></div>
+                <div><div style="font-weight:700;font-size:1.1rem;">${followCounts.followers}</div><div style="font-size:0.75rem;color:var(--text-muted,#888);">팔로워</div></div>
+                <div><div style="font-weight:700;font-size:1.1rem;">${followCounts.following}</div><div style="font-size:0.75rem;color:var(--text-muted,#888);">팔로잉</div></div>
             </div>
             ${!isMe ? `
             <div style="display:flex;gap:0.5rem;">
                 <button onclick="followUser('${uid}');document.getElementById('user-profile-modal')?.remove();" class="btn-primary" style="flex:1;padding:0.6rem;border-radius:8px;font-size:0.85rem;">${amFollowing ? '팔로잉 ✓' : '팔로우'}</button>
-                ${!amFriend ? `<button onclick="sendFriendRequest('${uid}');document.getElementById('user-profile-modal')?.remove();" style="flex:1;padding:0.6rem;border-radius:8px;font-size:0.85rem;border:1px solid #ddd;background:white;cursor:pointer;">친구 추가</button>` : `<span style="flex:1;display:flex;align-items:center;justify-content:center;font-size:0.85rem;color:#4CAF50;">✅ 친구</span>`}
-                <button onclick="startChatFromProfile('${uid}');document.getElementById('user-profile-modal')?.remove();" style="flex:1;padding:0.6rem;border-radius:8px;font-size:0.85rem;border:1px solid #ddd;background:white;cursor:pointer;">💬 메시지</button>
+                ${!amFriend ? `<button onclick="sendFriendRequest('${uid}');document.getElementById('user-profile-modal')?.remove();" style="flex:1;padding:0.6rem;border-radius:8px;font-size:0.85rem;border:1px solid var(--border,#2a2a3e);background:var(--bg-card,#1a1a2e);cursor:pointer;">친구 추가</button>` : `<span style="flex:1;display:flex;align-items:center;justify-content:center;font-size:0.85rem;color:#4CAF50;">✅ 친구</span>`}
+                <button onclick="startChatFromProfile('${uid}');document.getElementById('user-profile-modal')?.remove();" style="flex:1;padding:0.6rem;border-radius:8px;font-size:0.85rem;border:1px solid var(--border,#2a2a3e);background:var(--bg-card,#1a1a2e);cursor:pointer;">💬 메시지</button>
             </div>
             ` : ''}
-            <button onclick="document.getElementById('user-profile-modal')?.remove()" style="width:100%;margin-top:0.8rem;padding:0.6rem;border:1px solid #ddd;border-radius:8px;background:white;cursor:pointer;">${t('common.close', '닫기')}</button>
+            <button onclick="document.getElementById('user-profile-modal')?.remove()" style="width:100%;margin-top:0.8rem;padding:0.6rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;background:var(--bg-card,#1a1a2e);cursor:pointer;">${t('common.close', '닫기')}</button>
         </div>`;
         document.body.appendChild(overlay);
     } catch (e) {
@@ -354,7 +354,7 @@ function parseLinkPreviews(text) {
                 <img src="https://img.youtube.com/vi/${videoId}/mqdefault.jpg" style="width:100%;border-radius:8px 8px 0 0;" loading="lazy">
                 <div style="padding:0.5rem 0.8rem;display:flex;align-items:center;gap:0.5rem;">
                     <span style="font-size:1.2rem;">▶️</span>
-                    <span style="font-size:0.8rem;color:#666;">YouTube 동영상 · 클릭하여 재생</span>
+                    <span style="font-size:0.8rem;color:var(--text-muted,#888);">YouTube 동영상 · 클릭하여 재생</span>
                 </div>
             </div>`;
             continue;
@@ -365,10 +365,10 @@ function parseLinkPreviews(text) {
             <a href="${escapedUrl}" target="_blank" rel="noopener" class="link-preview-card" style="text-decoration:none;display:flex;align-items:center;gap:0.8rem;padding:0.8rem;">
                 <span style="font-size:1.5rem;">📸</span>
                 <div style="flex:1;min-width:0;">
-                    <div style="font-size:0.85rem;font-weight:600;color:#333;">Instagram</div>
-                    <div style="font-size:0.75rem;color:#999;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapedUrl}</div>
+                    <div style="font-size:0.85rem;font-weight:600;color:var(--text,#f0f0f0);">Instagram</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted,#888);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapedUrl}</div>
                 </div>
-                <span style="color:#999;">→</span>
+                <span style="color:var(--text-muted,#888);">→</span>
             </a>`;
             continue;
         }
@@ -378,10 +378,10 @@ function parseLinkPreviews(text) {
             <a href="${escapedUrl}" target="_blank" rel="noopener" class="link-preview-card" style="text-decoration:none;display:flex;align-items:center;gap:0.8rem;padding:0.8rem;">
                 <span style="font-size:1.5rem;">🎵</span>
                 <div style="flex:1;min-width:0;">
-                    <div style="font-size:0.85rem;font-weight:600;color:#333;">TikTok</div>
-                    <div style="font-size:0.75rem;color:#999;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapedUrl}</div>
+                    <div style="font-size:0.85rem;font-weight:600;color:var(--text,#f0f0f0);">TikTok</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted,#888);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapedUrl}</div>
                 </div>
-                <span style="color:#999;">→</span>
+                <span style="color:var(--text-muted,#888);">→</span>
             </a>`;
             continue;
         }

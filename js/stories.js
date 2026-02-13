@@ -13,10 +13,10 @@ async function openStoryUpload() {
     overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:99998;display:flex;align-items:center;justify-content:center;padding:1rem;';
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     overlay.innerHTML = `
-    <div style="background:white;padding:1.5rem;border-radius:20px;max-width:400px;width:100%;">
+    <div style="background:var(--bg-card,#1a1a2e);padding:1.5rem;border-radius:20px;max-width:400px;width:100%;">
         <h3 style="margin-bottom:1rem;text-align:center;">📸 스토리 만들기</h3>
         <div id="story-preview-area" style="width:100%;aspect-ratio:9/16;max-height:50vh;background:#111;border-radius:12px;margin-bottom:1rem;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;">
-            <span style="color:#666;font-size:0.9rem;">사진 또는 영상을 선택하세요</span>
+            <span style="color:var(--text-muted,#888);font-size:0.9rem;">사진 또는 영상을 선택하세요</span>
         </div>
         <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
             <label style="flex:1;text-align:center;padding:0.7rem;background:var(--bg);border-radius:10px;cursor:pointer;font-size:0.85rem;border:1px solid var(--border);">
@@ -30,7 +30,7 @@ async function openStoryUpload() {
         </div>
         <input type="text" id="story-text-input" placeholder="텍스트 추가..." style="width:100%;padding:0.7rem;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;margin-bottom:0.8rem;box-sizing:border-box;">
         <div style="display:flex;gap:0.5rem;">
-            <button onclick="document.getElementById('story-upload-modal')?.remove()" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:10px;background:white;cursor:pointer;">취소</button>
+            <button onclick="document.getElementById('story-upload-modal')?.remove()" style="flex:1;padding:0.7rem;border:1px solid var(--border,#2a2a3e);border-radius:10px;background:var(--bg-card,#1a1a2e);cursor:pointer;">취소</button>
             <button id="story-upload-btn" onclick="uploadStory()" style="flex:1;padding:0.7rem;border:none;border-radius:10px;background:#1a1a2e;color:white;font-weight:700;cursor:pointer;" disabled>스토리 올리기</button>
         </div>
     </div>`;
@@ -59,7 +59,7 @@ function previewStoryMedia(input, type) {
             if (v.duration > 15) {
                 showToast('스토리 영상은 15초 이하만 가능합니다', 'warning');
                 _storyMediaFile = null;
-                area.innerHTML = '<span style="color:#666;">15초 이하 영상만 가능합니다</span>';
+                area.innerHTML = '<span style="color:var(--text-muted,#888);">15초 이하 영상만 가능합니다</span>';
                 document.getElementById('story-upload-btn').disabled = true;
                 return;
             }
@@ -257,7 +257,7 @@ async function showStoryContent(userId, itemIdx) {
     let progressHTML = '<div style="display:flex;gap:3px;padding:8px 12px 4px;">';
     for (let i = 0; i < stories.length; i++) {
         progressHTML += `<div style="flex:1;height:2px;background:rgba(255,255,255,0.3);border-radius:1px;overflow:hidden;">
-            <div id="story-progress-${i}" style="height:100%;background:white;width:${i < itemIdx ? '100' : '0'}%;transition:width 0.1s linear;border-radius:1px;"></div>
+            <div id="story-progress-${i}" style="height:100%;background:var(--bg-card,#1a1a2e);width:${i < itemIdx ? '100' : '0'}%;transition:width 0.1s linear;border-radius:1px;"></div>
         </div>`;
     }
     progressHTML += '</div>';
@@ -396,10 +396,10 @@ async function showStoryViewers(storyId) {
         const modal = document.createElement('div');
         modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:100000;display:flex;align-items:center;justify-content:center;padding:1rem;';
         modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
-        modal.innerHTML = `<div style="background:white;padding:1.2rem;border-radius:16px;max-width:340px;width:100%;max-height:60vh;overflow-y:auto;">
+        modal.innerHTML = `<div style="background:var(--bg-card,#1a1a2e);padding:1.2rem;border-radius:16px;max-width:340px;width:100%;max-height:60vh;overflow-y:auto;">
             <h4 style="margin-bottom:0.8rem;">👁 조회 ${viewers.length}명</h4>
             ${html}
-            <button onclick="this.parentElement.parentElement.remove()" style="width:100%;margin-top:0.8rem;padding:0.6rem;border:1px solid #ddd;border-radius:8px;background:white;cursor:pointer;">닫기</button>
+            <button onclick="this.parentElement.parentElement.remove()" style="width:100%;margin-top:0.8rem;padding:0.6rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;background:var(--bg-card,#1a1a2e);cursor:pointer;">닫기</button>
         </div>`;
         document.body.appendChild(modal);
     } catch (e) {
