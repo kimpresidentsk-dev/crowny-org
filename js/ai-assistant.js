@@ -4,7 +4,7 @@ const AI_ASSISTANT = (() => {
     const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
     const MAX_HISTORY = 50;
 
-    let apiKey = 'AIzaSyDfLgJOoI9vXUaNy7hYhZWf6vx5beyAQVw';
+    let apiKey = ''; // DB에서 로드 (admin_config/ai_settings)
     let enabled = true;
     let isLoading = false;
     let currentCharId = null;
@@ -148,6 +148,10 @@ delay: 첫 번째 0~500, 이후 +800~2000씩 증가 (자연스러운 타이밍)`
                 const data = doc.data();
                 if (data.apiKey) apiKey = data.apiKey;
                 enabled = data.enabled !== false;
+            }
+            // API 키가 없으면 안내
+            if (!apiKey) {
+                console.warn('⚠️ Gemini API 키 미설정. 관리자 페이지에서 설정하세요.');
             }
         } catch (e) { console.error('AI settings load failed:', e); }
     }
