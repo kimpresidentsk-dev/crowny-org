@@ -571,14 +571,12 @@
         </section>
 
         <section id="messenger" class="page">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
-                <h2 style="margin:0;" data-i18n="messenger.title">💬 MESSENGER</h2>
-                <div style="display:flex; gap:0.5rem;">
-                    <button onclick="showNewChatModal()" class="btn-primary" style="padding:0.6rem 1rem; border-radius:10px; font-size:0.85rem;" data-i18n="messenger.new_chat">✏️ 새 채팅</button>
-                    <button onclick="showNewGroupModal()" class="btn-primary" style="padding:0.6rem 1rem; border-radius:10px; font-size:0.85rem;" data-i18n="messenger.new_group">👥 새 그룹</button>
-                    <button onclick="E2ECrypto.showStartSecretChatModal()" class="btn-primary" style="padding:0.6rem 1rem; border-radius:10px; font-size:0.85rem; background:#e65100;">🔒 비밀 채팅</button>
-                    <button onclick="showAddContactModal()" class="btn-secondary" style="padding:0.6rem 1rem; border-radius:10px; font-size:0.85rem;" data-i18n="messenger.contacts">📋 연락처</button>
-                </div>
+            <h2 style="margin:0 0 0.5rem;" data-i18n="messenger.title">💬 MESSENGER</h2>
+            <div style="display:flex; gap:0.5rem; overflow-x:auto; padding-bottom:0.5rem; -webkit-overflow-scrolling:touch; scrollbar-width:none; margin-bottom:0.5rem;">
+                <button onclick="showNewChatModal()" class="btn-primary" style="padding:0.5rem 0.8rem; border-radius:10px; font-size:0.8rem; white-space:nowrap; flex-shrink:0;" data-i18n="messenger.new_chat">✏️ 새 채팅</button>
+                <button onclick="showNewGroupModal()" class="btn-primary" style="padding:0.5rem 0.8rem; border-radius:10px; font-size:0.8rem; white-space:nowrap; flex-shrink:0;" data-i18n="messenger.new_group">👥 새 그룹</button>
+                <button onclick="E2ECrypto.showStartSecretChatModal()" class="btn-primary" style="padding:0.5rem 0.8rem; border-radius:10px; font-size:0.8rem; background:#e65100; white-space:nowrap; flex-shrink:0;">🔒 비밀 채팅</button>
+                <button onclick="showAddContactModal()" class="btn-secondary" style="padding:0.5rem 0.8rem; border-radius:10px; font-size:0.8rem; white-space:nowrap; flex-shrink:0;" data-i18n="messenger.contacts">👥 연락처</button>
             </div>
             
             <div class="messenger-container" id="messenger-container">
