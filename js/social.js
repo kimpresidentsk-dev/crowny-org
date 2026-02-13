@@ -561,6 +561,8 @@ async function openChat(chatId, otherId) {
     // Mobile: show chat window
     const container = document.getElementById('messenger-container');
     if (container) container.classList.add('chat-open');
+    const messengerPage = document.getElementById('messenger');
+    if (messengerPage) messengerPage.classList.add('chat-active');
 
     const info = await getUserDisplayInfo(otherId);
     document.getElementById('chat-username').innerHTML = `
@@ -835,6 +837,8 @@ async function openChat(chatId, otherId) {
 function closeChatMobile() {
     const container = document.getElementById('messenger-container');
     if (container) container.classList.remove('chat-open');
+    const messengerPage = document.getElementById('messenger');
+    if (messengerPage) messengerPage.classList.remove('chat-active');
     if (chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
     if (chatDocUnsubscribe) { chatDocUnsubscribe(); chatDocUnsubscribe = null; }
     currentChat = null;
@@ -2474,6 +2478,8 @@ async function openChannel(channelId) {
 
     const container = document.getElementById('messenger-container');
     if (container) container.classList.add('chat-open');
+    const messengerPage2 = document.getElementById('messenger');
+    if (messengerPage2) messengerPage2.classList.add('chat-active');
 
     const chDoc = await db.collection('channels').doc(channelId).get();
     const ch = chDoc.data();

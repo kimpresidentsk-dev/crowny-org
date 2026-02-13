@@ -2514,14 +2514,25 @@ input:checked + .notif-toggle-slider::before {
     }
     .messenger-container.chat-open .chat-window {
         display: flex !important;
-        height: 80vh !important;
+        height: calc(100vh - 160px) !important;
+    }
+    .messenger-container.chat-open ~ .messenger-header-bar,
+    .messenger-container.chat-open + .messenger-header-bar {
+        display: none !important;
+    }
+    /* 채팅방 열리면 헤더 숨기기 (sibling이 아니므로 JS로도 처리) */
+    #messenger.chat-active .messenger-header-bar {
+        display: none !important;
+    }
+    #messenger.chat-active .messenger-container {
+        height: calc(100vh - 120px) !important;
     }
     .messenger-container:not(.chat-open) .chat-window {
         display: none !important;
     }
     .messenger-container:not(.chat-open) .chat-sidebar {
         display: flex !important;
-        height: 80vh !important;
+        height: 70vh !important;
         max-height: none !important;
     }
     .chat-header-back {
