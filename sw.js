@@ -1,5 +1,5 @@
 // ===== CROWNY Service Worker v1.0 =====
-const CACHE_VERSION = 'crowny-v3.0';
+const CACHE_VERSION = 'crowny-v3.1';
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -39,6 +39,7 @@ const APP_SHELL = [
   '/js/i18n.js',
   '/js/ai-assistant.js',
   '/js/ai-social.js',
+  '/js/translate.js',
   '/js/beauty-manager.js',
   '/js/brain.js',
   '/js/movement.js',
