@@ -1,5 +1,5 @@
 // ===== CROWNY Service Worker v1.0 =====
-const CACHE_VERSION = 'crowny-v1.3';
+const CACHE_VERSION = 'crowny-v1.4';
 const APP_SHELL = [
   '/',
   '/index.html',

@@ -146,12 +146,8 @@ delay: 첫 번째 0~500, 이후 +800~2000씩 증가 (자연스러운 타이밍)`
             const doc = await db.collection('admin_config').doc('ai_settings').get();
             if (doc.exists) {
                 const data = doc.data();
-                if (data.apiKey) apiKey = data.apiKey;
+                if (data.apiKey && data.apiKey.length > 10) apiKey = data.apiKey;
                 enabled = data.enabled !== false;
-            }
-            // API 키가 없으면 안내
-            if (!apiKey) {
-                console.warn('⚠️ Gemini API 키 미설정. 관리자 페이지에서 설정하세요.');
             }
         } catch (e) { console.error('AI settings load failed:', e); }
     }
@@ -214,7 +210,16 @@ delay: 첫 번째 0~500, 이후 +800~2000씩 증가 (자연스러운 타이밍)`
                 return sendToGemini(userMessage, char, retryCount + 1);
             }
             if (res.status === 429) return '⏳ 요청이 너무 많습니다. 잠시 후 다시 시도해주세요.';
-            if (res.status === 403) return '🔑 API 키가 유효하지 않습니다.';
+            if (res.status === 403 || res.status === 400) {
+                // DB 키가 잘못됐을 수 있으니 기본 키로 재시도
+                const DEFAULT_KEY = 'AIzaSyD1E9ErsFaHzxy_-CBbXhXyAa10ua1PDeg';
+                if (apiKey !== DEFAULT_KEY && retryCount < 1) {
+                    console.warn('🔑 API 키 오류 → 기본 키로 재시도');
+                    apiKey = DEFAULT_KEY;
+                    return sendToGemini(userMessage, char, retryCount + 1);
+                }
+                return '🔑 API 키가 유효하지 않습니다. 관리자에게 문의하세요.';
+            }
             return '❌ AI 응답 오류가 발생했습니다.';
         }
 
