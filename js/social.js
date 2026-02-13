@@ -810,7 +810,7 @@ async function openChat(chatId, otherId) {
                 if (!msg.deleted) {
                     const side = isMine ? 'left' : 'right';
                     const sName = senderInfo.nickname.replace(/'/g, "\\'");
-                    const mText = (displayText || msg.text || '').replace(/'/g, "\\'").substring(0, 80);
+                    const mText = (msg._decryptedText || msg.text || '').replace(/'/g, "\\'").substring(0, 80);
                     actionsHTML = `<div class="msg-actions-bar ${side}" id="actions-${msgId}">`;
                     actionsHTML += `<button class="msg-action-btn" onclick="showReactionPicker('${msgId}')">😊</button>`;
                     actionsHTML += `<button class="msg-action-btn" onclick="setReplyTo('${msgId}','${mText}','${msg.senderId}','${sName}')">↩️</button>`;
