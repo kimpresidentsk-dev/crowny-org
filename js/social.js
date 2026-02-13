@@ -1032,6 +1032,9 @@ function showAttachMenu() {
         { icon: '📷', label: '사진', fn: () => sendMediaFile('image') },
         { icon: '🎬', label: '영상', fn: () => sendMediaFile('video') },
         { icon: '📄', label: '파일', fn: () => sendMediaFile('file') },
+        { icon: '🎤', label: '음성', fn: () => startVoiceRecord(), mobile: true },
+        { icon: '💰', label: '토큰', fn: () => sendTokenWithMessage(), mobile: true },
+        { icon: '😊', label: '스티커', fn: () => showStickerGifPanel(), mobile: true },
     ];
     items.forEach(item => {
         const btn = document.createElement('button');

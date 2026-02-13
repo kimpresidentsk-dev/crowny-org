@@ -974,3 +974,16 @@ a:not(.nav-item) {
         font-size: 1.3rem !important;
     }
 }
+
+/* Chat input: hide extra buttons on mobile, show via attach menu */
+@media (max-width: 768px) {
+    .chat-extra-btn {
+        display: none !important;
+    }
+    .chat-input {
+        gap: 0.3rem !important;
+    }
+    .chat-input input {
+        min-width: 0 !important;
+    }
+}
