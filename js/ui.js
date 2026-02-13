@@ -90,6 +90,9 @@ function showPage(pageId) {
     if (pageId === 'care') {
         if (typeof CARE !== 'undefined' && CARE.init) CARE.init();
     }
+    if (pageId === 'ai-assistant') {
+        if (typeof AI_ASSISTANT !== 'undefined' && AI_ASSISTANT.init) AI_ASSISTANT.init();
+    }
     if (pageId === 'credit') {
         loadCreditInfo();
         loadPumasiList();
