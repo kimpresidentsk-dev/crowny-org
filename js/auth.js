@@ -1,5 +1,40 @@
 // ===== auth.js - 회원가입, 로그인, 구글, 이메일인증, 비밀번호 리셋 =====
 
+// 로그인 버튼 이벤트 보강 (onclick 대비)
+document.addEventListener('DOMContentLoaded', () => {
+    const loginBtn = document.querySelector('#login-form .btn-primary');
+    if (loginBtn) {
+        loginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            login();
+        });
+        // 터치 디바이스 대응
+        loginBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            login();
+        });
+    }
+    
+    // Google 로그인 버튼
+    const googleBtn = document.querySelector('#login-form .btn-google');
+    if (googleBtn) {
+        googleBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            loginWithGoogle();
+        });
+    }
+    
+    // Enter 키로 로그인
+    const pwInput = document.getElementById('login-password');
+    if (pwInput) {
+        pwInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); login(); }
+        });
+    }
+});
+
 // 비밀번호 강도 체크 (실시간)
 document.addEventListener('DOMContentLoaded', () => {
     const pwInput = document.getElementById('signup-password');
@@ -115,8 +150,10 @@ async function signup() {
 
 // 이메일 로그인
 async function login() {
+    console.log('[AUTH] login() called');
     const email = document.getElementById('login-email').value.trim();
     const password = document.getElementById('login-password').value;
+    console.log('[AUTH] email:', email, 'pw length:', password?.length);
     
     if (!email || !password) {
         showToast(t('auth.enter_email_pw','이메일과 비밀번호를 입력하세요'), 'warning');
@@ -124,8 +161,11 @@ async function login() {
     }
     
     try {
+        console.log('[AUTH] calling signInWithEmailAndPassword...');
         await auth.signInWithEmailAndPassword(email, password);
+        console.log('[AUTH] login success');
     } catch (error) {
+        console.error('[AUTH] login error:', error);
         const msg = {
             'auth/user-not-found': t('auth.user_not_found','등록되지 않은 이메일입니다'),
             'auth/wrong-password': t('auth.wrong_pw','비밀번호가 틀립니다'),
