@@ -517,7 +517,16 @@ function initMentorPanel() {
 }
 
 function updateMentorAnalysis() {
-    if (!window.liveTicks || window.liveTicks.length < 10 || !currentPrice || currentPrice < 1000) return;
+    if (!window.liveTicks || window.liveTicks.length < 10 || !currentPrice || currentPrice < 1000) {
+        // 데이터 없을 때 패널에 안내 표시
+        if (!window.liveTicks || window.liveTicks.length === 0) {
+            for (const id of Object.keys(mentors)) {
+                mentorResults[id] = { signal: 'wait', confidence: 0, message: '📡 가격 데이터 수신 대기 중...', reason: '실시간 데이터 연결 필요' };
+            }
+            renderMentorPanel();
+        }
+        return;
+    }
 
     const candles = getCandlesFromTicks(window.liveTicks, 60);
     if (candles.length < 5) return;
