@@ -14,6 +14,10 @@ async function loadUserData() {
     loadMessages();
     loadSocialFeed();
     loadReferralInfo();
+    // AI 봇 댓글 자동 답변 감시
+    if (typeof AI_SOCIAL !== 'undefined') {
+        AI_SOCIAL.init().then(() => AI_SOCIAL.watchBotPostComments()).catch(e => console.warn('[AI-Social] init:', e));
+    }
 }
 
 // ========== ONLINE PRESENCE ==========
@@ -1679,7 +1683,7 @@ async function loadSocialFeed() {
                 <div class="post-header" style="display:flex;align-items:center;gap:10px;padding:10px 14px;">
                     <div onclick="showUserProfile('${post.userId}')" style="cursor:pointer;">${avatarHTML(userInfo.photoURL, userInfo.nickname, 36)}</div>
                     <div style="flex:1;min-width:0;">
-                        <strong onclick="showUserProfile('${post.userId}')" style="cursor:pointer;font-size:0.9rem;">${userInfo.nickname}</strong>
+                        <strong onclick="showUserProfile('${post.userId}')" style="cursor:pointer;font-size:0.9rem;">${userInfo.nickname}${typeof AI_SOCIAL !== 'undefined' && AI_SOCIAL.isBotUser(post.userId) ? AI_SOCIAL.getBotBadge(post.userId) : ''}</strong>
                         ${post.location ? `<span style="font-size:0.75rem;color:var(--dark-muted,#888);display:block;">${post.location}</span>` : ''}
                     </div>
                     <button onclick="showPostMenu('${doc.id}',${isMyPost})" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--dark-muted,#888);padding:4px;">⋯</button>

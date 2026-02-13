@@ -596,6 +596,22 @@
                             <button onclick="AI_ASSISTANT.saveAdminSettings()" class="btn-primary">💾 설정 저장</button>
                         </div>
                     </div>
+
+                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-top:1rem;">
+                        <h3 style="margin-bottom:1rem;">🤖 AI 소셜 봇</h3>
+                        <p style="font-size:0.85rem; color:#666; margin-bottom:1rem;">5명의 AI 캐릭터가 소셜 피드에 자동으로 글을 올리고, 댓글에 답변합니다.</p>
+                        <div style="display:grid; gap:0.5rem;">
+                            <button onclick="aiSocialPostAll()" class="btn-primary" style="background:linear-gradient(135deg,#D4AF37,#F0C060);color:#1a1a2e;">🚀 전체 캐릭터 포스팅 (5명)</button>
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-top:0.5rem;">
+                                <button onclick="aiSocialPostOne('kps')" style="padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">👔 KPS</button>
+                                <button onclick="aiSocialPostOne('hansun')" style="padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">🎹 한선</button>
+                                <button onclick="aiSocialPostOne('michael')" style="padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">🎤 마이클</button>
+                                <button onclick="aiSocialPostOne('matthew')" style="padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">🔧 매튜</button>
+                                <button onclick="aiSocialPostOne('crownygirl')" style="padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;grid-column:span 2;">✨ 크라우니걸</button>
+                            </div>
+                            <div id="ai-social-result" style="margin-top:0.5rem;font-size:0.8rem;color:#666;"></div>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -654,6 +670,27 @@
     <script src="js/config.js?v=21.2"></script>
     <script src="js/offchain.js?v=21.2"></script>
     <script src="js/ai-assistant.js?v=21.2"></script>
+    <script src="js/ai-social.js?v=1.0"></script>
+    <script>
+    async function aiSocialPostAll() {
+        const el = document.getElementById('ai-social-result');
+        el.textContent = '⏳ 5명 포스팅 생성 중...';
+        try {
+            await AI_SOCIAL.init();
+            const results = await AI_SOCIAL.autoPostAll();
+            el.innerHTML = results.map(r => r.error ? `❌ ${r.character}: ${r.error}` : `✅ ${r.character}: ${r.text}...`).join('<br>');
+        } catch (e) { el.textContent = '❌ 오류: ' + e.message; }
+    }
+    async function aiSocialPostOne(key) {
+        const el = document.getElementById('ai-social-result');
+        el.textContent = '⏳ 포스팅 생성 중...';
+        try {
+            await AI_SOCIAL.init();
+            const result = await AI_SOCIAL.autoPostOne(key);
+            el.textContent = result ? `✅ ${result.character}: ${result.text.substring(0, 80)}...` : '❌ 생성 실패';
+        } catch (e) { el.textContent = '❌ 오류: ' + e.message; }
+    }
+    </script>
     <script src="js/admin.js?v=21.2"></script>
     <script>
     // showToast polyfill for admin.html
