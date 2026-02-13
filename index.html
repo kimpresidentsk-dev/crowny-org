@@ -2137,6 +2137,24 @@
         if (active) active.classList.add('active');
     }
     function showCreatePostModal() {
+        const overlay = document.createElement('div');
+        overlay.className = 'bottom-sheet-overlay';
+        overlay.onclick = () => { overlay.remove(); sheet.remove(); };
+        const sheet = document.createElement('div');
+        sheet.className = 'bottom-sheet active';
+        sheet.innerHTML = `
+            <div class="bottom-sheet-handle"></div>
+            <div style="padding:12px 0;">
+                <div style="padding:12px 16px;font-weight:700;font-size:1rem;color:var(--text,#fff);">➕ 새로 만들기</div>
+                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('social');setTimeout(()=>{const t=document.getElementById('post-text');if(t){t.focus();t.scrollIntoView({behavior:'smooth',block:'center'})}},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:var(--text,#fff);font-size:0.95rem;cursor:pointer;text-align:left;">📸 소셜 게시물</button>
+                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('reels');setTimeout(()=>{if(typeof SHORTFORM!=='undefined'&&SHORTFORM.openUpload)SHORTFORM.openUpload()},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:var(--text,#fff);font-size:0.95rem;cursor:pointer;text-align:left;">🎬 숏폼 영상</button>
+                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('social');setTimeout(()=>{if(typeof openStoryUpload==='function')openStoryUpload()},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:var(--text,#fff);font-size:0.95rem;cursor:pointer;text-align:left;">📖 스토리</button>
+                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();" style="width:100%;padding:14px 16px;border:none;background:none;color:#888;font-size:0.95rem;cursor:pointer;text-align:left;">취소</button>
+            </div>`;
+        document.body.appendChild(overlay);
+        document.body.appendChild(sheet);
+    }
+    function _oldShowCreatePostModal() {
         showPage('social');
         if (typeof setSocialFilter === 'function') setSocialFilter('all');
         setTimeout(() => {
