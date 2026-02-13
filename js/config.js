@@ -293,9 +293,14 @@ async function checkCumulativeLiquidation() {
 
 // Auth State Listener
 auth.onAuthStateChanged(async (user) => {
+    // Landing State Update (Jamie)
+    if (typeof updateLandingState === 'function') {
+        updateLandingState(user);
+    }
+
     if (user) {
         currentUser = user;
-        document.getElementById('auth-modal').style.display = 'none';
+        // document.getElementById('auth-modal').style.display = 'none'; // handled by updateLandingState
         document.getElementById('user-email').textContent = user.email;
         document.getElementById('user-info').style.display = 'block';
         
@@ -344,7 +349,8 @@ auth.onAuthStateChanged(async (user) => {
         // ★ 초대 시스템 초기화
         if (typeof INVITE !== 'undefined') INVITE.init();
     } else {
-        document.getElementById('auth-modal').style.display = 'flex';
+        // Jamie: Landing 페이지 활성화를 위해 자동 모달 팝업 제거
+        // document.getElementById('auth-modal').style.display = 'flex'; 
         document.getElementById('user-info').style.display = 'none';
         // 관리자 메뉴 숨기기
         const adminNav = document.getElementById('admin-nav-item');

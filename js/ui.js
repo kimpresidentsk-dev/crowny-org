@@ -1,5 +1,19 @@
 // ===== ui.js - UI 헬퍼, 페이지 네비게이션 =====
 // ========== UI HELPERS ==========
+function updateLandingState(user) {
+    const landing = document.getElementById('landing-page');
+    if (!landing) return;
+    
+    if (user) {
+        landing.classList.add('hidden');
+    } else {
+        landing.classList.remove('hidden');
+        // 강제로 모달 닫기 (랜딩에 집중)
+        document.getElementById('auth-modal').style.display = 'none';
+        document.getElementById('sidebar').classList.remove('active');
+    }
+}
+
 function toggleMenu() {
     document.getElementById('sidebar').classList.toggle('active');
 }

@@ -5,21 +5,31 @@
 }
 
 :root {
-    --primary: #1a1a2e;
-    --primary-light: #16213e;
-    --gold: #D4AF37;
+    /* Brand Colors (New) */
+    --brand-pink: #E91E63;   /* Protecting Beauty */
+    --brand-blue: #2196F3;   /* Empowering Safety */
+    --brand-gold: #FFC107;   /* Wealth */
+    
+    /* Base Overrides */
+    --primary: var(--brand-pink);       /* 버튼 등 주요 액션 */
+    --primary-light: #F48FB1;
+    --bg: #050505;                      /* 더 깊은 검정 */
+    --bg-card: rgba(30, 30, 40, 0.7);   /* Glassmorphism 준비 */
+    --text: #ffffff;
+    --border: rgba(255, 255, 255, 0.1);
+    
+    /* Legacy Compat (기존 코드 깨짐 방지) */
+    --gold: var(--brand-gold);
+    --accent: var(--brand-gold);
+
+    --primary-legacy: #1a1a2e; /* Original primary kept for backup */
     --gold-dark: #B8860B;
     --cream: #FFF8F0;
     --cream-dark: #F5E6D3;
-    --bg: #0a0a1a;
-    --bg-card: #1a1a2e;
     --bg-card-alt: #1e1e3a;
-    --text: #f0f0f0;
     --text-light: #aaa;
     --text-muted: #888;
     --white: #1a1a2e;
-    --accent: #D4AF37;
-    --border: #2a2a3e;
     --card-bg: #1a1a2e;
     --success: #4CAF50;
     --warning: #ff9800;
@@ -37,6 +47,20 @@
     --dark-gold: #D4AF37;
     --dark-cream: #FFF8F0;
 }
+
+/* Landing Specific Styles */
+#landing-page {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100vh;
+    background: linear-gradient(135deg, #000000 0%, #1a0510 100%);
+    z-index: 9999; /* 최상단 노출 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+.hidden { display: none !important; }
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
