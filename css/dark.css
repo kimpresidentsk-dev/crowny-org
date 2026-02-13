@@ -1,0 +1,234 @@
+/* ===== DARK MODE ===== */
+
+/* ===== DARK MODE ===== */
+[data-theme="dark"] {
+    --primary: #0d0d1a;
+    --primary-light: #1a1a2e;
+    --gold: #FFD700;
+    --gold-dark: #B8860B;
+    --cream: #1a1a2e;
+    --bg: #0d0d1a;
+    --text: #e0e0e0;
+    --text-light: #aaa;
+    --border: #333;
+    --accent: #888;
+    --white: #16213e;
+    --card-bg: #16213e;
+}
+[data-theme="dark"] body { background: var(--bg); color: var(--text); }
+[data-theme="dark"] .sidebar { background: #0f0c29; border-color: var(--border); }
+[data-theme="dark"] .modal-content,
+[data-theme="dark"] .register-modal-content { background: var(--card-bg); color: var(--text); }
+[data-theme="dark"] input, [data-theme="dark"] textarea, [data-theme="dark"] select { background: var(--primary-light); color: var(--text); border-color: #444; }
+[data-theme="dark"] .service-card { background: var(--card-bg); color: var(--text); }
+[data-theme="dark"] .nav-item { color: #ccc; }
+[data-theme="dark"] .nav-item:hover, [data-theme="dark"] .nav-item.active { color: var(--gold); }
+
+
+/* ============================================================
+   MEGA UI UPGRADE — Instagram + YouTube Level
+   ============================================================ */
+
+/* ===== DARK MODE DEFAULTS (merged into :root) ===== */
+
+body {
+    background: var(--dark-bg) !important;
+    color: var(--dark-text) !important;
+}
+
+.content {
+    background: var(--dark-bg) !important;
+}
+
+.page > h2 { color: var(--dark-text); }
+.page > h2::after { background: var(--dark-gold); }
+
+/* Cards dark */
+.post, .post-create, .wallet-info, .credit-header, .trading-panel,
+.messenger-container, .chat-sidebar, .chat-window, .settings-card,
+.dash-card, .care-card {
+    background: var(--dark-card) !important;
+    border-color: var(--dark-border) !important;
+    color: var(--dark-text) !important;
+}
+
+.service-card {
+    background: var(--dark-card) !important;
+    border-color: var(--dark-border) !important;
+    color: var(--dark-text) !important;
+}
+.service-card:hover {
+    border-color: var(--dark-gold) !important;
+}
+
+/* Input dark */
+input, textarea, select {
+    background: var(--dark-card-alt) !important;
+    color: var(--dark-text) !important;
+    border-color: var(--dark-border) !important;
+}
+
+
+/* ===== POST CREATE (dark) ===== */
+.post-create {
+    background: var(--dark-card) !important;
+    border: none !important;
+    border-bottom: 1px solid var(--dark-border) !important;
+    border-radius: 0 !important;
+    padding: 12px 14px !important;
+}
+.post-create textarea {
+    background: var(--dark-card-alt) !important;
+    border-color: var(--dark-border) !important;
+    color: var(--dark-text) !important;
+}
+
+/* ===== FRIENDS GRID (dark) ===== */
+.friends-grid { display: none !important; }
+
+/* ===== FEED container max width ===== */
+@media (min-width: 769px) {
+    #social-feed-wrapper {
+        max-width: 470px;
+        margin: 0 auto;
+    }
+    #story-ring-container {
+        max-width: 470px;
+        margin: 0 auto !important;
+    }
+}
+
+/* ===== MODAL / OVERLAY DARK ===== */
+.modal-content,
+.register-modal-content {
+    background: var(--dark-card) !important;
+    color: var(--dark-text) !important;
+}
+
+/* ===== HERO DARK ===== */
+.hero h2 { color: var(--dark-gold) !important; }
+.hero h1 { color: var(--dark-text) !important; }
+.hero p { color: var(--dark-muted) !important; }
+
+/* ===== SIDEBAR STAYS DARK ===== */
+.sidebar { background: #0f0c29 !important; }
+
+/* ===== SECTION BANNER DARK ===== */
+.section-banner { color: white !important; }
+
+/* ===== MISC DARK OVERRIDES ===== */
+.btn-primary {
+    background: var(--dark-gold) !important;
+    color: #000 !important;
+}
+.btn-primary:hover {
+    background: #e6c040 !important;
+    color: #000 !important;
+}
+
+h2, h3, h4, strong { color: var(--dark-text); }
+p { color: var(--dark-muted); }
+label { color: var(--dark-muted) !important; }
+
+.token-card {
+    background: var(--dark-card-alt) !important;
+    border-color: var(--dark-border) !important;
+}
+.token-name { color: var(--dark-text) !important; }
+.token-desc { color: var(--dark-muted) !important; }
+.token-balance { color: var(--dark-gold) !important; }
+
+/* Chat dark */
+.chat-window { background: var(--dark-bg) !important; }
+.chat-header { background: var(--dark-card) !important; border-color: var(--dark-border) !important; }
+.chat-messages { background: var(--dark-bg) !important; }
+.chat-input { background: var(--dark-card) !important; border-color: var(--dark-border) !important; }
+.chat-item:hover { background: var(--dark-card-alt) !important; }
+
+/* Hide old social filter tabs when new tab bar is active */
+.social-filter-tab { display: none !important; }
+
+/* Story viewer z-index fix */
+#story-viewer-overlay { z-index: 99999 !important; }
+
+/* ===== REELS PAGE OVERRIDES ===== */
+#reels h2 { display: none; }
+#reels > div:first-child { display: none; }
+#reels-container {
+    height: 100dvh !important;
+    border-radius: 0 !important;
+    margin: -1.5rem -1.5rem 0 !important;
+    overflow: hidden;
+    overscroll-behavior: none;
+    touch-action: pan-x;
+}
+@media (max-width: 768px) {
+    #reels-container {
+        margin: -0.5rem -0.5rem 0 !important;
+        height: calc(100dvh - 56px) !important;
+    }
+    #reels.active {
+        padding: 0 !important;
+    }
+}
+
+
+/* ===== GLOBAL DARK MODE CLEANUP ===== */
+
+/* Ensure all system messages are dark */
+.system-message {
+    background: rgba(255,255,255,0.05) !important;
+    color: var(--text-muted) !important;
+}
+
+/* Sidebar dark */
+.sidebar {
+    background: var(--bg-card) !important;
+}
+.sidebar .nav-item:hover {
+    background: var(--bg-card-alt) !important;
+    color: var(--gold) !important;
+}
+.sidebar .nav-item.active {
+    background: rgba(212,175,55,0.1) !important;
+    border-left: 3px solid var(--gold) !important;
+    color: var(--gold) !important;
+}
+
+/* Bottom tab active gold */
+.bottom-tab-item.active {
+    color: var(--gold) !important;
+}
+
+/* Tables dark */
+table, th, td {
+    border-color: var(--border) !important;
+    color: var(--text);
+}
+th {
+    background: var(--bg-card-alt) !important;
+}
+td {
+    background: var(--bg-card) !important;
+}
+
+/* Scrollbar dark */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+}
+
+/* Selection */
+::selection {
+    background: rgba(212,175,55,0.3);
+    color: var(--text);
+}
+
+
