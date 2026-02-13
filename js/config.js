@@ -1,8 +1,8 @@
 // ===== config.js - 전역변수, 토큰설정, 슬롯/리스크 =====
 // Cache Buster - Version 5.4 - Copy Trading + Fee Display + Trading Tier
 // Global State
-let currentUser = null;
-let userWallet = null;
+var currentUser = null;
+var userWallet = null;
 
 // ========== POLYGON ERC-20 토큰 컨트랙트 ==========
 const POLYGON_TOKENS = {
