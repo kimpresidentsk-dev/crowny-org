@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>CROWNY PLATFORM</title>
     
     <!-- PWA -->
@@ -652,14 +652,13 @@
                     </div>
                     <div class="chat-input" id="chat-input-area" style="display:none;">
                         <button onclick="showAttachMenu()" class="btn-send-token" title="파일 첨부">📎</button>
-                        <button id="voice-record-btn" class="btn-send-token" title="음성 메시지"
+                        <button id="voice-record-btn" class="btn-send-token chat-extra-btn" title="음성 메시지"
                             onmousedown="startVoiceRecord()" onmouseup="stopVoiceRecord()" onmouseleave="cancelVoiceRecord()"
                             ontouchstart="startVoiceRecord()" ontouchend="stopVoiceRecord()">🎤</button>
-                        <textarea id="message-input" placeholder="메시지..." rows="1" data-i18n-placeholder="messenger.input_placeholder"></textarea>
+                        <input type="text" id="message-input" placeholder="메시지..." style="font-size:16px;" data-i18n-placeholder="messenger.input_placeholder">
                         <button onclick="showStickerGifPanel()" class="btn-send-token" title="스티커/GIF">😊</button>
-                        <button onclick="sendTokenWithMessage()" class="btn-send-token" title="토큰 전송">💰</button>
-                        <button onclick="showShareItemModal()" class="btn-send-token" title="상품 공유">🔗</button>
-                        <button onclick="sendMessage()" data-i18n="messenger.send">전송</button>
+                        <button onclick="sendTokenWithMessage()" class="btn-send-token chat-extra-btn" title="토큰 전송">💰</button>
+                        <button onclick="sendMessage()" class="btn-send-msg" data-i18n="messenger.send">➤</button>
                     </div>
                     <!-- Voice recording indicator -->
                     <div id="voice-recording-ui" style="display:none;" class="voice-recording-ui">

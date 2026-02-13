@@ -1873,9 +1873,29 @@ h2 {
     border-radius: 50% !important;
 }
 
-.chat-input button:last-child {
+.chat-input .btn-send-msg {
     flex-shrink: 0 !important;
-    white-space: nowrap !important;
+    width: 40px !important;
+    height: 40px !important;
+    padding: 0 !important;
+    font-size: 1.2rem !important;
+    border-radius: 50% !important;
+    background: var(--gold, #D4AF37) !important;
+    color: #000 !important;
+    border: none !important;
+    cursor: pointer !important;
+}
+
+@media (max-width: 768px) {
+    .chat-input .chat-extra-btn {
+        display: none !important;
+    }
+    .chat-input {
+        padding: 0.4rem 0.5rem !important;
+    }
+    .chat-input input {
+        font-size: 16px !important; /* prevent iOS zoom */
+    }
 }
 
 /* ===== Contact card overflow fix ===== */
