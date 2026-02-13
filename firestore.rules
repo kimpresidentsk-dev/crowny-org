@@ -187,6 +187,24 @@ service cloud.firestore {
       }
     }
 
+    // prop_challenges (CRTD 트레이딩 챌린지)
+    match /prop_challenges/{challengeId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null;
+
+      match /participants/{participantId} {
+        allow read: if request.auth != null;
+        allow write: if request.auth != null;
+      }
+    }
+
+    // admin_log
+    match /admin_log/{logId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+    }
+
     // translation_requests, book_translators 등 기타
     match /translation_requests/{docId} {
       allow read, create: if request.auth != null;
