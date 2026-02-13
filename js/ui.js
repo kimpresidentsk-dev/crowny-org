@@ -21,6 +21,9 @@ function showPage(pageId) {
     
     document.getElementById('sidebar').classList.remove('active');
     
+    // Sync bottom tab bar highlight
+    if (typeof updateBottomTab === 'function') updateBottomTab(pageId);
+    
     // Load page-specific data
     if (pageId === 'social') {
         if (typeof loadSocialFeed === 'function') loadSocialFeed();

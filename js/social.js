@@ -2668,7 +2668,7 @@ async function showFullProfile(uid) {
             ${userData.bio ? `<div class="insta-profile-bio">${userData.bio}</div>` : ""}
             <div class="insta-profile-actions">
                 ${isMe ? `<button class="insta-btn-edit" onclick="showProfileEdit()">프로필 편집</button><button class="insta-btn-edit" onclick="copyShareURL('user','${uid}')">공유</button>` : `<button class="${amFollowing ? 'insta-btn-following' : 'insta-btn-follow'}" onclick="followUser('${uid}');showFullProfile('${uid}')">${amFollowing ? "팔로잉" : "팔로우"}</button><button class="insta-btn-edit" onclick="startChatFromProfile('${uid}')">메시지</button>`}
-            </div>
+            </div>`;
         // Profile tabs (Instagram-style)
         html += `<div class="insta-profile-tabs">
             <button class="insta-profile-tab active" onclick="switchProfileTab('posts','${uid}')">📷</button>
