@@ -682,12 +682,12 @@
     <script>
     async function aiSocialPostAll() {
         const el = document.getElementById('ai-social-result');
-        el.textContent = '⏳ 5명 포스팅 생성 중...';
+        el.textContent = '⏳ 5명 포스팅 생성 중... (각 캐릭터 5~10초 소요)';
         try {
-            await AI_SOCIAL.init();
+            try { await AI_SOCIAL.init(); } catch(e) { console.warn('init skip:', e); }
             const results = await AI_SOCIAL.autoPostAll();
             el.innerHTML = results.map(r => r.error ? `❌ ${r.character}: ${r.error}` : `✅ ${r.character}: ${r.text}...`).join('<br>');
-        } catch (e) { el.textContent = '❌ 오류: ' + e.message; }
+        } catch (e) { el.textContent = '❌ 오류: ' + e.message + '\n\n' + e.stack; }
     }
     async function aiSocialPostOne(key) {
         const el = document.getElementById('ai-social-result');

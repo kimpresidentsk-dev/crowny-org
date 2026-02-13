@@ -265,18 +265,24 @@ ${lang !== 'ko' ? `언어: ${langNames[lang] || lang}로 답변하세요.` : ''}
 
     // 자동 포스팅 (관리자가 트리거)
     async function autoPostAll() {
-        if (!geminiApiKey) await init();
+        try { if (!geminiApiKey) await init(); } catch(e) { console.warn('[AI-Social] init warn:', e); }
+        // API 키 폴백
+        if (!geminiApiKey) geminiApiKey = 'AIzaSyD1E9ErsFaHzxy_-CBbXhXyAa10ua1PDeg';
         const results = [];
         for (const [key, char] of Object.entries(BOT_CHARACTERS)) {
             try {
+                console.log(`[AI-Social] Generating post for ${char.nickname}...`);
                 const text = await generatePost(key);
                 if (text) {
                     // 캐릭터 간 시간차 (자연스러움)
-                    await new Promise(r => setTimeout(r, 2000 + Math.random() * 3000));
+                    await new Promise(r => setTimeout(r, 1000 + Math.random() * 2000));
                     const postId = await publishPost(key, text);
                     results.push({ character: char.nickname, postId, text: text.substring(0, 60) });
+                } else {
+                    results.push({ character: char.nickname, error: 'Gemini 응답 없음' });
                 }
             } catch (e) {
+                console.error(`[AI-Social] ${char.nickname} error:`, e);
                 results.push({ character: char.nickname, error: e.message });
             }
         }
@@ -285,7 +291,8 @@ ${lang !== 'ko' ? `언어: ${langNames[lang] || lang}로 답변하세요.` : ''}
 
     // 특정 캐릭터만 포스팅
     async function autoPostOne(charKey) {
-        if (!geminiApiKey) await init();
+        try { if (!geminiApiKey) await init(); } catch(e) { console.warn('[AI-Social] init warn:', e); }
+        if (!geminiApiKey) geminiApiKey = 'AIzaSyD1E9ErsFaHzxy_-CBbXhXyAa10ua1PDeg';
         const text = await generatePost(charKey);
         if (text) {
             const postId = await publishPost(charKey, text);
