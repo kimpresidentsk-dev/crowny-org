@@ -214,6 +214,7 @@
             <a href="#" onclick="showPage('fundraise')" class="nav-item">💝 FUNDRAISE<span class="nav-sub" data-i18n="nav.fundraise">모금</span></a>
             <a href="#" onclick="showPage('ai-assistant')" class="nav-item">👑 CROWNY PANEL<span class="nav-sub" data-i18n="nav.crowny_panel">크라우니 패널</span></a>
             <a href="#" onclick="showPage('care')" class="nav-item">💝 CARE<span class="nav-sub" data-i18n="nav.care">크라우니케어</span></a>
+            <a href="#" onclick="showPage('beauty-manager')" class="nav-item">✨ BEAUTY<span class="nav-sub">뷰티매니저</span></a>
             <hr class="nav-divider">
             <a href="admin.html" class="nav-item" id="admin-nav-item" style="display:none; color:#e94560;">🔐 ADMIN<span class="nav-sub" data-i18n="nav.admin">관리자</span></a>
             <a href="#" onclick="showPage('settings')" class="nav-item" style="margin-top:auto;">⚙️ SETTINGS<span class="nav-sub" data-i18n="nav.settings">설정</span></a>
@@ -299,6 +300,10 @@
                 <div class="service-card" onclick="showPage('care')">
                     <span class="icon">💝</span>
                     <h3>CARE</h3>
+                </div>
+                <div class="service-card" onclick="showPage('beauty-manager')">
+                    <span class="icon">✨</span>
+                    <h3>BEAUTY</h3>
                 </div>
                 <div class="service-card" onclick="showPage('ai-assistant')" style="border:2px solid var(--gold, #D4AF37);">
                     <span class="icon">👑</span>
@@ -1693,6 +1698,20 @@
             </div>
         </section>
 
+        <!-- BEAUTY MANAGER -->
+        <section id="beauty-manager" class="page">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <h2 style="margin:0;">✨ 뷰티매니저</h2>
+            </div>
+            <div class="section-banner" style="background:linear-gradient(135deg, #E91E63, #FF6090);">
+                <h3>✨ 뷰티매니저 — 피부 분석 & 변화 추적</h3>
+                <p>부위별 피부 촬영 → 전문가/AI 분석 → 타임라인으로 변화 확인</p>
+            </div>
+            <div id="beauty-manager-content" style="margin-top:1rem;">
+                <p style="text-align:center;color:var(--accent);padding:2rem;">로딩 중...</p>
+            </div>
+        </section>
+
         <!-- Admin moved to admin.html -->
         <!-- AI ASSISTANT -->
         <section id="ai-assistant" class="page">
@@ -2126,6 +2145,7 @@
     <script src="js/care.js?v=21.0" defer></script>
     <script src="js/ai-assistant.js?v=3.6" defer></script>
     <script src="js/ai-social.js?v=1.0" defer></script>
+    <script src="js/beauty-manager.js?v=1.0" defer></script>
     <script src="js/shortform.js?v=21.0" defer></script>
     <script src="js/landing.js?v=1.0" defer></script>
     <script src="js/invite.js?v=21.0" defer></script>

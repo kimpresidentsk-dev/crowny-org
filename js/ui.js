@@ -77,6 +77,9 @@ function showPage(pageId) {
     if (pageId === 'settings') {
         if (typeof loadSettings === 'function') loadSettings();
     }
+    if (pageId === 'beauty-manager') {
+        if (typeof BEAUTY !== 'undefined') BEAUTY.init();
+    }
     if (pageId === 'art') {
         loadArtGallery();
     }

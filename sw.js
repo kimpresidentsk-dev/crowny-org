@@ -28,6 +28,7 @@ const APP_SHELL = [
   '/js/i18n.js',
   '/js/ai-assistant.js',
   '/js/ai-social.js',
+  '/js/beauty-manager.js',
   '/js/care.js',
   '/js/e2e-crypto.js',
   '/js/explore.js',

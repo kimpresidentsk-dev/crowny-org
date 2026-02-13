@@ -612,6 +612,13 @@
                             <div id="ai-social-result" style="margin-top:0.5rem;font-size:0.8rem;color:#666;"></div>
                         </div>
                     </div>
+
+                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-top:1rem;">
+                        <h3 style="margin-bottom:1rem;">✨ 뷰티매니저 — 분석 요청</h3>
+                        <p style="font-size:0.85rem; color:#666; margin-bottom:1rem;">사용자들의 피부 분석 요청 목록입니다. 사진을 확인하고 분석 결과를 입력하세요.</p>
+                        <button onclick="BEAUTY.loadAdminRequests()" style="padding:0.5rem 1rem;border:none;border-radius:6px;background:#E91E63;color:white;cursor:pointer;margin-bottom:0.5rem;">🔄 요청 목록 새로고침</button>
+                        <div id="beauty-admin-requests"><p style="color:#888;font-size:0.85rem;">목록을 로드하려면 위 버튼을 클릭하세요.</p></div>
+                    </div>
                 </div>
 
             </div>
@@ -671,6 +678,7 @@
     <script src="js/offchain.js?v=21.2"></script>
     <script src="js/ai-assistant.js?v=21.2"></script>
     <script src="js/ai-social.js?v=1.0"></script>
+    <script src="js/beauty-manager.js?v=1.0"></script>
     <script>
     async function aiSocialPostAll() {
         const el = document.getElementById('ai-social-result');
