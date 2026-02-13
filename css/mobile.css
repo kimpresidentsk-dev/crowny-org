@@ -987,3 +987,10 @@ a:not(.nav-item) {
         min-width: 0 !important;
     }
 }
+
+/* iOS: prevent auto-zoom on input focus */
+@media (max-width: 768px) {
+    input, textarea, select {
+        font-size: 16px !important;
+    }
+}
