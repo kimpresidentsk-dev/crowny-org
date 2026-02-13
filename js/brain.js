@@ -195,6 +195,25 @@ const BRAIN = (() => {
                     ${latestResult ? renderResult(latestResult) : '<p style="text-align:center;color:var(--accent);font-size:0.85rem;padding:1rem;">아직 진단 결과가 없습니다.<br>위 단계를 선택해서 시작해보세요!</p>'}
                 </div>
             </div>
+
+            <!-- 크라우니 지식 라이브러리 -->
+            <div style="background:var(--card-bg,white);border-radius:12px;padding:1.2rem;margin-top:1rem;">
+                <h3 style="margin:0 0 0.8rem 0;font-size:1rem;">📚 크라우니 지식 라이브러리</h3>
+                <div style="display:grid;gap:0.5rem;">
+                    <div onclick="showPage('books')" style="display:flex;align-items:center;gap:0.8rem;padding:0.8rem;background:var(--bg);border-radius:10px;cursor:pointer;">
+                        <span style="font-size:1.5rem;">📖</span>
+                        <div><div style="font-weight:600;font-size:0.9rem;">크라우니 북스</div><div style="font-size:0.75rem;color:var(--accent);">다국어 도서 · 번역 기여 · 지식 공유</div></div>
+                    </div>
+                    <div onclick="showPage('ai-assistant')" style="display:flex;align-items:center;gap:0.8rem;padding:0.8rem;background:var(--bg);border-radius:10px;cursor:pointer;">
+                        <span style="font-size:1.5rem;">👑</span>
+                        <div><div style="font-weight:600;font-size:0.9rem;">크라우니 패널</div><div style="font-size:0.75rem;color:var(--accent);">5명의 AI 멘토에게 질문하기</div></div>
+                    </div>
+                    <div onclick="showPage('prop-trading')" style="display:flex;align-items:center;gap:0.8rem;padding:0.8rem;background:var(--bg);border-radius:10px;cursor:pointer;">
+                        <span style="font-size:1.5rem;">📈</span>
+                        <div><div style="font-weight:600;font-size:0.9rem;">트레이딩 게임</div><div style="font-size:0.75rem;color:var(--accent);">실전 투자 학습 · 모의 트레이딩</div></div>
+                    </div>
+                </div>
+            </div>
         `;
     }
 

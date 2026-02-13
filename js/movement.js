@@ -280,6 +280,22 @@ const MOVEMENT = (() => {
 
         timerSeconds = 0;
         showToast(`✅ ${userProgress.totalSessions}/500 세션 완료! 🔥 ${userProgress.streak}일 연속`, 'success');
+
+        // 크라우니걸 AI 격려 메시지 (10회마다)
+        if (userProgress.totalSessions % 10 === 0) {
+            try {
+                let apiKey = 'AIzaSyD1E9ErsFaHzxy_-CBbXhXyAa10ua1PDeg';
+                try { const s = await db.collection('admin_config').doc('ai_settings').get(); const d = s.data()||{}; if(d.apiKey?.length>10) apiKey=d.apiKey; } catch(e){}
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+                    method:'POST', headers:{'Content-Type':'application/json'},
+                    body: JSON.stringify({ contents:[{parts:[{text:`크라우니걸(밝고 친근한 23세)로서, 무브먼트 ${userProgress.totalSessions}회를 달성한 사용자에게 1~2줄 격려 메시지. 이모지 포함. 텍스트만.`}]}], generationConfig:{temperature:0.9,maxOutputTokens:100} })
+                });
+                const data = await res.json();
+                const msg = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+                if (msg) showToast(`✨ ${msg}`, 'success');
+            } catch(e){}
+        }
+
         init();
     }
 
