@@ -294,16 +294,22 @@ let channelMsgUnsubscribe = null;
 
 function showChats() {
     document.querySelectorAll('.sidebar-tabs .tab-btn').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
+    if (event && event.target) event.target.classList.add('active');
+    else document.querySelector('.sidebar-tabs .tab-btn')?.classList.add('active');
     document.getElementById('chats-view').style.display = 'block';
     document.getElementById('contacts-view').style.display = 'none';
+    const channelsView = document.getElementById('channels-view');
+    if (channelsView) channelsView.style.display = 'none';
 }
 
 function showContacts() {
     document.querySelectorAll('.sidebar-tabs .tab-btn').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
+    if (event && event.target) event.target.classList.add('active');
+    else document.querySelectorAll('.sidebar-tabs .tab-btn')[1]?.classList.add('active');
     document.getElementById('chats-view').style.display = 'none';
     document.getElementById('contacts-view').style.display = 'block';
+    const channelsView = document.getElementById('channels-view');
+    if (channelsView) channelsView.style.display = 'none';
     loadContacts();
 }
 

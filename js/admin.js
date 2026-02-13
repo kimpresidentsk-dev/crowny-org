@@ -18,7 +18,7 @@ async function loadTransferRequests() {
 
 async function adminMintTokens() {
     if (currentUser.email !== 'kim.president.sk@gmail.com') {
-        alert(t('admin.admin_only','관리자만 사용 가능합니다'));
+        showToast(t('admin.admin_only','관리자만 사용 가능합니다'), 'error');
         return;
     }
     
@@ -27,14 +27,14 @@ async function adminMintTokens() {
     const amount = parseFloat(document.getElementById('admin-amount')?.value || 0);
     
     if (!email || amount <= 0) {
-        alert(t('admin.enter_email_amount','이메일과 수량을 입력하세요'));
+        showToast(t('admin.enter_email_amount','이메일과 수량을 입력하세요'), 'info');
         return;
     }
     
     const users = await db.collection('users').where('email', '==', email).get();
     
     if (users.empty) {
-        alert(t('social.user_not_found','사용자를 찾을 수 없습니다'));
+        showToast(t('social.user_not_found','사용자를 찾을 수 없습니다'), 'error');
         return;
     }
     
@@ -55,7 +55,7 @@ async function adminMintTokens() {
         timestamp: new Date()
     });
     
-    alert(`✅ ${amount} ${token} 발급 완료!`);
+    showToast(`✅ ${amount} ${token} 발급 완료!`, 'success');
     
     if (document.getElementById('admin-recipient')) {
         document.getElementById('admin-recipient').value = '';
@@ -406,7 +406,7 @@ async function checkAdminQuota(level) {
         const current = await db.collection('users').where('adminLevel', '==', level).get();
         
         if (current.size >= maxTotal) {
-            alert(`⛔ Lv${level} 쿼터 초과\n\n최대: ${maxTotal}명\n현재: ${current.size}명\n\n수퍼관리자에게 쿼터 증가를 요청하세요.`);
+            showToast(`⛔ Lv${level} 쿼터 초과\n\n최대: ${maxTotal}명\n현재: ${current.size}명\n\n수퍼관리자에게 쿼터 증가를 요청하세요.`, 'error');
             return false;
         }
         return true;
@@ -433,7 +433,7 @@ async function checkPersonalQuota(level) {
             .get();
         
         if (myAppointed.size >= perAdmin) {
-            alert(`⛔ 개인 임명 쿼터 초과\n\nLv${level} 최대 임명: ${perAdmin}명\n이미 임명: ${myAppointed.size}명`);
+            showToast(`⛔ 개인 임명 쿼터 초과\n\nLv${level} 최대 임명: ${perAdmin}명\n이미 임명: ${myAppointed.size}명`, 'error');
             return false;
         }
         return true;
@@ -445,7 +445,7 @@ async function checkPersonalQuota(level) {
 
 // ★ 쿼터 설정 (수퍼관리자 전용)
 async function saveAdminQuotas() {
-    if (!isSuperAdmin()) { alert('수퍼관리자만 설정 가능합니다'); return; }
+    if (!isSuperAdmin()) { showToast('수퍼관리자만 설정 가능합니다', 'info'); return; }
     
     const quotas = {};
     for (let lv = 1; lv <= 5; lv++) {
@@ -461,10 +461,10 @@ async function saveAdminQuotas() {
     
     try {
         await db.collection('admin_config').doc('settings').set({ quotas }, { merge: true });
-        alert('✅ 관리자 쿼터 저장 완료');
+        showToast('✅ 관리자 쿼터 저장 완료', 'success');
         loadAdminUserList();
     } catch (e) {
-        alert('저장 실패: ' + e.message);
+        showToast('저장 실패: ' + e.message, 'info');
     }
 }
 
@@ -753,7 +753,7 @@ async function distributeReferralReward_DISABLED(userId, amount, token) {
 // 관리자: 특정 사용자 전체 포지션 강제 청산
 async function adminForceCloseAll(targetUserId, targetParticipantId, challengeId) {
     if (!isAdmin()) {
-        alert(t('admin.admin_only','관리자만 사용 가능합니다'));
+        showToast(t('admin.admin_only','관리자만 사용 가능합니다'), 'error');
         return;
     }
     
@@ -763,7 +763,7 @@ async function adminForceCloseAll(targetUserId, targetParticipantId, challengeId
         const docRef = db.collection('prop_challenges').doc(challengeId)
             .collection('participants').doc(targetParticipantId);
         const doc = await docRef.get();
-        if (!doc.exists) { alert('참가자를 찾을 수 없습니다'); return; }
+        if (!doc.exists) { showToast('참가자를 찾을 수 없습니다', 'error'); return; }
         
         const data = doc.data();
         const trades = data.trades || [];
@@ -805,16 +805,16 @@ async function adminForceCloseAll(targetUserId, targetParticipantId, challengeId
             timestamp: new Date()
         });
         
-        alert(`✅ 강제 청산 완료!\n손익: $${totalPnL.toFixed(2)}`);
+        showToast(`✅ 강제 청산 완료!\n손익: $${totalPnL.toFixed(2)}`, 'success');
     } catch (error) {
-        alert('강제 청산 실패: ' + error.message);
+        showToast('강제 청산 실패: ' + error.message, 'info');
     }
 }
 
 // 관리자: 사용자 거래 중단 (dailyLocked 설정)
 async function adminSuspendTrading(targetParticipantId, challengeId, reason) {
     if (!isAdmin()) {
-        alert(t('admin.admin_only','관리자만 사용 가능합니다'));
+        showToast(t('admin.admin_only','관리자만 사용 가능합니다'), 'error');
         return;
     }
     
@@ -841,16 +841,16 @@ async function adminSuspendTrading(targetParticipantId, challengeId, reason) {
             timestamp: new Date()
         });
         
-        alert(`✅ ${t('admin.suspended','거래 중단 처리 완료')}\n${t('admin.reason','사유')}: ${suspendReason}`);
+        showToast(`✅ ${t('admin.suspended','거래 중단 처리 완료')}\n${t('admin.reason','사유')}: ${suspendReason}`, 'success');
     } catch (error) {
-        alert('중단 처리 실패: ' + error.message);
+        showToast('중단 처리 실패: ' + error.message, 'info');
     }
 }
 
 // 관리자: 거래 중단 해제
 async function adminResumeTrading(targetParticipantId, challengeId) {
     if (!isAdmin()) {
-        alert(t('admin.admin_only','관리자만 사용 가능합니다'));
+        showToast(t('admin.admin_only','관리자만 사용 가능합니다'), 'error');
         return;
     }
     
@@ -873,10 +873,10 @@ async function adminResumeTrading(targetParticipantId, challengeId) {
             timestamp: new Date()
         });
         
-        alert(t('admin.resumed','✅ 거래 중단 해제 완료'));
+        showToast(t('admin.resumed','✅ 거래 중단 해제 완료'), 'success');
         loadAdminParticipants(); // 새로고침
     } catch (error) {
-        alert('해제 실패: ' + error.message);
+        showToast('해제 실패: ' + error.message, 'info');
     }
 }
 
@@ -1040,18 +1040,18 @@ async function adminLookupOffchain() {
 
 // 포인트 발행 (민팅) — ★ 수퍼관리자(레벨 6) 전용
 async function adminMintOffchain() {
-    if (!hasLevel(6)) { alert(t('admin.super_only_mint','⛔ 수퍼관리자만 토큰을 발행할 수 있습니다')); return; }
+    if (!hasLevel(6)) { showToast(t('admin.super_only_mint','⛔ 수퍼관리자만 토큰을 발행할 수 있습니다'), 'error'); return; }
     
     const email = document.getElementById('admin-off-mint-email').value.trim();
     const tokenKey = document.getElementById('admin-off-mint-token').value;
     const amount = parseInt(document.getElementById('admin-off-mint-amount').value);
     const reason = document.getElementById('admin-off-mint-reason').value.trim() || t('admin.admin_mint','관리자 발행');
     
-    if (!email || !amount || amount <= 0) { alert(t('admin.enter_email_amount','이메일과 수량을 입력하세요')); return; }
+    if (!email || !amount || amount <= 0) { showToast(t('admin.enter_email_amount','이메일과 수량을 입력하세요'), 'info'); return; }
     
     try {
         const users = await db.collection('users').where('email', '==', email).get();
-        if (users.empty) { alert('사용자 없음: ' + email); return; }
+        if (users.empty) { showToast('사용자 없음: ' + email, 'error'); return; }
         
         const targetDoc = users.docs[0];
         const data = targetDoc.data();
@@ -1082,29 +1082,29 @@ async function adminMintOffchain() {
             timestamp: new Date()
         });
         
-        alert(`✅ ${amount.toLocaleString()} ${tokenKey.toUpperCase()} 발행 → ${email}`);
+        showToast(`✅ ${amount.toLocaleString()} ${tokenKey.toUpperCase()} 발행 → ${email}`, 'success');
         document.getElementById('admin-off-mint-email').value = '';
         document.getElementById('admin-off-mint-amount').value = '100';
         document.getElementById('admin-off-mint-reason').value = '';
     } catch (e) {
-        alert('발행 실패: ' + e.message);
+        showToast('발행 실패: ' + e.message, 'info');
     }
 }
 
 // 포인트 차감 (소각) — ★ 수퍼관리자(레벨 6) 전용
 async function adminBurnOffchain() {
-    if (!hasLevel(6)) { alert(t('admin.super_only_burn','⛔ 수퍼관리자만 토큰을 차감할 수 있습니다')); return; }
+    if (!hasLevel(6)) { showToast(t('admin.super_only_burn','⛔ 수퍼관리자만 토큰을 차감할 수 있습니다'), 'error'); return; }
     
     const email = document.getElementById('admin-off-burn-email').value.trim();
     const tokenKey = document.getElementById('admin-off-burn-token').value;
     const amount = parseInt(document.getElementById('admin-off-burn-amount').value);
     const reason = document.getElementById('admin-off-burn-reason').value.trim() || t('admin.admin_burn_reason','관리자 차감');
     
-    if (!email || !amount || amount <= 0) { alert(t('admin.enter_email_amount','이메일과 수량을 입력하세요')); return; }
+    if (!email || !amount || amount <= 0) { showToast(t('admin.enter_email_amount','이메일과 수량을 입력하세요'), 'info'); return; }
     
     try {
         const users = await db.collection('users').where('email', '==', email).get();
-        if (users.empty) { alert('사용자 없음: ' + email); return; }
+        if (users.empty) { showToast('사용자 없음: ' + email, 'error'); return; }
         
         const targetDoc = users.docs[0];
         const data = targetDoc.data();
@@ -1112,7 +1112,7 @@ async function adminBurnOffchain() {
         const curBal = off[tokenKey] || 0;
         
         if (amount > curBal) {
-            alert(`❌ 잔액 부족!\n${email}의 ${tokenKey.toUpperCase()}: ${curBal.toLocaleString()} pt\n차감 요청: ${amount.toLocaleString()} pt`);
+            showToast(`❌ 잔액 부족!\n${email}의 ${tokenKey.toUpperCase()}: ${curBal.toLocaleString()} pt\n차감 요청: ${amount.toLocaleString()} pt`, 'error');
             return;
         }
         
@@ -1138,12 +1138,12 @@ async function adminBurnOffchain() {
             timestamp: new Date()
         });
         
-        alert(`✅ ${amount.toLocaleString()} ${tokenKey.toUpperCase()} 차감 ← ${email}`);
+        showToast(`✅ ${amount.toLocaleString()} ${tokenKey.toUpperCase()} 차감 ← ${email}`, 'success');
         document.getElementById('admin-off-burn-email').value = '';
         document.getElementById('admin-off-burn-amount').value = '100';
         document.getElementById('admin-off-burn-reason').value = '';
     } catch (e) {
-        alert('차감 실패: ' + e.message);
+        showToast('차감 실패: ' + e.message, 'info');
     }
 }
 
@@ -1193,7 +1193,7 @@ async function loadTokenList() {
 
 // ★ 새 토큰 생성
 async function createCustomToken() {
-    if (!isSuperAdmin()) { alert('⛔ 수퍼관리자만 토큰을 생성할 수 있습니다'); return; }
+    if (!isSuperAdmin()) { showToast('⛔ 수퍼관리자만 토큰을 생성할 수 있습니다', 'error'); return; }
     
     const key = (document.getElementById('new-token-key').value || '').trim().toLowerCase();
     const name = (document.getElementById('new-token-name').value || '').trim().toUpperCase();
@@ -1201,10 +1201,10 @@ async function createCustomToken() {
     const icon = (document.getElementById('new-token-icon').value || '').trim() || '🪙';
     const color = document.getElementById('new-token-color').value || '#888888';
     
-    if (!key || !name) { alert('토큰 KEY와 이름은 필수입니다'); return; }
-    if (key.length < 2 || key.length > 10) { alert('KEY는 2~10자 영문 소문자'); return; }
-    if (!/^[a-z0-9]+$/.test(key)) { alert('KEY는 영문 소문자 + 숫자만 가능'); return; }
-    if (OFFCHAIN_TOKEN_REGISTRY[key]) { alert(`이미 존재하는 토큰: ${key.toUpperCase()}`); return; }
+    if (!key || !name) { showToast('토큰 KEY와 이름은 필수입니다', 'info'); return; }
+    if (key.length < 2 || key.length > 10) { showToast('KEY는 2~10자 영문 소문자', 'info'); return; }
+    if (!/^[a-z0-9]+$/.test(key)) { showToast('KEY는 영문 소문자 + 숫자만 가능', 'info'); return; }
+    if (OFFCHAIN_TOKEN_REGISTRY[key]) { showToast(`이미 존재하는 토큰: ${key.toUpperCase()}`, 'info'); return; }
     
     const tokenData = { name, fullName, icon, color, isDefault: false, createdBy: currentUser.email, createdAt: new Date().toISOString() };
     
@@ -1227,7 +1227,7 @@ async function createCustomToken() {
             tokenKey: key, tokenName: name, timestamp: new Date()
         });
         
-        alert(`✅ ${icon} ${name} (${key}) 토큰 생성 완료!`);
+        showToast(`✅ ${icon} ${name} (${key}) 토큰 생성 완료!`, 'success');
         
         // UI 업데이트
         document.getElementById('new-token-key').value = '';
@@ -1236,7 +1236,7 @@ async function createCustomToken() {
         refreshAllTokenDropdowns();
         loadTokenList();
     } catch (e) {
-        alert('토큰 생성 실패: ' + e.message);
+        showToast('토큰 생성 실패: ' + e.message, 'info');
     }
 }
 
@@ -1244,7 +1244,7 @@ async function createCustomToken() {
 async function deleteCustomToken(key) {
     if (!isSuperAdmin()) return;
     const info = OFFCHAIN_TOKEN_REGISTRY[key];
-    if (!info || info.isDefault) { alert('기본 토큰은 삭제할 수 없습니다'); return; }
+    if (!info || info.isDefault) { showToast('기본 토큰은 삭제할 수 없습니다', 'info'); return; }
     
     if (!confirm(`⚠️ ${info.icon} ${info.name} (${key}) 삭제\n\n이미 배포된 잔액은 유지되지만, 새 발행/거래가 불가합니다.\n삭제하시겠습니까?`)) return;
     
@@ -1262,30 +1262,30 @@ async function deleteCustomToken(key) {
             tokenKey: key, tokenName: info.name, timestamp: new Date()
         });
         
-        alert(`✅ ${info.icon} ${info.name} 삭제 완료`);
+        showToast(`✅ ${info.icon} ${info.name} 삭제 완료`, 'success');
         refreshAllTokenDropdowns();
         loadTokenList();
     } catch (e) {
-        alert('삭제 실패: ' + e.message);
+        showToast('삭제 실패: ' + e.message, 'info');
     }
 }
 
 // ★ 일괄 배포 (여러 사용자에게 한번에)
 async function adminBatchDistribute() {
-    if (!hasLevel(6)) { alert('⛔ 수퍼관리자만 일괄 배포할 수 있습니다'); return; }
+    if (!hasLevel(6)) { showToast('⛔ 수퍼관리자만 일괄 배포할 수 있습니다', 'error'); return; }
     
     const tokenKey = document.getElementById('admin-dist-token').value;
     const amount = parseInt(document.getElementById('admin-dist-amount').value);
     const reason = document.getElementById('admin-dist-reason').value.trim() || '일괄 배포';
     const emailsRaw = document.getElementById('admin-dist-emails').value.trim();
     
-    if (!tokenKey || !amount || amount <= 0) { alert('토큰과 수량을 입력하세요'); return; }
-    if (!emailsRaw) { alert('이메일을 입력하세요 (줄바꿈 구분)'); return; }
+    if (!tokenKey || !amount || amount <= 0) { showToast('토큰과 수량을 입력하세요', 'info'); return; }
+    if (!emailsRaw) { showToast('이메일을 입력하세요 (줄바꿈 구분)', 'info'); return; }
     
     // 이메일 파싱 (줄바꿈, 쉼표, 세미콜론)
     const emails = emailsRaw.split(/[\n,;]+/).map(e => e.trim().toLowerCase()).filter(e => e && e.includes('@'));
     
-    if (emails.length === 0) { alert('유효한 이메일이 없습니다'); return; }
+    if (emails.length === 0) { showToast('유효한 이메일이 없습니다', 'info'); return; }
     
     const ti = getTokenInfo(tokenKey);
     const totalAmount = amount * emails.length;
@@ -1347,13 +1347,13 @@ async function adminBatchDistribute() {
 
 // ★ 전체 회원 배포
 async function adminDistributeToAll() {
-    if (!hasLevel(6)) { alert('⛔ 수퍼관리자만 가능합니다'); return; }
+    if (!hasLevel(6)) { showToast('⛔ 수퍼관리자만 가능합니다', 'error'); return; }
     
     const tokenKey = document.getElementById('admin-dist-token').value;
     const amount = parseInt(document.getElementById('admin-dist-amount').value);
     const reason = document.getElementById('admin-dist-reason').value.trim() || '전체 배포';
     
-    if (!tokenKey || !amount || amount <= 0) { alert('토큰과 수량을 입력하세요'); return; }
+    if (!tokenKey || !amount || amount <= 0) { showToast('토큰과 수량을 입력하세요', 'info'); return; }
     
     const ti = getTokenInfo(tokenKey);
     
@@ -1473,11 +1473,11 @@ async function adminLoadGivingPool() {
 
 // 기부풀 분배
 async function adminDistributeGivingPool() {
-    if (!hasLevel(3)) { alert('권한 부족 (레벨 3+)'); return; }
+    if (!hasLevel(3)) { showToast('권한 부족 (레벨 3+)', 'info'); return; }
     
     const email = document.getElementById('admin-giving-email').value.trim();
     const amount = parseInt(document.getElementById('admin-giving-amount').value);
-    if (!email || !amount || amount <= 0) { alert(t('admin.enter_email_amount','이메일과 수량을 입력하세요')); return; }
+    if (!email || !amount || amount <= 0) { showToast(t('admin.enter_email_amount','이메일과 수량을 입력하세요'), 'info'); return; }
     
     try {
         // 기부풀 잔액 확인
@@ -1486,13 +1486,13 @@ async function adminDistributeGivingPool() {
         const poolBal = poolDoc.exists ? (poolDoc.data().totalAmount || 0) : 0;
         
         if (amount > poolBal) {
-            alert(`❌ 기부풀 잔액 부족!\n현재: ${poolBal.toLocaleString()} pt\n요청: ${amount.toLocaleString()} pt`);
+            showToast(`❌ 기부풀 잔액 부족!\n현재: ${poolBal.toLocaleString()} pt\n요청: ${amount.toLocaleString()} pt`, 'error');
             return;
         }
         
         // 수신자 확인
         const users = await db.collection('users').where('email', '==', email).get();
-        if (users.empty) { alert('사용자 없음: ' + email); return; }
+        if (users.empty) { showToast('사용자 없음: ' + email, 'error'); return; }
         
         if (!confirm(`🎁 기부풀 분배\n\n대상: ${email}\n수량: ${amount.toLocaleString()} CRGC pt\n기부풀 잔액: ${poolBal.toLocaleString()} → ${(poolBal - amount).toLocaleString()}`)) return;
         
@@ -1525,10 +1525,10 @@ async function adminDistributeGivingPool() {
             targetEmail: email, amount, timestamp: new Date()
         });
         
-        alert(`✅ ${amount.toLocaleString()} CRGC 기부풀에서 ${email}에게 분배 완료`);
+        showToast(`✅ ${amount.toLocaleString()} CRGC 기부풀에서 ${email}에게 분배 완료`, 'success');
         adminLoadGivingPool();
     } catch (e) {
-        alert('분배 실패: ' + e.message);
+        showToast('분배 실패: ' + e.message, 'info');
     }
 }
 
@@ -1683,7 +1683,7 @@ async function adminAdjustDailyLimit(participantId, challengeId) {
         const doc = await db.collection('prop_challenges').doc(challengeId)
             .collection('participants').doc(participantId).get();
         
-        if (!doc.exists) { alert('참가자를 찾을 수 없습니다'); return; }
+        if (!doc.exists) { showToast('참가자를 찾을 수 없습니다', 'error'); return; }
         const data = doc.data();
         const currentLimit = data.dailyLossLimit || 500;
         const email = data.email || data.userId || participantId;
@@ -1705,10 +1705,10 @@ async function adminAdjustDailyLimit(participantId, challengeId) {
             timestamp: new Date()
         });
         
-        alert(`✅ 일일 한도 $${currentLimit} → $${newLimit} 변경 완료`);
+        showToast(`✅ 일일 한도 $${currentLimit} → $${newLimit} 변경 완료`, 'success');
         loadAdminParticipants();
     } catch (error) {
-        alert('변경 실패: ' + error.message);
+        showToast('변경 실패: ' + error.message, 'info');
         console.error('adminAdjustDailyLimit 에러:', error);
     }
 }
@@ -1721,7 +1721,7 @@ async function adminUnlockTrading(participantId, challengeId) {
         const doc = await db.collection('prop_challenges').doc(challengeId)
             .collection('participants').doc(participantId).get();
         
-        if (!doc.exists) { alert('참가자를 찾을 수 없습니다'); return; }
+        if (!doc.exists) { showToast('참가자를 찾을 수 없습니다', 'error'); return; }
         const data = doc.data();
         const email = data.email || data.userId || participantId;
         const locked = data.dailyLocked ? '🔒 잠금 상태' : '🔓 정상';
@@ -1746,10 +1746,10 @@ async function adminUnlockTrading(participantId, challengeId) {
             timestamp: new Date()
         });
         
-        alert('✅ 거래 잠금 해제 + 일일 PnL 초기화 완료');
+        showToast('✅ 거래 잠금 해제 + 일일 PnL 초기화 완료', 'success');
         loadAdminParticipants();
     } catch (error) {
-        alert('해제 실패: ' + error.message);
+        showToast('해제 실패: ' + error.message, 'info');
         console.error('adminUnlockTrading 에러:', error);
     }
 }
@@ -1762,7 +1762,7 @@ async function adminAdjustBalance(participantId, challengeId) {
         const doc = await db.collection('prop_challenges').doc(challengeId)
             .collection('participants').doc(participantId).get();
         
-        if (!doc.exists) { alert('참가자를 찾을 수 없습니다'); return; }
+        if (!doc.exists) { showToast('참가자를 찾을 수 없습니다', 'error'); return; }
         const data = doc.data();
         const currentBalance = data.currentBalance || 0;
         const email = data.email || data.userId || participantId;
@@ -1786,10 +1786,10 @@ async function adminAdjustBalance(participantId, challengeId) {
             timestamp: new Date()
         });
         
-        alert(`✅ 잔액 $${currentBalance.toLocaleString()} → $${parseFloat(newBalance).toLocaleString()} 변경 완료`);
+        showToast(`✅ 잔액 $${currentBalance.toLocaleString()} → $${parseFloat(newBalance).toLocaleString()} 변경 완료`, 'success');
         loadAdminParticipants();
     } catch (error) {
-        alert('변경 실패: ' + error.message);
+        showToast('변경 실패: ' + error.message, 'info');
         console.error('adminAdjustBalance 에러:', error);
     }
 }
@@ -1802,7 +1802,7 @@ async function adminAdjustMaxDrawdown(participantId, challengeId) {
         const doc = await db.collection('prop_challenges').doc(challengeId)
             .collection('participants').doc(participantId).get();
         
-        if (!doc.exists) { alert('참가자를 찾을 수 없습니다'); return; }
+        if (!doc.exists) { showToast('참가자를 찾을 수 없습니다', 'error'); return; }
         const data = doc.data();
         const currentDD = data.maxDrawdown || 3000;
         const email = data.email || data.userId || participantId;
@@ -1826,10 +1826,10 @@ async function adminAdjustMaxDrawdown(participantId, challengeId) {
             timestamp: new Date()
         });
         
-        alert(`✅ 청산 한도 -$${currentDD.toLocaleString()} → -$${parseFloat(newDD).toLocaleString()} 변경 완료`);
+        showToast(`✅ 청산 한도 -$${currentDD.toLocaleString()} → -$${parseFloat(newDD).toLocaleString()} 변경 완료`, 'success');
         loadAdminParticipants();
     } catch (error) {
-        alert('변경 실패: ' + error.message);
+        showToast('변경 실패: ' + error.message, 'info');
         console.error('adminAdjustMaxDrawdown 에러:', error);
     }
 }
@@ -1842,7 +1842,7 @@ async function adminAdjustCopyAccounts(participantId, challengeId) {
         const doc = await db.collection('prop_challenges').doc(challengeId)
             .collection('participants').doc(participantId).get();
         
-        if (!doc.exists) { alert('참가자를 찾을 수 없습니다'); return; }
+        if (!doc.exists) { showToast('참가자를 찾을 수 없습니다', 'error'); return; }
         const data = doc.data();
         const currentCopy = data.copyAccounts || 1;
         const email = data.email || data.userId || participantId;
@@ -1866,10 +1866,10 @@ async function adminAdjustCopyAccounts(participantId, challengeId) {
             timestamp: new Date()
         });
         
-        alert(`✅ 카피 계정 ${currentCopy} → ${val} 변경 완료\n(실효 계약수 = 입력계약 × ${val})`);
+        showToast(`✅ 카피 계정 ${currentCopy} → ${val} 변경 완료\n(실효 계약수 = 입력계약 × ${val})`, 'success');
         loadAdminParticipants();
     } catch (error) {
-        alert('변경 실패: ' + error.message);
+        showToast('변경 실패: ' + error.message, 'info');
     }
 }
 
@@ -1881,7 +1881,7 @@ async function adminAdjustTradingTier(participantId, challengeId) {
         const doc = await db.collection('prop_challenges').doc(challengeId)
             .collection('participants').doc(participantId).get();
         
-        if (!doc.exists) { alert('참가자를 찾을 수 없습니다'); return; }
+        if (!doc.exists) { showToast('참가자를 찾을 수 없습니다', 'error'); return; }
         const data = doc.data();
         const currentTier = data.tradingTier || { MNQ: 1, NQ: 0 };
         const email = data.email || data.userId || participantId;
@@ -1908,10 +1908,10 @@ async function adminAdjustTradingTier(participantId, challengeId) {
             timestamp: new Date()
         });
         
-        alert(`✅ 거래 티어 변경 완료\nMNQ: ${currentTier.MNQ||0} → ${newTier.MNQ}\nNQ: ${currentTier.NQ||0} → ${newTier.NQ}`);
+        showToast(`✅ 거래 티어 변경 완료\nMNQ: ${currentTier.MNQ||0} → ${newTier.MNQ}\nNQ: ${currentTier.NQ||0} → ${newTier.NQ}`, 'success');
         loadAdminParticipants();
     } catch (error) {
-        alert('변경 실패: ' + error.message);
+        showToast('변경 실패: ' + error.message, 'info');
     }
 }
 
@@ -2068,7 +2068,7 @@ async function adminSendToken() {
     const amount = parseFloat(document.getElementById('admin-send-amount').value);
     
     if (!email || !amount || amount <= 0) {
-        alert(t('admin.enter_email_amount','이메일과 수량을 입력하세요'));
+        showToast(t('admin.enter_email_amount','이메일과 수량을 입력하세요'), 'info');
         return;
     }
     
@@ -2076,7 +2076,7 @@ async function adminSendToken() {
         // 받는 사람 찾기
         const users = await db.collection('users').where('email', '==', email).get();
         if (users.empty) {
-            alert('사용자를 찾을 수 없습니다: ' + email);
+            showToast('사용자를 찾을 수 없습니다: ' + email, 'info');
             return;
         }
         
@@ -2088,7 +2088,7 @@ async function adminSendToken() {
             .collection('wallets').limit(1).get();
         
         if (wallets.empty) {
-            alert('사용자의 지갑을 찾을 수 없습니다');
+            showToast('사용자의 지갑을 찾을 수 없습니다', 'error');
             return;
         }
         
@@ -2096,7 +2096,7 @@ async function adminSendToken() {
         const toAddress = targetWalletData.walletAddress;
         
         if (!toAddress) {
-            alert('받는 사람의 Polygon 지갑 주소가 없습니다');
+            showToast('받는 사람의 Polygon 지갑 주소가 없습니다', 'info');
             return;
         }
         
@@ -2105,7 +2105,7 @@ async function adminSendToken() {
             .collection('wallets').limit(1).get();
         
         if (adminWallets.empty) {
-            alert('관리자 지갑을 찾을 수 없습니다');
+            showToast('관리자 지갑을 찾을 수 없습니다', 'error');
             return;
         }
         
@@ -2114,14 +2114,14 @@ async function adminSendToken() {
         const fromAddress = adminWalletData.walletAddress;
         
         if (!fromPrivateKey) {
-            alert('관리자 지갑의 개인키가 없습니다');
+            showToast('관리자 지갑의 개인키가 없습니다', 'info');
             return;
         }
         
         // 온체인 잔액 확인
         const balance = await getOnchainBalance(fromAddress, tokenKey);
         if (balance < amount) {
-            alert(`온체인 잔액 부족!\n보유: ${balance.toFixed(4)} ${tokenKey.toUpperCase()}\n필요: ${amount}`);
+            showToast(`온체인 잔액 부족!\n보유: ${balance.toFixed(4)} ${tokenKey.toUpperCase()}\n필요: ${amount}`, 'error');
             return;
         }
         
@@ -2129,7 +2129,7 @@ async function adminSendToken() {
         const maticBalance = await web3.eth.getBalance(fromAddress);
         const maticFormatted = parseFloat(web3.utils.fromWei(maticBalance, 'ether'));
         if (maticFormatted < 0.01) {
-            alert(`⚠️ POL(MATIC) 잔액 부족! 가스비가 필요합니다.\n보유: ${maticFormatted.toFixed(4)} POL\n최소 0.01 POL 필요`);
+            showToast(`⚠️ POL(MATIC) 잔액 부족! 가스비가 필요합니다.\n보유: ${maticFormatted.toFixed(4)} POL\n최소 0.01 POL 필요`, 'error');
             return;
         }
         
@@ -2188,11 +2188,7 @@ async function adminSendToken() {
             timestamp: new Date()
         });
         
-        alert(
-            `✅ 온체인 전송 완료!\n\n` +
-            `${amount} ${tokenSymbol} → ${email}\n` +
-            `TX: ${receipt.transactionHash.slice(0,10)}...`
-        );
+        showToast(`✅ 온체인 전송 완료! ${amount} ${tokenSymbol} → ${email}`, 'success');
         
         document.getElementById('admin-send-email').value = '';
         document.getElementById('admin-send-amount').value = '1';
@@ -2200,7 +2196,7 @@ async function adminSendToken() {
         
     } catch (error) {
         console.error('온체인 전송 실패:', error);
-        alert('전송 실패: ' + error.message);
+        showToast('전송 실패: ' + error.message, 'info');
     } finally {
         const sendBtn = document.querySelector('[onclick="adminSendToken()"]');
         if (sendBtn) {
@@ -2489,7 +2485,7 @@ async function loadPropTrading() {
 
 async function showCreateChallenge() {
     if (!isAdmin()) {
-        alert('관리자만 챌린지를 생성할 수 있습니다');
+        showToast('관리자만 챌린지를 생성할 수 있습니다', 'info');
         return;
     }
     
@@ -2634,7 +2630,7 @@ async function submitCreateChallenge() {
     if (!isAdmin()) return;
     
     const name = document.getElementById('ch-name').value;
-    if (!name) { alert('챌린지 이름을 입력하세요'); return; }
+    if (!name) { showToast('챌린지 이름을 입력하세요', 'info'); return; }
     
     // 티어 읽기
     const tiers = {};
@@ -2643,7 +2639,7 @@ async function submitCreateChallenge() {
     const tierC = readTierInput('c'); if (tierC) tiers.C = tierC;
     
     if (Object.keys(tiers).length === 0) {
-        alert('최소 1개 티어의 참가비를 설정하세요');
+        showToast('최소 1개 티어의 참가비를 설정하세요', 'info');
         return;
     }
     
@@ -2670,12 +2666,12 @@ async function submitCreateChallenge() {
         await db.collection('prop_challenges').add(challengeData);
         
         const tierSummary = Object.entries(tiers).map(([k,v]) => `${k}군=${v.deposit}CRTD`).join(', ');
-        alert(`✅ 챌린지 생성 완료!\n\n${name}\n티어: ${tierSummary}\n상품: ${challengeData.allowedProduct}`);
+        showToast(`✅ 챌린지 생성 완료!\n\n${name}\n티어: ${tierSummary}\n상품: ${challengeData.allowedProduct}`, 'success');
         
         document.getElementById('create-challenge-form')?.remove();
         loadPropTrading();
     } catch (error) {
-        alert('생성 실패: ' + error.message);
+        showToast('생성 실패: ' + error.message, 'info');
     }
 }
 

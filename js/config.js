@@ -243,7 +243,7 @@ async function checkDailyLossLimit() {
             });
         
         updateRiskGaugeUI();
-        alert(`🚨 ${t('config.daily_limit_reached','일일 손실 한도 도달!')} (-$${limitValue})\n\n${t('config.trading_ended','오늘의 거래가 종료됩니다.')}\n${t('config.auto_reset','관리자가 해제하거나 내일 자정(UTC)에 자동 해제됩니다.')}`);
+        showToast(`🚨 ${t('config.daily_limit_reached','일일 손실 한도 도달!')} (-$${limitValue})`, 'warning');
         return true; // locked
     }
     
@@ -280,10 +280,7 @@ async function checkCumulativeLiquidation() {
         updateRiskGaugeUI();
         updateTradingUI();
         
-        alert(
-            `💀 ${t('config.cumulative_loss','누적 손실')} -$${Math.abs(RISK_CONFIG.cumulativeLossLimit).toLocaleString()} ${t('config.reached','도달')}!\n\n` +
-            t('config.account_reset','계좌가 초기화되었습니다.')
-        );
+        showToast(`💀 ${t('config.cumulative_loss','누적 손실')} -$${Math.abs(RISK_CONFIG.cumulativeLossLimit).toLocaleString()} ${t('config.reached','도달')}!`, 'error');
         
         return true;
     }
