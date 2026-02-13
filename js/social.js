@@ -620,7 +620,7 @@ async function openChat(chatId, otherId) {
 
     // Update header with security indicators
     const secIcons = [];
-    if (_chatSettings.e2eEnabled !== false) secIcons.push('🔒');
+    if (_chatSettings.e2eEnabled === true) secIcons.push('🔒');
     if (_chatSettings.autoDeleteAfter > 0) secIcons.push('⏱️');
     if (_chatSettings.secret) secIcons.push('🤫');
     if (secIcons.length > 0) {
