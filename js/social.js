@@ -1791,6 +1791,39 @@ async function addComment(postId) {
     loadSocialFeed();
 }
 
+async function editPost(postId) {
+    try {
+        const doc = await db.collection('posts').doc(postId).get();
+        if (!doc.exists) { showToast('게시물을 찾을 수 없습니다', 'error'); return; }
+        const data = doc.data();
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay active';
+        overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+        overlay.innerHTML = `<div class="modal-content" style="max-width:500px;width:90%;padding:1.5rem;">
+            <h3 style="margin-bottom:1rem;">✏️ 게시물 수정</h3>
+            <textarea id="edit-post-text" style="width:100%;min-height:120px;padding:0.8rem;border:1px solid var(--border,#333);border-radius:10px;font-size:0.95rem;resize:vertical;background:var(--card-bg,#1a1a2e);color:var(--text,#fff);box-sizing:border-box;">${data.text || ''}</textarea>
+            <div style="display:flex;gap:0.5rem;justify-content:flex-end;margin-top:1rem;">
+                <button onclick="this.closest('.modal-overlay').remove();" style="padding:0.6rem 1.2rem;border:1px solid var(--border,#333);border-radius:8px;background:none;color:var(--text,#fff);cursor:pointer;">취소</button>
+                <button onclick="saveEditPost('${postId}');" style="padding:0.6rem 1.2rem;border:none;border-radius:8px;background:#D4AF37;color:#000;font-weight:600;cursor:pointer;">저장</button>
+            </div>
+        </div>`;
+        document.body.appendChild(overlay);
+    } catch (e) { showToast('수정 실패: ' + e.message, 'error'); }
+}
+
+async function saveEditPost(postId) {
+    const textarea = document.getElementById('edit-post-text');
+    if (!textarea) return;
+    const newText = textarea.value.trim();
+    if (!newText) { showToast('내용을 입력해주세요', 'warning'); return; }
+    try {
+        await db.collection('posts').doc(postId).update({ text: newText, editedAt: firebase.firestore.FieldValue.serverTimestamp() });
+        showToast('게시물이 수정되었습니다 ✅', 'success');
+        document.querySelector('.modal-overlay')?.remove();
+        loadSocialFeed();
+    } catch (e) { showToast('수정 실패: ' + e.message, 'error'); }
+}
+
 async function deletePost(postId) {
     if (!await showConfirmModal(t('social.delete_post','게시물 삭제'), t('social.confirm_delete','이 게시물을 삭제하시겠습니까?'))) return;
     try {
@@ -2967,6 +3000,7 @@ function showPostMenu(postId, isMyPost) {
     
     let menuItems = '';
     if (isMyPost) {
+        menuItems += `<button onclick="editPost('${postId}');closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:var(--dark-text,#f0f0f0);font-size:0.95rem;cursor:pointer;text-align:left;">✏️ 수정</button>`;
         menuItems += `<button onclick="deletePost('${postId}');closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:#ff4444;font-size:0.95rem;font-weight:600;cursor:pointer;text-align:left;">🗑️ 삭제</button>`;
     }
     menuItems += `<button onclick="copyShareURL('post','${postId}');closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:var(--dark-text,#f0f0f0);font-size:0.95rem;cursor:pointer;text-align:left;">🔗 링크 복사</button>`;
