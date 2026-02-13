@@ -155,6 +155,12 @@ delay: 첫 번째 0~500, 이후 +800~2000씩 증가 (자연스러운 타이밍)`
     // ── Context ──
     function buildContext(char) {
         let ctx = char.systemPrompt;
+        // 다국어 대응: 사용자 선택 언어로 답변
+        const lang = (typeof currentLang !== 'undefined') ? currentLang : 'ko';
+        const langNames = { ko: '한국어', en: 'English', ja: '日本語', zh: '中文', es: 'Español' };
+        if (lang !== 'ko') {
+            ctx += `\n\n[중요] 사용자가 ${langNames[lang] || lang}를 선택했습니다. 반드시 ${langNames[lang] || lang}로 답변하세요. 캐릭터의 성격과 말투는 유지하되 언어만 바꿔주세요.`;
+        }
         if (!currentUser) return ctx;
         ctx += '\n\n--- 현재 사용자 정보 ---';
         ctx += `\n이메일: ${currentUser.email}`;
