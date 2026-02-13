@@ -228,4 +228,34 @@ function updateAdminRegisterButtons() {
     });
 }
 
+// ========== HASH ROUTING (딥링크 지원) ==========
+// URL 형식: #page=messenger, #page=wallet 등
+function navigateFromHash() {
+    const hash = location.hash; // e.g. "#page=messenger" or "#messenger"
+    if (!hash) return false;
+    let pageId = null;
+    if (hash.startsWith('#page=')) {
+        pageId = hash.replace('#page=', '');
+    } else if (hash.startsWith('#')) {
+        pageId = hash.substring(1);
+    }
+    if (pageId) {
+        const el = document.getElementById(pageId);
+        if (el && el.classList.contains('page')) {
+            showPage(pageId);
+            return true;
+        }
+    }
+    return false;
+}
+
+// 페이지 로드 시 hash 확인
+document.addEventListener('DOMContentLoaded', () => {
+    // auth 완료 후 hash 라우팅 (Firebase onAuthStateChanged보다 늦게 실행)
+    setTimeout(() => { navigateFromHash(); }, 300);
+});
+
+// 브라우저 뒤로가기/앞으로가기 지원
+window.addEventListener('hashchange', () => { navigateFromHash(); });
+
 // Init Web3 (Polygon) - fallback RPC
