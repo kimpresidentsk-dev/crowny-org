@@ -154,7 +154,7 @@ ${lang !== 'ko' ? `\n언어: ${langNames[lang] || lang}로 작성하세요.` : '
             likedBy: [],
             commentCount: 0,
             shareCount: 0,
-            timestamp: new Date(),
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             hashtags,
             mentions,
             isBot: true,
@@ -163,10 +163,12 @@ ${lang !== 'ko' ? `\n언어: ${langNames[lang] || lang}로 작성하세요.` : '
 
         try {
             const ref = await db.collection('posts').add(postData);
-            console.log(`[AI-Social] ${char.nickname} posted: ${text.substring(0, 50)}...`);
+            console.log(`[AI-Social] ${char.nickname} posted (${ref.id}): ${text.substring(0, 50)}...`);
+            showToast(`${char.emoji} ${char.nickname} 포스팅 완료!`, 'success');
             return ref.id;
         } catch (e) {
             console.error('[AI-Social] Publish failed:', e);
+            showToast(`❌ ${char.nickname} 포스팅 실패: ${e.message}`, 'error');
             return null;
         }
     }

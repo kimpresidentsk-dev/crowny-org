@@ -1639,7 +1639,7 @@ async function loadSocialFeed() {
             if (currentFilter === 'shorts' && !post.videoUrl) continue;
 
             const userInfo = await getUserDisplayInfo(post.userId);
-            const timeAgo = getTimeAgo(post.timestamp.toDate());
+            const timeAgo = post.timestamp ? getTimeAgo(post.timestamp.toDate()) : '방금';
             const likedByMe = post.likedBy && post.likedBy.includes(currentUser.uid);
             const likeCount = post.likes || 0;
             const commentCount = post.commentCount || 0;
