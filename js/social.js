@@ -507,11 +507,18 @@ function formatDateLabel(date) {
 
 // ===== Load chat list =====
 async function loadMessages() {
-    if (!currentUser) return;
+    if (!currentUser) { console.log('[loadMessages] no currentUser'); return; }
     const chatList = document.getElementById('chat-list');
     if (!chatList) return;
     chatList.innerHTML = '';
-    const chats = await db.collection('chats').where('participants', 'array-contains', currentUser.uid).get();
+    let chats;
+    try {
+        chats = await db.collection('chats').where('participants', 'array-contains', currentUser.uid).get();
+    } catch (e) {
+        console.error('[loadMessages] Firestore error:', e);
+        chatList.innerHTML = `<p style="padding:1rem;color:#e53935;text-align:center;">채팅 로드 실패: ${e.message}</p>`;
+        return;
+    }
     if (chats.empty) { chatList.innerHTML = `<p style="padding:1rem; color:var(--accent); text-align:center;">${t('social.start_chat','채팅을 시작하세요')}</p>`; return; }
 
     cachedChatDocs = chats.docs.sort((a, b) => {
