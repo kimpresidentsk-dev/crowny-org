@@ -410,7 +410,7 @@ const BRAIN = (() => {
 
         // AI 다음 질문
         try {
-            let apiKey = 'AIzaSyD1E9ErsFaHzxy_-CBbXhXyAa10ua1PDeg';
+            let apiKey = 'AIzaSyAhkJlLDE_V2Iso8PZaGIWPqs_ht0ZuZeA';
             try {
                 const s = await db.collection('admin_config').doc('ai_settings').get();
                 const d = s.data() || {};
@@ -442,7 +442,7 @@ const BRAIN = (() => {
 
     async function analyzeEnneagram() {
         try {
-            let apiKey = 'AIzaSyD1E9ErsFaHzxy_-CBbXhXyAa10ua1PDeg';
+            let apiKey = 'AIzaSyAhkJlLDE_V2Iso8PZaGIWPqs_ht0ZuZeA';
             try {
                 const s = await db.collection('admin_config').doc('ai_settings').get();
                 const d = s.data() || {};

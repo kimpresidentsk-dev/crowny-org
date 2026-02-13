@@ -60,9 +60,9 @@ const AI_SOCIAL = (() => {
         try {
             const settings = await db.collection('admin_config').doc('ai_settings').get();
             const data = settings.data() || {};
-            geminiApiKey = (data.apiKey && data.apiKey.length > 10) ? data.apiKey : 'AIzaSyD1E9ErsFaHzxy_-CBbXhXyAa10ua1PDeg';
+            geminiApiKey = (data.apiKey && data.apiKey.length > 10) ? data.apiKey : 'AIzaSyAhkJlLDE_V2Iso8PZaGIWPqs_ht0ZuZeA';
         } catch (e) {
-            geminiApiKey = 'AIzaSyD1E9ErsFaHzxy_-CBbXhXyAa10ua1PDeg';
+            geminiApiKey = 'AIzaSyAhkJlLDE_V2Iso8PZaGIWPqs_ht0ZuZeA';
         }
 
         // 봇 프로필 문서 확인/생성 — 관리자 로그인 상태에서만
@@ -136,7 +136,7 @@ ${lang !== 'ko' ? `\n언어: ${langNames[lang] || lang}로 작성하세요.` : '
                 const errText = await res.text();
                 console.error(`[AI-Social] Gemini ${res.status}:`, errText);
                 // 403이면 DB에서 다른 키 시도
-                if (res.status === 403 && geminiApiKey === 'AIzaSyD1E9ErsFaHzxy_-CBbXhXyAa10ua1PDeg') {
+                if (res.status === 403 && geminiApiKey === 'AIzaSyAhkJlLDE_V2Iso8PZaGIWPqs_ht0ZuZeA') {
                     try {
                         const s = await db.collection('admin_config').doc('ai_settings').get();
                         const d = s.data() || {};
@@ -285,7 +285,7 @@ ${lang !== 'ko' ? `언어: ${langNames[lang] || lang}로 답변하세요.` : ''}
     async function autoPostAll() {
         try { if (!geminiApiKey) await init(); } catch(e) { console.warn('[AI-Social] init warn:', e); }
         // API 키 폴백
-        if (!geminiApiKey) geminiApiKey = 'AIzaSyD1E9ErsFaHzxy_-CBbXhXyAa10ua1PDeg';
+        if (!geminiApiKey) geminiApiKey = 'AIzaSyAhkJlLDE_V2Iso8PZaGIWPqs_ht0ZuZeA';
         const results = [];
         for (const [key, char] of Object.entries(BOT_CHARACTERS)) {
             try {
@@ -310,7 +310,7 @@ ${lang !== 'ko' ? `언어: ${langNames[lang] || lang}로 답변하세요.` : ''}
     // 특정 캐릭터만 포스팅
     async function autoPostOne(charKey) {
         try { if (!geminiApiKey) await init(); } catch(e) { console.warn('[AI-Social] init warn:', e); }
-        if (!geminiApiKey) geminiApiKey = 'AIzaSyD1E9ErsFaHzxy_-CBbXhXyAa10ua1PDeg';
+        if (!geminiApiKey) geminiApiKey = 'AIzaSyAhkJlLDE_V2Iso8PZaGIWPqs_ht0ZuZeA';
         const text = await generatePost(charKey);
         if (text) {
             const postId = await publishPost(charKey, text);

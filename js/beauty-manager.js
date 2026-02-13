@@ -305,7 +305,7 @@ const BEAUTY = (() => {
             const zones = photos.docs.map(d => d.data().zone);
 
             // Gemini Vision으로 분석
-            let apiKey = 'AIzaSyD1E9ErsFaHzxy_-CBbXhXyAa10ua1PDeg';
+            let apiKey = 'AIzaSyAhkJlLDE_V2Iso8PZaGIWPqs_ht0ZuZeA';
             try {
                 const settings = await db.collection('admin_config').doc('ai_settings').get();
                 const data = settings.data() || {};

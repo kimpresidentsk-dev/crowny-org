@@ -284,7 +284,7 @@ const MOVEMENT = (() => {
         // 크라우니걸 AI 격려 메시지 (10회마다)
         if (userProgress.totalSessions % 10 === 0) {
             try {
-                let apiKey = 'AIzaSyD1E9ErsFaHzxy_-CBbXhXyAa10ua1PDeg';
+                let apiKey = 'AIzaSyAhkJlLDE_V2Iso8PZaGIWPqs_ht0ZuZeA';
                 try { const s = await db.collection('admin_config').doc('ai_settings').get(); const d = s.data()||{}; if(d.apiKey?.length>10) apiKey=d.apiKey; } catch(e){}
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
                     method:'POST', headers:{'Content-Type':'application/json'},
