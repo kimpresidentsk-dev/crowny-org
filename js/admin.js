@@ -2478,7 +2478,7 @@ async function loadPropTrading() {
         }
     } catch (error) {
         console.error('Load challenges error:', error);
-        container.innerHTML = '<p style="text-align:center; color:red;">로딩 실패</p>';
+        container.innerHTML = `<p style="text-align:center; color:red;">로딩 실패: ${error.code || error.message}</p>`;
     }
 }
 
