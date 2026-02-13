@@ -120,7 +120,7 @@
     </section>
 
     <!-- Auth Modal -->
-    <div id="auth-modal" class="modal">
+    <div id="auth-modal" class="modal" onclick="if(event.target===this){this.style.display='none'; document.getElementById('landing-page').classList.remove('hidden');}">
         <div class="modal-content">
             <h2>CROWNY</h2>
             

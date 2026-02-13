@@ -6,10 +6,13 @@ function updateLandingState(user) {
     
     if (user) {
         landing.classList.add('hidden');
-    } else {
-        landing.classList.remove('hidden');
-        // 강제로 모달 닫기 (랜딩에 집중)
         document.getElementById('auth-modal').style.display = 'none';
+    } else {
+        // auth-modal이 이미 열려있으면 landing을 다시 띄우지 않음
+        const authModal = document.getElementById('auth-modal');
+        if (authModal && authModal.style.display === 'flex') return;
+        
+        landing.classList.remove('hidden');
         document.getElementById('sidebar').classList.remove('active');
     }
 }
