@@ -171,7 +171,7 @@ function initNotifBell() {
             🔔 <span style="font-size:0.85rem; flex:1; text-align:left;">알림</span>
             <span id="notif-badge" style="display:none; background:#ff4444; color:white; font-size:0.65rem; font-weight:700; padding:0.1rem 0.4rem; border-radius:10px; min-width:16px; text-align:center;">0</span>
         </button>
-        <div id="notif-panel" style="display:none; position:absolute; left:0; right:0; top:100%; z-index:9999; margin-top:0.3rem; background:white; border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.15); border:1px solid var(--border); max-height:60vh; overflow-y:auto; min-width:280px;">
+        <div id="notif-panel" style="display:none; position:fixed; left:60px; top:auto; z-index:99999; margin-top:0.3rem; background:var(--bg-card, white); border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.3); border:1px solid var(--border); max-height:70vh; overflow-y:auto; width:320px;">
             <div id="notif-panel-header" style="padding:0.8rem 1rem; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; background:white; border-radius:12px 12px 0 0;">
                 <strong style="font-size:0.9rem;">🔔 알림</strong>
                 <div style="display:flex; gap:0.5rem;">
@@ -199,8 +199,19 @@ function toggleNotifPanel() {
     notifPanelOpen = !notifPanelOpen;
     const panel = document.getElementById('notif-panel');
     if (!panel) return;
-    panel.style.display = notifPanelOpen ? 'block' : 'none';
-    if (notifPanelOpen) renderNotifPanel();
+    if (notifPanelOpen) {
+        // 벨 버튼 위치 기준으로 패널 배치
+        const bell = document.getElementById('notif-bell-btn');
+        if (bell) {
+            const rect = bell.getBoundingClientRect();
+            panel.style.top = (rect.bottom + 4) + 'px';
+            panel.style.left = Math.max(rect.left, 8) + 'px';
+        }
+        panel.style.display = 'block';
+        renderNotifPanel();
+    } else {
+        panel.style.display = 'none';
+    }
 }
 
 function renderNotifPanel() {
