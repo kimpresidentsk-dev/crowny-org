@@ -4771,3 +4771,394 @@ td {
     background: rgba(212,175,55,0.3);
     color: var(--text);
 }
+
+/* ============================================================
+   MOBILE QA FIXES — 375px 전체 레이아웃 점검
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+    /* 1. Bottom tab bar: content padding to prevent overlap */
+    .content {
+        padding-bottom: calc(56px + env(safe-area-inset-bottom) + 14px) !important;
+    }
+
+    /* AI Assistant: input bar above bottom tab */
+    #ai-assistant {
+        height: calc(100dvh - 3rem - 56px - env(safe-area-inset-bottom)) !important;
+        max-height: calc(100dvh - 3rem - 56px - env(safe-area-inset-bottom)) !important;
+    }
+    .ai-input-bar {
+        padding-bottom: max(0.8rem, env(safe-area-inset-bottom)) !important;
+        margin-bottom: 0 !important;
+    }
+
+    /* Lounge / Panel chat input above bottom tab */
+    .panel-chat-header-left,
+    .panel-back-btn { min-height: 44px; }
+
+    /* Panel character grid: 2 columns on very small screens */
+    .panel-char-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.5rem !important;
+    }
+    .panel-char-card {
+        padding: 0.8rem 0.4rem !important;
+    }
+    .panel-char-avatar {
+        width: 42px !important;
+        height: 42px !important;
+        font-size: 1.3rem !important;
+    }
+    .panel-select-screen {
+        max-width: 100% !important;
+        padding: 1rem 0.5rem !important;
+    }
+
+    /* 2. Social feed: image overflow prevention */
+    .post .post-media-wrap img,
+    .post .post-media-wrap video {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+    .post-image-carousel {
+        max-width: 100vw !important;
+    }
+    .post img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
+    /* 3. Reels: account for bottom tab */
+    #reels-container {
+        height: calc(100dvh - 56px - env(safe-area-inset-bottom)) !important;
+    }
+    .reels-fullscreen {
+        height: calc(100dvh - 56px - env(safe-area-inset-bottom)) !important;
+    }
+    .reel-item {
+        height: calc(100dvh - 56px - env(safe-area-inset-bottom)) !important;
+    }
+    .reel-side-actions {
+        bottom: 80px !important;
+    }
+
+    /* 4. Story bar: horizontal scroll padding */
+    #story-ring-container {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+        scroll-padding: 8px;
+    }
+    .story-ring-item {
+        min-width: 66px !important;
+    }
+
+    /* 5. Profile page: stats alignment on small screens */
+    .insta-profile-top {
+        gap: 16px !important;
+    }
+    .insta-profile-stats {
+        gap: 16px !important;
+    }
+    .insta-stat-num {
+        font-size: 1rem !important;
+    }
+    .insta-profile-pic,
+    .insta-profile-pic-placeholder {
+        width: 70px !important;
+        height: 70px !important;
+    }
+    .insta-grid {
+        gap: 1px !important;
+    }
+
+    /* 6. Crowny Lounge / AI chat: input area spacing for bottom tab */
+    .messenger-container.chat-open .chat-window {
+        height: calc(80vh - 56px) !important;
+    }
+    .messenger-container.chat-open .chat-input {
+        padding-bottom: max(0.5rem, env(safe-area-inset-bottom)) !important;
+    }
+    .chat-window .chat-input {
+        position: relative;
+        z-index: 2;
+    }
+
+    /* 7. CrownyCare: tabs and layout */
+    .care-card {
+        padding: 1rem !important;
+        margin-bottom: 0.8rem !important;
+    }
+    .care-quick-replies {
+        gap: 0.4rem !important;
+    }
+    .care-quick-btn {
+        min-width: 70px !important;
+        min-height: 70px !important;
+        font-size: 1.5rem !important;
+        padding: 0.6rem !important;
+    }
+    .care-quick-btn span {
+        font-size: 0.75rem !important;
+    }
+    .care-schedule-item {
+        gap: 0.6rem !important;
+        padding: 0.6rem !important;
+    }
+    .care-schedule-time {
+        font-size: 1rem !important;
+        min-width: 50px !important;
+    }
+    .care-schedule-label {
+        font-size: 0.95rem !important;
+    }
+    .care-med-item {
+        padding: 0.8rem !important;
+        gap: 0.5rem !important;
+        flex-wrap: wrap !important;
+    }
+    .sos-emergency-btns {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 0.6rem !important;
+    }
+    .sos-ec-card {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.4rem !important;
+    }
+
+    /* 8. Mall: product cards mobile grid */
+    .products {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.6rem !important;
+    }
+    .product-card {
+        padding: 0.8rem !important;
+    }
+    .product-image {
+        font-size: 2rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    .product-card h3 {
+        font-size: 0.85rem !important;
+    }
+    .price {
+        font-size: 1rem !important;
+    }
+    .reward {
+        font-size: 0.75rem !important;
+    }
+    /* Product detail gallery overflow */
+    #pd-gallery {
+        max-width: 100% !important;
+        overflow-x: auto !important;
+    }
+    #pd-gallery img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
+    /* 9. Trading: chart + panel overflow */
+    .trading-panel {
+        max-width: 100% !important;
+        padding: 1rem !important;
+    }
+    .trading-header {
+        padding: 0.8rem !important;
+    }
+    .balance-display {
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
+        font-size: 0.9rem !important;
+    }
+    .trade-tabs {
+        gap: 0.5rem !important;
+    }
+    .trade-tabs .tab-btn {
+        padding: 0.7rem 0.5rem !important;
+        font-size: 0.8rem !important;
+    }
+    /* Mentor panel scroll on mobile */
+    .mentor-avatars {
+        max-width: 100% !important;
+    }
+    .mentor-avatar {
+        width: 60px !important;
+    }
+
+    /* 10. All modals: prevent cutoff */
+    .modal-content {
+        max-width: 95vw !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        margin: 0 auto !important;
+    }
+    .register-modal-content {
+        max-width: 95vw !important;
+        max-height: 85vh !important;
+    }
+    .bottom-sheet {
+        max-height: 90vh !important;
+    }
+    .bottom-sheet-body {
+        max-height: calc(90vh - 60px) !important;
+        overflow-y: auto !important;
+    }
+    .group-member-select-modal {
+        max-width: 95vw !important;
+        max-height: 80vh !important;
+    }
+    /* Profile edit modal */
+    #profile-edit-modal > div {
+        max-width: 95vw !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+    }
+
+    /* 11. Wallet actions: 3-col to 2-col on very small */
+    .wallet-actions {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 0.5rem !important;
+    }
+    .wallet-actions .btn-action:last-child {
+        grid-column: 1 / -1 !important;
+    }
+
+    /* 12. Dark mode consistency: ensure all bg colors propagate */
+    .care-board-fullscreen .care-board-overlay {
+        padding: 1rem !important;
+    }
+    .care-board-clock {
+        font-size: 4rem !important;
+    }
+    .care-board-date {
+        font-size: 1.2rem !important;
+    }
+    .care-board-msg {
+        font-size: 1.1rem !important;
+    }
+
+    /* Books page overflow */
+    .book-scroll-row {
+        max-width: 100vw !important;
+    }
+
+    /* Explore page card overflow */
+    .collection-scroll {
+        max-width: 100% !important;
+    }
+
+    /* Sidebar overlay: prevent body scroll when open */
+    body.sidebar-open {
+        overflow: hidden !important;
+    }
+
+    /* Fix: menu toggle should not be hidden by bottom tab */
+    .menu-toggle {
+        z-index: 1001 !important;
+    }
+
+    /* Fix: bottom tab should not overlap floating elements */
+    .bottom-tab-bar {
+        box-shadow: 0 -1px 8px rgba(0,0,0,0.3) !important;
+    }
+}
+
+/* Extra small screens (375px and below) */
+@media (max-width: 380px) {
+    .panel-char-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    .services {
+        gap: 0.4rem !important;
+    }
+    .service-card .icon {
+        font-size: 1.6rem !important;
+    }
+    .service-card h3 {
+        font-size: 0.7rem !important;
+    }
+    .insta-profile-top {
+        gap: 12px !important;
+    }
+    .insta-profile-pic,
+    .insta-profile-pic-placeholder {
+        width: 60px !important;
+        height: 60px !important;
+    }
+    .insta-profile-stats {
+        gap: 12px !important;
+    }
+    .dash-grid {
+        gap: 0.6rem !important;
+    }
+    .dash-welcome {
+        padding: 1rem !important;
+        gap: 0.6rem !important;
+    }
+    .care-quick-btn {
+        min-width: 60px !important;
+        min-height: 60px !important;
+        font-size: 1.3rem !important;
+    }
+}
+
+/* ===== Landing Page (invite) ===== */
+.landing-page{position:fixed;inset:0;z-index:10002;background:#FFF8F0;color:#1a1a2e;overflow-y:auto;overflow-x:hidden;animation:landingFadeIn .5s ease}
+.landing-page.landing-exit{animation:landingFadeOut .4s ease forwards}
+@keyframes landingFadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes landingFadeOut{from{opacity:1}to{opacity:0;transform:translateY(-20px)}}
+
+.landing-inner{max-width:480px;margin:0 auto;padding:0 1.25rem 3rem}
+
+/* Hero */
+.landing-hero{text-align:center;padding:3rem 0 2rem;position:relative;overflow:hidden}
+.landing-hero-glow{position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:300px;height:300px;background:radial-gradient(circle,rgba(212,175,55,.15) 0%,transparent 70%);pointer-events:none}
+.landing-logo{display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:1rem}
+.landing-logo-icon{font-size:2.5rem}
+.landing-logo-text{font-size:2rem;font-weight:900;letter-spacing:3px;color:#1a1a2e}
+.landing-invited-by{font-size:.85rem;color:#888;margin-bottom:1rem}
+.landing-slogan{font-size:1.35rem;font-weight:700;line-height:1.5;color:#1a1a2e;margin-bottom:2rem}
+.landing-slogan em{color:#D4AF37;font-style:normal}
+
+/* Phone mockup */
+.landing-mockup{display:flex;justify-content:center}
+.landing-phone{width:200px;height:380px;background:#1a1a2e;border-radius:28px;padding:12px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.landing-phone-screen{background:#0a0a1a;border-radius:18px;height:100%;padding:1rem;display:flex;flex-direction:column;gap:.8rem}
+.landing-phone-header{display:flex;justify-content:space-between;align-items:center;color:#D4AF37;font-weight:800;font-size:.8rem}
+.landing-phone-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-top:auto;margin-bottom:1.5rem}
+.lp-icon{background:rgba(212,175,55,.12);border-radius:12px;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+
+/* Features */
+.landing-features{padding:2rem 0}
+.landing-section-title{text-align:center;font-size:1.1rem;font-weight:800;margin-bottom:1.5rem;color:#1a1a2e;letter-spacing:1px}
+.landing-feature-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem}
+.landing-feature-card{background:#fff;border-radius:14px;padding:1.2rem 1rem;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.05);transition:transform .2s}
+.landing-feature-card:active{transform:scale(.97)}
+.landing-feat-icon{font-size:2rem;margin-bottom:.4rem}
+.landing-feature-card h3{font-size:.9rem;font-weight:700;margin-bottom:.25rem;color:#1a1a2e}
+.landing-feature-card p{font-size:.75rem;color:#888;line-height:1.4}
+
+/* Social proof */
+.landing-proof{text-align:center;padding:2rem 0}
+.landing-proof-number{font-size:3rem;font-weight:900;background:linear-gradient(135deg,#D4AF37,#B8860B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.landing-proof p{font-size:.9rem;color:#888;margin-top:.25rem}
+
+/* CTA */
+.landing-cta{text-align:center;padding:1.5rem 0 2rem;position:sticky;bottom:0;background:linear-gradient(transparent,#FFF8F0 30%);z-index:1}
+.landing-cta-btn{width:100%;padding:1rem;font-size:1.1rem;font-weight:800;border:none;border-radius:14px;cursor:pointer;background:linear-gradient(135deg,#1a1a2e,#302b63);color:#D4AF37;box-shadow:0 8px 30px rgba(26,26,46,.3);transition:transform .15s,box-shadow .15s}
+.landing-cta-btn:active{transform:scale(.97);box-shadow:0 4px 15px rgba(26,26,46,.3)}
+.landing-cta-sub{font-size:.75rem;color:#aaa;margin-top:.5rem}
+
+/* Footer */
+.landing-footer{text-align:center;padding:1rem 0;font-size:.7rem;color:#ccc}
+
+/* Desktop */
+@media(min-width:768px){
+    .landing-inner{max-width:560px;padding:0 2rem 4rem}
+    .landing-slogan{font-size:1.7rem}
+    .landing-phone{width:240px;height:440px}
+    .landing-feature-grid{grid-template-columns:repeat(3,1fr)}
+    .landing-proof-number{font-size:4rem}
+    .landing-cta{position:static;background:none}
+}
