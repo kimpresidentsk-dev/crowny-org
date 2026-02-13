@@ -49,6 +49,33 @@ function isOffchainToken(tokenKey) {
 }
 
 // Firestore에서 오프체인 잔액 로드
+// 실시간 오프체인 잔액 리스너
+let _offchainUnsubscribe = null;
+function startOffchainListener() {
+    if (_offchainUnsubscribe) _offchainUnsubscribe();
+    if (!currentUser) return;
+    _offchainUnsubscribe = db.collection('users').doc(currentUser.uid)
+        .onSnapshot(doc => {
+            if (!doc.exists || !userWallet) return;
+            const offchain = doc.data().offchainBalances || {};
+            const prev = JSON.stringify(userWallet.offchainBalances || {});
+            userWallet.offchainBalances = {};
+            for (const key of OFFCHAIN_TOKENS_LIST) {
+                userWallet.offchainBalances[key] = offchain[key] || 0;
+            }
+            for (const [key, val] of Object.entries(offchain)) {
+                if (!userWallet.offchainBalances.hasOwnProperty(key)) {
+                    userWallet.offchainBalances[key] = val;
+                }
+            }
+            if (JSON.stringify(userWallet.offchainBalances) !== prev) {
+                console.log('🔄 Off-chain balances updated (realtime):', userWallet.offchainBalances);
+                if (typeof updateBalancesUI === 'function') updateBalancesUI();
+                if (typeof showToast === 'function') showToast('💰 잔액이 업데이트되었습니다', 'success', 2000);
+            }
+        }, err => console.warn('Offchain listener error:', err));
+}
+
 async function loadOffchainBalances() {
     if (!userWallet || !currentUser) return;
     try {

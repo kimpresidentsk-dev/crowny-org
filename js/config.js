@@ -323,6 +323,7 @@ auth.onAuthStateChanged(async (user) => {
         if (typeof updateAdminRegisterButtons === 'function') updateAdminRegisterButtons();
         
         if (typeof loadUserWallet === 'function') await loadUserWallet();
+        if (typeof startOffchainListener === 'function') startOffchainListener();
         if (typeof loadUserData === 'function') await loadUserData();
         
         // ★ 알림 시스템 초기화
