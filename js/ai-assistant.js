@@ -181,8 +181,8 @@ delay: 첫 번째 0~500, 이후 +800~2000씩 증가 (자연스러운 타이밍)`
         return ctx;
     }
 
-    // ── API Call (1:1) ──
-    async function sendToGemini(userMessage, char) {
+    // ── API Call (1:1) with retry ──
+    async function sendToGemini(userMessage, char, retryCount = 0) {
         if (!apiKey) return '⚠️ AI API 키가 설정되지 않았습니다. 관리자에게 문의하세요.';
 
         const history = chatHistories[char.id] || [];
@@ -205,6 +205,10 @@ delay: 첫 번째 0~500, 이후 +800~2000씩 증가 (자연스러운 타이밍)`
         });
 
         if (!res.ok) {
+            if (res.status === 429 && retryCount < 2) {
+                await new Promise(r => setTimeout(r, 2000 * (retryCount + 1)));
+                return sendToGemini(userMessage, char, retryCount + 1);
+            }
             if (res.status === 429) return '⏳ 요청이 너무 많습니다. 잠시 후 다시 시도해주세요.';
             if (res.status === 403) return '🔑 API 키가 유효하지 않습니다.';
             return '❌ AI 응답 오류가 발생했습니다.';
@@ -616,11 +620,13 @@ delay: 첫 번째 0~500, 이후 +800~2000씩 증가 (자연스러운 타이밍)`
         showToast(t('panel.invite_soon', '친구 초대 기능은 곧 업데이트됩니다!'), 'info');
     }
 
-    function resetLounge() {
-        if (confirm(t('ai.clear_confirm','대화 기록을 모두 삭제할까요?'))) {
+    async function resetLounge() {
+        const answer = await showPromptModal(t('ai.clear_title','🗑️ 대화 초기화'), t('ai.clear_confirm','대화 기록을 모두 삭제할까요?\n"확인"을 입력하세요'), '');
+        if (answer === '확인' || answer === 'ok' || answer === 'yes') {
             loungeHistory = [];
             localStorage.removeItem('crowny_lounge_history');
             renderLoungeMessages();
+            showToast(t('ai.cleared','대화 기록이 초기화되었습니다'), 'success');
         }
     }
 
@@ -682,12 +688,14 @@ delay: 첫 번째 0~500, 이후 +800~2000씩 증가 (자연스러운 타이밍)`
         if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
     }
 
-    function reset() {
+    async function reset() {
         if (loungeMode) { resetLounge(); return; }
         if (!currentCharId) return;
-        if (confirm(t('ai.clear_confirm','대화 기록을 모두 삭제할까요?'))) {
+        const answer = await showPromptModal(t('ai.clear_title','🗑️ 대화 초기화'), t('ai.clear_confirm','대화 기록을 모두 삭제할까요?\n"확인"을 입력하세요'), '');
+        if (answer === '확인' || answer === 'ok' || answer === 'yes') {
             clearHistory(currentCharId);
             renderChat();
+            showToast(t('ai.cleared','대화 기록이 초기화되었습니다'), 'success');
         }
     }
 
