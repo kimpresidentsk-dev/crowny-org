@@ -4,7 +4,7 @@ const AI_ASSISTANT = (() => {
     const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
     const MAX_HISTORY = 50;
 
-    let apiKey = ''; // DB에서 로드 (admin_config/ai_settings)
+    let apiKey = 'AIzaSyD1E9ErsFaHzxy_-CBbXhXyAa10ua1PDeg'; // 기본 키 (DB에서 오버라이드 가능)
     let enabled = true;
     let isLoading = false;
     let currentCharId = null;
