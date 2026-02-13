@@ -68,6 +68,7 @@ function showPage(pageId) {
         return;
     }
     if (pageId === 'dashboard') {
+        if (typeof refreshBalancesFromDB === 'function') refreshBalancesFromDB();
         if (typeof loadDashboard === 'function') loadDashboard();
     }
     if (pageId === 'settings') {
@@ -75,6 +76,9 @@ function showPage(pageId) {
     }
     if (pageId === 'art') {
         loadArtGallery();
+    }
+    if (pageId === 'wallet') {
+        if (typeof refreshBalancesFromDB === 'function') refreshBalancesFromDB();
     }
     if (pageId === 'mall') {
         loadMallProducts();

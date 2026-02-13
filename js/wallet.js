@@ -545,7 +545,20 @@ function fallbackCopy(text) {
 }
 
 // Update Balances (7-token: 3 on-chain + 4 off-chain + MATIC)
+async function refreshBalancesFromDB() {
+    if (!currentUser || !userWallet) return;
+    try {
+        await loadOffchainBalances();
+        await loadRealBalances();
+        updateBalancesUI();
+    } catch(e) { console.warn('Balance refresh error:', e); }
+}
+
 function updateBalances() {
+    updateBalancesUI();
+}
+
+function updateBalancesUI() {
     if (!userWallet) return;
     
     // On-chain balances
