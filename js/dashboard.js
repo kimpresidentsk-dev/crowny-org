@@ -6,6 +6,7 @@ async function loadDashboard() {
     const container = document.getElementById('dashboard-content');
     if (!container) return;
     
+    try {
     // 1. Welcome + Avatar
     const userDoc = await db.collection('users').doc(currentUser.uid).get();
     const userData = userDoc.exists ? userDoc.data() : {};
@@ -166,6 +167,19 @@ async function loadDashboard() {
             </div>
         </div>
     `;
+    } catch(e) {
+        console.error('Dashboard load error:', e);
+        container.innerHTML = `<div style="text-align:center;padding:2rem;">
+            <h2>📊 DASHBOARD</h2>
+            <p style="margin-top:1rem;">환영합니다, ${currentUser.email?.split('@')[0] || ''}님!</p>
+            <div class="dash-shortcuts" style="margin-top:1.5rem;display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;">
+                <button onclick="showPage('wallet')" class="dash-shortcut-btn">💰 WALLET</button>
+                <button onclick="showPage('social')" class="dash-shortcut-btn">📸 SOCIAL</button>
+                <button onclick="showPage('mall')" class="dash-shortcut-btn">🛒 MALL</button>
+                <button onclick="showPage('prop-trading')" class="dash-shortcut-btn">📈 TRADING</button>
+            </div>
+        </div>`;
+    }
 }
 
 // ========== Quick Shortcuts (사용자 커스텀) ==========

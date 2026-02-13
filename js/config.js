@@ -317,8 +317,8 @@ auth.onAuthStateChanged(async (user) => {
         // 등록 버튼 표시 (레벨 2 이상)
         if (typeof updateAdminRegisterButtons === 'function') updateAdminRegisterButtons();
         
-        await loadUserWallet();
-        await loadUserData();
+        if (typeof loadUserWallet === 'function') await loadUserWallet();
+        if (typeof loadUserData === 'function') await loadUserData();
         
         // ★ 알림 시스템 초기화
         if (typeof initNotifications === 'function') initNotifications();

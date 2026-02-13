@@ -1,7 +1,7 @@
 // ===== ai-assistant.js — 크라우니 패널 5인 AI 캐릭터 채팅 + 라운지 v3.0 =====
 
 const AI_ASSISTANT = (() => {
-    const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+    const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
     const MAX_HISTORY = 50;
 
     let apiKey = 'AIzaSyDfLgJOoI9vXUaNy7hYhZWf6vx5beyAQVw';
