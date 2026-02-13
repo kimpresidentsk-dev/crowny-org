@@ -242,6 +242,11 @@
                     ${t('invite.reward_info', '친구가 가입하면 0.5 CRTD를 받아요! (최대 100 CRTD)')}
                 </p>
             </div>
+
+            <button onclick="document.getElementById('invite-modal').remove(); showPage('dashboard');" 
+                style="width:100%;margin-top:1rem;padding:0.8rem;border:none;border-radius:10px;background:linear-gradient(135deg,#D4AF37,#F0C060);color:#1a1a2e;font-weight:700;cursor:pointer;font-size:0.85rem;">
+                ⭐ ${t('invite.manage_referral', '소개자 프로그램 관리')}
+            </button>
         </div>`;
         document.body.appendChild(modal);
     }

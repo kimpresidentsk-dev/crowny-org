@@ -493,7 +493,10 @@ async function generateReferralCode() {
         if (userData.referralCode) {
             const nick = userData.referralNickname || userData.nickname || '';
             const display = nick ? `${nick} (${userData.referralCode})` : userData.referralCode;
-            alert(`이미 소개 코드가 있습니다: ${display}`);
+            showToast(`이미 소개 코드가 있습니다: ${display}`, 'info');
+            // 소개코드 표시 업데이트
+            const codeEl = document.getElementById('my-referral-code');
+            if (codeEl) codeEl.textContent = userData.referralCode;
             return userData.referralCode;
         }
         
@@ -523,11 +526,13 @@ async function generateReferralCode() {
         
         const displayNick = (nickname || '').trim() || userData.nickname || '';
         const display = displayNick ? `${displayNick} (${code})` : code;
-        alert(`✅ 소개 코드 생성: ${display}\n\n이 코드를 공유하세요!\n⚠️ 소개 코드(${code})는 변경할 수 없습니다.`);
+        showToast(`✅ 소개 코드 생성: ${display}`, 'success');
+        const codeEl = document.getElementById('my-referral-code');
+        if (codeEl) codeEl.textContent = code;
         if (typeof loadReferralInfo === 'function') loadReferralInfo();
         return code;
     } catch (error) {
-        alert('코드 생성 실패: ' + error.message);
+        showToast('코드 생성 실패: ' + error.message, 'error');
     }
 }
 
