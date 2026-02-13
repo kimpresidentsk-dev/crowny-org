@@ -898,7 +898,8 @@ const ADMIN_TAB_CONFIG = [
     { id: 'products',  icon: '📦', label: t('admin.tab.products','상품승인'),  minLevel: 2 },
     { id: 'superwall', icon: '🏦', label: t('admin.tab.superwall','계좌관리'),  minLevel: 6 },
     { id: 'rewards',   icon: '🎁', label: t('admin.tab.rewards','리워드'),    minLevel: 3 },
-    { id: 'ai',        icon: '👑', label: t('admin.tab.ai','크라우니 패널 설정'),     minLevel: 6 }
+    { id: 'ai',        icon: '👑', label: t('admin.tab.ai','크라우니 패널 설정'),     minLevel: 6 },
+    { id: 'features',  icon: '🔧', label: t('admin.tab.features','기능 관리'),   minLevel: 5 }
 ];
 
 let activeAdminTab = null;

@@ -625,6 +625,70 @@
                     </div>
                 </div>
 
+                <!-- TAB: 🔧 기능 관리 (Features) -->
+                <div id="admin-tab-features" class="admin-tab-content" style="display:none;">
+                    <div style="background:white; padding:1.5rem; border-radius:12px;">
+                        <h3 style="margin-bottom:1rem;">🔧 기능 관리 (Feature Flags)</h3>
+                        <p style="color:#666; font-size:0.85rem; margin-bottom:1rem;">일반 유저에게 보이는 메뉴를 관리합니다. 수퍼관리자는 항상 모든 메뉴를 볼 수 있습니다.</p>
+                        <div id="feature-flags-list" style="display:grid; gap:0.8rem;"></div>
+                        <script>
+                        (function(){
+                            const features = [
+                                { key: 'home', label: '🏠 홈/투데이', stable: true },
+                                { key: 'wallet', label: '💰 지갑', stable: true },
+                                { key: 'social', label: '📸 소셜', stable: true },
+                                { key: 'messenger', label: '💬 메신저', stable: true },
+                                { key: 'settings', label: '⚙️ 설정', stable: true },
+                                { key: 'trading', label: '📈 트레이딩 게임' },
+                                { key: 'ai_assistant', label: '👑 크라우니 패널' },
+                                { key: 'beauty', label: '✨ 뷰티 매니저' },
+                                { key: 'brain', label: '🧠 브레인' },
+                                { key: 'movement', label: '💪 무브먼트' },
+                                { key: 'care', label: '💝 크라우니케어' },
+                                { key: 'reels', label: '🎬 릴스' },
+                                { key: 'art', label: '🎨 아트' },
+                                { key: 'books', label: '📚 도서' },
+                                { key: 'mall', label: '🛒 쇼핑몰' },
+                                { key: 'energy', label: '🔬 CREB Labs' },
+                                { key: 'business', label: '🏢 비즈니스' },
+                                { key: 'artist', label: '🌟 아티스트' },
+                            ];
+                            
+                            function renderFlags() {
+                                const flags = typeof getFeatureFlags === 'function' ? getFeatureFlags() : {};
+                                const container = document.getElementById('feature-flags-list');
+                                container.innerHTML = '';
+                                features.forEach(f => {
+                                    const enabled = f.stable || flags[f.key] || false;
+                                    const div = document.createElement('div');
+                                    div.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:0.8rem;background:#f8f9fa;border-radius:8px;border:1px solid #e0e0e0;';
+                                    div.innerHTML = `
+                                        <span style="font-size:0.9rem;">${f.label}</span>
+                                        ${f.stable 
+                                            ? '<span style="font-size:0.75rem;color:#4CAF50;font-weight:600;">✅ 기본</span>'
+                                            : `<label style="position:relative;display:inline-block;width:48px;height:26px;">
+                                                <input type="checkbox" ${enabled?'checked':''} onchange="setFeatureFlag('${f.key}',this.checked)" style="opacity:0;width:0;height:0;">
+                                                <span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:${enabled?'#4CAF50':'#ccc'};border-radius:13px;transition:0.3s;"></span>
+                                                <span style="position:absolute;content:'';height:20px;width:20px;left:${enabled?'24px':'3px'};bottom:3px;background:white;border-radius:50%;transition:0.3s;"></span>
+                                              </label>`
+                                        }`;
+                                    container.appendChild(div);
+                                });
+                            }
+                            
+                            // Render when tab is shown
+                            const observer = new MutationObserver(() => {
+                                const tab = document.getElementById('admin-tab-features');
+                                if (tab && tab.style.display !== 'none') renderFlags();
+                            });
+                            const tab = document.getElementById('admin-tab-features');
+                            if (tab) observer.observe(tab, { attributes: true, attributeFilter: ['style'] });
+                            setTimeout(renderFlags, 2000);
+                        })();
+                        </script>
+                    </div>
+                </div>
+
             </div>
         
             </div>
