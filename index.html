@@ -276,63 +276,63 @@
                     <span class="icon">📸</span>
                     <h3>SOCIAL</h3>
                 </div>
-                <div class="service-card" onclick="showPage('art')">
+                <div class="service-card" data-feature="art" onclick="showPage('art')">
                     <span class="icon">🎨</span>
                     <h3>ART</h3>
                 </div>
-                <div class="service-card" onclick="showPage('mall')">
+                <div class="service-card" data-feature="mall" onclick="showPage('mall')">
                     <span class="icon">🛒</span>
                     <h3>MALL</h3>
                 </div>
-                <div class="service-card" onclick="showPage('fundraise')">
+                <div class="service-card" data-feature="business" onclick="showPage('fundraise')">
                     <span class="icon">💝</span>
                     <h3>FUNDRAISE</h3>
                 </div>
-                <div class="service-card" onclick="showPage('energy')">
+                <div class="service-card" data-feature="energy" onclick="showPage('energy')">
                     <span class="icon">🔬</span>
                     <h3>CREB LABS</h3>
                 </div>
-                <div class="service-card" onclick="showPage('business')">
+                <div class="service-card" data-feature="business" onclick="showPage('business')">
                     <span class="icon">🏢</span>
                     <h3>BUSINESS</h3>
                 </div>
-                <div class="service-card" onclick="showPage('artist')">
+                <div class="service-card" data-feature="artist" onclick="showPage('artist')">
                     <span class="icon">🎤</span>
                     <h3>ARTIST</h3>
                 </div>
-                <div class="service-card" onclick="showPage('books')">
+                <div class="service-card" data-feature="books" onclick="showPage('books')">
                     <span class="icon">📚</span>
                     <h3>BOOKS</h3>
                 </div>
-                <div class="service-card" onclick="showPage('credit')">
+                <div class="service-card" data-feature="mall" onclick="showPage('credit')">
                     <span class="icon">💳</span>
                     <h3>CREDIT</h3>
                 </div>
-                <div class="service-card" onclick="showPage('prop-trading')">
+                <div class="service-card" data-feature="trading" onclick="showPage('prop-trading')">
                     <span class="icon">📊</span>
                     <h3>TRADING GAME</h3>
                 </div>
-                <div class="service-card" onclick="showPage('care')">
+                <div class="service-card" data-feature="care" onclick="showPage('care')">
                     <span class="icon">💝</span>
                     <h3>CARE</h3>
                 </div>
-                <div class="service-card" onclick="showPage('beauty-manager')">
+                <div class="service-card" data-feature="beauty" onclick="showPage('beauty-manager')">
                     <span class="icon">✨</span>
                     <h3>BEAUTY</h3>
                 </div>
-                <div class="service-card" onclick="showPage('brain')">
+                <div class="service-card" data-feature="brain" onclick="showPage('brain')">
                     <span class="icon">🧠</span>
                     <h3>BRAIN</h3>
                 </div>
-                <div class="service-card" onclick="showPage('movement')">
+                <div class="service-card" data-feature="movement" onclick="showPage('movement')">
                     <span class="icon">💪</span>
                     <h3>MOVEMENT</h3>
                 </div>
-                <div class="service-card" onclick="showPage('ai-assistant')" style="border:2px solid var(--gold, #D4AF37);">
+                <div class="service-card" data-feature="ai_assistant" onclick="showPage('ai-assistant')" style="border:2px solid var(--gold, #D4AF37);">
                     <span class="icon">👑</span>
                     <h3>CROWNY PANEL</h3>
                 </div>
-                <div class="service-card" onclick="showPage('reels')">
+                <div class="service-card" data-feature="reels" onclick="showPage('reels')">
                     <span class="icon">🎬</span>
                     <h3>REELS</h3>
                 </div>
@@ -810,7 +810,7 @@
         </section>
 
         <!-- ========== REELS - 숏폼 영상 ========== -->
-        <section id="reels" class="page">
+        <section id="reels" class="page" data-feature="reels">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
                 <h2 style="margin:0;" data-i18n="shortform.title">🎬 REELS</h2>
                 <button onclick="SHORTFORM.openUpload()" style="padding:0.5rem 1rem;border:none;border-radius:20px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;cursor:pointer;font-weight:600;font-size:0.85rem;">➕ 업로드</button>
@@ -819,7 +819,7 @@
         </section>
 
         <!-- ========== ART v2.0 - 디지털 아트 거래소 + NFT ========== -->
-        <section id="art" class="page">
+        <section id="art" class="page" data-feature="art">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                 <h2 style="margin:0;" data-i18n="art.title">🎨 ART</h2>
                 <button class="admin-register-btn" id="art-register-btn" onclick="openRegisterModal('art')" data-i18n="art.register">➕ 작품 등록</button>
@@ -878,7 +878,7 @@
 
 
         <!-- ========== MALL - 쇼핑몰 ========== -->
-        <section id="mall" class="page">
+        <section id="mall" class="page" data-feature="mall">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                 <h2 style="margin:0;" data-i18n="mall.title">🛒 MALL</h2>
                 <div style="display:flex; gap:0.4rem; align-items:center;">
@@ -1049,7 +1049,7 @@
         </section>
 
         <!-- ========== FUNDRAISE - 모금/기부 ========== -->
-        <section id="fundraise" class="page">
+        <section id="fundraise" class="page" data-feature="business">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                 <h2 style="margin:0;" data-i18n="fundraise.title">💝 FUNDRAISE</h2>
                 <button class="admin-register-btn" id="fundraise-register-btn" onclick="openRegisterModal('fundraise')" data-i18n="fundraise.create">➕ 캠페인 만들기</button>
@@ -1093,7 +1093,7 @@
         </section>
 
         <!-- ========== CREB LABS - 미래기술 투자 ========== -->
-        <section id="energy" class="page">
+        <section id="energy" class="page" data-feature="energy">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                 <h2 style="margin:0;" data-i18n="energy.title">🔬 CREB LABS</h2>
                 <button class="admin-register-btn" id="energy-register-btn" onclick="openRegisterModal('energy')" data-i18n="energy.register">➕ 프로젝트 등록</button>
@@ -1170,7 +1170,7 @@
         </section>
 
         <!-- ========== BUSINESS - 크라우니 생태계 ========== -->
-        <section id="business" class="page">
+        <section id="business" class="page" data-feature="business">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                 <h2 style="margin:0;" data-i18n="business.title">🏢 BUSINESS</h2>
                 <button class="admin-register-btn" id="business-register-btn" onclick="openRegisterModal('business')" data-i18n="business.register">➕ 사업체 등록</button>
@@ -1185,7 +1185,7 @@
         </section>
 
         <!-- ========== ARTIST - 엔터테인먼트 ========== -->
-        <section id="artist" class="page">
+        <section id="artist" class="page" data-feature="artist">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                 <h2 style="margin:0;" data-i18n="artist.title">🎵 ARTIST</h2>
                 <button class="admin-register-btn" id="artist-register-btn" onclick="openRegisterModal('artist')" data-i18n="artist.register">➕ 아티스트 등록</button>
@@ -1200,7 +1200,7 @@
         </section>
 
         <!-- ========== BOOKS - 인터랙티브 출판 플랫폼 ========== -->
-        <section id="books" class="page">
+        <section id="books" class="page" data-feature="books">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                 <h2 style="margin:0;" data-i18n="books.title">📚 BOOKS</h2>
                 <div style="display:flex;gap:0.5rem;">
@@ -1224,7 +1224,7 @@
         </section>
 
         <!-- ========== CREDIT - P2P 크레딧 ========== -->
-        <section id="credit" class="page">
+        <section id="credit" class="page" data-feature="mall">
             <h2 data-i18n="credit.title">💳 CREDIT - P2P 크레딧</h2>
             
             <div style="background:linear-gradient(135deg, #0066cc, #004d99); padding:1.5rem; border-radius:12px; margin-bottom:1rem; color:white;">
@@ -1389,7 +1389,7 @@
         </section>
 
         <!-- Prop Trading Page -->
-        <section id="prop-trading" class="page">
+        <section id="prop-trading" class="page" data-feature="trading">
             <h2 data-i18n="trading.title">📊 TRADING GAME</h2>
             
             <!-- 초기화 버튼 -->
@@ -1722,7 +1722,7 @@
         </section>
 
         <!-- BRAIN -->
-        <section id="brain" class="page">
+        <section id="brain" class="page" data-feature="brain">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                 <h2 style="margin:0;">🧠 크라우니브레인</h2>
             </div>
@@ -1736,7 +1736,7 @@
         </section>
 
         <!-- MOVEMENT -->
-        <section id="movement" class="page">
+        <section id="movement" class="page" data-feature="movement">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                 <h2 style="margin:0;">💪 크라우니무브먼트</h2>
             </div>
@@ -1750,7 +1750,7 @@
         </section>
 
         <!-- BEAUTY MANAGER -->
-        <section id="beauty-manager" class="page">
+        <section id="beauty-manager" class="page" data-feature="beauty">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                 <h2 style="margin:0;">✨ 뷰티매니저</h2>
             </div>
@@ -1765,7 +1765,7 @@
 
         <!-- Admin moved to admin.html -->
         <!-- AI ASSISTANT -->
-        <section id="ai-assistant" class="page">
+        <section id="ai-assistant" class="page" data-feature="ai_assistant">
             <div class="section-header">
                 <h2>👑 <span data-i18n="nav.crowny_panel">크라우니 패널</span></h2>
                 <button onclick="AI_ASSISTANT.reset()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;" title="대화 초기화">🗑️</button>
@@ -2197,6 +2197,7 @@
     <script src="js/ai-assistant.js?v=3.7" defer></script>
     <script src="js/ai-social.js?v=1.0" defer></script>
     <script src="js/translate.js?v=1.0" defer></script>
+    <script src="js/menu-visibility.js?v=1.0" defer></script>
     <script src="js/beauty-manager.js?v=1.0" defer></script>
     <script src="js/brain.js?v=1.0" defer></script>
     <script src="js/movement.js?v=1.0" defer></script>

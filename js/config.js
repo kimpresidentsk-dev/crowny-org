@@ -304,6 +304,9 @@ auth.onAuthStateChanged(async (user) => {
         // 관리자 레벨 로드
         await loadUserLevel();
         
+        // 권한별 메뉴 가시성 적용
+        if (typeof applyMenuVisibility === 'function') applyMenuVisibility(currentUserLevel);
+        
         // ★ 동적 토큰 레지스트리 로드
         if (typeof loadTokenRegistry === 'function') await loadTokenRegistry();
         

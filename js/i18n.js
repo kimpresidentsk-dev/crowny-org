@@ -11,7 +11,32 @@ const SUPPORTED_LANGS = {
     en: { name: 'English', flag: '🇺🇸' },
     zh: { name: '中文', flag: '🇨🇳' },
     ja: { name: '日本語', flag: '🇯🇵' },
-    es: { name: 'Español', flag: '🇪🇸' }
+    es: { name: 'Español', flag: '🇪🇸' },
+    fr: { name: 'Français', flag: '🇫🇷' },
+    de: { name: 'Deutsch', flag: '🇩🇪' },
+    pt: { name: 'Português', flag: '🇧🇷' },
+    ru: { name: 'Русский', flag: '🇷🇺' },
+    ar: { name: 'العربية', flag: '🇸🇦' },
+    hi: { name: 'हिन्दी', flag: '🇮🇳' },
+    th: { name: 'ไทย', flag: '🇹🇭' },
+    vi: { name: 'Tiếng Việt', flag: '🇻🇳' },
+    id: { name: 'Bahasa Indonesia', flag: '🇮🇩' },
+    tr: { name: 'Türkçe', flag: '🇹🇷' },
+    it: { name: 'Italiano', flag: '🇮🇹' },
+    nl: { name: 'Nederlands', flag: '🇳🇱' },
+    pl: { name: 'Polski', flag: '🇵🇱' },
+    sv: { name: 'Svenska', flag: '🇸🇪' },
+    da: { name: 'Dansk', flag: '🇩🇰' },
+    fi: { name: 'Suomi', flag: '🇫🇮' },
+    no: { name: 'Norsk', flag: '🇳🇴' },
+    uk: { name: 'Українська', flag: '🇺🇦' },
+    ro: { name: 'Română', flag: '🇷🇴' },
+    hu: { name: 'Magyar', flag: '🇭🇺' },
+    cs: { name: 'Čeština', flag: '🇨🇿' },
+    el: { name: 'Ελληνικά', flag: '🇬🇷' },
+    he: { name: 'עברית', flag: '🇮🇱' },
+    ms: { name: 'Bahasa Melayu', flag: '🇲🇾' },
+    bn: { name: 'বাংলা', flag: '🇧🇩' }
 };
 
 // 지원하지 않는 언어면 ko로 폴백
