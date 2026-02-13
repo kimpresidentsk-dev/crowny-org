@@ -589,7 +589,7 @@ const E2ECrypto = (() => {
         const chatDoc = await db.collection('chats').doc(chatId).get();
         const chat = chatDoc.data();
         const isSecret = chat.secret || false;
-        const e2eEnabled = chat.e2eEnabled !== false; // default ON
+        const e2eEnabled = chat.e2eEnabled === true; // default OFF — only encrypt when explicitly enabled
         const autoDeleteAfter = chat.autoDeleteAfter || 0;
         const isGroup = chat.type === 'group';
 
@@ -719,7 +719,7 @@ const E2ECrypto = (() => {
             const doc = await db.collection('chats').doc(chatId).get();
             if (!doc.exists) return false;
             const data = doc.data();
-            return data.e2eEnabled !== false; // default ON
+            return data.e2eEnabled === true; // default OFF — only encrypt when explicitly enabled
         } catch (e) { return false; }
     }
 

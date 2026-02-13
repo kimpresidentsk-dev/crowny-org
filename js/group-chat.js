@@ -593,7 +593,7 @@ async function loadMessagesWithGroups() {
         if (chat.type === 'group') {
             const memberCount = chat.participants ? chat.participants.length : 0;
             const gSecIcons = [];
-            if (chat.e2eEnabled !== false) gSecIcons.push('🔒');
+            if (chat.e2eEnabled === true) gSecIcons.push('🔒');
             if (chat.autoDeleteAfter > 0) gSecIcons.push('⏱️');
             chatItem.onclick = () => openGroupChat(doc.id);
             chatItem.innerHTML = `

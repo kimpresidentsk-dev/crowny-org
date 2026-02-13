@@ -525,7 +525,7 @@ async function loadMessages() {
         chatItem.onclick = () => openChat(doc.id, otherId);
         const secIndicators = [];
         if (chat.secret) secIndicators.push('🔒');
-        else if (chat.e2eEnabled !== false) secIndicators.push('🔒');
+        else if (chat.e2eEnabled === true) secIndicators.push('🔒');
         if (chat.autoDeleteAfter > 0) secIndicators.push('⏱️');
 
         chatItem.innerHTML = `
@@ -943,7 +943,7 @@ async function sendMessage() {
     if (typeof E2ECrypto !== 'undefined') {
         try {
             const chatSettings = await E2ECrypto.getChatSettings(currentChat);
-            if (chatSettings.e2eEnabled !== false) {
+            if (chatSettings.e2eEnabled === true) {
                 let encrypted = null;
                 if (currentChatOtherId) {
                     // 1:1 chat
@@ -968,29 +968,34 @@ async function sendMessage() {
         } catch (e) { console.warn('[E2E] Encryption failed, sending plaintext:', e); }
     }
 
-    await db.collection('chats').doc(currentChat).collection('messages').add(msgData);
+    try {
+        await db.collection('chats').doc(currentChat).collection('messages').add(msgData);
 
-    // Update chat doc - handle both 1:1 and group
-    const updateData = { lastMessage: text, lastMessageTime: new Date() };
-    if (currentChatOtherId) {
-        updateData[`unreadCount.${currentChatOtherId}`] = firebase.firestore.FieldValue.increment(1);
+        // Update chat doc - handle both 1:1 and group
+        const updateData = { lastMessage: text, lastMessageTime: new Date() };
+        if (currentChatOtherId) {
+            updateData[`unreadCount.${currentChatOtherId}`] = firebase.firestore.FieldValue.increment(1);
+        }
+        await db.collection('chats').doc(currentChat).update(updateData);
+
+        // Notification for recipient (1:1 only)
+        if (currentChatOtherId) {
+            try {
+                const myInfo = await getUserDisplayInfo(currentUser.uid);
+                await db.collection('users').doc(currentChatOtherId).collection('notifications').add({
+                    type: 'messenger', message: `💬 ${myInfo.nickname}: ${text.substring(0, 50)}`,
+                    data: { chatId: currentChat, otherId: currentUser.uid }, read: false, createdAt: new Date()
+                });
+            } catch (e) { /* best-effort */ }
+        }
+
+        cancelReply();
+        input.value = '';
+        input.style.height = 'auto';
+    } catch (e) {
+        console.error('[sendMessage] 전송 실패:', e);
+        showToast('메시지 전송 실패: ' + e.message, 'error');
     }
-    await db.collection('chats').doc(currentChat).update(updateData);
-
-    // Notification for recipient (1:1 only)
-    if (currentChatOtherId) {
-        try {
-            const myInfo = await getUserDisplayInfo(currentUser.uid);
-            await db.collection('users').doc(currentChatOtherId).collection('notifications').add({
-                type: 'messenger', message: `💬 ${myInfo.nickname}: ${text.substring(0, 50)}`,
-                data: { chatId: currentChat, otherId: currentUser.uid }, read: false, createdAt: new Date()
-            });
-        } catch (e) { /* best-effort */ }
-    }
-
-    cancelReply();
-    input.value = '';
-    input.style.height = 'auto';
 }
 
 // ===== Attach menu (📎) =====
