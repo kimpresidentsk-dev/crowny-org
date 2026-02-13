@@ -1,59 +1,7 @@
 /* ===== SOCIAL: Feed, Posts, Stories, Reels, Profile ===== */
 
 /* Social Feed */
-.post-create {
-    background: var(--white);
-    padding: 1.5rem;
-    border-radius: 8px;
-    margin-bottom: 2rem;
-    border: 1px solid var(--border);
-}
 
-.post-create textarea {
-    width: 100%;
-    padding: 1rem;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    resize: vertical;
-    min-height: 100px;
-    margin-bottom: 1rem;
-}
-
-.feed {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.post {
-    background: var(--white);
-    border-radius: 8px;
-    padding: 1.5rem;
-    border: 1px solid var(--border);
-}
-
-.post-header {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.post-avatar {
-    font-size: 2rem;
-}
-
-.post-info strong {
-    display: block;
-}
-
-.post-info span {
-    font-size: 0.85rem;
-    color: var(--accent);
-}
-
-.post-content p {
-    margin-bottom: 1rem;
-}
 
 .post-image {
     font-size: 10rem;
@@ -63,21 +11,6 @@
     border-radius: 8px;
 }
 
-.post-actions {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border);
-}
-
-.post-actions button {
-    padding: 0.5rem 1rem;
-    border: none;
-    background: var(--bg);
-    border-radius: 6px;
-    cursor: pointer;
-}
 
 @media (max-width: 768px) {
     .sidebar {
@@ -105,27 +38,7 @@
 /* ===== TASK 2: Social/Messenger Design Improvements ===== */
 
 /* Social Feed - Modern Card Design */
-.post-create {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.2rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
-}
 
-.post-create textarea {
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1rem;
-    font-size: 0.95rem;
-    line-height: 1.5;
-    resize: vertical;
-    min-height: 80px;
-    transition: border-color 0.2s;
-    width: 100%;
-    margin-bottom: 0.8rem;
-}
 
 .post-create textarea:focus {
     outline: none;
@@ -138,14 +51,6 @@
     gap: 1rem;
 }
 
-.post {
-    background: var(--white);
-    border-radius: 16px;
-    padding: 1.2rem;
-    border: 1px solid var(--border);
-    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
-    transition: box-shadow 0.2s;
-}
 
 .post:hover {
     box-shadow: 0 4px 16px rgba(0,0,0,0.08);
@@ -215,18 +120,7 @@
 
 
 /* ===== v2.0 Instagram-style Social Feed ===== */
-.post {
-    background: var(--white);
-    border-radius: 12px;
-    padding: 1.2rem;
-    border: 1px solid var(--border);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-    margin-bottom: 0;
-}
 
-.post .post-actions-bar button {
-    transition: transform 0.15s;
-}
 
 .post .post-actions-bar button:active {
     transform: scale(1.3);
@@ -562,10 +456,7 @@
 
 /* ===== STORIES ===== */
 #story-ring-container::-webkit-scrollbar { display: none; }
-.story-ring-item { display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;min-width:70px; }
-.story-ring-item .story-username { font-size:0.65rem;color:var(--text);max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center; }
 .story-avatar-wrap { padding:3px;border-radius:50%;background:transparent; }
-.story-avatar-wrap.has-story { background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);padding:3px; }
 .story-avatar-wrap.has-story img, .story-avatar-wrap.has-story > div { border:2px solid white; }
 .story-avatar-wrap.viewed { background:linear-gradient(45deg,#ccc,#999);padding:3px; }
 .story-avatar-wrap.viewed img, .story-avatar-wrap.viewed > div { border:2px solid white; }
@@ -576,18 +467,8 @@
 .double-tap-heart { position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);font-size:80px;pointer-events:none;z-index:10;animation:heartPop 0.8s ease-out forwards; }
 
 /* ===== PROFILE PAGE ===== */
-.profile-stats { display:flex;justify-content:space-around;text-align:center;padding:0.8rem 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border); }
-.profile-stats > div { cursor:pointer; }
-.profile-stats .stat-num { font-weight:700;font-size:1.1rem; }
-.profile-stats .stat-label { font-size:0.75rem;color:var(--accent); }
-.profile-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:2px; }
-.profile-grid-item { aspect-ratio:1;overflow:hidden;cursor:pointer;position:relative; }
-.profile-grid-item img, .profile-grid-item video { width:100%;height:100%;object-fit:cover;display:block; }
-.profile-tab-btn { background:none;border:none;padding:0.5rem 1rem;cursor:pointer;font-size:0.85rem;font-weight:600;color:#999;border-bottom:2px solid transparent; }
-.profile-tab-btn.active { color:var(--text);border-bottom-color:var(--text); }
 
 /* ===== NESTED COMMENTS ===== */
-.reply-comment { margin-left:2rem;padding-left:0.5rem;border-left:2px solid var(--border); }
 
 
 /* ===== AI ASSISTANT ===== */

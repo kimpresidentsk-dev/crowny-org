@@ -111,7 +111,6 @@ input, textarea, select {
 .hero p { color: var(--dark-muted) !important; }
 
 /* ===== SIDEBAR STAYS DARK ===== */
-.sidebar { background: #0f0c29 !important; }
 
 /* ===== SECTION BANNER DARK ===== */
 .section-banner { color: white !important; }
