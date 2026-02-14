@@ -121,13 +121,14 @@ body {
 .auth-form .input {
     width: 100%;
     margin-bottom: 1rem;
-    color: #3D2B1F;
-    background: #FFF8F0;
+    color: #3D2B1F !important;
+    background: #FFF8F0 !important;
+    font-size: 1rem !important;
 }
 
 .auth-form .input::placeholder {
-    color: #6B5744;
-    opacity: 0.7;
+    color: #6B5744 !important;
+    opacity: 0.9 !important;
 }
 
 .auth-form p {

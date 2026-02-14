@@ -56,12 +56,12 @@
     font-size: 1rem;
     margin-bottom: 1rem;
     background: var(--bg-card-alt);
-    color: var(--text);
+    color: #3D2B1F !important;
 }
 
 .input::placeholder {
-    color: var(--text-secondary);
-    opacity: 0.8;
+    color: #6B5744 !important;
+    opacity: 0.9 !important;
 }
 
 .trade-info {
