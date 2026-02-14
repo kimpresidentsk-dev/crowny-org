@@ -6,7 +6,11 @@ function updateLandingState(user) {
     
     if (user) {
         landing.classList.add('hidden');
-        document.getElementById('auth-modal').style.display = 'none';
+        const authModal = document.getElementById('auth-modal');
+        if (authModal) authModal.style.display = 'none';
+        // 모든 모달 오버레이 정리 (로그인 후 회색 화면 방지)
+        document.querySelectorAll('.modal').forEach(m => { if (m.id !== 'profile-edit-modal') m.style.display = 'none'; });
+        document.querySelectorAll('.register-modal-overlay').forEach(m => m.classList.remove('active'));
     } else {
         // auth-modal이 이미 열려있으면 landing을 다시 띄우지 않음
         const authModal = document.getElementById('auth-modal');

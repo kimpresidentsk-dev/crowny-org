@@ -254,17 +254,18 @@ a:not(.nav-item) {
 
 /* Sidebar user-info brand styling */
 .sidebar .user-info {
-    color: rgba(255,248,240,0.8);
-    border-bottom-color: rgba(255,248,240,0.1);
+    color: #E8D5C4;
+    border-bottom-color: rgba(255,248,240,0.15);
 }
 .sidebar .user-info .btn-logout {
-    color: rgba(255,248,240,0.7);
-    border-color: rgba(255,248,240,0.2);
-    background: rgba(255,248,240,0.05);
+    color: #E8D5C4;
+    border-color: rgba(232,213,196,0.4);
+    background: rgba(255,248,240,0.1);
+    font-weight: 600;
 }
 .sidebar .user-info .btn-logout:hover {
-    background: rgba(255,248,240,0.15);
-    color: var(--gold);
+    background: rgba(255,248,240,0.2);
+    color: #D4AF37;
 }
 
 /* Sidebar search button brand */

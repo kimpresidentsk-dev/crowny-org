@@ -217,7 +217,7 @@
 .friend-avatar-wrap {
     border-radius: 50%;
     padding: 2px;
-    background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    background: linear-gradient(135deg, #8B6914, #6B5744, #3D2B1F);
 }
 .friend-avatar-wrap img, .friend-avatar-wrap div {
     border: 2px solid white;
@@ -487,7 +487,7 @@
     font-size: 0.65rem !important;
 }
 .story-avatar-wrap.has-story {
-    background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888) !important;
+    background: linear-gradient(135deg, #8B6914, #6B5744, #3D2B1F) !important;
 }
 
 /* ===== SOCIAL FEED TABS (icon-based) ===== */
