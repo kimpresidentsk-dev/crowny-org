@@ -892,7 +892,7 @@ h2 {
 /* Buttons */
 .btn-primary {
     background: var(--gold);
-    color: #000;
+    color: #FFF8F0;
     border: none;
     padding: 1rem 2rem;
     border-radius: 6px;
@@ -904,7 +904,7 @@ h2 {
 
 .btn-primary:hover {
     background: var(--primary-hover);
-    color: #000;
+    color: #FFF8F0;
 }
 
 .btn-buy {
@@ -4489,11 +4489,11 @@ input, textarea, select {
 /* ===== MISC DARK OVERRIDES ===== */
 .btn-primary {
     background: var(--dark-gold) !important;
-    color: #000 !important;
+    color: #FFF8F0 !important;
 }
 .btn-primary:hover {
     background: #e6c040 !important;
-    color: #000 !important;
+    color: #FFF8F0 !important;
 }
 
 h2, h3, h4, strong { color: var(--dark-text); }
@@ -4571,7 +4571,7 @@ label { color: var(--dark-muted) !important; }
 /* Post create "게시" button gold */
 .post-create .btn-primary {
     background: var(--gold, #8B6914) !important;
-    color: #000 !important;
+    color: #FFF8F0 !important;
     font-weight: 700;
 }
 
@@ -5308,4 +5308,13 @@ select:-webkit-autofill {
 .modal input:focus {
     border-color: #8B6914 !important;
     outline: none;
+}
+
+/* 로그인 입력 필드 placeholder 뮤트 브라운 */
+.login-modal input::placeholder,
+.register-modal input::placeholder,
+.modal input[type="email"]::placeholder,
+.modal input[type="password"]::placeholder,
+.modal input[type="text"]::placeholder {
+    color: #6B5744 !important;
 }
