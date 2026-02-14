@@ -10,7 +10,7 @@ let _storyProgressTimer = null;
 async function openStoryUpload() {
     const overlay = document.createElement('div');
     overlay.id = 'story-upload-modal';
-    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:99998;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.85);z-index:99998;display:flex;align-items:center;justify-content:center;padding:1rem;';
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     overlay.innerHTML = `
     <div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:20px;max-width:400px;width:100%;">
@@ -277,7 +277,7 @@ async function showStoryContent(userId, itemIdx) {
         </div>
         <div style="flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;">
             ${mediaHTML}
-            ${story.text ? `<div style="position:absolute;bottom:80px;left:0;right:0;text-align:center;padding:0.8rem;font-size:1.1rem;font-weight:600;color:#FFF8F0;text-shadow:0 2px 8px rgba(0,0,0,0.8);">${story.text}</div>` : ''}
+            ${story.text ? `<div style="position:absolute;bottom:80px;left:0;right:0;text-align:center;padding:0.8rem;font-size:1.1rem;font-weight:600;color:#FFF8F0;text-shadow:0 2px 8px rgba(61,43,31,0.8);">${story.text}</div>` : ''}
             <div onclick="storyTapLeft()" style="position:absolute;left:0;top:0;width:30%;height:100%;cursor:pointer;"></div>
             <div onclick="storyTapRight()" style="position:absolute;right:0;top:0;width:70%;height:100%;cursor:pointer;"></div>
         </div>
@@ -394,7 +394,7 @@ async function showStoryViewers(storyId) {
         }
 
         const modal = document.createElement('div');
-        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:100000;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.7);z-index:100000;display:flex;align-items:center;justify-content:center;padding:1rem;';
         modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
         modal.innerHTML = `<div style="background:var(--bg-card,#3D2B1F);padding:1.2rem;border-radius:16px;max-width:340px;width:100%;max-height:60vh;overflow-y:auto;">
             <h4 style="margin-bottom:0.8rem;">👁 조회 ${viewers.length}명</h4>

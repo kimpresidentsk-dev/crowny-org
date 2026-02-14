@@ -615,7 +615,7 @@ const E2ECrypto = (() => {
 
         const overlay = document.createElement('div');
         overlay.id = 'chat-security-modal';
-        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
 
         overlay.innerHTML = `
@@ -675,7 +675,7 @@ const E2ECrypto = (() => {
         if (contacts.empty) { showToast('연락처에 추가된 사용자가 없습니다', 'warning'); return; }
 
         const overlay = document.createElement('div');
-        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
 
         let listHTML = '';

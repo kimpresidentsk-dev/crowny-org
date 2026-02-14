@@ -188,7 +188,7 @@ async function viewBookDetailV2(id) {
 
     const modal = document.createElement('div');
     modal.id = 'book-detail-modal-v2';
-    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
 
     const translations = b.availableTranslations || ['ko'];
@@ -771,7 +771,7 @@ function _renderBookReader() {
         </div>
         <div style="height:2px;background:#3D2B1F;flex-shrink:0;"><div style="height:100%;background:#4CAF50;width:${progress}%;transition:width 0.3s;"></div></div>
         
-        <div id="reader-settings-panel" style="display:none;background:rgba(0,0,0,0.5);padding:0.8rem 1rem;flex-shrink:0;">
+        <div id="reader-settings-panel" style="display:none;background:rgba(61,43,31,0.5);padding:0.8rem 1rem;flex-shrink:0;">
             <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
                 <button onclick="_adjustFontSize(-0.1)" style="background:#3D2B1F;color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">A-</button>
                 <button onclick="_adjustFontSize(0.1)" style="background:#3D2B1F;color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">A+</button>
@@ -889,7 +889,7 @@ async function _claimTreasure(code, sceneId) {
 
 function _showTreasureModal(reward) {
     const m = document.createElement('div');
-    m.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10010;display:flex;align-items:center;justify-content:center;';
+    m.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.8);z-index:10010;display:flex;align-items:center;justify-content:center;';
     m.onclick = () => m.remove();
     m.innerHTML = `<div style="background:#FFF8F0;border-radius:20px;padding:2rem;text-align:center;max-width:300px;animation:bounceIn 0.5s;">
         <div style="font-size:4rem;">🎉</div>
@@ -1279,7 +1279,7 @@ function _selectLanguage() {
         ];
 
         const m = document.createElement('div');
-        m.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:10010;display:flex;align-items:center;justify-content:center;';
+        m.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.5);z-index:10010;display:flex;align-items:center;justify-content:center;';
         m.innerHTML = `<div style="background:#FFF8F0;border-radius:12px;padding:1.5rem;max-width:300px;width:90%;">
             <h3 style="margin:0 0 1rem;">🌍 번역 언어 선택</h3>
             <div style="display:grid;gap:0.5rem;">

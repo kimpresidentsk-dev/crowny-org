@@ -31,7 +31,7 @@
 
         const modal = document.createElement('div');
         modal.id = 'shortform-upload-modal';
-        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:99998;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.7);z-index:99998;display:flex;align-items:center;justify-content:center;padding:1rem;';
         modal.onclick = e => { if (e.target === modal) modal.remove(); };
         modal.innerHTML = `
         <div style="background:var(--card,#F7F3ED);padding:1.5rem;border-radius:16px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;color:var(--text,#3D2B1F);">
@@ -486,7 +486,7 @@
 
         const filterStyle = reel.filter ? `filter:${reel.filter};` : '';
         const textPos = reel.textPosition === 'top' ? 'top:12%' : reel.textPosition === 'center' ? 'top:45%' : 'bottom:15%';
-        const textHTML = reel.textOverlay ? `<div style="position:absolute;left:0;right:0;text-align:center;${textPos};font-size:${reel.textSize||24}px;font-weight:700;color:${reel.textColor||'#E8D5C4'};text-shadow:0 2px 8px rgba(0,0,0,0.8);pointer-events:none;padding:0 1rem;">${reel.textOverlay}</div>` : '';
+        const textHTML = reel.textOverlay ? `<div style="position:absolute;left:0;right:0;text-align:center;${textPos};font-size:${reel.textSize||24}px;font-weight:700;color:${reel.textColor||'#E8D5C4'};text-shadow:0 2px 8px rgba(61,43,31,0.8);pointer-events:none;padding:0 1rem;">${reel.textOverlay}</div>` : '';
 
         const isLiked = reel.likedBy && currentUser && reel.likedBy.includes(currentUser.uid);
 
@@ -497,10 +497,10 @@
             ${textHTML}
 
             <!-- Mute toggle -->
-            <button onclick="SHORTFORM._toggleMute()" id="reel-mute-btn" style="position:absolute;top:16px;left:16px;background:rgba(0,0,0,0.5);color:#FFF8F0;border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1rem;z-index:10;">${reelsMuted?'🔇':'🔊'}</button>
+            <button onclick="SHORTFORM._toggleMute()" id="reel-mute-btn" style="position:absolute;top:16px;left:16px;background:rgba(61,43,31,0.5);color:#FFF8F0;border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1rem;z-index:10;">${reelsMuted?'🔇':'🔊'}</button>
 
             <!-- Counter -->
-            <div style="position:absolute;top:16px;right:16px;background:rgba(0,0,0,0.5);color:#FFF8F0;border-radius:12px;padding:0.2rem 0.6rem;font-size:0.75rem;z-index:10;">${idx+1}/${reelsData.length}</div>
+            <div style="position:absolute;top:16px;right:16px;background:rgba(61,43,31,0.5);color:#FFF8F0;border-radius:12px;padding:0.2rem 0.6rem;font-size:0.75rem;z-index:10;">${idx+1}/${reelsData.length}</div>
 
             <!-- Author + caption -->
             <div style="position:absolute;bottom:20px;left:16px;right:80px;color:#FFF8F0;z-index:5;">
@@ -601,7 +601,7 @@
         
         overlay = document.createElement('div');
         overlay.id = 'reel-comments-overlay';
-        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:99998;display:flex;align-items:flex-end;justify-content:center;';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.5);z-index:99998;display:flex;align-items:flex-end;justify-content:center;';
         overlay.innerHTML = `
             <div id="reel-comments-sheet" style="width:100%;max-width:500px;max-height:70vh;background:var(--dark-card,#F7F3ED);border-radius:16px 16px 0 0;display:flex;flex-direction:column;overflow:hidden;">
                 <div style="padding:12px 16px;border-bottom:1px solid var(--dark-border,#2a2a4a);display:flex;align-items:center;justify-content:space-between;">

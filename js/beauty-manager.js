@@ -146,7 +146,7 @@ const BEAUTY = (() => {
         // 카메라 모달
         const modal = document.createElement('div');
         modal.id = 'beauty-capture-modal';
-        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);z-index:10001;display:flex;flex-direction:column;align-items:center;justify-content:center;';
+        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.95);z-index:10001;display:flex;flex-direction:column;align-items:center;justify-content:center;';
         modal.innerHTML = `
             <div style="color:#FFF8F0;text-align:center;margin-bottom:1rem;">
                 <h3>${zone.emoji || '🤳'} ${zone.name}</h3>
@@ -447,7 +447,7 @@ JSON만 출력하세요.`;
                 return `
                     <div style="position:relative;border-radius:8px;overflow:hidden;aspect-ratio:1;cursor:pointer;" onclick="BEAUTY.viewPhoto('${d.photoURL}','${zone.name}','${date}')">
                         <img src="${d.photoURL}" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
-                        <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.7));padding:0.3rem;color:#FFF8F0;font-size:0.6rem;">
+                        <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(61,43,31,0.7));padding:0.3rem;color:#FFF8F0;font-size:0.6rem;">
                             ${zone.emoji} ${zone.name}<br>${date}
                         </div>
                     </div>`;
@@ -500,7 +500,7 @@ JSON만 출력하세요.`;
 
     function viewPhoto(url, zone, date) {
         const modal = document.createElement('div');
-        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);z-index:10001;display:flex;align-items:center;justify-content:center;flex-direction:column;';
+        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.95);z-index:10001;display:flex;align-items:center;justify-content:center;flex-direction:column;';
         modal.onclick = () => modal.remove();
         modal.innerHTML = `
             <img src="${url}" style="max-width:90%;max-height:75vh;border-radius:12px;object-fit:contain;">
@@ -550,7 +550,7 @@ JSON만 출력하세요.`;
     async function adminAnalyze(requestId, userId) {
         const modal = document.createElement('div');
         modal.id = 'beauty-admin-modal';
-        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:10001;display:flex;align-items:center;justify-content:center;padding:1rem;overflow-y:auto;';
+        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.85);z-index:10001;display:flex;align-items:center;justify-content:center;padding:1rem;overflow-y:auto;';
         modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
 
         modal.innerHTML = `

@@ -90,7 +90,7 @@ async function showProfileEdit() {
 
     const overlay = document.createElement('div');
     overlay.id = 'profile-edit-modal';
-    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     overlay.innerHTML = `
     <div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:420px;width:100%;">
@@ -319,7 +319,7 @@ function showContacts() {
 async function showAddContactModal() {
     const overlay = document.createElement('div');
     overlay.id = 'add-contact-modal';
-    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     overlay.innerHTML = `
     <div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:420px;width:100%;">
@@ -1185,7 +1185,7 @@ async function forwardMessage(msgId) {
     // Show chat selection modal
     const chats = await db.collection('chats').where('participants', 'array-contains', currentUser.uid).get();
     const overlay = document.createElement('div');
-    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     let listHTML = '';
     for (const doc of chats.docs) {
@@ -1339,7 +1339,7 @@ async function sendGifMessage(gifUrl) {
 async function showShareItemModal() {
     if (!currentChat) { showToast('채팅을 선택하세요', 'warning'); return; }
     const overlay = document.createElement('div');
-    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     overlay.innerHTML = `
     <div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:420px;width:100%;">
@@ -1363,7 +1363,7 @@ async function shareServiceItem(type) {
         const snap = await db.collection(cfg.col).limit(20).get();
         if (snap.empty) { showToast('항목이 없습니다', 'info'); return; }
         const overlay = document.createElement('div');
-        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
         let listHTML = '';
         snap.forEach(doc => {
@@ -1682,7 +1682,7 @@ async function loadSocialFeed() {
                 const posCSS = textPos === 'top' ? 'top:10%' : textPos === 'center' ? 'top:45%' : 'bottom:10%';
                 mediaHTML = `<div class="post-media-wrap" style="position:relative;cursor:pointer;" onclick="openShortsViewer('${doc.id}')">
                     <video src="${post.videoUrl}" style="width:100%;display:block;max-height:500px;object-fit:contain;${filterStyle}" muted playsinline preload="metadata" onmouseenter="this.play().catch(()=>{})" onmouseleave="this.pause();this.currentTime=0;"></video>
-                    ${textOverlay ? `<div style="position:absolute;left:0;right:0;text-align:center;${posCSS};font-size:1.1rem;font-weight:700;color:${textColor};text-shadow:0 2px 4px rgba(0,0,0,0.8);pointer-events:none;">${textOverlay}</div>` : ''}
+                    ${textOverlay ? `<div style="position:absolute;left:0;right:0;text-align:center;${posCSS};font-size:1.1rem;font-weight:700;color:${textColor};text-shadow:0 2px 4px rgba(61,43,31,0.8);pointer-events:none;">${textOverlay}</div>` : ''}
                     <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.4);border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;pointer-events:none;"><span style="color:#FFF8F0;font-size:1.5rem;margin-left:4px;">▶</span></div>
                 </div>`;
             } else if (post.imageUrl) {
@@ -1900,7 +1900,7 @@ const SERVICE_LINK_CONFIG = {
 async function showServiceLinkModal() {
     const overlay = document.createElement('div');
     overlay.id = 'service-link-modal';
-    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     overlay.innerHTML = `
     <div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:480px;width:100%;max-height:80vh;overflow-y:auto;">
@@ -1993,12 +1993,12 @@ function openVideoEditor() {
 
     const overlay = document.createElement('div');
     overlay.id = 'video-editor-modal';
-    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:99998;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem;';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.9);z-index:99998;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem;';
     overlay.innerHTML = `
     <div style="width:100%;max-width:400px;">
         <div style="position:relative;margin-bottom:1rem;">
             <video id="editor-video" src="${url}" style="width:100%;border-radius:12px;max-height:50vh;" playsinline></video>
-            <div id="editor-text-overlay" style="position:absolute;left:0;right:0;text-align:center;font-size:1.2rem;font-weight:700;text-shadow:0 2px 4px rgba(0,0,0,0.8);pointer-events:none;"></div>
+            <div id="editor-text-overlay" style="position:absolute;left:0;right:0;text-align:center;font-size:1.2rem;font-weight:700;text-shadow:0 2px 4px rgba(61,43,31,0.8);pointer-events:none;"></div>
         </div>
         <div style="background:var(--bg-card,#3D2B1F);border-radius:12px;padding:1rem;">
             <h4 style="margin:0 0 0.8rem;">✂️ 영상 편집</h4>
@@ -2292,10 +2292,10 @@ function renderShortsViewer() {
     <div style="position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;" id="shorts-container">
         <video id="shorts-video" src="${post.data.videoUrl}" style="max-width:100%;max-height:100%;object-fit:contain;${filterCSS ? 'filter:'+filterCSS+';' : ''}" playsinline loop muted autoplay
             ${post.data.trimStart ? `data-trim-start="${post.data.trimStart}"` : ''} ${post.data.trimEnd ? `data-trim-end="${post.data.trimEnd}"` : ''}></video>
-        ${textOverlay ? `<div style="position:absolute;left:0;right:0;text-align:center;${posStyle};font-size:1.4rem;font-weight:700;color:${textColor};text-shadow:0 2px 6px rgba(0,0,0,0.8);pointer-events:none;padding:0 1rem;">${textOverlay}</div>` : ''}
+        ${textOverlay ? `<div style="position:absolute;left:0;right:0;text-align:center;${posStyle};font-size:1.4rem;font-weight:700;color:${textColor};text-shadow:0 2px 6px rgba(61,43,31,0.8);pointer-events:none;padding:0 1rem;">${textOverlay}</div>` : ''}
         
         <!-- Close -->
-        <button onclick="closeShortsViewer()" style="position:absolute;top:16px;right:16px;background:rgba(0,0,0,0.5);color:#FFF8F0;border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1.2rem;z-index:10;">✕</button>
+        <button onclick="closeShortsViewer()" style="position:absolute;top:16px;right:16px;background:rgba(61,43,31,0.5);color:#FFF8F0;border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1.2rem;z-index:10;">✕</button>
         
         <!-- Info overlay -->
         <div style="position:absolute;bottom:20px;left:16px;right:80px;color:#FFF8F0;z-index:5;">
@@ -2807,7 +2807,7 @@ async function switchProfileTab(tab, uid) {
             grid.innerHTML = '';
             grid.className = 'insta-grid';
             for (const post of videos) {
-                grid.innerHTML += `<div class="insta-grid-item" onclick="openShortsViewer('${post.id}')"><video src="${post.videoUrl}" muted preload="metadata" style="width:100%;height:100%;object-fit:cover;"></video><span style="position:absolute;top:4px;right:4px;color:#FFF8F0;font-size:0.8rem;text-shadow:0 1px 3px rgba(0,0,0,0.8);">🎬</span></div>`;
+                grid.innerHTML += `<div class="insta-grid-item" onclick="openShortsViewer('${post.id}')"><video src="${post.videoUrl}" muted preload="metadata" style="width:100%;height:100%;object-fit:cover;"></video><span style="position:absolute;top:4px;right:4px;color:#FFF8F0;font-size:0.8rem;text-shadow:0 1px 3px rgba(61,43,31,0.8);">🎬</span></div>`;
             }
             if (videos.length === 0) grid.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--accent);">숏폼이 없습니다</p>';
         } else if (tab === 'saved') {
@@ -2850,7 +2850,7 @@ async function showFollowList(uid, type) {
         }
 
         const modal = document.createElement('div');
-        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
         modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
         modal.innerHTML = `<div style="background:var(--bg-card,#3D2B1F);padding:1.2rem;border-radius:16px;max-width:380px;width:100%;max-height:70vh;overflow-y:auto;">
             <h4 style="margin-bottom:0.8rem;">${type === 'followers' ? '팔로워' : '팔로잉'} ${snap.size}명</h4>

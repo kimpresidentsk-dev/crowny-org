@@ -235,7 +235,7 @@ async function editShortcuts() {
     const current = getShortcuts();
     const modal = document.createElement('div');
     modal.id = 'shortcut-edit-modal';
-    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
 
     const items = ALL_PAGES.map(p => {

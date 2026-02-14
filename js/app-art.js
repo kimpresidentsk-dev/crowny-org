@@ -574,7 +574,7 @@ function _renderArtCard(art) {
         if (isSoldOut) {
             badges += `<div style="position:absolute;top:6px;left:6px;background:rgba(204,0,0,0.9);color:#E8D5C4;padding:2px 8px;border-radius:12px;font-size:0.65rem;font-weight:700">SOLD OUT</div>`;
         } else {
-            badges += `<div style="position:absolute;top:${art.isNFT ? '28' : '6'}px;right:6px;background:rgba(0,0,0,0.6);color:#E8D5C4;padding:2px 6px;border-radius:10px;font-size:0.6rem">${remaining}/${art.totalSupply}</div>`;
+            badges += `<div style="position:absolute;top:${art.isNFT ? '28' : '6'}px;right:6px;background:rgba(61,43,31,0.6);color:#E8D5C4;padding:2px 6px;border-radius:10px;font-size:0.6rem">${remaining}/${art.totalSupply}</div>`;
         }
     }
 
@@ -724,12 +724,12 @@ async function viewArtwork(artId) {
         // Modal
         const modal = document.createElement('div');
         modal.id = 'art-modal';
-        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.88);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem';
+        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,.88);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem';
         modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
 
         modal.innerHTML = `
             <div style="background:#FFF8F0;border-radius:12px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;position:relative">
-                <button onclick="document.getElementById('art-modal').remove()" style="position:absolute;top:10px;right:12px;background:rgba(0,0,0,.5);color:#E8D5C4;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.1rem;z-index:1">✕</button>
+                <button onclick="document.getElementById('art-modal').remove()" style="position:absolute;top:10px;right:12px;background:rgba(61,43,31,.5);color:#E8D5C4;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.1rem;z-index:1">✕</button>
                 <img src="${imgSrc}" style="width:100%;border-radius:12px 12px 0 0;max-height:50vh;object-fit:contain;background:#F7F3ED">
                 <div style="padding:1.2rem">
                     <h3 style="margin-bottom:.5rem">${art.title}</h3>
@@ -1541,7 +1541,7 @@ async function viewArtistProfile(artistId) {
 
         const modal = document.createElement('div');
         modal.id = 'artist-profile-modal';
-        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.88);z-index:10001;display:flex;align-items:center;justify-content:center;padding:1rem';
+        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,.88);z-index:10001;display:flex;align-items:center;justify-content:center;padding:1rem';
         modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
 
         modal.innerHTML = `

@@ -195,7 +195,7 @@
         const link = getInviteLink();
         const modal = document.createElement('div');
         modal.id = 'invite-modal';
-        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
         modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
 
         modal.innerHTML = `
@@ -288,7 +288,7 @@
 
         const landing = document.createElement('div');
         landing.id = 'invite-landing';
-        landing.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:10001;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        landing.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.9);z-index:10001;display:flex;align-items:center;justify-content:center;padding:1rem;';
         landing.innerHTML = `
         <div style="background:#FFF8F0;border-radius:16px;max-width:400px;width:100%;padding:2rem;text-align:center;">
             <div style="font-size:3rem;margin-bottom:0.5rem;">🎉</div>

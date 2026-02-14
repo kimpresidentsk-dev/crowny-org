@@ -93,7 +93,7 @@ async function loadMallProducts() {
         };
         items.forEach(p => {
             const thumb = getProductThumb(p);
-            const imgCount = (p.images && p.images.length > 1) ? `<span style="position:absolute; top:6px; left:6px; background:rgba(0,0,0,0.6); color:#FFF8F0; font-size:0.6rem; padding:0.15rem 0.4rem; border-radius:4px;">📷 ${p.images.length}</span>` : '';
+            const imgCount = (p.images && p.images.length > 1) ? `<span style="position:absolute; top:6px; left:6px; background:rgba(61,43,31,0.6); color:#FFF8F0; font-size:0.6rem; padding:0.15rem 0.4rem; border-radius:4px;">📷 ${p.images.length}</span>` : '';
             const ratingHtml = p.avgRating ? `<div style="margin-top:0.2rem;">${renderStars(p.avgRating, '0.7rem')} <span style="font-size:0.65rem; color:var(--accent);">(${p.reviewCount||0})</span></div>` : '';
             const displayTitle = searchVal ? highlightText(p.title, searchVal) : p.title;
             container.innerHTML += `
@@ -265,7 +265,7 @@ async function writeReview(productId) {
     return new Promise((resolve) => {
         let selectedRating = 5;
         const overlay = document.createElement('div');
-        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99998;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99998;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); resolve(); } };
         overlay.innerHTML = `<div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;max-width:420px;width:100%;max-height:90vh;overflow-y:auto;">
             <h3 style="margin-bottom:1rem;">⭐ 리뷰 작성</h3>
@@ -839,7 +839,7 @@ async function openProjectDetail(projectId) {
             }
         } catch(e) { console.warn("[catch]", e); }
 
-        const modalHtml = `<div id="creb-project-modal" style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); z-index:10000; display:flex; align-items:center; justify-content:center; padding:1rem;" onclick="if(event.target===this)this.remove();">
+        const modalHtml = `<div id="creb-project-modal" style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(61,43,31,0.85); z-index:10000; display:flex; align-items:center; justify-content:center; padding:1rem;" onclick="if(event.target===this)this.remove();">
             <div style="background:#FFF8F0; border-radius:12px; max-width:550px; width:100%; max-height:90vh; overflow-y:auto; padding:1.5rem;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                     <h3 style="margin:0;">${catInfo.icon} ${xTitle}</h3>
@@ -984,7 +984,7 @@ async function loadArtistList() {
         c.innerHTML = '';
         docs.forEach(d => { const x = d.data();
             c.innerHTML += `<div onclick="viewArtistDetail('${d.id}')" style="background:#FFF8F0; border-radius:10px; overflow:hidden; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.08); cursor:pointer;">
-                <div style="height:160px; overflow:hidden; background:linear-gradient(135deg,#9C27B0,#E91E63);">
+                <div style="height:160px; overflow:hidden; background:linear-gradient(135deg,#8B6914,#6B5744);">
                 ${x.imageData ? `<img src="${x.imageData}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : `<div style="height:100%; display:flex; align-items:center; justify-content:center; font-size:3rem; color:#FFF8F0;">${GENRES[x.genre]||'🌟'}</div>`}</div>
                 <div style="padding:0.6rem;"><div style="font-weight:700;">${x.name}</div>
                 <div style="font-size:0.75rem; color:var(--accent);">${GENRES[x.genre]||''} · 팬 ${x.fans}명</div>
@@ -1280,9 +1280,9 @@ async function loadCreditScoreBreakdown() {
                 <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem; background:#fce4ec; border-radius:6px;">
                     <span>💯 상환율</span><span style="font-weight:700;">${repayRate}% → +${repayScore}점</span>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.8rem; background:linear-gradient(135deg,#3D2B1F,#3D2B1F); border-radius:8px; color:#FFF8F0; margin-top:0.3rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.8rem; background:linear-gradient(135deg,#8B6914,#6B5744); border-radius:8px; color:#FFF8F0; margin-top:0.3rem;">
                     <span style="font-size:1rem;">🏆 총 크레딧 점수</span>
-                    <span style="font-size:1.5rem; font-weight:800; color:${totalScore >= 700 ? '#4CAF50' : totalScore >= 500 ? '#ff9800' : '#ff4444'};">${totalScore}</span>
+                    <span style="font-size:1.5rem; font-weight:800; color:${totalScore >= 700 ? '#8B6914' : totalScore >= 500 ? '#F0C060' : '#8B6914'};">${totalScore}</span>
                 </div>
             </div>`;
         // 메인 점수도 업데이트
@@ -1308,7 +1308,7 @@ async function viewBusinessDetail(id) {
 
     const modal = document.createElement('div');
     modal.id = 'biz-detail-modal';
-    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     modal.innerHTML = `<div style="background:#FFF8F0; border-radius:12px; max-width:500px; width:100%; max-height:90vh; overflow-y:auto;">
         ${b.imageData ? `<img src="${b.imageData}" loading="lazy" style="width:100%; border-radius:12px 12px 0 0; max-height:200px; object-fit:cover;">` : ''}
@@ -1413,10 +1413,10 @@ async function viewArtistDetail(id) {
 
     const modal = document.createElement('div');
     modal.id = 'artist-detail-modal';
-    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     modal.innerHTML = `<div style="background:#FFF8F0; border-radius:12px; max-width:500px; width:100%; max-height:90vh; overflow-y:auto;">
-        <div style="height:200px; background:linear-gradient(135deg,#9C27B0,#E91E63); position:relative;">
+        <div style="height:200px; background:linear-gradient(135deg,#8B6914,#6B5744); position:relative;">
             ${a.imageData ? `<img src="${a.imageData}" loading="lazy" style="width:100%; height:100%; object-fit:cover; border-radius:12px 12px 0 0;">` : ''}
         </div>
         <div style="padding:1.2rem;">
@@ -1444,7 +1444,7 @@ async function viewBookDetail(id) {
 
     const modal = document.createElement('div');
     modal.id = 'book-detail-modal';
-    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     modal.innerHTML = `<div style="background:#FFF8F0; border-radius:12px; max-width:500px; width:100%; max-height:90vh; overflow-y:auto;">
         <div style="height:250px; background:#f5f0e8; display:flex; align-items:center; justify-content:center;">
@@ -2420,7 +2420,7 @@ async function showStoreSettingsModal() {
 
     const overlay = document.createElement('div');
     overlay.id = 'store-settings-modal';
-    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.7);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     overlay.innerHTML = `<div style="background:#FFF8F0; border-radius:12px; max-width:450px; width:100%; max-height:90vh; overflow-y:auto; padding:1.5rem;">
         <h3 style="margin-bottom:1rem;">⚙️ 스토어 설정</h3>
@@ -2530,15 +2530,15 @@ async function loadMyShopDashboard() {
             
             <!-- 매출 통계 -->
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.8rem; margin-bottom:1.5rem;">
-                <div style="background:linear-gradient(135deg,#3D2B1F,#004d99); color:#FFF8F0; padding:1rem; border-radius:12px; text-align:center;">
+                <div style="background:linear-gradient(135deg,#8B6914,#6B5744); color:#FFF8F0; padding:1rem; border-radius:12px; text-align:center;">
                     <div style="font-size:0.7rem; opacity:0.8;">총 매출</div>
                     <div style="font-size:1.3rem; font-weight:700;">${totalRevenue} CRGC</div>
                 </div>
-                <div style="background:linear-gradient(135deg,#4CAF50,#2E7D32); color:#FFF8F0; padding:1rem; border-radius:12px; text-align:center;">
+                <div style="background:linear-gradient(135deg,#8B6914,#6B5744); color:#FFF8F0; padding:1rem; border-radius:12px; text-align:center;">
                     <div style="font-size:0.7rem; opacity:0.8;">이번 달</div>
                     <div style="font-size:1.3rem; font-weight:700;">${monthlyRevenue} CRGC</div>
                 </div>
-                <div style="background:linear-gradient(135deg,#ff9800,#e65100); color:#FFF8F0; padding:1rem; border-radius:12px; text-align:center;">
+                <div style="background:linear-gradient(135deg,#8B6914,#6B5744); color:#FFF8F0; padding:1rem; border-radius:12px; text-align:center;">
                     <div style="font-size:0.7rem; opacity:0.8;">총 주문</div>
                     <div style="font-size:1.3rem; font-weight:700;">${totalOrders}건</div>
                 </div>
@@ -2572,7 +2572,7 @@ async function editProductModal(id) {
 
     const overlay = document.createElement('div');
     overlay.id = 'edit-product-modal';
-    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.7);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
 
     const images = (p.images && p.images.length > 0) ? p.images : (p.imageData ? [p.imageData] : []);
@@ -2672,7 +2672,7 @@ async function showShippingModal() {
 
     return new Promise((resolve) => {
         const overlay = document.createElement('div');
-        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.innerHTML = `
             <div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;max-width:420px;width:100%;max-height:90vh;overflow-y:auto;">
                 <h3 style="margin-bottom:1rem;">📦 배송지 정보</h3>
@@ -2858,7 +2858,7 @@ async function showOrderDetail(orderId) {
 
         const overlay = document.createElement('div');
         overlay.id = 'order-detail-modal';
-        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.7);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
         overlay.innerHTML = `<div style="background:#FFF8F0;border-radius:12px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;padding:1.5rem;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
@@ -2897,7 +2897,7 @@ async function showOrderDetail(orderId) {
 async function requestReturn(orderId) {
     return new Promise((resolve) => {
         const overlay = document.createElement('div');
-        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99999;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99999;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); resolve(); } };
         overlay.innerHTML = `<div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;max-width:420px;width:100%;">
             <h3 style="margin-bottom:1rem;">🔄 반품/환불 요청</h3>
@@ -3111,7 +3111,7 @@ async function reportProduct(productId) {
     if (!currentUser) { showToast('로그인이 필요합니다', 'warning'); return; }
     return new Promise((resolve) => {
         const overlay = document.createElement('div');
-        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99998;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99998;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); resolve(); } };
         overlay.innerHTML = `<div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;max-width:400px;width:100%;">
             <h3 style="margin-bottom:1rem;">🚨 상품 신고</h3>
@@ -3163,7 +3163,7 @@ function _showReportModal(targetType, targetId, title) {
         const REASONS = { product: {fake:t('mall.report_fake','허위상품'),inappropriate:t('mall.report_inappropriate','부적절'),scam:t('mall.report_scam','사기의심'),other:t('mall.report_other','기타')}, review: {fake:t('mall.report_fake_review','허위 리뷰'),inappropriate:t('mall.report_inappropriate','부적절'),spam:t('mall.report_spam','스팸'),other:t('mall.report_other','기타')}, seller: {fraud:t('mall.report_fraud','사기'),inappropriate:t('mall.report_inappropriate','부적절'),nondelivery:t('mall.report_nondelivery','미배송'),other:t('mall.report_other','기타')} };
         const reasons = REASONS[targetType] || REASONS.product;
         const overlay = document.createElement('div');
-        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99998;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99998;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); resolve(); } };
         overlay.innerHTML = `<div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;max-width:400px;width:100%;">
             <h3 style="margin-bottom:1rem;">🚨 ${title}</h3>

@@ -183,7 +183,7 @@ async function loadExploreGrid() {
         for (const post of posts.slice(0, 30)) {
             let thumb = '';
             if (post.videoUrl) {
-                thumb = `<div style="position:relative;"><video src="${post.videoUrl}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;" muted preload="metadata"></video><span style="position:absolute;top:6px;right:6px;color:#FFF8F0;font-size:0.8rem;text-shadow:0 1px 3px rgba(0,0,0,0.8);">🎬</span></div>`;
+                thumb = `<div style="position:relative;"><video src="${post.videoUrl}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;" muted preload="metadata"></video><span style="position:absolute;top:6px;right:6px;color:#FFF8F0;font-size:0.8rem;text-shadow:0 1px 3px rgba(61,43,31,0.8);">🎬</span></div>`;
             } else if (post.imageUrl) {
                 thumb = `<img src="${post.imageUrl}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;" loading="lazy">`;
             } else {
@@ -193,7 +193,7 @@ async function loadExploreGrid() {
 
             gridHTML += `<div onclick="scrollToPostOrOpen('${post.id}')" style="cursor:pointer;position:relative;overflow:hidden;">
                 ${thumb}
-                <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.6));padding:4px 6px;display:flex;gap:0.4rem;align-items:center;">
+                <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(61,43,31,0.6));padding:4px 6px;display:flex;gap:0.4rem;align-items:center;">
                     <span style="color:#FFF8F0;font-size:0.65rem;">❤️${post.likes || 0}</span>
                     <span style="color:#FFF8F0;font-size:0.65rem;">💬${post.commentCount || 0}</span>
                 </div>
