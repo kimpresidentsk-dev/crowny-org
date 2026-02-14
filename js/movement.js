@@ -6,8 +6,8 @@ const MOVEMENT = (() => {
             id: 'precision',
             name: '프레시전 무브먼트',
             emoji: '🎯',
-            color: '#6C5CE7',
-            gradient: 'linear-gradient(135deg,#6C5CE7,#A29BFE)',
+            color: '#8B6914',
+            gradient: 'linear-gradient(135deg,#8B6914,#F0C060)',
             subtitle: 'Precision Movement',
             desc: '터치를 통해 정교하게 몸 속에서 근육들이 살아나게 하는 단계',
             detail: '몸의 미세한 근육들을 깨우는 정교한 터치와 움직임. 평소 사용하지 않던 근육을 인식하고 활성화시킵니다.',
@@ -26,8 +26,8 @@ const MOVEMENT = (() => {
             id: 'active',
             name: '액티브 무브먼트',
             emoji: '🔥',
-            color: '#E17055',
-            gradient: 'linear-gradient(135deg,#E17055,#FDCB6E)',
+            color: '#8B6914',
+            gradient: 'linear-gradient(135deg,#8B6914,#6B5744)',
             subtitle: 'Active Movement',
             desc: '아랫배에서 명치까지 중심축을 끌어올리는 활동형 무브먼트',
             detail: '코어의 중심축을 아랫배(단전)에서 명치(태양신경총)까지 끌어올리며 에너지 흐름을 활성화합니다.',
@@ -46,8 +46,8 @@ const MOVEMENT = (() => {
             id: 'core',
             name: '코어 무브먼트',
             emoji: '💎',
-            color: '#00B894',
-            gradient: 'linear-gradient(135deg,#00B894,#55EFC4)',
+            color: '#8B6914',
+            gradient: 'linear-gradient(135deg,#8B6914,#6B5744)',
             subtitle: 'Core Movement',
             desc: '몸의 가장 깊은 곳까지 에너지를 넘쳐나게 하는 훈련형 무브먼트',
             detail: '신체의 가장 깊은 근육과 에너지 시스템을 활성화하여, 내면에서 넘치는 활력과 아름다움을 만들어냅니다.',
@@ -89,7 +89,7 @@ const MOVEMENT = (() => {
 
         container.innerHTML = `
             <!-- 전체 진행률 -->
-            <div style="background:linear-gradient(135deg,#2d3436,#636e72);border-radius:16px;padding:1.5rem;color:#FFF8F0;margin-bottom:1.5rem;">
+            <div style="background:linear-gradient(135deg,#3D2B1F,#6B5744);border-radius:16px;padding:1.5rem;color:#FFF8F0;margin-bottom:1.5rem;">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem;">
                     <div>
                         <div style="font-size:0.75rem;opacity:0.7;">500회 프로세스</div>
@@ -101,7 +101,7 @@ const MOVEMENT = (() => {
                     </div>
                 </div>
                 <div style="background:rgba(255,255,255,0.2);border-radius:10px;height:10px;overflow:hidden;">
-                    <div style="background:linear-gradient(90deg,#6C5CE7,#E17055,#00B894);height:100%;width:${totalPercent}%;border-radius:10px;transition:width 0.5s;"></div>
+                    <div style="background:linear-gradient(90deg,#8B6914,#F0C060,#6B5744);height:100%;width:${totalPercent}%;border-radius:10px;transition:width 0.5s;"></div>
                 </div>
                 <div style="display:flex;justify-content:space-between;font-size:0.7rem;opacity:0.7;margin-top:0.3rem;">
                     <span>🎯 프레시전</span><span>🔥 액티브</span><span>💎 코어</span>
@@ -121,7 +121,7 @@ const MOVEMENT = (() => {
 
             <!-- 오늘의 운동 시작 -->
             <button onclick="MOVEMENT.startSession()" 
-                style="width:100%;padding:1.2rem;border:none;border-radius:12px;background:linear-gradient(135deg,#E91E63,#FF6090);color:#FFF8F0;font-weight:700;font-size:1.1rem;cursor:pointer;margin-bottom:1.5rem;box-shadow:0 4px 15px rgba(233,30,99,0.3);">
+                style="width:100%;padding:1.2rem;border:none;border-radius:12px;background:linear-gradient(135deg,#8B6914,#6B5744);color:#FFF8F0;font-weight:700;font-size:1.1rem;cursor:pointer;margin-bottom:1.5rem;box-shadow:0 4px 15px rgba(139,105,20,0.3);">
                 ▶️ 오늘의 무브먼트 시작
             </button>
 

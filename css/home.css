@@ -272,7 +272,7 @@ body {
 .landing-cta-sub{font-size:.75rem;color:#6B5744;margin-top:.5rem}
 
 /* Footer */
-.landing-footer{text-align:center;padding:1rem 0;font-size:.7rem;color:#ccc}
+.landing-footer{text-align:center;padding:1rem 0;font-size:.7rem;color:#E8E0D8}
 
 /* Desktop */
 @media(min-width:768px){

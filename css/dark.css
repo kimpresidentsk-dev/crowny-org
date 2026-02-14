@@ -21,7 +21,7 @@
 [data-theme="dark"] .register-modal-content { background: var(--card-bg); color: var(--text); }
 [data-theme="dark"] input, [data-theme="dark"] textarea, [data-theme="dark"] select { background: var(--primary-light); color: var(--text); border-color: #444; }
 [data-theme="dark"] .service-card { background: var(--card-bg); color: var(--text); }
-[data-theme="dark"] .nav-item { color: #ccc; }
+[data-theme="dark"] .nav-item { color: #E8E0D8; }
 [data-theme="dark"] .nav-item:hover, [data-theme="dark"] .nav-item.active { color: var(--gold); }
 
 

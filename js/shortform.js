@@ -38,7 +38,7 @@
             <h3 style="margin:0 0 1rem;"><i data-lucide="video" style="width:20px;height:20px;margin-right:8px;"></i>${t('shortform.upload_title','숏폼 영상 업로드')}</h3>
 
             <!-- file select -->
-            <label style="display:block;border:2px dashed var(--border,#ccc);border-radius:12px;padding:2rem;text-align:center;cursor:pointer;margin-bottom:1rem;" id="sf-drop-zone">
+            <label style="display:block;border:2px dashed var(--border,#E8E0D8);border-radius:12px;padding:2rem;text-align:center;cursor:pointer;margin-bottom:1rem;" id="sf-drop-zone">
                 <input type="file" id="sf-file" accept="video/mp4,video/quicktime,video/webm" style="display:none;">
                 <div id="sf-file-label">📁 ${t('shortform.select_video','동영상 선택')} (60s, 50MB)</div>
             </label>
@@ -72,7 +72,7 @@
                 <details style="margin-bottom:0.5rem;">
                     <summary style="cursor:pointer;font-weight:600;">📝 ${t('shortform.text_overlay','텍스트 오버레이')}</summary>
                     <div style="margin-top:0.5rem;">
-                        <input type="text" id="sf-text" placeholder="${t('shortform.enter_text','캡션 텍스트')}" style="width:100%;padding:0.5rem;border:1px solid var(--border,#ccc);border-radius:8px;margin-bottom:0.5rem;">
+                        <input type="text" id="sf-text" placeholder="${t('shortform.enter_text','캡션 텍스트')}" style="width:100%;padding:0.5rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;margin-bottom:0.5rem;">
                         <div style="display:flex;gap:0.5rem;">
                             <select id="sf-text-pos" style="padding:0.4rem;border:1px solid var(--border);border-radius:6px;">
                                 <option value="top">상단</option><option value="center">중앙</option><option value="bottom" selected>하단</option>
@@ -85,7 +85,7 @@
             </div>
 
             <!-- caption & hashtags -->
-            <textarea id="sf-caption" placeholder="${t('shortform.caption_placeholder','캡션을 입력하세요 #해시태그')}" rows="2" style="width:100%;padding:0.6rem;border:1px solid var(--border,#ccc);border-radius:8px;resize:none;margin-bottom:0.5rem;font-size:0.9rem;"></textarea>
+            <textarea id="sf-caption" placeholder="${t('shortform.caption_placeholder','캡션을 입력하세요 #해시태그')}" rows="2" style="width:100%;padding:0.6rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;resize:none;margin-bottom:0.5rem;font-size:0.9rem;"></textarea>
 
             <!-- service link -->
             <div style="margin-bottom:0.8rem;">
@@ -105,7 +105,7 @@
 
             <!-- progress -->
             <div id="sf-progress" style="display:none;margin-bottom:0.8rem;">
-                <div style="background:var(--border,#eee);border-radius:8px;height:6px;overflow:hidden;">
+                <div style="background:var(--border,#E8E0D8);border-radius:8px;height:6px;overflow:hidden;">
                     <div id="sf-progress-bar" style="height:100%;background:#8B6914;width:0%;transition:width 0.3s;"></div>
                 </div>
                 <div id="sf-progress-text" style="font-size:0.75rem;color:#6B5744;margin-top:0.2rem;text-align:center;">0%</div>
@@ -113,7 +113,7 @@
 
             <!-- actions -->
             <div style="display:flex;gap:0.5rem;justify-content:flex-end;">
-                <button onclick="document.getElementById('shortform-upload-modal').remove()" style="padding:0.6rem 1rem;border:1px solid var(--border,#ccc);border-radius:8px;cursor:pointer;background:transparent;color:var(--text);">${t('common.cancel','취소')}</button>
+                <button onclick="document.getElementById('shortform-upload-modal').remove()" style="padding:0.6rem 1rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:transparent;color:var(--text);">${t('common.cancel','취소')}</button>
                 <button id="sf-submit-btn" onclick="SHORTFORM._doUpload()" style="padding:0.6rem 1.2rem;border:none;border-radius:8px;background:#3D2B1F;color:#FFF8F0;cursor:pointer;font-weight:600;" disabled>${t('shortform.upload','업로드')}</button>
             </div>
         </div>`;
@@ -216,7 +216,7 @@
                 const d = doc.data();
                 const name = d[cfg.nameField] || d.title || d.name || doc.id;
                 if (q && !name.toLowerCase().includes(q.toLowerCase())) return;
-                html += `<div onclick="SHORTFORM._pickService('${_selectedServiceType}','${doc.id}','${name.replace(/'/g,"\\'")}')" style="padding:0.5rem;border-bottom:1px solid var(--border,#eee);cursor:pointer;font-size:0.85rem;display:flex;justify-content:space-between;align-items:center;"><span>${name}</span><span style="color:${CTA_MAP[_selectedServiceType].color};font-size:0.75rem;">${CTA_MAP[_selectedServiceType].label}</span></div>`;
+                html += `<div onclick="SHORTFORM._pickService('${_selectedServiceType}','${doc.id}','${name.replace(/'/g,"\\'")}')" style="padding:0.5rem;border-bottom:1px solid var(--border,#E8E0D8);cursor:pointer;font-size:0.85rem;display:flex;justify-content:space-between;align-items:center;"><span>${name}</span><span style="color:${CTA_MAP[_selectedServiceType].color};font-size:0.75rem;">${CTA_MAP[_selectedServiceType].label}</span></div>`;
             });
             results.innerHTML = html || '<p style="text-align:center;font-size:0.8rem;color:var(--text-muted,#6B5744);">결과 없음</p>';
         } catch(e) { results.innerHTML = '<p style="color:red;font-size:0.8rem;">검색 실패</p>'; }
