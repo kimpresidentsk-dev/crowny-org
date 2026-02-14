@@ -2143,7 +2143,7 @@ async function loadCart() {
     try {
         const snap = await db.collection('users').doc(currentUser.uid).collection('cart').orderBy('addedAt','desc').get();
         if (snap.empty) {
-            c.innerHTML = '<div style="text-align:center; padding:3rem; color:var(--accent);"><div style="font-size:3rem; margin-bottom:1rem;">🛒</div><p>장바구니가 비어있습니다</p><button onclick="showPage(\'mall\')" style="margin-top:1rem; background:#3D2B1F; color:#FFF8F0; border:none; padding:0.7rem 1.5rem; border-radius:8px; cursor:pointer;">쇼핑하러 가기</button></div>';
+            c.innerHTML = '<div style="text-align:center; padding:3rem; color:var(--accent);"><div style="font-size:3rem; margin-bottom:1rem;"><i data-lucide="shopping-cart"></i></div><p>장바구니가 비어있습니다</p><button onclick="showPage(\'mall\')" style="margin-top:1rem; background:#3D2B1F; color:#FFF8F0; border:none; padding:0.7rem 1.5rem; border-radius:8px; cursor:pointer;">쇼핑하러 가기</button></div>';
             if(summary) summary.style.display='none';
             return;
         }

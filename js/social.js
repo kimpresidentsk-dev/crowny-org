@@ -345,7 +345,7 @@ async function searchContactUsers() {
     const resultsDiv = document.getElementById('contact-search-results');
     if (!query) { resultsDiv.innerHTML = `<p style="text-align:center;color:var(--text-muted,#6B5744);font-size:0.85rem;">${t('social.enter_search','검색어를 입력하세요')}</p>`; return; }
 
-    resultsDiv.innerHTML = '<p style="text-align:center;color:var(--accent);">🔍 검색 중...</p>';
+    resultsDiv.innerHTML = '<p style="text-align:center;color:var(--accent);"><i data-lucide="search"></i> 검색 중...</p>';
 
     try {
         const results = new Map();
@@ -401,7 +401,7 @@ async function addContactFromSearch(uid, email, name) {
 
 async function loadContacts() {
     const contactList = document.getElementById('contact-list');
-    contactList.innerHTML = '<p style="padding:1rem; text-align:center; color:var(--accent);">📋 로딩 중...</p>';
+    contactList.innerHTML = '<p style="padding:1rem; text-align:center; color:var(--accent);"><i data-lucide="clipboard"></i> 로딩 중...</p>';
     const contacts = await db.collection('users').doc(currentUser.uid).collection('contacts').get();
     contactList.innerHTML = '';
 
@@ -435,6 +435,7 @@ async function loadContacts() {
             </div>`;
         contactList.appendChild(contactItem);
     }
+    if(window.lucide) lucide.createIcons();
 }
 
 async function startChatWithContact(email) {

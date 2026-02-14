@@ -1481,7 +1481,7 @@ function updateFeeDisplay() {
     // 수수료 표시
     const feeEl = document.getElementById('trade-fee-display');
     if (feeEl) {
-        feeEl.innerHTML = `💰 ${t('trading.est_fee','예상 수수료')}: <strong>$${fee.toFixed(2)}</strong>` +
+        feeEl.innerHTML = `<i data-lucide="coins"></i> ${t('trading.est_fee','예상 수수료')}: <strong>$${fee.toFixed(2)}</strong>` +
             (copyAccounts > 1 ? ` <span style="color:#ff9800;">(${contracts}계약 × ${copyAccounts}계정 = ${effectiveContracts}계약)</span>` : '');
     }
     
@@ -1490,11 +1490,12 @@ function updateFeeDisplay() {
     if (copyEl) {
         if (copyAccounts > 1) {
             copyEl.style.display = 'block';
-            copyEl.innerHTML = `📋 ${t('trading.copy_trading','카피트레이딩')}: <strong>${copyAccounts}${t('trading.accounts','계정')}</strong> × ${contracts}계약 = <strong style="color:#ff9800;">${effectiveContracts}계약</strong> 실효`;
+            copyEl.innerHTML = `<i data-lucide="clipboard"></i> ${t('trading.copy_trading','카피트레이딩')}: <strong>${copyAccounts}${t('trading.accounts','계정')}</strong> × ${contracts}계약 = <strong style="color:#ff9800;">${effectiveContracts}계약</strong> 실효`;
         } else {
             copyEl.style.display = 'none';
         }
     }
+    if(window.lucide) lucide.createIcons();
 }
 
 function updateContractSpecs() {

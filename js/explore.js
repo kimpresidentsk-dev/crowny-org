@@ -8,7 +8,7 @@ async function loadExploreTab() {
     if (!currentUser) return;
     const container = document.getElementById('explore-content');
     if (!container) return;
-    container.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--accent);">🔍 탐색 로딩 중...</p>';
+    container.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--accent);"><i data-lucide="search"></i> 탐색 로딩 중...</p>';
 
     try {
         // Build explore content
@@ -17,7 +17,7 @@ async function loadExploreTab() {
         // Search bar
         html += `<div style="margin-bottom:1rem;">
             <div style="display:flex;gap:0.5rem;">
-                <input type="text" id="explore-search-input" placeholder="🔍 사용자, 해시태그, 게시물 검색..." value="${_exploreSearchQuery}" style="flex:1;padding:0.7rem 1rem;border:1px solid var(--border);border-radius:12px;font-size:0.9rem;outline:none;" onkeypress="if(event.key==='Enter')runExploreSearch()">
+                <input type="text" id="explore-search-input" placeholder="<i data-lucide=\"search\"></i> 사용자, 해시태그, 게시물 검색..." value="${_exploreSearchQuery}" style="flex:1;padding:0.7rem 1rem;border:1px solid var(--border);border-radius:12px;font-size:0.9rem;outline:none;" onkeypress="if(event.key==='Enter')runExploreSearch()">
                 <button onclick="runExploreSearch()" style="padding:0.7rem 1rem;border:none;border-radius:12px;background:#3D2B1F;color:#FFF8F0;cursor:pointer;font-weight:600;">검색</button>
             </div>
         </div>`;
@@ -51,6 +51,7 @@ async function loadExploreTab() {
             loadRecommendedUsers(),
             loadExploreGrid()
         ]);
+        if(window.lucide) lucide.createIcons();
     } catch (e) {
         console.error('Explore error:', e);
         container.innerHTML = `<p style="text-align:center;color:red;">탐색 로드 실패: ${e.message}</p>`;

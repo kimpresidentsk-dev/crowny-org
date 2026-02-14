@@ -513,7 +513,7 @@ async function mintExistingArtwork(artworkId) {
 async function loadArtGallery() {
     const container = document.getElementById('art-gallery');
     if (!container) return;
-    container.innerHTML = '<p style="text-align:center; color:var(--accent); grid-column:1/-1;">🎨 로딩 중...</p>';
+    container.innerHTML = '<p style="text-align:center; color:var(--accent); grid-column:1/-1;"><i data-lucide="palette"></i> 로딩 중...</p>';
 
     try {
         const filterCat  = document.getElementById('art-filter-category')?.value || 'all';
@@ -536,7 +536,7 @@ async function loadArtGallery() {
         }
 
         if (snapshot.empty) {
-            container.innerHTML = '<p style="text-align:center; color:var(--accent); grid-column:1/-1;">아직 등록된 작품이 없습니다. 첫 작품을 등록해보세요! 🎨</p>';
+            container.innerHTML = '<p style="text-align:center; color:var(--accent); grid-column:1/-1;">아직 등록된 작품이 없습니다. 첫 작품을 등록해보세요! <i data-lucide="palette"></i></p>';
             return;
         }
 
@@ -1257,7 +1257,7 @@ async function _loadMyArtworks(container) {
         }
 
         if (arts.empty) {
-            container.innerHTML = '<div class="art-empty-state"><span class="icon">🎨</span><p>등록한 작품이 없습니다<br><small>작품 등록 버튼을 눌러 첫 작품을 올려보세요!</small></p></div>';
+            container.innerHTML = '<div class="art-empty-state"><span class="icon"><i data-lucide="palette"></i></span><p>등록한 작품이 없습니다<br><small>작품 등록 버튼을 눌러 첫 작품을 올려보세요!</small></p></div>';
             return;
         }
 
@@ -1297,7 +1297,7 @@ async function _loadMyPurchases(container) {
         }
 
         if (arts.empty) {
-            container.innerHTML = '<div class="art-empty-state"><span class="icon">🛒</span><p>구매한 작품이 없습니다<br><small>갤러리에서 마음에 드는 작품을 찾아보세요!</small></p></div>';
+            container.innerHTML = '<div class="art-empty-state"><span class="icon"><i data-lucide="shopping-cart"></i></span><p>구매한 작품이 없습니다<br><small>갤러리에서 마음에 드는 작품을 찾아보세요!</small></p></div>';
             return;
         }
 
@@ -1345,7 +1345,7 @@ async function _loadMyNFTs(container) {
 
         const items = Array.from(nfts.values());
         if (!items.length) {
-            container.innerHTML = '<div class="art-empty-state"><span class="icon">🔗</span><p>보유한 NFT가 없습니다<br><small>작품을 NFT로 민팅하거나 NFT를 구매해보세요!</small></p></div>';
+            container.innerHTML = '<div class="art-empty-state"><span class="icon"><i data-lucide="link"></i></span><p>보유한 NFT가 없습니다<br><small>작품을 NFT로 민팅하거나 NFT를 구매해보세요!</small></p></div>';
             return;
         }
 
@@ -1455,7 +1455,7 @@ async function _loadMyTransactions(container) {
         });
 
         if (!txs.length) {
-            container.innerHTML = '<div class="art-empty-state"><span class="icon">📋</span><p>거래 내역이 없습니다</p></div>';
+            container.innerHTML = '<div class="art-empty-state"><span class="icon"><i data-lucide="clipboard"></i></span><p>거래 내역이 없습니다</p></div>';
             return;
         }
 

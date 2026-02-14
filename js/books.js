@@ -1219,7 +1219,7 @@ async function _loadLibraryTreasures() {
     c.innerHTML = '로딩...';
     try {
         const snap = await db.collection('users').doc(currentUser.uid).collection('foundTreasures').orderBy('foundAt', 'desc').limit(50).get();
-        if (snap.empty) { c.innerHTML = '<p style="color:var(--accent);text-align:center;padding:2rem;">아직 발견한 보물이 없습니다<br>책을 읽으며 숨겨진 보물을 찾아보세요! 🎯</p>'; return; }
+        if (snap.empty) { c.innerHTML = '<p style="color:var(--accent);text-align:center;padding:2rem;">아직 발견한 보물이 없습니다<br>책을 읽으며 숨겨진 보물을 찾아보세요! <i data-lucide="target"></i></p>'; return; }
         let html = '<div style="display:grid;gap:0.5rem;">';
         let total = 0;
         snap.forEach(d => {
