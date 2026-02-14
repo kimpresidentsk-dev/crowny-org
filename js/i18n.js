@@ -117,31 +117,30 @@ function setLanguage(lang) {
     });
 }
 
-// 언어 선택 UI 생성 (사이드바 하단에 삽입)
+// 언어 선택 UI 생성 (사이드바 상단, 로고 아래)
 function createLanguageSelector() {
-    const nav = document.querySelector('.sidebar .nav') || document.querySelector('.sidebar');
-    if (!nav) return;
+    const sidebar = document.getElementById('sidebar') || document.querySelector('.sidebar');
+    if (!sidebar) return;
 
     const container = document.createElement('div');
     container.id = 'lang-switcher';
-    container.style.cssText = 'padding:0.8rem 1rem; border-top:1px solid rgba(255,255,255,0.1); margin-top:auto;';
+    container.style.cssText = 'padding:0.4rem 1rem; margin:0;';
     container.innerHTML = `
-        <div style="display:flex; align-items:center; gap:0.5rem;">
-            <span style="font-size:1rem;">🌐</span>
-            <select id="lang-selector" onchange="setLanguage(this.value)" 
-                style="flex:1; padding:0.4rem 0.6rem; border-radius:6px; border:1px solid rgba(255,255,255,0.2); 
-                background:rgba(255,255,255,0.1); color:inherit; font-size:0.82rem; cursor:pointer; appearance:auto;">
-                ${Object.entries(SUPPORTED_LANGS).map(([code, info]) => 
-                    `<option value="${code}" ${code === currentLang ? 'selected' : ''}>${info.flag} ${info.name}</option>`
-                ).join('')}
-            </select>
-        </div>
+        <select id="lang-selector" onchange="setLanguage(this.value)" 
+            style="width:100%; max-width:200px; padding:0.3rem 0.5rem; border-radius:6px; border:1px solid rgba(232,213,196,0.3); 
+            background:rgba(255,248,240,0.1); color:#E8D5C4; font-size:0.78rem; cursor:pointer; appearance:auto;">
+            ${Object.entries(SUPPORTED_LANGS).map(([code, info]) => 
+                `<option value="${code}" ${code === currentLang ? 'selected' : ''}>${info.flag} ${info.name}</option>`
+            ).join('')}
+        </select>
     `;
 
-    // 사이드바 하단에 삽입
-    const sidebar = document.getElementById('sidebar') || document.querySelector('.sidebar');
-    if (sidebar) {
-        sidebar.appendChild(container);
+    // 로고 바로 아래에 삽입
+    const logo = sidebar.querySelector('.logo');
+    if (logo && logo.nextSibling) {
+        sidebar.insertBefore(container, logo.nextSibling);
+    } else {
+        sidebar.prepend(container);
     }
 }
 
