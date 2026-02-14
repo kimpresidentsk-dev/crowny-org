@@ -226,7 +226,7 @@ a:not(.nav-item) {
     
     /* Gallery grid mobile 2col */
     #art-gallery {
-        grid-template-columns: repeat(2, 1fr) !important;
+        grid-template-columns: repeat(2, 1fr);
     }
     
     /* Touch targets enforcement */
@@ -270,9 +270,9 @@ a:not(.nav-item) {
 
 /* Sidebar search button brand */
 .sidebar div[style*="padding:0.5rem"] button {
-    color: rgba(255,248,240,0.5) !important;
-    border-color: rgba(255,248,240,0.15) !important;
-    background: rgba(255,248,240,0.05) !important;
+    color: rgba(255,248,240,0.5);
+    border-color: rgba(255,248,240,0.15);
+    background: rgba(255,248,240,0.05);
 }
 
 /* CREB LABS category tabs */
@@ -391,13 +391,13 @@ a:not(.nav-item) {
 @media (max-width: 768px) {
     .bottom-tab-bar { display: block; }
     .content {
-        padding-bottom: 70px !important;
+        padding-bottom: 70px;
     }
 }
 
 
 /* ===== FRIENDS GRID (dark) ===== */
-.friends-grid { display: none !important; }
+.friends-grid { display: none; }
 
 /* ===== FEED container max width ===== */
 @media (min-width: 769px) {
@@ -407,7 +407,7 @@ a:not(.nav-item) {
     }
     #story-ring-container {
         max-width: 470px;
-        margin: 0 auto !important;
+        margin: 0 auto;
     }
 }
 
@@ -455,11 +455,11 @@ textarea, select {
 
 /* Auth form inputs */
 .auth-form input {
-    background: #FFF8F0 !important;
-    color: #3D2B1F !important;
+    background: #FFF8F0;
+    color: #3D2B1F;
 }
 .auth-form input::placeholder {
-    color: #6B5744 !important;
+    color: #6B5744;
     opacity: 0.7;
 }
 input:focus, textarea:focus, select:focus {
@@ -689,21 +689,21 @@ input:focus, textarea:focus, select:focus {
 
 /* Sidebar dark */
 .sidebar {
-    background: #3D2B1F !important;
-    color: #E8D5C4 !important;
+    background: #3D2B1F;
+    color: #E8D5C4;
 }
 .sidebar .nav-item {
-    color: #E8D5C4 !important;
+    color: #E8D5C4;
 }
 .sidebar .nav-item:hover {
-    background: rgba(232,213,196,0.1) !important;
-    color: #FFF8F0 !important;
+    background: rgba(232,213,196,0.1);
+    color: #FFF8F0;
 }
 .sidebar .nav-item.active {
-    background: rgba(139,105,20,0.2) !important;
-    border-left: 3px solid #8B6914 !important;
-    color: #FFF8F0 !important;
-    color: var(--gold) !important;
+    background: rgba(139,105,20,0.2);
+    border-left: 3px solid #8B6914;
+    color: #FFF8F0;
+    color: var(--gold);
 }
 
 /* Bottom tab active gold */
