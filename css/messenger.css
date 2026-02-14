@@ -707,6 +707,11 @@
     .chat-header-back {
         display: block !important;
     }
+    
+    /* Ensure sent message text is always visible */
+    .chat-messages [style*="background:#3D2B1F"] * {
+        color: #FFF8F0 !important;
+    }
 }
 
 
