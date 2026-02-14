@@ -1,10 +1,20 @@
 // ===== dashboard.js v1.0 - 대시보드 페이지 =====
 
 async function loadDashboard() {
-    if (!currentUser) return;
+    console.log('[Dashboard] 로딩 시작, currentUser:', !!currentUser);
+    if (!currentUser) {
+        console.warn('[Dashboard] currentUser 없음 - 로딩 중단');
+        return;
+    }
     
     const container = document.getElementById('dashboard-content');
-    if (!container) return;
+    if (!container) {
+        console.warn('[Dashboard] dashboard-content 컨테이너 없음');
+        return;
+    }
+    
+    // 초기 로딩 표시
+    container.innerHTML = `<p style="text-align:center;padding:2rem;color:var(--accent);"><i data-lucide="loader" style="width:16px;height:16px;display:inline-block;vertical-align:middle;animation:spin 1s linear infinite;"></i> 대시보드 로딩 중...</p>`;
     
     try {
     // 1. Welcome + Avatar
@@ -172,8 +182,9 @@ async function loadDashboard() {
     `;
     // Lucide 아이콘 렌더링
     if (window.lucide) lucide.createIcons();
+    console.log('[Dashboard] 로딩 성공 완료');
     } catch(e) {
-        console.error('Dashboard load error:', e);
+        console.error('[Dashboard] 로딩 중 에러:', e);
         container.innerHTML = `<div style="text-align:center;padding:2rem;">
             <h2><i data-lucide="bar-chart-3" style="width:20px;height:20px;display:inline-block;vertical-align:middle;"></i> DASHBOARD</h2>
             <p style="margin-top:1rem;">환영합니다, ${currentUser.email?.split('@')[0] || ''}님!</p>
@@ -184,6 +195,7 @@ async function loadDashboard() {
                 <button onclick="showPage('prop-trading')" class="dash-shortcut-btn"><i data-lucide="trending-up" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> TRADING</button>
             </div>
         </div>`;
+        console.log('[Dashboard] 에러 발생으로 fallback UI 로드됨');
     }
 }
 
