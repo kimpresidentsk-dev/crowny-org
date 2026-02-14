@@ -59,6 +59,11 @@
     color: var(--text);
 }
 
+.input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.8;
+}
+
 .trade-info {
     display: flex;
     justify-content: space-between;
