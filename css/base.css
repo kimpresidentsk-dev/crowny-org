@@ -216,7 +216,8 @@ body {
 }
 
 .logo {
-    padding: 0 1rem 1rem;
+    padding: 0.5rem 1rem 1rem;
+    padding-left: 3rem;
     border-bottom: 1px solid rgba(210,188,176,0.1);
     margin-bottom: 0.5rem;
     cursor: pointer;
