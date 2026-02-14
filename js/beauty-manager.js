@@ -399,7 +399,7 @@ JSON만 출력하세요.`;
     function renderAnalysis(analysis) {
         const scores = analysis.scores || {};
         const metricsKo = { moisture: '수분', oil: '유분', pore: '모공', wrinkle: '주름', pigment: '색소', elasticity: '탄력', overall: '전체' };
-        const colors = { moisture: '#4FC3F7', oil: '#FFB74D', pore: '#BA68C8', wrinkle: '#B54534', pigment: '#A1887F', elasticity: '#6B8F3C', overall: '#B54534' };
+        const colors = { moisture: '#8B6914', oil: '#FFB74D', pore: '#BA68C8', wrinkle: '#B54534', pigment: '#A1887F', elasticity: '#6B8F3C', overall: '#B54534' };
 
         const date = analysis.createdAt?.toDate ? analysis.createdAt.toDate().toLocaleDateString('ko-KR') : new Date().toLocaleDateString('ko-KR');
         const typeLabel = analysis.type === 'ai' ? '✨ 크라우니걸 AI' : '👩‍⚕️ 전문가';

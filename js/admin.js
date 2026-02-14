@@ -232,7 +232,7 @@ function normalizeToArray(val) {
 function buildCheckboxGrid(name, options, selectedArr) {
     return options.map(o => {
         const checked = selectedArr.includes(o.v) ? 'checked' : '';
-        return `<label style="display:inline-flex;align-items:center;gap:0.2rem;padding:0.25rem 0.5rem;background:${checked ? '#F7F3ED' : '#F7F3ED'};border-radius:6px;cursor:pointer;font-size:0.78rem;border:1px solid ${checked ? '#90caf9' : '#E8E0D8'};transition:all 0.15s;">
+        return `<label style="display:inline-flex;align-items:center;gap:0.2rem;padding:0.25rem 0.5rem;background:${checked ? '#F7F3ED' : '#F7F3ED'};border-radius:6px;cursor:pointer;font-size:0.78rem;border:1px solid ${checked ? '#E8E0D8' : '#E8E0D8'};transition:all 0.15s;">
             <input type="checkbox" name="${name}" value="${o.v}" ${checked} style="margin:0;accent-color:#5B7B8C;"> ${o.l}
         </label>`;
     }).join('');
@@ -327,7 +327,7 @@ async function showAdminEditModal(userId, userData) {
     overlay.querySelectorAll('input[type="checkbox"]').forEach(cb => {
         cb.addEventListener('change', () => {
             const lbl = cb.closest('label');
-            if (cb.checked) { lbl.style.background = '#F7F3ED'; lbl.style.borderColor = '#90caf9'; }
+            if (cb.checked) { lbl.style.background = '#F7F3ED'; lbl.style.borderColor = '#E8E0D8'; }
             else { lbl.style.background = '#F7F3ED'; lbl.style.borderColor = '#E8E0D8'; }
         });
     });
@@ -2311,7 +2311,7 @@ async function loadAdminParticipants() {
                                     </button>
                                     <button onclick="adminAdjustMaxDrawdown('${participantId}', '${challengeId}')" 
                                         style="background:#455A64; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
-                                        💀 청산한도
+                                        <i data-lucide="skull" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 청산한도
                                     </button>
                                     <button onclick="adminAdjustBalance('${participantId}', '${challengeId}')" 
                                         style="background:#795548; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
@@ -2438,12 +2438,12 @@ async function loadPropTrading() {
                         <div style="font-size:1.4rem; font-weight:700; color:#3D2B1F; margin:0.3rem 0;">${t.deposit} CRTD</div>
                         <div style="font-size:0.75rem; color:var(--accent); line-height:1.6;">
                             <i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> $${(t.account||100000).toLocaleString()} 계좌<br>
-                            💀 -$${(t.liquidation||3000).toLocaleString()} 청산<br>
+                            <i data-lucide="skull" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> -$${(t.liquidation||3000).toLocaleString()} 청산<br>
                             <i data-lucide="trending-up" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> +$${(t.profitThreshold||1000).toLocaleString()}~ → CRTD<br>
-                            💎 ${(t.withdrawUnit||1000).toLocaleString()} 단위 인출
+                            <i data-lucide="gem" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${(t.withdrawUnit||1000).toLocaleString()} 단위 인출
                         </div>
                         <button onclick="joinChallenge('${doc.id}','${key}')" class="btn-primary" style="width:100%; margin-top:0.5rem; padding:0.6rem; font-size:0.9rem;">
-                            🚀 ${key}군 참가
+                            <i data-lucide="rocket" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${key}군 참가
                         </button>
                     </div>
                 `;
@@ -2455,7 +2455,7 @@ async function loadPropTrading() {
                     <div style="background:var(--bg); padding:0.8rem; border-radius:8px; text-align:center;">
                         <div style="font-size:1.2rem; font-weight:700; color:#3D2B1F;">${ch.entryFeeCRTD || 100} CRTD</div>
                         <button onclick="joinChallenge('${doc.id}','A')" class="btn-primary" style="width:100%; margin-top:0.5rem; padding:0.7rem;">
-                            🚀 참가
+                            <i data-lucide="rocket" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 참가
                         </button>
                     </div>
                 `;
@@ -2502,7 +2502,7 @@ async function showCreateChallenge() {
                 
                 <!-- ★ 티어 설정 -->
                 <div style="background:linear-gradient(135deg, rgba(139,105,20,0.05), rgba(107,87,68,0.05)); padding:1rem; border-radius:8px; border:1px solid rgba(139,105,20,0.2);">
-                    <h4 style="margin-bottom:0.8rem;">💎 CRTD 티어 설정</h4>
+                    <h4 style="margin-bottom:0.8rem;"><i data-lucide="gem" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> CRTD 티어 설정</h4>
                     <p style="font-size:0.75rem; color:var(--accent); margin-bottom:0.8rem;">사용하지 않을 티어는 참가비를 0으로 설정</p>
                     
                     <div style="overflow-x:auto; -webkit-overflow-scrolling:touch; max-width:100%;">
@@ -2716,12 +2716,12 @@ async function joinChallenge(challengeId, tierKey) {
     
     const confirmMsg = 
         `<i data-lucide="clipboard-list" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${data.name} (${tierKey}군)\n\n` +
-        `💎 참가비: ${tier.deposit} CRTD\n` +
+        `<i data-lucide="gem" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 참가비: ${tier.deposit} CRTD\n` +
         `<i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 가상 계좌: $${tier.account.toLocaleString()}\n` +
         `<i data-lucide="bar-chart-3" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 상품: ${productText}\n` +
         `<i data-lucide="trending-up" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 포지션: 최대 ${data.maxPositions || 5}개\n\n` +
         `── 프랍 규칙 ──\n` +
-        `💀 -$${tier.liquidation.toLocaleString()} → 계좌 청산 (${tier.deposit} CRTD 소멸)\n` +
+        `<i data-lucide="skull" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> -$${tier.liquidation.toLocaleString()} → 계좌 청산 (${tier.deposit} CRTD 소멸)\n` +
         `<i data-lucide="trending-up" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> +$${tier.profitThreshold.toLocaleString()} 초과분 → 1:1 CRTD 변환\n` +
         `<i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${tier.withdrawUnit.toLocaleString()} CRTD 단위 인출 가능\n` +
         `🔴 일일 한도: -$${data.dailyLossLimit || 500}\n\n` +

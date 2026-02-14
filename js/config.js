@@ -280,7 +280,7 @@ async function checkCumulativeLiquidation() {
         updateRiskGaugeUI();
         updateTradingUI();
         
-        showToast(`💀 ${t('config.cumulative_loss','누적 손실')} -$${Math.abs(RISK_CONFIG.cumulativeLossLimit).toLocaleString()} ${t('config.reached','도달')}!`, 'error');
+        showToast(`<i data-lucide="skull" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${t('config.cumulative_loss','누적 손실')} -$${Math.abs(RISK_CONFIG.cumulativeLossLimit).toLocaleString()} ${t('config.reached','도달')}!`, 'error');
         
         return true;
     }

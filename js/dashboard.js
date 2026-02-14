@@ -87,7 +87,7 @@ async function loadDashboard() {
         <div class="dash-grid">
             <!-- Token Portfolio -->
             <div class="dash-card dash-card-wide">
-                <h4>💎 ${t('dashboard.portfolio', '토큰 포트폴리오')}</h4>
+                <h4><i data-lucide="gem" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${t('dashboard.portfolio', '토큰 포트폴리오')}</h4>
                 <div class="dash-tokens">
                     <div class="dash-token" onclick="showPage('wallet')">
                         <span class="dash-token-icon"><i data-lucide="coins" style="width:20px;height:20px;color:#8B6914;"></i></span>

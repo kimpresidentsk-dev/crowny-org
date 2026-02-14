@@ -1904,7 +1904,7 @@ async function loadMyEnergyInvestments() {
             <div style="background:#FFF8E1; padding:0.8rem; border-radius:8px; margin-bottom:0.8rem; display:flex; justify-content:space-around; text-align:center;">
                 <div><div style="font-size:0.7rem; color:var(--accent);">총 투자</div><strong>${totalInvested.toFixed(1)}</strong></div>
                 <div><div style="font-size:0.7rem; color:var(--accent);">예상 월 수익</div><strong style="color:#6B8F3C;">${totalMonthly.toFixed(2)} CREB</strong></div>
-                <div><div style="font-size:0.7rem; color:var(--accent);">예상 연 수익</div><strong style="color:#1976D2;">${(totalMonthly * 12).toFixed(2)} CREB</strong></div>
+                <div><div style="font-size:0.7rem; color:var(--accent);">예상 연 수익</div><strong style="color:#8B6914;">${(totalMonthly * 12).toFixed(2)} CREB</strong></div>
             </div>
             ${rows}`;
         
