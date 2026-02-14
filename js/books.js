@@ -1140,7 +1140,7 @@ async function showMyLibrary() {
     </div>
     <div style="display:flex;border-bottom:1px solid #E8E0D8;">
         <button onclick="_showLibraryTab('purchased')" class="lib-tab active" style="flex:1;padding:0.8rem;border:none;background:#FFF8F0;cursor:pointer;font-weight:700;border-bottom:2px solid #3D2B1F;">📖 구매한 책</button>
-        <button onclick="_showLibraryTab('wishlist')" class="lib-tab" style="flex:1;padding:0.8rem;border:none;background:#FFF8F0;cursor:pointer;">💝 위시리스트</button>
+        <button onclick="_showLibraryTab('wishlist')" class="lib-tab" style="flex:1;padding:0.8rem;border:none;background:#FFF8F0;cursor:pointer;"><i data-lucide="heart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 위시리스트</button>
         <button onclick="_showLibraryTab('treasures')" class="lib-tab" style="flex:1;padding:0.8rem;border:none;background:#FFF8F0;cursor:pointer;">🎯 보물</button>
         <button onclick="_showLibraryTab('translations')" class="lib-tab" style="flex:1;padding:0.8rem;border:none;background:#FFF8F0;cursor:pointer;">🌍 번역</button>
     </div>

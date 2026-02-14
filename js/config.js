@@ -74,7 +74,7 @@ function checkDailyReset() {
                 }).catch(err => console.error('Daily reset error:', err));
         }
         
-        console.log('🔄 일일 손실 리셋 (새로운 날)');
+        console.log('<i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 일일 손실 리셋 (새로운 날)');
     }
 }
 

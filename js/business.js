@@ -134,7 +134,7 @@
                 <div style="height:100%;background:${progress >= 100 ? '#6B8F3C' : '#8B6914'};width:${progress}%;border-radius:6px;"></div>
             </div>
             <p style="font-size:0.85rem;margin-bottom:1rem;"><strong>${(data.raised||0).toLocaleString()}</strong> / ${(data.goal||0).toLocaleString()} CRTD (${progress}%)</p>
-            <button onclick="donateToCampaign('${id}')" class="btn-primary" style="width:100%;padding:0.8rem;">💝 후원하기</button>
+            <button onclick="donateToCampaign('${id}')" class="btn-primary" style="width:100%;padding:0.8rem;"><i data-lucide="heart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 후원하기</button>
             <button onclick="document.getElementById('campaign-detail-modal').style.display='none'" style="width:100%;padding:0.6rem;margin-top:0.5rem;background:none;border:1px solid #E8E0D8;border-radius:8px;cursor:pointer;">닫기</button>`;
         modal.style.display = 'flex';
     };

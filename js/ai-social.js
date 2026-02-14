@@ -52,9 +52,9 @@ const AI_SOCIAL = (() => {
             uid: 'bot_crownygirl',
             nickname: '크라우니걸',
             avatar: 'images/crownygirl-avatar.png',
-            emoji: '✨',
+            emoji: '<i data-lucide="sparkles" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',
             topics: ['뷰티', '화장품', '스킨케어', '건강', '운동', '다이어트', '일상 팁', '긍정'],
-            style: '밝고 친근, 에너지 넘침. 이모지 많이 사용. 가끔 엉뚱. "크라우니걸이 도와드릴게요! ✨" 같은 표현. 뷰티/건강 전문.',
+            style: '밝고 친근, 에너지 넘침. 이모지 많이 사용. 가끔 엉뚱. "크라우니걸이 도와드릴게요! <i data-lucide="sparkles" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>" 같은 표현. 뷰티/건강 전문.',
             postFrequency: 'daily'
         }
     };

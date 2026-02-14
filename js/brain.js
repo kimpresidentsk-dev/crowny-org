@@ -322,7 +322,7 @@ const BRAIN = (() => {
                 </div>
                 <h4 style="margin:1rem 0 0.5rem 0;">🌱 성장 포인트</h4>
                 <p style="font-size:0.85rem;color:var(--accent);">${temp.growth}</p>
-                <h4 style="margin:1rem 0 0.5rem 0;">🤝 관련 기질</h4>
+                <h4 style="margin:1rem 0 0.5rem 0;"><i data-lucide="handshake" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 관련 기질</h4>
                 <p style="font-size:0.85rem;">${temp.traits.join(', ')}</p>
             </div>
 

@@ -613,7 +613,7 @@ function _renderArtCard(art) {
                 <div style="font-size:.7rem;color:var(--accent);margin:.2rem 0">${catLabel} · ${art.artistNickname || t('art.anonymous','익명')}</div>
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-top:.3rem">
                     ${priceLabel}
-                    <span style="font-size:.7rem;color:var(--accent)">❤️ ${art.likes || 0}</span>
+                    <span style="font-size:.7rem;color:var(--accent)"><i data-lucide="heart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${art.likes || 0}</span>
                 </div>
             </div>
         </div>`;
@@ -662,14 +662,14 @@ async function viewArtwork(artId) {
             if (artistWeight > 1) {
                 priceInfoHtml = `
                     <div style="background:#f0f7ff;padding:.6rem;border-radius:8px;margin-bottom:.8rem;font-size:.82rem">
-                        <div>💰 ${t('art.base_price','기본가')}: <strong>${art.basePrice} ${art.priceToken || 'CRAC'}</strong></div>
+                        <div><i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${t('art.base_price','기본가')}: <strong>${art.basePrice} ${art.priceToken || 'CRAC'}</strong></div>
                         <div>⭐ ${t('art.weight','가중치')}: <strong>${artistWeight}x</strong></div>
                         <div style="font-size:.95rem;font-weight:700;margin-top:.3rem;color:#3D2B1F">= ${effectivePrice} ${art.priceToken || 'CRAC'}</div>
                     </div>`;
             } else {
                 priceInfoHtml = `
                     <div style="background:#f0f7ff;padding:.6rem;border-radius:8px;margin-bottom:.8rem;font-size:.85rem">
-                        💰 ${t('art.price','가격')}: <strong>${effectivePrice} ${art.priceToken || 'CRAC'}</strong>
+                        <i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${t('art.price','가격')}: <strong>${effectivePrice} ${art.priceToken || 'CRAC'}</strong>
                     </div>`;
             }
         }
@@ -705,7 +705,7 @@ async function viewArtwork(artId) {
             } else {
                 actionHtml = `
                     <div style="display:flex;gap:.5rem">
-                        <button onclick="buyArtwork('${artId}')" style="background:#3D2B1F;color:#E8D5C4;border:none;padding:.8rem 1.5rem;border-radius:8px;cursor:pointer;font-weight:700;flex:1">💰 ${effectivePrice} ${art.priceToken || 'CRAC'} 구매</button>
+                        <button onclick="buyArtwork('${artId}')" style="background:#3D2B1F;color:#E8D5C4;border:none;padding:.8rem 1.5rem;border-radius:8px;cursor:pointer;font-weight:700;flex:1"><i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${effectivePrice} ${art.priceToken || 'CRAC'} 구매</button>
                         <button onclick="reserveArtwork('${artId}')" style="background:#C4841D;color:#E8D5C4;border:none;padding:.8rem 1rem;border-radius:8px;cursor:pointer;font-weight:700">📅 예약</button>
                     </div>
                     <p style="font-size:.7rem;color:var(--accent);margin-top:.3rem;text-align:center">📅 예약: 보증금 ${Math.ceil(effectivePrice / 10)} ${art.priceToken || 'CRAC'} (1/10) · 1년 내 잔금 결제</p>`;
@@ -742,14 +742,14 @@ async function viewArtwork(artId) {
                 <div style="padding:1.2rem">
                     <h3 style="margin-bottom:.5rem">${art.title}</h3>
                     <div style="font-size:.85rem;color:var(--accent);margin-bottom:.8rem">
-                        ${catLabel} · 🎨 <span onclick="viewArtistProfile('${art.artistId}')" style="cursor:pointer;text-decoration:underline">${art.artistNickname || t('art.anonymous','익명')}</span> · 👁️ ${(art.views||0)+1} · ❤️ ${art.likes||0}
+                        ${catLabel} · 🎨 <span onclick="viewArtistProfile('${art.artistId}')" style="cursor:pointer;text-decoration:underline">${art.artistNickname || t('art.anonymous','익명')}</span> · 👁️ ${(art.views||0)+1} · <i data-lucide="heart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${art.likes||0}
                     </div>
                     ${art.description ? `<p style="font-size:.9rem;line-height:1.6;margin-bottom:1rem;color:#3D2B1F">${art.description}</p>` : ''}
                     ${supplyHtml}
                     ${priceInfoHtml}
                     ${nftInfoHtml}
                     <div style="display:flex;gap:.5rem;margin-bottom:1rem">
-                        <button onclick="likeArtwork('${artId}')" style="background:var(--bg);border:1px solid var(--border);padding:.5rem 1rem;border-radius:6px;cursor:pointer">❤️ 좋아요</button>
+                        <button onclick="likeArtwork('${artId}')" style="background:var(--bg);border:1px solid var(--border);padding:.5rem 1rem;border-radius:6px;cursor:pointer"><i data-lucide="heart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 좋아요</button>
                         <button onclick="shareArtwork('${artId}','${art.title.replace(/'/g, "\\'")}')" style="background:var(--bg);border:1px solid var(--border);padding:.5rem 1rem;border-radius:6px;cursor:pointer">🔗 공유</button>
                     </div>
                     ${actionHtml}
@@ -774,7 +774,7 @@ async function likeArtwork(artId) {
         if ((await likeRef.get()).exists) { showToast('이미 좋아요 한 작품입니다', 'info'); return; }
         await likeRef.set({ userId: currentUser.uid, timestamp: new Date() });
         await db.collection('artworks').doc(artId).update({ likes: firebase.firestore.FieldValue.increment(1) });
-        showToast('❤️ 좋아요!', 'success');
+        showToast('<i data-lucide="heart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 좋아요!', 'success');
     } catch (e) { console.error('🎨 [Like]', e); }
 }
 
@@ -837,7 +837,7 @@ async function buyArtwork(artId) {
         const artistReceive = Math.round((effectivePrice - platformFee) * 100) / 100;
 
         const confirmMsg = `"${art.title}"\n\n` +
-            `💰 가격: ${effectivePrice} ${art.priceToken || 'CRAC'}\n` +
+            `<i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 가격: ${effectivePrice} ${art.priceToken || 'CRAC'}\n` +
             (art.basePrice && art.artistWeight > 1 ? `   (기본가 ${art.basePrice} × 가중치 ${art.artistWeight}x)\n` : '') +
             `📊 수수료: ${platformFee} (${ART_CONFIG.platformFeePercent}%)\n` +
             `🎨 아티스트 수령: ${artistReceive}\n` +
@@ -988,7 +988,7 @@ async function reserveArtwork(artId) {
         const tokenKey = (art.priceToken || 'CRAC').toLowerCase();
 
         const confirmMsg = `📅 예약 구매\n\n"${art.title}"\n\n` +
-            `💰 총 가격: ${effectivePrice} ${art.priceToken || 'CRAC'}\n` +
+            `<i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 총 가격: ${effectivePrice} ${art.priceToken || 'CRAC'}\n` +
             `💵 보증금 (1/10): ${depositAmount} ${art.priceToken || 'CRAC'}\n` +
             `📋 잔금: ${remainingAmount} ${art.priceToken || 'CRAC'}\n` +
             `⏰ 잔금 결제 기한: 1년\n\n` +
@@ -1420,7 +1420,7 @@ async function _loadMyReservations(container) {
                     </div>
                     <div style="display:flex;flex-direction:column;gap:.3rem">
                         ${r.status === 'reserved' && !isExpired ? `
-                            <button onclick="completeReservation('${doc.id}')" style="background:#6B8F3C;color:#E8D5C4;border:none;padding:.4rem .6rem;border-radius:6px;cursor:pointer;font-size:.75rem;font-weight:600">💰 잔금</button>
+                            <button onclick="completeReservation('${doc.id}')" style="background:#6B8F3C;color:#E8D5C4;border:none;padding:.4rem .6rem;border-radius:6px;cursor:pointer;font-size:.75rem;font-weight:600"><i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 잔금</button>
                             <button onclick="cancelReservation('${doc.id}')" style="background:none;border:1px solid #E8E0D8;padding:.3rem .5rem;border-radius:6px;cursor:pointer;font-size:.7rem;color:#6B5744">취소</button>
                         ` : ''}
                     </div>

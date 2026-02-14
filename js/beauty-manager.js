@@ -84,7 +84,7 @@ const BEAUTY = (() => {
                     </button>
                     <button onclick="BEAUTY.requestAIAnalysis()" 
                         style="width:100%;padding:0.8rem;border:none;border-radius:10px;background:linear-gradient(135deg,#8B6914,#F0C060);color:#FFF8F0;font-weight:700;cursor:pointer;font-size:0.85rem;">
-                        ✨ 크라우니걸 AI 분석
+                        <i data-lucide="sparkles" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 크라우니걸 AI 분석
                     </button>
                 </div>
             </div>
@@ -107,7 +107,7 @@ const BEAUTY = (() => {
 
             <!-- 크라우니 뷰티 추천 -->
             <div style="background:var(--card-bg,#F7F3ED);border-radius:12px;padding:1.2rem;margin-bottom:1.2rem;">
-                <h3 style="margin:0 0 0.8rem 0;font-size:1rem;">🎁 크라우니 뷰티 추천</h3>
+                <h3 style="margin:0 0 0.8rem 0;font-size:1rem;"><i data-lucide="gift" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 크라우니 뷰티 추천</h3>
                 <div style="display:grid;gap:0.5rem;">
                     <div onclick="showPage('mall')" style="display:flex;align-items:center;gap:0.8rem;padding:0.8rem;background:linear-gradient(135deg,#FFF8F0,#F7F3ED);border-radius:10px;cursor:pointer;">
                         <span style="font-size:1.5rem;">mask</span>
@@ -298,7 +298,7 @@ const BEAUTY = (() => {
             return;
         }
 
-        showLoading('✨ 크라우니걸이 분석 중...');
+        showLoading('<i data-lucide="sparkles" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 크라우니걸이 분석 중...');
         try {
             // 최근 사진 URL 수집
             const photoURLs = photos.docs.map(d => d.data().photoURL).filter(Boolean);
@@ -382,7 +382,7 @@ JSON만 출력하세요.`;
                 });
 
             hideLoading();
-            showToast('✨ 크라우니걸 분석 완료!', 'success');
+            showToast('<i data-lucide="sparkles" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 크라우니걸 분석 완료!', 'success');
 
             // 결과 표시
             const resultEl = document.getElementById('beauty-result-content');
@@ -402,7 +402,7 @@ JSON만 출력하세요.`;
         const colors = { moisture: '#8B6914', oil: '#FFB74D', pore: '#BA68C8', wrinkle: '#B54534', pigment: '#A1887F', elasticity: '#6B8F3C', overall: '#B54534' };
 
         const date = analysis.createdAt?.toDate ? analysis.createdAt.toDate().toLocaleDateString('ko-KR') : new Date().toLocaleDateString('ko-KR');
-        const typeLabel = analysis.type === 'ai' ? '✨ 크라우니걸 AI' : '👩‍⚕️ 전문가';
+        const typeLabel = analysis.type === 'ai' ? '<i data-lucide="sparkles" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 크라우니걸 AI' : '👩‍⚕️ 전문가';
 
         return `
             <div style="margin-bottom:0.8rem;">
@@ -424,7 +424,7 @@ JSON만 출력하세요.`;
             </div>
             ${analysis.summary ? `<div style="background:#F7F3ED;padding:0.8rem;border-radius:8px;font-size:0.85rem;margin-bottom:0.8rem;">${analysis.summary}</div>` : ''}
             ${analysis.advice ? `<div style="font-size:0.8rem;color:var(--accent);"><strong>💡 관리 조언:</strong> ${analysis.advice}</div>` : ''}
-            ${analysis.recommended ? `<div style="font-size:0.8rem;color:var(--primary,#B54534);margin-top:0.5rem;"><strong>🎁 추천:</strong> ${analysis.recommended}</div>` : ''}
+            ${analysis.recommended ? `<div style="font-size:0.8rem;color:var(--primary,#B54534);margin-top:0.5rem;"><strong><i data-lucide="gift" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 추천:</strong> ${analysis.recommended}</div>` : ''}
         `;
     }
 

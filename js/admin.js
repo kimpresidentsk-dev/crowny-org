@@ -614,7 +614,7 @@ async function distributeSignupReferralReward(referrerId, newUserId, referrerEma
             });
         }
         
-        console.log(`🎁 소개 가입 보상 지급:`, rewards, `→ ${referrerId}`);
+        console.log(`<i data-lucide="gift" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 소개 가입 보상 지급:`, rewards, `→ ${referrerId}`);
     } catch (e) {
         console.error('소개 가입 보상 지급 실패:', e);
     }
@@ -699,7 +699,7 @@ async function distributeReferralReward_DISABLED(userId, amount, token) {
                 [`referralEarnings.crtd`]: ((referrerData.referralEarnings || {}).crtd || 0) + rewardAmount
             });
             
-            console.log(`💰 소개 CRTD 즉시 지급: ${rewardAmount} → ${referredBy}`);
+            console.log(`<i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 소개 CRTD 즉시 지급: ${rewardAmount} → ${referredBy}`);
         } else if (tokenKey === 'crny') {
             // CRNY → 30일 후 자동 지급 (pendingRewards)
             const releaseDate = new Date();
@@ -3829,7 +3829,7 @@ async function loadRewardSettingsTab() {
             <tr style="background:#F7F3ED;"><th style="padding:0.4rem;text-align:left;">UID</th><th>유형</th><th>금액</th><th>날짜</th></tr>
             ${logs.map(l => `<tr style="border-bottom:1px solid #E8E0D8;">
                 <td style="padding:0.4rem;font-family:monospace;font-size:0.7rem;">${(l.uid||'').slice(0,12)}…</td>
-                <td style="text-align:center;">${l.type === 'signup' ? '🆕 가입' : '🤝 초대'}</td>
+                <td style="text-align:center;">${l.type === 'signup' ? '🆕 가입' : '<i data-lucide="handshake" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 초대'}</td>
                 <td style="text-align:center;font-weight:600;">${l.amount} CRTD</td>
                 <td style="text-align:center;font-size:0.7rem;">${l.createdAt?.toDate ? l.createdAt.toDate().toLocaleDateString() : '—'}</td>
             </tr>`).join('')}
@@ -3856,7 +3856,7 @@ async function loadRewardSettingsTab() {
         <!-- 초대 리워드 -->
         <div style="margin-bottom:1.5rem;">
             <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
-                <label style="font-weight:700;">🤝 ${t('admin.rw_invite','초대 리워드')}</label>
+                <label style="font-weight:700;"><i data-lucide="handshake" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${t('admin.rw_invite','초대 리워드')}</label>
                 <label class="toggle-switch" style="margin-left:auto;">
                     <input type="checkbox" id="rw-invite-enabled" ${rs.inviteEnabled ? 'checked' : ''}>
                     <span class="toggle-slider"></span>

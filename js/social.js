@@ -3060,7 +3060,7 @@ function showPostMenu(postId, isMyPost) {
         menuItems += `<button onclick="deletePost('${postId}');closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:#B54534;font-size:0.95rem;font-weight:600;cursor:pointer;text-align:left;">🗑️ 삭제</button>`;
     }
     menuItems += `<button onclick="copyShareURL('post','${postId}');closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:var(--dark-text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;">🔗 링크 복사</button>`;
-    menuItems += `<button onclick="repostPost('${postId}');closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:var(--dark-text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;">🔄 리포스트</button>`;
+    menuItems += `<button onclick="repostPost('${postId}');closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:var(--dark-text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 리포스트</button>`;
     menuItems += `<button onclick="closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:var(--dark-muted,#6B5744);font-size:0.95rem;cursor:pointer;text-align:left;">취소</button>`;
     
     sheet.innerHTML = `

@@ -69,7 +69,7 @@ function startOffchainListener() {
                 }
             }
             if (JSON.stringify(userWallet.offchainBalances) !== prev) {
-                console.log('🔄 Off-chain balances updated (realtime):', userWallet.offchainBalances);
+                console.log('<i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> Off-chain balances updated (realtime):', userWallet.offchainBalances);
                 if (typeof updateBalancesUI === 'function') updateBalancesUI();
                 if (typeof showToast === 'function') showToast('💰 잔액이 업데이트되었습니다', 'success', 2000);
             }
@@ -232,7 +232,7 @@ async function executeBridge() {
         if (from === 'crny') {
             if (amount > (userWallet.balances.crny || 0)) { showToast(t('bridge.crny_insufficient', 'CRNY 잔액 부족')); return; }
             const pts = amount * rate;
-            if (!confirm(`🔄 ${amount} CRNY → ${pts.toLocaleString()} ${to.toUpperCase()}\n${t('bridge.execute_confirm', '실행?')}`)) return;
+            if (!confirm(`<i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${amount} CRNY → ${pts.toLocaleString()} ${to.toUpperCase()}\n${t('bridge.execute_confirm', '실행?')}`)) return;
 
             const newCrny = userWallet.balances.crny - amount;
             await db.collection('users').doc(currentUser.uid)
@@ -258,7 +258,7 @@ async function executeBridge() {
             if (amount < rate) { showToast(`${t('bridge.min_required', '최소')} ${rate} pt ${t('bridge.min_required_suffix', '필요')}`); return; }
             const crnyOut = Math.floor(amount / rate);
             const ptsUsed = crnyOut * rate;
-            if (!confirm(`🔄 ${ptsUsed.toLocaleString()} ${from.toUpperCase()} → ${crnyOut} CRNY\n${t('bridge.execute_confirm', '실행?')}`)) return;
+            if (!confirm(`<i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${ptsUsed.toLocaleString()} ${from.toUpperCase()} → ${crnyOut} CRNY\n${t('bridge.execute_confirm', '실행?')}`)) return;
 
             await db.collection('users').doc(currentUser.uid)
                 .update({ [`offchainBalances.${from}`]: bal - ptsUsed });

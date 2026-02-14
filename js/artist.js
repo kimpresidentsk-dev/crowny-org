@@ -36,7 +36,7 @@
                         <strong style="display:block;font-size:0.95rem;margin-bottom:0.3rem;">${d.name || '이름 없음'}</strong>
                         <p style="font-size:0.75rem;color:var(--accent);margin-bottom:0.5rem;">${d.genre || ''} ${d.country ? '· ' + d.country : ''}</p>
                         <p style="font-size:0.7rem;color:var(--text-muted,#6B5744);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${d.bio || ''}</p>
-                        ${d.supportCount ? `<p style="font-size:0.7rem;margin-top:0.4rem;">❤️ ${d.supportCount} 후원</p>` : ''}
+                        ${d.supportCount ? `<p style="font-size:0.7rem;margin-top:0.4rem;"><i data-lucide="heart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${d.supportCount} 후원</p>` : ''}
                     </div>`;
                 list.appendChild(card);
             });
@@ -59,7 +59,7 @@
                 </div>
                 <p style="font-size:0.9rem;line-height:1.6;margin-bottom:1rem;">${data.bio || '소개가 없습니다.'}</p>
                 ${data.links ? `<div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem;">${Object.entries(data.links).map(([k,v]) => `<a href="${v}" target="_blank" style="padding:0.3rem 0.8rem;background:var(--bg);border-radius:20px;font-size:0.8rem;text-decoration:none;">${k}</a>`).join('')}</div>` : ''}
-                <button onclick="supportArtist('${id}')" class="btn-primary" style="width:100%;padding:0.8rem;">❤️ 후원하기</button>
+                <button onclick="supportArtist('${id}')" class="btn-primary" style="width:100%;padding:0.8rem;"><i data-lucide="heart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 후원하기</button>
                 <button onclick="this.closest('div[style*=fixed]').remove()" style="width:100%;padding:0.6rem;margin-top:0.5rem;background:none;border:1px solid var(--border);border-radius:8px;cursor:pointer;">닫기</button>
             </div>`;
         document.body.appendChild(overlay);

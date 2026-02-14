@@ -538,7 +538,7 @@ async function repostPost(postId) {
             mentions: data.mentions || [],
             timestamp: new Date()
         });
-        showToast(t('social.reposted', '🔄 리포스트 완료!'), 'success');
+        showToast(t('social.reposted', '<i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 리포스트 완료!'), 'success');
         loadSocialFeed();
     } catch (e) {
         showToast('리포스트 실패', 'error');
