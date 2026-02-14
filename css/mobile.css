@@ -513,18 +513,48 @@ a:not(.nav-item) {
         min-height: 44px !important;
         min-width: 44px !important;
     }
-    .chat-input .chat-extra-btn {
+    /* Mobile chat input: hide overflow buttons */
+    .chat-input .chat-extra-btn,
+    .chat-extra-btn {
         display: none !important;
     }
+    
+    /* Mobile chat input optimization */
     .chat-input {
         padding: 0.4rem 0.5rem !important;
-    }
-    .chat-input input {
-        font-size: 16px !important; /* prevent iOS zoom */
-    }
-    .chat-input {
-        padding: 0.5rem !important;
         gap: 0.3rem !important;
+        display: flex !important;
+        align-items: center !important;
+        flex-wrap: nowrap !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* iOS zoom prevention for all messenger inputs */
+    .chat-input input,
+    .chat-input textarea,
+    .chat-search-bar input,
+    .chat-search-overlay input,
+    #message-input,
+    #chat-search-input {
+        font-size: 16px !important;
+        -webkit-text-size-adjust: 100% !important;
+        -webkit-appearance: none !important;
+    }
+    
+    /* Responsive button sizing */
+    .chat-input .btn-send-token:not(.chat-extra-btn) {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        flex-shrink: 0 !important;
+    }
+    
+    .chat-input .btn-send-msg {
+        width: 40px !important;
+        height: 40px !important;
+        min-width: 40px !important;
+        flex-shrink: 0 !important;
     }
 
     .chat-input input {
@@ -975,18 +1005,7 @@ a:not(.nav-item) {
     }
 }
 
-/* Chat input: hide extra buttons on mobile, show via attach menu */
-@media (max-width: 768px) {
-    .chat-extra-btn {
-        display: none !important;
-    }
-    .chat-input {
-        gap: 0.3rem !important;
-    }
-    .chat-input input {
-        min-width: 0 !important;
-    }
-}
+/* Chat input: comprehensive mobile optimization - handled above in main @media section */
 
 /* iOS: prevent auto-zoom on input focus */
 @media (max-width: 768px) {
