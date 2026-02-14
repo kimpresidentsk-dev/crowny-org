@@ -3172,7 +3172,7 @@ a:not(.nav-item) {
 /* ===== Messenger Phase 1 - New styles ===== */
 .reply-preview-bar {
     display: flex; align-items: center; gap: 0.5rem;
-    padding: 0.4rem 0.8rem; background: var(--bg-card-alt); border-left: 3px solid #0066cc;
+    padding: 0.4rem 0.8rem; background: var(--bg-card-alt); border-left: 3px solid #8B6914;
     margin: 0 0.5rem; border-radius: 0 8px 8px 0;
 }
 .reply-preview-content { flex: 1; min-width: 0; overflow: hidden; }
@@ -4578,7 +4578,7 @@ label { color: var(--dark-muted) !important; }
 /* Input fields unified */
 input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
 textarea, select {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #F7F3ED) !important;
     color: var(--text, #f0f0f0) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
@@ -4606,7 +4606,7 @@ input:focus, textarea:focus, select:focus {
 
 /* Unified secondary buttons */
 .btn-secondary {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #F7F3ED) !important;
     color: var(--text, #f0f0f0) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
@@ -4620,7 +4620,7 @@ input:focus, textarea:focus, select:focus {
 }
 #profile-edit-modal input,
 #add-contact-modal input {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #F7F3ED) !important;
     color: var(--text, #f0f0f0) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
@@ -4642,7 +4642,7 @@ input:focus, textarea:focus, select:focus {
     color: var(--text, #f0f0f0) !important;
 }
 .settings-btn {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #F7F3ED) !important;
     color: var(--text, #f0f0f0) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
@@ -4655,7 +4655,7 @@ input:focus, textarea:focus, select:focus {
 
 /* Link preview dark */
 .link-preview-card {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
     color: var(--text, #f0f0f0) !important;
 }
@@ -4674,7 +4674,7 @@ input:focus, textarea:focus, select:focus {
     border-color: var(--border, #E8E0D8) !important;
 }
 .post-dropdown-menu div:hover {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #F7F3ED) !important;
 }
 
 /* Reaction picker dark */
@@ -4706,7 +4706,7 @@ input:focus, textarea:focus, select:focus {
     color: var(--text, #f0f0f0) !important;
 }
 .chat-menu-item:hover {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #F7F3ED) !important;
 }
 
 /* Friend request item dark */
@@ -4729,28 +4729,28 @@ input:focus, textarea:focus, select:focus {
 
 /* Reply preview bar dark */
 .reply-preview-bar {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #F7F3ED) !important;
     border-color: var(--gold, #8B6914) !important;
     color: var(--text, #f0f0f0) !important;
 }
 
 /* Pinned message dark */
 .pinned-message-banner {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #F7F3ED) !important;
     border-color: var(--gold, #8B6914) !important;
     color: var(--text, #f0f0f0) !important;
 }
 
 /* Dashboard shortcuts dark */
 .dash-shortcut-btn {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #F7F3ED) !important;
     color: var(--text, #f0f0f0) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Tab buttons dark */
 .tab-btn {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #F7F3ED) !important;
     color: var(--text, #f0f0f0) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
@@ -4772,7 +4772,7 @@ input:focus, textarea:focus, select:focus {
 
 /* System message dark */
 .system-message {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #F7F3ED) !important;
     color: var(--text-muted, #888) !important;
 }
 
@@ -4782,11 +4782,11 @@ input:focus, textarea:focus, select:focus {
     border-color: var(--border, #E8E0D8) !important;
 }
 .ai-bubble-bot {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #F7F3ED) !important;
     color: var(--text, #f0f0f0) !important;
 }
 .ai-quick-card {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #F7F3ED) !important;
     color: var(--text, #f0f0f0) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
@@ -4804,7 +4804,7 @@ input:focus, textarea:focus, select:focus {
 
 /* Msg reaction chip dark */
 .msg-reaction-chip {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
     color: var(--text, #f0f0f0) !important;
 }

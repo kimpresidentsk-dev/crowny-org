@@ -657,7 +657,7 @@
             list.scrollTop = list.scrollHeight;
         } catch(e) {
             console.error('Reel comments load error:', e);
-            list.innerHTML = '<p style="color:#f44336;text-align:center;">댓글 로드 실패</p>';
+            list.innerHTML = '<p style="color:#B54534;text-align:center;">댓글 로드 실패</p>';
         }
     }
 

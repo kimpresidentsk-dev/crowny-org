@@ -97,11 +97,11 @@ function updateRiskGaugeUI() {
     
     if (dailyBar) {
         dailyBar.style.width = dailyPercent + '%';
-        dailyBar.style.background = dailyPercent >= 100 ? '#f44336' : dailyPercent >= 80 ? '#C4841D' : '#4caf50';
+        dailyBar.style.background = dailyPercent >= 100 ? '#B54534' : dailyPercent >= 80 ? '#C4841D' : '#6B8F3C';
     }
     if (dailyText) {
         dailyText.textContent = `$${dailyPnL.toFixed(0)} / -$${actualDailyLimit}`;
-        dailyText.style.color = dailyPnL < 0 ? '#f44336' : '#4caf50';
+        dailyText.style.color = dailyPnL < 0 ? '#B54534' : '#6B8F3C';
     }
     
     // 누적 손실 게이지 (참가자별 한도 사용)
@@ -111,11 +111,11 @@ function updateRiskGaugeUI() {
     
     if (cumulativeBar) {
         cumulativeBar.style.width = cumulativePercent + '%';
-        cumulativeBar.style.background = cumulativePercent >= 100 ? '#f44336' : cumulativePercent >= 80 ? '#C4841D' : '#4caf50';
+        cumulativeBar.style.background = cumulativePercent >= 100 ? '#B54534' : cumulativePercent >= 80 ? '#C4841D' : '#6B8F3C';
     }
     if (cumulativeText) {
         cumulativeText.textContent = `$${cumulativePnL.toFixed(0)} / -$${actualCumulativeLimit.toLocaleString()}`;
-        cumulativeText.style.color = cumulativePnL < 0 ? '#f44336' : '#4caf50';
+        cumulativeText.style.color = cumulativePnL < 0 ? '#B54534' : '#6B8F3C';
     }
     
     // 일일 한도 경고

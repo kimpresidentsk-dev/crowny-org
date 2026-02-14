@@ -2829,7 +2829,7 @@ async function switchProfileTab(tab, uid) {
                 } else if (post.videoUrl) {
                     grid.innerHTML += `<div class="insta-grid-item" onclick="openShortsViewer('${doc.id}')"><video src="${post.videoUrl}" muted preload="metadata" style="width:100%;height:100%;object-fit:cover;"></video></div>`;
                 } else {
-                    grid.innerHTML += `<div class="insta-grid-item"><div style="width:100%;height:100%;background:var(--bg-card-alt,#1e1e3a);display:flex;align-items:center;justify-content:center;"><span style="font-size:0.7rem;">${(post.text || '').substring(0, 40)}</span></div></div>`;
+                    grid.innerHTML += `<div class="insta-grid-item"><div style="width:100%;height:100%;background:var(--bg-card-alt,#F7F3ED);display:flex;align-items:center;justify-content:center;"><span style="font-size:0.7rem;">${(post.text || '').substring(0, 40)}</span></div></div>`;
                 }
             }
             if (savedSnap.empty) grid.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--accent);">저장된 게시물이 없습니다</p>';

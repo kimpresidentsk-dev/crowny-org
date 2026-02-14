@@ -31,9 +31,9 @@
         window.db = firebase.firestore();
         window.OFFCHAIN_RATE = 100;
         window.OFFCHAIN_TOKENS = {
-            CRTD: { name: '크라우니 트레이딩 달러', icon: 'trending-up', color: '#FF6D00' },
-            CRAC: { name: '크라우니 아트 크레딧', icon: 'palette', color: '#E91E63' },
-            CRGC: { name: '크라우니 굿즈 & 기빙', icon: 'shopping-bag', color: '#00BFA5' },
+            CRTD: { name: '크라우니 트레이딩 달러', icon: 'trending-up', color: '#C4841D' },
+            CRAC: { name: '크라우니 아트 크레딧', icon: 'palette', color: '#B54534' },
+            CRGC: { name: '크라우니 굿즈 & 기빙', icon: 'shopping-bag', color: '#6B8F3C' },
             CREB: { name: '크라우니 에코 바이오', icon: 'leaf', color: '#2E7D32' }
         };
         window.THIRDWEB_CONFIG = { clientId: '26c044bdfa2f575538d00945419126bf', contracts: { CRNY: '0xe56173b6a57680286253566B9C80Fcc175c88bE1', FNC: '0x68E3aA1049F583C2f1701fefc4443e398ebF32ee', CRFN: '0x396DAd0C7625a4881cA0cd444Cd80A9bbce4A054' } };
@@ -192,7 +192,7 @@
                                     </div>
                                     <div>
                                         <label style="font-size:0.68rem;">색상</label>
-                                        <input type="color" id="new-token-color" value="#FF6D00" style="width:100%; height:32px; border:1px solid var(--border); border-radius:4px; cursor:pointer;">
+                                        <input type="color" id="new-token-color" value="#C4841D" style="width:100%; height:32px; border:1px solid var(--border); border-radius:4px; cursor:pointer;">
                                     </div>
                                     <button onclick="createCustomToken()" style="background:#E65100; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer; font-weight:600; font-size:0.82rem;">🪙 생성</button>
                                 </div>
@@ -274,7 +274,7 @@
                                     <label style="font-size:0.75rem;">수량</label>
                                     <input type="number" id="admin-send-amount" value="1" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
                                 </div>
-                                <button onclick="adminSendToken()" style="background:#0066cc; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer; white-space:nowrap;">보내기</button>
+                                <button onclick="adminSendToken()" style="background:#8B6914; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer; white-space:nowrap;">보내기</button>
                             </div>
                             <p style="font-size:0.7rem; color:var(--accent); margin-top:0.5rem;">⚠️ Polygon 온체인 전송 — POL(MATIC) 가스비 필요</p>
                         </div>
@@ -608,7 +608,7 @@
                         <h3 style="margin-bottom:1rem;">🤖 AI 소셜 봇</h3>
                         <p style="font-size:0.85rem; color:#666; margin-bottom:1rem;">5명의 AI 캐릭터가 소셜 피드에 자동으로 글을 올리고, 댓글에 답변합니다.</p>
                         <div style="display:grid; gap:0.5rem;">
-                            <button onclick="aiSocialPostAll()" class="btn-primary" style="background:linear-gradient(135deg,#D4AF37,#F0C060);color:#3D2B1F;">🚀 전체 캐릭터 포스팅 (5명)</button>
+                            <button onclick="aiSocialPostAll()" class="btn-primary" style="background:linear-gradient(135deg,#8B6914,#F0C060);color:#3D2B1F;">🚀 전체 캐릭터 포스팅 (5명)</button>
                             <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-top:0.5rem;">
                                 <button onclick="aiSocialPostOne('kps')" style="padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;">👔 KPS</button>
                                 <button onclick="aiSocialPostOne('hansun')" style="padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;">🎹 한선</button>
@@ -623,7 +623,7 @@
                     <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-top:1rem;">
                         <h3 style="margin-bottom:1rem;">✨ 뷰티매니저 — 분석 요청</h3>
                         <p style="font-size:0.85rem; color:#666; margin-bottom:1rem;">사용자들의 피부 분석 요청 목록입니다. 사진을 확인하고 분석 결과를 입력하세요.</p>
-                        <button onclick="BEAUTY.loadAdminRequests()" style="padding:0.5rem 1rem;border:none;border-radius:6px;background:#E91E63;color:#FFF8F0;cursor:pointer;margin-bottom:0.5rem;">🔄 요청 목록 새로고침</button>
+                        <button onclick="BEAUTY.loadAdminRequests()" style="padding:0.5rem 1rem;border:none;border-radius:6px;background:#B54534;color:#FFF8F0;cursor:pointer;margin-bottom:0.5rem;">🔄 요청 목록 새로고침</button>
                         <div id="beauty-admin-requests"><p style="color:#888;font-size:0.85rem;">목록을 로드하려면 위 버튼을 클릭하세요.</p></div>
                     </div>
                 </div>
@@ -638,7 +638,7 @@
                         <div style="background:#fff3e0;border:1px solid #ffcc02;border-radius:8px;padding:1rem;margin-bottom:1rem;">
                             <p style="font-size:0.85rem;margin-bottom:0.5rem;"><strong>🌱 초기 데이터 시드</strong></p>
                             <p style="font-size:0.75rem;color:#666;margin-bottom:0.8rem;">아티스트, 사업체, 캠페인, AI 봇 프로필 등 초기 데이터를 생성합니다. 이미 있는 데이터는 건드리지 않습니다.</p>
-                            <button onclick="seedAll().then(r=>document.getElementById('seed-result').textContent=r)" style="padding:0.6rem 1.2rem;background:#ff9800;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:600;">🌱 시드 데이터 실행</button>
+                            <button onclick="seedAll().then(r=>document.getElementById('seed-result').textContent=r)" style="padding:0.6rem 1.2rem;background:#C4841D;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:600;">🌱 시드 데이터 실행</button>
                             <pre id="seed-result" style="margin-top:0.5rem;font-size:0.75rem;color:#333;white-space:pre-wrap;"></pre>
                         </div>
                         <div id="feature-flags-list" style="display:grid; gap:0.8rem;"></div>
@@ -676,10 +676,10 @@
                                     div.innerHTML = `
                                         <span style="font-size:0.9rem;">${f.label}</span>
                                         ${f.stable 
-                                            ? '<span style="font-size:0.75rem;color:#4CAF50;font-weight:600;">✅ 기본</span>'
+                                            ? '<span style="font-size:0.75rem;color:#6B8F3C;font-weight:600;">✅ 기본</span>'
                                             : `<label style="position:relative;display:inline-block;width:48px;height:26px;">
                                                 <input type="checkbox" ${enabled?'checked':''} onchange="setFeatureFlag('${f.key}',this.checked)" style="opacity:0;width:0;height:0;">
-                                                <span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:${enabled?'#4CAF50':'#ccc'};border-radius:13px;transition:0.3s;"></span>
+                                                <span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:${enabled?'#6B8F3C':'#ccc'};border-radius:13px;transition:0.3s;"></span>
                                                 <span style="position:absolute;content:'';height:20px;width:20px;left:${enabled?'24px':'3px'};bottom:3px;background:#FFF8F0;border-radius:50%;transition:0.3s;"></span>
                                               </label>`
                                         }`;
@@ -710,7 +710,7 @@
     <div id="toast-container" style="position:fixed;top:20px;right:20px;z-index:99999;display:flex;flex-direction:column;gap:8px;pointer-events:none;"></div>
     <div id="loading-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.5);z-index:99998;align-items:center;justify-content:center;">
         <div style="background:#FFF8F0;padding:2rem;border-radius:12px;text-align:center;">
-            <div style="width:40px;height:40px;border:4px solid #ddd;border-top:4px solid #0066cc;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 1rem;"></div>
+            <div style="width:40px;height:40px;border:4px solid #ddd;border-top:4px solid #8B6914;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 1rem;"></div>
             <p id="loading-text">처리 중...</p>
         </div>
     </div>
@@ -720,7 +720,7 @@
             <p id="confirm-message" style="color:#666;margin:0.8rem 0 1.2rem;white-space:pre-line;"></p>
             <div style="display:flex;gap:0.5rem;">
                 <button id="confirm-cancel" onclick="closeConfirmModal(false)" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;">취소</button>
-                <button id="confirm-ok" onclick="closeConfirmModal(true)" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#0066cc;color:#FFF8F0;font-weight:700;">확인</button>
+                <button id="confirm-ok" onclick="closeConfirmModal(true)" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#8B6914;color:#FFF8F0;font-weight:700;">확인</button>
             </div>
         </div>
     </div>
@@ -729,7 +729,7 @@
         @keyframes slideIn { from { transform: translateX(100%); opacity:0; } to { transform: translateX(0); opacity:1; } }
         @keyframes fadeOut { from { opacity:1; } to { opacity:0; transform:translateY(-10px); } }
         .toast { pointer-events:auto; padding:0.8rem 1.2rem; border-radius:8px; color:#FFF8F0; font-size:0.9rem; box-shadow:0 4px 12px rgba(61,43,31,0.15); animation: slideIn 0.3s ease; max-width:350px; }
-        .toast.success { background:#4CAF50; } .toast.error { background:#f44336; } .toast.info { background:#8B6914; } .toast.warning { background:#ff9800; }
+        .toast.success { background:#6B8F3C; } .toast.error { background:#B54534; } .toast.info { background:#8B6914; } .toast.warning { background:#C4841D; }
         .toast.fadeout { animation: fadeOut 0.3s ease forwards; }
     </style>
     <script>

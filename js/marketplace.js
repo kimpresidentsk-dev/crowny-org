@@ -456,7 +456,7 @@ async function loadMyProducts() {
         c.innerHTML='';
         o.forEach(d => {
             const x = d.data();
-            const statusBadge = x.status === 'active' ? '<span style="color:#6B8F3C; font-size:0.75rem;">● 판매중</span>' : x.status === 'pending' ? '<span style="color:#C4841D; font-size:0.75rem;">● 승인대기</span>' : x.status === 'rejected' ? '<span style="color:#f44336; font-size:0.75rem;">● 거부됨</span>' : '<span style="color:#6B5744; font-size:0.75rem;">● 비활성</span>';
+            const statusBadge = x.status === 'active' ? '<span style="color:#6B8F3C; font-size:0.75rem;">● 판매중</span>' : x.status === 'pending' ? '<span style="color:#C4841D; font-size:0.75rem;">● 승인대기</span>' : x.status === 'rejected' ? '<span style="color:#B54534; font-size:0.75rem;">● 거부됨</span>' : '<span style="color:#6B5744; font-size:0.75rem;">● 비활성</span>';
             c.innerHTML += `<div style="padding:0.6rem; background:var(--bg); border-radius:6px; margin-bottom:0.4rem; font-size:0.85rem;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.3rem;">
                     <div><strong>${x.title}</strong> — ${x.price} CRGC · 판매: ${x.sold||0}/${x.stock} ${statusBadge}</div>
@@ -1160,7 +1160,7 @@ async function loadInsuranceAdmin() {
                 <p style="font-size:0.85rem; color:#6B5744; margin:0.3rem 0;">${r.reason}</p>
                 <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
                     <button onclick="approveInsurance('${d.id}')" style="flex:1; background:#6B8F3C; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; font-weight:600;"><i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 승인</button>
-                    <button onclick="rejectInsurance('${d.id}')" style="flex:1; background:#f44336; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; font-weight:600;"><i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 거절</button>
+                    <button onclick="rejectInsurance('${d.id}')" style="flex:1; background:#B54534; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; font-weight:600;"><i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 거절</button>
                 </div>
             </div>`;
         });
@@ -1175,7 +1175,7 @@ async function loadMyInsuranceClaims() {
         const docs = await db.collection('insurance_requests').where('requesterId', '==', currentUser.uid).orderBy('createdAt', 'desc').limit(10).get();
         if (docs.empty) { c.innerHTML = '<p style="color:var(--accent); font-size:0.85rem;">보험 신청 내역이 없습니다</p>'; return; }
         const STATUS = { pending: '<i data-lucide="hourglass" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 대기중', approved: '<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 승인', rejected: '<i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 거절' };
-        const STATUS_COLOR = { pending: '#C4841D', approved: '#6B8F3C', rejected: '#f44336' };
+        const STATUS_COLOR = { pending: '#C4841D', approved: '#6B8F3C', rejected: '#B54534' };
         c.innerHTML = '';
         docs.forEach(d => {
             const r = d.data();
@@ -1184,7 +1184,7 @@ async function loadMyInsuranceClaims() {
                     <span><strong>${r.amount} CRNY</strong> — ${r.reason?.slice(0, 40)}</span>
                     <span style="color:${STATUS_COLOR[r.status]}; font-weight:600;">${STATUS[r.status] || r.status}</span>
                 </div>
-                ${r.rejectReason ? `<p style="font-size:0.75rem; color:#f44336; margin-top:0.2rem;">사유: ${r.rejectReason}</p>` : ''}
+                ${r.rejectReason ? `<p style="font-size:0.75rem; color:#B54534; margin-top:0.2rem;">사유: ${r.rejectReason}</p>` : ''}
             </div>`;
         });
     } catch (e) { c.innerHTML = e.message; }
@@ -2831,7 +2831,7 @@ async function showOrderDetail(orderId) {
         if (!returnSnap.empty) {
             const ret = returnSnap.docs[0].data();
             const retStatus = {requested:'<i data-lucide="hourglass" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 반품 요청중',approved:'<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 반품 승인',rejected:'<i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 반품 거절',completed:'<i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 환불 완료'};
-            const retColor = {requested:'#C4841D',approved:'#6B8F3C',rejected:'#f44336',completed:'#5B7B8C'};
+            const retColor = {requested:'#C4841D',approved:'#6B8F3C',rejected:'#B54534',completed:'#5B7B8C'};
             returnHtml = `<div style="background:${retColor[ret.status]}15;border-left:4px solid ${retColor[ret.status]};padding:0.8rem;border-radius:0 8px 8px 0;margin-bottom:1rem;">
                 <div style="font-weight:700;color:${retColor[ret.status]};">${retStatus[ret.status] || ret.status}</div>
                 <div style="font-size:0.8rem;color:#6B5744;margin-top:0.2rem;">사유: ${ret.reasonCategory} — ${ret.reasonDetail||''}</div>
@@ -2843,7 +2843,7 @@ async function showOrderDetail(orderId) {
         if (o.status === 'delivered' && returnSnap.empty) {
             const deliveredAt = o.deliveredAt?.toDate ? o.deliveredAt.toDate() : (historyMap.delivered ? new Date(historyMap.delivered) : null);
             if (deliveredAt && (Date.now() - deliveredAt.getTime()) < 7 * 86400000) {
-                returnBtnHtml = `<button onclick="requestReturn('${orderId}')" style="background:#f44336;color:#FFF8F0;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;font-weight:600;width:100%;margin-bottom:0.5rem;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 반품/환불 요청</button>`;
+                returnBtnHtml = `<button onclick="requestReturn('${orderId}')" style="background:#B54534;color:#FFF8F0;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;font-weight:600;width:100%;margin-bottom:0.5rem;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 반품/환불 요청</button>`;
             }
         }
 
@@ -2914,7 +2914,7 @@ async function requestReturn(orderId) {
                 </div>
                 <div style="display:flex;gap:0.5rem;">
                     <button onclick="this.closest('div[style]').parentElement.parentElement.remove()" style="flex:1;padding:0.7rem;border:1px solid #E8E0D8;border-radius:8px;cursor:pointer;background:#FFF8F0;">취소</button>
-                    <button id="return-submit" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#f44336;color:#FFF8F0;font-weight:700;">요청</button>
+                    <button id="return-submit" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#B54534;color:#FFF8F0;font-weight:700;">요청</button>
                 </div>
             </div>
         </div>`;
@@ -2954,7 +2954,7 @@ async function loadSellerReturns() {
     try {
         const snap = await db.collection('returns').where('sellerId','==',currentUser.uid).where('status','==','requested').orderBy('createdAt','desc').limit(20).get();
         if (snap.empty) return '';
-        let html = '<div style="margin-top:1rem;"><h4 style="color:#f44336;margin-bottom:0.5rem;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 반품 요청 ('+snap.size+')</h4>';
+        let html = '<div style="margin-top:1rem;"><h4 style="color:#B54534;margin-bottom:0.5rem;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 반품 요청 ('+snap.size+')</h4>';
         snap.forEach(d => {
             const r = d.data();
             const dateStr = r.createdAt?.toDate ? r.createdAt.toDate().toLocaleDateString('ko-KR') : '';
@@ -2966,7 +2966,7 @@ async function loadSellerReturns() {
                 <div style="font-size:0.8rem;color:#6B5744;margin:0.3rem 0;">${r.buyerEmail} · ${r.reasonCategory}: ${r.reasonDetail||''}</div>
                 <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
                     <button onclick="approveReturn('${d.id}')" style="flex:1;background:#6B8F3C;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.8rem;"><i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 승인 (환불)</button>
-                    <button onclick="rejectReturn('${d.id}')" style="flex:1;background:#f44336;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.8rem;"><i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 거절</button>
+                    <button onclick="rejectReturn('${d.id}')" style="flex:1;background:#B54534;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.8rem;"><i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 거절</button>
                 </div>
             </div>`;
         });

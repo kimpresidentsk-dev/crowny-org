@@ -2295,7 +2295,7 @@ async function loadAdminParticipants() {
                                         </button>
                                     ` : `
                                         <button onclick="adminResumeTrading('${participantId}', '${challengeId}')" 
-                                            style="background:#4caf50; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
+                                            style="background:#6B8F3C; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
                                             <i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 중단 해제
                                         </button>
                                     `}
@@ -2378,7 +2378,7 @@ async function loadAdminLog() {
                     break;
                 case 'resume_trading':
                     actionText = '<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 중단 해제';
-                    actionColor = '#4caf50';
+                    actionColor = '#6B8F3C';
                     break;
                 default:
                     actionText = log.action;
@@ -3694,7 +3694,7 @@ async function loadAdminPendingProducts() {
                 </div>
                 <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
                     <button onclick="approveProduct('${d.id}')" style="flex:1;background:#6B8F3C;color:#FFF8F0;border:none;padding:0.5rem;border-radius:6px;cursor:pointer;font-weight:600;"><i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 승인</button>
-                    <button onclick="rejectProduct('${d.id}')" style="flex:1;background:#f44336;color:#FFF8F0;border:none;padding:0.5rem;border-radius:6px;cursor:pointer;font-weight:600;"><i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 거부</button>
+                    <button onclick="rejectProduct('${d.id}')" style="flex:1;background:#B54534;color:#FFF8F0;border:none;padding:0.5rem;border-radius:6px;cursor:pointer;font-weight:600;"><i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 거부</button>
                 </div>
             </div>`;
         });
@@ -3745,7 +3745,7 @@ async function loadAdminReports() {
         snap.forEach(d => {
             const r = d.data();
             const dateStr = r.createdAt?.toDate ? r.createdAt.toDate().toLocaleDateString('ko-KR') : '';
-            c.innerHTML += `<div style="background:#F7F3ED;padding:0.8rem;border-radius:8px;margin-bottom:0.5rem;border-left:4px solid #f44336;">
+            c.innerHTML += `<div style="background:#F7F3ED;padding:0.8rem;border-radius:8px;margin-bottom:0.5rem;border-left:4px solid #B54534;">
                 <div style="display:flex;justify-content:space-between;align-items:center;">
                     <div>
                         <strong>🚨 ${REPORT_REASONS[r.reason] || r.reason}</strong>
@@ -3756,7 +3756,7 @@ async function loadAdminReports() {
                 <div style="font-size:0.8rem;color:#6B5744;margin:0.3rem 0;">신고자: ${r.reporterEmail || r.reporterId?.slice(0,8)}</div>
                 ${r.detail ? `<div style="font-size:0.8rem;color:#6B5744;">상세: ${r.detail}</div>` : ''}
                 <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
-                    <button onclick="handleReport('${d.id}','confirmed')" style="flex:1;background:#f44336;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-size:0.8rem;"><i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 삭제조치</button>
+                    <button onclick="handleReport('${d.id}','confirmed')" style="flex:1;background:#B54534;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-size:0.8rem;"><i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 삭제조치</button>
                     <button onclick="handleReport('${d.id}','dismissed')" style="flex:1;background:#6B5744;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-size:0.8rem;">무시</button>
                 </div>
             </div>`;
@@ -3819,7 +3819,7 @@ async function loadRewardSettingsTab() {
             <span style="font-size:0.8rem;">${t('admin.rw_users','명')}</span>
             <input type="number" class="rw-tier-amt" value="${tier.amount}" min="0" step="0.1" style="width:80px;padding:0.4rem;border:1px solid #E8E0D8;border-radius:6px;font-size:0.85rem;" placeholder="CRTD">
             <span style="font-size:0.8rem;">CRTD</span>
-            <button onclick="this.parentElement.remove()" style="background:#f44336;color:#FFF8F0;border:none;border-radius:4px;padding:0.2rem 0.5rem;cursor:pointer;font-size:0.75rem;">✕</button>
+            <button onclick="this.parentElement.remove()" style="background:#B54534;color:#FFF8F0;border:none;border-radius:4px;padding:0.2rem 0.5rem;cursor:pointer;font-size:0.75rem;">✕</button>
         </div>
     `).join('');
 
@@ -3908,7 +3908,7 @@ function addRewardTier() {
         <span style="font-size:0.8rem;">명</span>
         <input type="number" class="rw-tier-amt" value="" min="0" step="0.1" style="width:80px;padding:0.4rem;border:1px solid #E8E0D8;border-radius:6px;font-size:0.85rem;" placeholder="CRTD">
         <span style="font-size:0.8rem;">CRTD</span>
-        <button onclick="this.parentElement.remove()" style="background:#f44336;color:#FFF8F0;border:none;border-radius:4px;padding:0.2rem 0.5rem;cursor:pointer;font-size:0.75rem;">✕</button>
+        <button onclick="this.parentElement.remove()" style="background:#B54534;color:#FFF8F0;border:none;border-radius:4px;padding:0.2rem 0.5rem;cursor:pointer;font-size:0.75rem;">✕</button>
     `;
     container.appendChild(div);
 }
