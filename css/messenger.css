@@ -346,9 +346,14 @@
 
 /* ===== Contact card overflow fix ===== */
 .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem;
     max-width: 100%;
     overflow: hidden;
     box-sizing: border-box;
+    border-bottom: none;
 }
 
 /* ===== General mobile text overflow ===== */

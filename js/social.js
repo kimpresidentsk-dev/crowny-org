@@ -323,7 +323,7 @@ async function showAddContactModal() {
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     overlay.innerHTML = `
     <div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:420px;width:100%;">
-        <h3 style="margin-bottom:1rem;"><i data-lucide="plus" style="width:18px;height:18px;display:inline-block;vertical-align:middle;margin-right:6px;"></i>${t('social.add_contact','➕ 연락처 추가')}</h3>
+        <h3 style="margin-bottom:1rem;"><i data-lucide="plus" style="width:18px;height:18px;display:inline-block;vertical-align:middle;margin-right:6px;"></i>${t('social.add_contact','연락처 추가')}</h3>
         <div style="display:flex;gap:0.5rem;margin-bottom:0.8rem;">
             <input type="text" id="contact-search-input" placeholder="${t('social.search_email_nick','이메일 또는 닉네임 검색')}" style="flex:1;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;font-size:0.9rem;">
             <button onclick="searchContactUsers()" style="padding:0.7rem 1rem;border:none;border-radius:8px;background:var(--gold,#8B6914);color:#3D2B1F;font-weight:600;cursor:pointer;">${t('social.search','검색')}</button>
@@ -411,7 +411,7 @@ async function loadContacts() {
             <div style="text-align:center; padding:2rem; color:var(--accent);">
                 <div style="font-size:2.5rem; margin-bottom:0.8rem;"><i data-lucide="users" style="width:40px;height:40px;display:block;"></i></div>
                 <p style="font-size:0.95rem; margin-bottom:0.5rem;">${t('social.no_contacts','연락처가 없습니다')}</p>
-                <button onclick="showAddContactModal()" class="btn-primary" style="padding:0.5rem 1rem; font-size:0.85rem;"><i data-lucide="plus" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>${t('social.add_contact_btn','➕ 연락처 추가')}</button>
+                <button onclick="showAddContactModal()" class="btn-primary" style="padding:0.5rem 1rem; font-size:0.85rem;"><i data-lucide="plus" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>${t('social.add_contact_btn','연락처 추가')}</button>
             </div>`;
         return;
     }
@@ -432,7 +432,7 @@ async function loadContacts() {
             </div>
             <div style="display:flex; gap:0.3rem; flex-direction:column;">
                 <button onclick='startChatWithContact("${contact.email}")' class="btn-chat" style="font-size:0.8rem; padding:0.4rem 0.6rem;">${t('social.chat','채팅')}</button>
-                <button onclick='deleteContact("${doc.id}", "${info.nickname}")' style="background:none; border:1px solid #fcc; border-radius:4px; padding:0.2rem 0.5rem; font-size:0.7rem; cursor:pointer; color:#c00;"><i data-lucide="trash-2" style="width:12px;height:12px;display:inline-block;vertical-align:middle;"></i></button>
+                <button onclick='deleteContact("${doc.id}", "${info.nickname}")' style="background:none; border:1px solid #E8E0D8; border-radius:4px; padding:0.2rem 0.5rem; font-size:0.7rem; cursor:pointer; color:#B54534;"><i data-lucide="trash-2" style="width:12px;height:12px;display:inline-block;vertical-align:middle;"></i></button>
             </div>`;
         contactList.appendChild(contactItem);
     }
