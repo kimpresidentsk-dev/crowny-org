@@ -6,7 +6,7 @@
 
 :root {
     /* Brand Colors (Cream/Chocolate Theme) */
-    --brand-pink: #E91E63;   /* Protecting Beauty */
+    --brand-pink: #8B6914;   /* Protecting Beauty */
     --brand-blue: #2196F3;   /* Empowering Safety */
     --brand-gold: #8B6914;   /* 골드 브라운 */
     
@@ -2699,7 +2699,7 @@ input:checked + .notif-toggle-slider::before {
 }
 .group-member-option:hover { background: var(--bg-card-alt); }
 .group-member-option input[type="checkbox"] {
-    width: 18px; height: 18px; accent-color: var(--primary, #667eea);
+    width: 18px; height: 18px; accent-color: var(--primary, #8B6914);
 }
 
 @media (max-width: 768px) {

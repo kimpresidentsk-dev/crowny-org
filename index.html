@@ -125,11 +125,11 @@
     <!-- Landing Section (로그인 전 전용) -->
     <section id="landing-page" class="hidden">
         <div class="landing-content">
-            <h1 style="font-size: 3rem; margin-bottom: 0.5rem; background: linear-gradient(to right, #E91E63, #2196F3); -webkit-background-clip: text; color: transparent;">CROWNY</h1>
-            <p style="font-size: 1.2rem; color: #888; margin-bottom: 3rem;">Protecting Beauty, Empowering Safety</p>
+            <h1 style="font-size: 3rem; margin-bottom: 0.5rem; color: #3D2B1F; letter-spacing: 3px;">CROWNY</h1>
+            <p style="font-size: 1.2rem; color: #6B5744; margin-bottom: 3rem;">Protecting Beauty, Empowering Safety</p>
             
             <button onclick="document.getElementById('landing-page').classList.add('hidden'); document.getElementById('auth-modal').style.display='flex'" 
-                    style="padding: 1rem 3rem; font-size: 1.2rem; border-radius: 50px; background: var(--brand-pink); color: #FFF8F0; border: none; cursor: pointer; box-shadow: 0 0 20px rgba(233,30,99,0.4);">
+                    style="padding: 1rem 3rem; font-size: 1.2rem; border-radius: 50px; background: #8B6914; color: #FFF8F0; border: none; cursor: pointer; box-shadow: 0 0 20px rgba(139,105,20,0.3);">
                 시작하기
             </button>
         </div>
@@ -350,12 +350,12 @@
             </div>
             
             <div style="background:var(--bg); padding:1.5rem; border-radius:12px; margin-top:2rem;">
-                <h3 style="margin-bottom:1rem; font-size:1.1rem;" data-i18n="today.get_started"><i data-lucide="lightbulb" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> 크라우니 시작하기</h3>
+                <h3 style="margin-bottom:1rem; font-size:1.1rem;"><i data-lucide="lightbulb" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> <span data-i18n="today.get_started">크라우니 시작하기</span></h3>
                 <div style="line-height:2; font-size:0.9rem;">
-                    <p data-i18n-html="today.auto_wallet"><i data-lucide="check-circle" style="width:16px;height:16px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> <strong>자동 생성된 지갑</strong>으로 바로 시작</p>
-                    <p data-i18n-html="today.no_gas"><i data-lucide="check-circle" style="width:16px;height:16px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> <strong>가스비 무료</strong> (크라우니 지갑)</p>
-                    <p data-i18n-html="today.seven_tokens"><i data-lucide="check-circle" style="width:16px;height:16px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> <strong>7가지 토큰</strong>: CRNY, FNC, CRFN + CRTD, CRAC, CRGC, CREB</p>
-                    <p data-i18n-html="today.send_token"><i data-lucide="check-circle" style="width:16px;height:16px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> 메신저로 <strong>토큰 전송</strong> 가능</p>
+                    <p><i data-lucide="check-circle" style="width:16px;height:16px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> <span data-i18n-html="today.auto_wallet"><strong>자동 생성된 지갑</strong>으로 바로 시작</span></p>
+                    <p><i data-lucide="check-circle" style="width:16px;height:16px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> <span data-i18n-html="today.no_gas"><strong>가스비 무료</strong> (크라우니 지갑)</span></p>
+                    <p><i data-lucide="check-circle" style="width:16px;height:16px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> <span data-i18n-html="today.seven_tokens"><strong>7가지 토큰</strong>: CRNY, FNC, CRFN + CRTD, CRAC, CRGC, CREB</span></p>
+                    <p><i data-lucide="check-circle" style="width:16px;height:16px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> <span data-i18n-html="today.send_token">메신저로 <strong>토큰 전송</strong> 가능</span></p>
                 </div>
             </div>
         </section>
@@ -445,7 +445,7 @@
                     </div>
                     <div class="token-balances">
                         <div class="token-card" onclick="selectToken('crny')" id="token-card-crny">
-                            <div class="token-icon" style="background:linear-gradient(135deg,#FFD700,#FFA000); color:#FFF8F0; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">👑</div>
+                            <div class="token-icon" style="background:linear-gradient(135deg,#8B6914,#6B5744); color:#FFF8F0; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">👑</div>
                             <div class="token-info">
                                 <span class="token-name">CRNY</span>
                                 <span class="token-desc" data-i18n="wallet.token.crny">거버넌스 · 앵커</span>
@@ -1727,10 +1727,10 @@
         <!-- BRAIN -->
         <section id="brain" class="page" data-feature="brain">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-                <h2 style="margin:0;">🧠 크라우니브레인</h2>
+                <h2 style="margin:0;"><i data-lucide="brain" style="width:20px;height:20px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> 크라우니브레인</h2>
             </div>
-            <div class="section-banner" style="background:linear-gradient(135deg, #667eea, #764ba2);">
-                <h3>🧠 크라우니브레인 — 나를 발견하는 3단계</h3>
+            <div class="section-banner" style="background:linear-gradient(135deg, #3D2B1F, #6B5744);">
+                <h3><i data-lucide="brain" style="width:20px;height:20px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> 크라우니브레인 — 나를 발견하는 3단계</h3>
                 <p>4기질 → 243유형(애니어그램) → 8,192유형(브레인OS)</p>
             </div>
             <div id="brain-content" style="margin-top:1rem;">

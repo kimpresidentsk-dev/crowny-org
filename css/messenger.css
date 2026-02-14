@@ -713,7 +713,7 @@
 
 .group-avatar-icon {
     width: 32px; height: 32px; border-radius: 50%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #3D2B1F, #6B5744);
     display: flex; align-items: center; justify-content: center;
     font-size: 1rem; flex-shrink: 0;
 }
@@ -722,7 +722,7 @@
 }
 .group-avatar-large {
     width: 64px; height: 64px; border-radius: 50%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #3D2B1F, #6B5744);
     display: flex; align-items: center; justify-content: center;
     font-size: 2rem; margin: 0 auto 0.5rem;
 }
@@ -814,7 +814,7 @@
 }
 .group-member-option:hover { background: var(--bg-card-alt); }
 .group-member-option input[type="checkbox"] {
-    width: 18px; height: 18px; accent-color: var(--primary, #667eea);
+    width: 18px; height: 18px; accent-color: var(--primary, #8B6914);
 }
 
 @media (max-width: 768px) {
