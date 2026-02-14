@@ -186,6 +186,7 @@ input:checked + .notif-toggle-slider::before {
 .page > h2 {
     position: relative;
     padding-bottom: 0.5rem;
+    padding-left: 3rem;
 }
 .page > h2::after {
     content: '';
