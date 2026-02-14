@@ -62,15 +62,15 @@ async function loadSettings() {
         <div class="settings-grid">
             <!-- Profile -->
             <div class="settings-card">
-                <h4>👤 ${getText('settings.profile', '프로필 설정')}</h4>
+                <h4><i data-lucide="user" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> ${getText('settings.profile', '프로필 설정')}</h4>
                 <p>${getText('settings.nickname', '닉네임')}: <strong>${userData.nickname || '—'}</strong></p>
                 <p>${getText('settings.status', '상태 메시지')}: ${userData.statusMessage || '—'}</p>
-                <button onclick="showProfileEdit()" class="settings-btn">${getText('settings.edit_profile', '✏️ 프로필 편집')}</button>
+                <button onclick="showProfileEdit()" class="settings-btn">${getText('settings.edit_profile', '<i data-lucide="pencil" style="width:14px;height:14px;display:inline;vertical-align:text-bottom;"></i> 프로필 편집')}</button>
             </div>
             
             <!-- Notifications -->
             <div class="settings-card">
-                <h4>🔔 ${getText('settings.notifications', '알림 설정')}</h4>
+                <h4><i data-lucide="bell" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> ${getText('settings.notifications', '알림 설정')}</h4>
                 <label class="settings-toggle">
                     <span>${getText('settings.msg_notif', '새 메시지 알림')}</span>
                     <input type="checkbox" id="notif-messages" ${notifSettings.messages !== false ? 'checked' : ''} onchange="saveNotifSettings()">
@@ -93,8 +93,9 @@ async function loadSettings() {
             
             <!-- Language -->
             <div class="settings-card">
-                <h4>🌐 ${getText('settings.language', '언어 설정')}</h4>
-                <div class="settings-lang-list">
+                <h4><i data-lucide="globe" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> ${getText('settings.language', '언어 설정')}</h4>
+                <button onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'flex' : 'none'; this.textContent = this.nextElementSibling.style.display === 'none' ? '언어 선택 ▼' : '언어 선택 ▲'" class="settings-btn" style="margin-bottom:0.5rem;">언어 선택 ▼</button>
+                <div class="settings-lang-list" style="display:none">
                     ${Object.entries(typeof SUPPORTED_LANGS !== 'undefined' ? SUPPORTED_LANGS : {
                         ko: { name: '한국어', flag: '🇰🇷' },
                         en: { name: 'English', flag: '🇺🇸' },
@@ -137,7 +138,7 @@ async function loadSettings() {
             
             <!-- Theme -->
             <div class="settings-card">
-                <h4>🎨 ${getText('settings.theme', '테마 설정')}</h4>
+                <h4><i data-lucide="palette" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> ${getText('settings.theme', '테마 설정')}</h4>
                 <label class="settings-toggle">
                     <span>${getText('settings.dark_mode', '다크 모드')}</span>
                     <input type="checkbox" id="theme-toggle" ${currentTheme === 'dark' ? 'checked' : ''} onchange="toggleTheme()">
@@ -147,14 +148,14 @@ async function loadSettings() {
             
             <!-- Privacy -->
             <div class="settings-card">
-                <h4>🔒 ${getText('settings.privacy', '개인정보')}</h4>
+                <h4><i data-lucide="lock" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> ${getText('settings.privacy', '개인정보')}</h4>
                 <button onclick="exportMyData()" class="settings-btn">${getText('settings.export_data', '📥 내 데이터 다운로드')}</button>
                 <button onclick="requestDeactivation()" class="settings-btn settings-btn-danger">${getText('settings.deactivate', '⚠️ 계정 비활성화 요청')}</button>
             </div>
             
             <!-- Security -->
             <div class="settings-card">
-                <h4>🛡️ ${getText('settings.security', '보안')}</h4>
+                <h4><i data-lucide="shield" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> ${getText('settings.security', '보안')}</h4>
                 <button onclick="resetPassword()" class="settings-btn">${getText('settings.change_password', '🔑 비밀번호 변경')}</button>
                 <p style="font-size:0.8rem; color:var(--accent); margin-top:0.5rem;">
                     ${getText('settings.wallet_encryption', '지갑 암호화')}: 
@@ -163,6 +164,7 @@ async function loadSettings() {
             </div>
         </div>
     `;
+    if(window.lucide) lucide.createIcons();
 }
 
 async function saveNotifSettings() {
