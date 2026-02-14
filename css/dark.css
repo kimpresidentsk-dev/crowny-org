@@ -29,58 +29,68 @@
    MEGA UI UPGRADE — Instagram + YouTube Level
    ============================================================ */
 
-/* ===== DARK MODE DEFAULTS (merged into :root) ===== */
+/* ===== DARK MODE DEFAULTS (scoped to dark theme) ===== */
 
-body {
-    background: var(--dark-bg) !important;
-    color: var(--dark-text) !important;
+[data-theme="dark"] body {
+    background: var(--bg) !important;
+    color: var(--text) !important;
 }
 
-.content {
-    background: var(--dark-bg) !important;
+[data-theme="dark"] .content {
+    background: var(--bg) !important;
 }
 
-.page > h2 { color: var(--dark-text); }
-.page > h2::after { background: var(--dark-gold); }
+[data-theme="dark"] .page > h2 { color: var(--text); }
+[data-theme="dark"] .page > h2::after { background: var(--gold-dark); }
 
 /* Cards dark */
-.post, .post-create, .wallet-info, .credit-header, .trading-panel,
-.messenger-container, .chat-sidebar, .chat-window, .settings-card,
-.dash-card, .care-card {
-    background: var(--dark-card) !important;
-    border-color: var(--dark-border) !important;
-    color: var(--dark-text) !important;
+[data-theme="dark"] .post, 
+[data-theme="dark"] .post-create, 
+[data-theme="dark"] .wallet-info, 
+[data-theme="dark"] .credit-header, 
+[data-theme="dark"] .trading-panel,
+[data-theme="dark"] .messenger-container, 
+[data-theme="dark"] .chat-sidebar, 
+[data-theme="dark"] .chat-window, 
+[data-theme="dark"] .settings-card,
+[data-theme="dark"] .dash-card, 
+[data-theme="dark"] .care-card {
+    background: var(--card-bg) !important;
+    border-color: var(--border) !important;
+    color: var(--text) !important;
 }
 
-.service-card {
-    background: var(--dark-card) !important;
-    border-color: var(--dark-border) !important;
-    color: var(--dark-text) !important;
+[data-theme="dark"] .service-card {
+    background: var(--card-bg) !important;
+    border-color: var(--border) !important;
+    color: var(--text) !important;
 }
-.service-card:hover {
-    border-color: var(--dark-gold) !important;
+[data-theme="dark"] .service-card:hover {
+    border-color: var(--gold-dark) !important;
 }
 
 /* Input dark */
-input, textarea, select {
-    background: var(--dark-card-alt) !important;
-    color: var(--dark-text) !important;
-    border-color: var(--dark-border) !important;
+[data-theme="dark"] input, 
+[data-theme="dark"] textarea, 
+[data-theme="dark"] select {
+    background: var(--primary-light) !important;
+    color: var(--text) !important;
+    border-color: var(--border) !important;
 }
 
 
 /* ===== POST CREATE (dark) ===== */
-.post-create {
-    background: var(--dark-card) !important;
+[data-theme="dark"] .post-create {
+    background: var(--card-bg) !important;
     border: none !important;
-    border-bottom: 1px solid var(--dark-border) !important;
+    border-bottom: 1px solid var(--border) !important;
     border-radius: 0 !important;
     padding: 12px 14px !important;
 }
-.post-create textarea {
-    background: var(--dark-card-alt) !important;
-    border-color: var(--dark-border) !important;
-    color: var(--dark-text) !important;
+[data-theme="dark"] .post-create textarea {
+    background: var(--primary-light) !important;
+    border-color: var(--border) !important;
+    color: var(--text) !important;
 }
 
 /* ===== FRIENDS GRID (dark) ===== */
@@ -99,16 +109,16 @@ input, textarea, select {
 }
 
 /* ===== MODAL / OVERLAY DARK ===== */
-.modal-content,
-.register-modal-content {
-    background: var(--dark-card) !important;
-    color: var(--dark-text) !important;
+[data-theme="dark"] .modal-content,
+[data-theme="dark"] .register-modal-content {
+    background: var(--card-bg) !important;
+    color: var(--text) !important;
 }
 
 /* ===== HERO DARK ===== */
-.hero h2 { color: var(--dark-gold) !important; }
-.hero h1 { color: var(--dark-text) !important; }
-.hero p { color: var(--dark-muted) !important; }
+[data-theme="dark"] .hero h2 { color: var(--gold-dark) !important; }
+[data-theme="dark"] .hero h1 { color: var(--text) !important; }
+[data-theme="dark"] .hero p { color: var(--text-light) !important; }
 
 /* ===== SIDEBAR STAYS DARK ===== */
 
@@ -116,18 +126,21 @@ input, textarea, select {
 .section-banner { color: white !important; }
 
 /* ===== MISC DARK OVERRIDES ===== */
-.btn-primary {
-    background: var(--dark-gold) !important;
+[data-theme="dark"] .btn-primary {
+    background: var(--gold-dark) !important;
     color: #000 !important;
 }
-.btn-primary:hover {
+[data-theme="dark"] .btn-primary:hover {
     background: #e6c040 !important;
     color: #000 !important;
 }
 
-h2, h3, h4, strong { color: var(--dark-text); }
-p { color: var(--dark-muted); }
-label { color: var(--dark-muted) !important; }
+[data-theme="dark"] h2, 
+[data-theme="dark"] h3, 
+[data-theme="dark"] h4, 
+[data-theme="dark"] strong { color: var(--text); }
+[data-theme="dark"] p { color: var(--text-light); }
+[data-theme="dark"] label { color: var(--text-light) !important; }
 
 .token-card {
     background: #F7F3ED !important;
@@ -138,11 +151,11 @@ label { color: var(--dark-muted) !important; }
 .token-balance { color: #8B6914 !important; }
 
 /* Chat dark */
-.chat-window { background: var(--dark-bg) !important; }
-.chat-header { background: var(--dark-card) !important; border-color: var(--dark-border) !important; }
-.chat-messages { background: var(--dark-bg) !important; }
-.chat-input { background: var(--dark-card) !important; border-color: var(--dark-border) !important; }
-.chat-item:hover { background: var(--dark-card-alt) !important; }
+[data-theme="dark"] .chat-window { background: var(--bg) !important; }
+[data-theme="dark"] .chat-header { background: var(--card-bg) !important; border-color: var(--border) !important; }
+[data-theme="dark"] .chat-messages { background: var(--bg) !important; }
+[data-theme="dark"] .chat-input { background: var(--card-bg) !important; border-color: var(--border) !important; }
+[data-theme="dark"] .chat-item:hover { background: var(--primary-light) !important; }
 
 /* Hide old social filter tabs when new tab bar is active */
 .social-filter-tab { display: none !important; }
@@ -175,57 +188,59 @@ label { color: var(--dark-muted) !important; }
 /* ===== GLOBAL DARK MODE CLEANUP ===== */
 
 /* Ensure all system messages are dark */
-.system-message {
+[data-theme="dark"] .system-message {
     background: rgba(255,255,255,0.05) !important;
-    color: var(--text-muted) !important;
+    color: var(--text-light) !important;
 }
 
 /* Sidebar dark */
-.sidebar {
-    background: var(--bg-card) !important;
+[data-theme="dark"] .sidebar {
+    background: var(--card-bg) !important;
 }
-.sidebar .nav-item:hover {
-    background: var(--bg-card-alt) !important;
+[data-theme="dark"] .sidebar .nav-item:hover {
+    background: var(--primary-light) !important;
     color: var(--gold) !important;
 }
-.sidebar .nav-item.active {
+[data-theme="dark"] .sidebar .nav-item.active {
     background: rgba(212,175,55,0.1) !important;
     border-left: 3px solid var(--gold) !important;
     color: var(--gold) !important;
 }
 
 /* Bottom tab active gold */
-.bottom-tab-item.active {
+[data-theme="dark"] .bottom-tab-item.active {
     color: var(--gold) !important;
 }
 
 /* Tables dark */
-table, th, td {
+[data-theme="dark"] table, 
+[data-theme="dark"] th, 
+[data-theme="dark"] td {
     border-color: var(--border) !important;
     color: var(--text);
 }
-th {
-    background: var(--bg-card-alt) !important;
+[data-theme="dark"] th {
+    background: var(--primary-light) !important;
 }
-td {
-    background: var(--bg-card) !important;
+[data-theme="dark"] td {
+    background: var(--card-bg) !important;
 }
 
 /* Scrollbar dark */
-::-webkit-scrollbar {
+[data-theme="dark"] ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
 }
-::-webkit-scrollbar-track {
+[data-theme="dark"] ::-webkit-scrollbar-track {
     background: var(--bg);
 }
-::-webkit-scrollbar-thumb {
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
     background: var(--border);
     border-radius: 3px;
 }
 
 /* Selection */
-::selection {
+[data-theme="dark"] ::selection {
     background: rgba(212,175,55,0.3);
     color: var(--text);
 }
