@@ -50,7 +50,7 @@
 }
 .care-btn:active { transform: scale(0.96); }
 .care-btn-primary {
-    background: linear-gradient(135deg, #D4AF37, #B8860B);
+    background: linear-gradient(135deg, #8B6914, #B8860B);
     color: #FFF8F0;
     padding: 0.8rem 1.5rem;
     font-size: 1.1rem;
@@ -126,7 +126,7 @@
 }
 .care-quick-btn:active {
     transform: scale(0.92);
-    background: #D4AF37;
+    background: #8B6914;
     color: #FFF8F0;
 }
 
@@ -149,7 +149,7 @@
     font-weight: 600;
 }
 .care-member-tag.guardian {
-    background: linear-gradient(135deg, #D4AF37, #B8860B);
+    background: linear-gradient(135deg, #8B6914, #B8860B);
     color: #FFF8F0;
 }
 .care-member-tag.member-tag {
@@ -175,7 +175,7 @@
 .care-schedule-time {
     font-weight: 800;
     font-size: 1.2rem;
-    color: #D4AF37;
+    color: #8B6914;
     min-width: 60px;
 }
 .care-schedule-label {
@@ -279,7 +279,7 @@
     font-size: 1.5rem;
     padding: 0.8rem;
     opacity: 0.9;
-    border-left: 3px solid #D4AF37;
+    border-left: 3px solid #8B6914;
     margin-bottom: 0.5rem;
     text-align: left;
     padding-left: 1rem;

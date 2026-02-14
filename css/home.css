@@ -240,13 +240,13 @@ body {
 .landing-logo-text{font-size:2rem;font-weight:900;letter-spacing:3px;color:#3D2B1F}
 .landing-invited-by{font-size:.85rem;color:#888;margin-bottom:1rem}
 .landing-slogan{font-size:1.35rem;font-weight:700;line-height:1.5;color:#3D2B1F;margin-bottom:2rem}
-.landing-slogan em{color:#D4AF37;font-style:normal}
+.landing-slogan em{color:#8B6914;font-style:normal}
 
 /* Phone mockup */
 .landing-mockup{display:flex;justify-content:center}
 .landing-phone{width:200px;height:380px;background:#3D2B1F;border-radius:28px;padding:12px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
 .landing-phone-screen{background:#6B5744;border-radius:18px;height:100%;padding:1rem;display:flex;flex-direction:column;gap:.8rem}
-.landing-phone-header{display:flex;justify-content:space-between;align-items:center;color:#D4AF37;font-weight:800;font-size:.8rem}
+.landing-phone-header{display:flex;justify-content:space-between;align-items:center;color:#8B6914;font-weight:800;font-size:.8rem}
 .landing-phone-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-top:auto;margin-bottom:1.5rem}
 .lp-icon{background:rgba(212,175,55,.12);border-radius:12px;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:1.5rem}
 
@@ -262,7 +262,7 @@ body {
 
 /* Social proof */
 .landing-proof{text-align:center;padding:2rem 0}
-.landing-proof-number{font-size:3rem;font-weight:900;background:linear-gradient(135deg,#D4AF37,#B8860B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.landing-proof-number{font-size:3rem;font-weight:900;background:linear-gradient(135deg,#8B6914,#B8860B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .landing-proof p{font-size:.9rem;color:#888;margin-top:.25rem}
 
 /* CTA */

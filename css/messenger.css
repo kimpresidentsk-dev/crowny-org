@@ -287,7 +287,7 @@
     padding: 0 !important;
     font-size: 1.2rem !important;
     border-radius: 50% !important;
-    background: var(--gold, #D4AF37) !important;
+    background: var(--gold, #8B6914) !important;
     color: #3D2B1F !important;
     border: none !important;
     cursor: pointer !important;
@@ -825,7 +825,7 @@
 /* ===== Messenger Phase 1 - New styles ===== */
 .reply-preview-bar {
     display: flex; align-items: center; gap: 0.5rem;
-    padding: 0.4rem 0.8rem; background: var(--bg-card-alt); border-left: 3px solid #0066cc;
+    padding: 0.4rem 0.8rem; background: var(--bg-card-alt); border-left: 3px solid #3D2B1F;
     margin: 0 0.5rem; border-radius: 0 8px 8px 0;
 }
 .reply-preview-content { flex: 1; min-width: 0; overflow: hidden; }
