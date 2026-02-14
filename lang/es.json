@@ -1120,5 +1120,6 @@
   "admin.users_title": "Admin Hierarchy Management",
   "art.filter.illustration": "Illustration",
   "trading.timezone.london": "🇬🇧 London",
-  "trading.mentor_bot": "Mentor Bot"
+  "trading.mentor_bot": "Mentor Bot",
+  "messenger.new_group": "New Group"
 }

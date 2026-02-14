@@ -1111,5 +1111,6 @@
   "auth.profile_detail": "My Profile Details",
   "wallet.withdraw_confirm": "Withdraw Confirmation",
   "wallet.offchain_balance": "Off-chain Balance",
-  "wallet.current_rate": "Current Exchange Rate"
+  "wallet.current_rate": "Current Exchange Rate",
+  "messenger.new_group": "New Group"
 }
