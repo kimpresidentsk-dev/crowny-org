@@ -125,10 +125,10 @@
 
 .chat-item {
     display: flex;
-    gap: 0.8rem;
-    padding: 1rem;
+    gap: 0.6rem;
+    padding: 0.6rem 0.5rem;
     cursor: pointer;
-    border-bottom: 1px solid #E8E0D8;
+    border-bottom: none;
     transition: background 0.15s;
     align-items: center;
 }

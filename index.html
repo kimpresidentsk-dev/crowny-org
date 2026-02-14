@@ -45,7 +45,7 @@
     <link rel="stylesheet" href="css/home.css?v=23.4">
     <link rel="stylesheet" href="css/wallet.css?v=23.7">
     <link rel="stylesheet" href="css/social.css?v=23.4">
-    <link rel="stylesheet" href="css/messenger.css?v=23.5">
+    <link rel="stylesheet" href="css/messenger.css?v=23.8">
     <link rel="stylesheet" href="css/trading.css?v=23.4">
     <link rel="stylesheet" href="css/ai.css?v=23.4">
     <link rel="stylesheet" href="css/care.css?v=23.4">
@@ -718,20 +718,20 @@
         <section id="messenger" class="page">
             <div id="messenger-header" class="messenger-header-bar">
                 <h2 style="margin:0 0 0.5rem;" data-i18n="messenger.title"><i data-lucide="message-circle"></i> MESSENGER</h2>
-                <div style="display:flex; gap:0.5rem; overflow-x:auto; padding-bottom:0.5rem; -webkit-overflow-scrolling:touch; scrollbar-width:none; margin-bottom:0.5rem;">
-                    <button onclick="showNewChatModal()" class="btn-primary" style="padding:0.5rem 0.8rem; border-radius:10px; font-size:0.8rem; white-space:nowrap; flex-shrink:0;" data-i18n="messenger.new_chat"><i data-lucide="plus" style="width:16px;height:16px;margin-right:4px;"></i> 새 채팅</button>
-                    <button onclick="showNewGroupModal()" class="btn-primary" style="padding:0.5rem 0.8rem; border-radius:10px; font-size:0.8rem; white-space:nowrap; flex-shrink:0;" data-i18n="messenger.new_group"><i data-lucide="users" style="width:16px;height:16px;margin-right:4px;"></i> 새 그룹</button>
-                    <button onclick="E2ECrypto.showStartSecretChatModal()" class="btn-primary" style="padding:0.5rem 0.8rem; border-radius:10px; font-size:0.8rem; background:#C4841D; white-space:nowrap; flex-shrink:0;"><i data-lucide="lock" style="width:16px;height:16px;margin-right:4px;"></i> 비밀 채팅</button>
-                    <button onclick="showAddContactModal()" class="btn-secondary" style="padding:0.5rem 0.8rem; border-radius:10px; font-size:0.8rem; white-space:nowrap; flex-shrink:0;" data-i18n="messenger.contacts"><i data-lucide="users" style="width:16px;height:16px;margin-right:4px;"></i> 연락처</button>
+                <div style="display:flex; gap:0.3rem; overflow-x:auto; padding-bottom:0.3rem; -webkit-overflow-scrolling:touch; scrollbar-width:none; margin-bottom:0.3rem;">
+                    <button onclick="showNewChatModal()" style="padding:0.35rem 0.6rem; border-radius:8px; font-size:0.75rem; white-space:nowrap; flex-shrink:0; background:#3D2B1F; color:#FFF8F0; border:none; cursor:pointer;" data-i18n="messenger.new_chat"><i data-lucide="message-square-plus" style="width:14px;height:14px;margin-right:3px;vertical-align:middle;display:inline-block;"></i>새 채팅</button>
+                    <button onclick="showNewGroupModal()" style="padding:0.35rem 0.6rem; border-radius:8px; font-size:0.75rem; white-space:nowrap; flex-shrink:0; background:#3D2B1F; color:#FFF8F0; border:none; cursor:pointer;" data-i18n="messenger.new_group"><i data-lucide="users-round" style="width:14px;height:14px;margin-right:3px;vertical-align:middle;display:inline-block;"></i>새 그룹</button>
+                    <button onclick="E2ECrypto.showStartSecretChatModal()" style="padding:0.35rem 0.6rem; border-radius:8px; font-size:0.75rem; white-space:nowrap; flex-shrink:0; background:#3D2B1F; color:#FFF8F0; border:none; cursor:pointer;"><i data-lucide="lock" style="width:14px;height:14px;margin-right:3px;vertical-align:middle;display:inline-block;"></i>비밀 채팅</button>
+                    <button onclick="showAddContactModal()" style="padding:0.35rem 0.6rem; border-radius:8px; font-size:0.75rem; white-space:nowrap; flex-shrink:0; background:#F7F3ED; color:#3D2B1F; border:1px solid #E8E0D8; cursor:pointer;" data-i18n="messenger.contacts"><i data-lucide="contact" style="width:14px;height:14px;margin-right:3px;vertical-align:middle;display:inline-block;"></i>연락처</button>
                 </div>
             </div>
             
             <div class="messenger-container" id="messenger-container">
                 <div class="chat-sidebar" id="chat-sidebar">
                     <div class="sidebar-tabs">
-                        <button class="tab-btn active" onclick="showChats()" data-i18n="messenger.tab_chats">채팅</button>
-                        <button class="tab-btn" onclick="showContacts()" data-i18n="messenger.tab_contacts">연락처</button>
-                        <button class="tab-btn" onclick="showChannels()" data-i18n="messenger.tab_channels"><i data-lucide="megaphone" style="width:16px;height:16px;margin-right:4px;"></i> 채널</button>
+                        <button class="tab-btn active" onclick="showChats()" data-i18n="messenger.tab_chats"><i data-lucide="message-circle" style="width:14px;height:14px;margin-right:3px;vertical-align:middle;display:inline-block;"></i>채팅</button>
+                        <button class="tab-btn" onclick="showContacts()" data-i18n="messenger.tab_contacts"><i data-lucide="contact" style="width:14px;height:14px;margin-right:3px;vertical-align:middle;display:inline-block;"></i>연락처</button>
+                        <button class="tab-btn" onclick="showChannels()" data-i18n="messenger.tab_channels"><i data-lucide="megaphone" style="width:14px;height:14px;margin-right:3px;vertical-align:middle;display:inline-block;"></i>채널</button>
                     </div>
                     
                     <div id="chats-view" class="sidebar-content">
