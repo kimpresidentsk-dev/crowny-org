@@ -72,7 +72,7 @@
                 return connectedSDK;
             }
         };
-        console.log('🔗 Thirdweb SDK v4 initialized (Polygon)');
+        console.log('<i data-lucide="link"></i> Thirdweb SDK v4 initialized (Polygon)');
     </script>
     
     <!-- Web3 -->
@@ -97,8 +97,8 @@
         
         // Massive (구 Polygon.io) 실시간 CME 데이터 설정
         window.MASSIVE_CONFIG = {
-            apiKey: 'UaNpU8hwqykC0pSPqSGYM9V5hLXtjIkX', // ✅ API Key 적용 완료!
-            enabled: true, // ✅ 실시간 활성화!
+            apiKey: 'UaNpU8hwqykC0pSPqSGYM9V5hLXtjIkX', // <i data-lucide="check-circle"></i> API Key 적용 완료!
+            enabled: true, // <i data-lucide="check-circle"></i> 실시간 활성화!
             plan: 'Starter', // $199/월
             symbol: 'C:NQ' // NQ E-mini 선물
         };
@@ -116,7 +116,7 @@
             CRTD: { name: '크라우니 트레이딩 달러', icon: 'trending-up', color: '#C4841D', category: '트레이딩', desc: '프럍 트레이딩 · 챌린지 전용' },
             CRAC: { name: '크라우니 아트 크레딧', icon: 'palette', color: '#B54534', category: '엔터테인먼트', desc: 'K-팝 · 굿즈 · 멤버 투표' },
             CRGC: { name: '크라우니 굿즈 & 기빙', icon: 'shopping-bag', color: '#6B8F3C', category: '커머스', desc: 'H&B 결제 · 기부풀 자동 적립' },
-            CREB: { name: '크라우니 에코 바이오', icon: 'leaf', color: '#2E7D32', category: '에코/바이오', desc: '태양광 · 나노봇 · PoV 크레딧' }
+            CREB: { name: '크라우니 에코 바이오', icon: 'leaf', color: '#6B8F3C', category: '에코/바이오', desc: '태양광 · 나노봇 · PoV 크레딧' }
         };
         window.OFFCHAIN_RATE = 100; // 100 offchain point = 1 CRNY
     </script>
@@ -176,9 +176,9 @@
             
             <!-- 이메일 인증 안내 -->
             <div id="verify-email-form" class="auth-form" style="display:none;">
-                <h3 data-i18n="auth.email_verify">📧 이메일 인증</h3>
+                <h3 data-i18n="auth.email_verify"><i data-lucide="mail"></i> 이메일 인증</h3>
                 <p style="color:#6B5744; margin-bottom:1rem;" data-i18n-html="auth.email_verify_desc">가입하신 이메일로 인증 링크를 보냈습니다.<br>인증 후 아래 버튼을 눌러주세요.</p>
-                <button onclick="checkEmailVerified()" class="btn-primary" data-i18n="auth.verify_done">✅ 인증 완료 확인</button>
+                <button onclick="checkEmailVerified()" class="btn-primary" data-i18n="auth.verify_done"><i data-lucide="check-circle"></i> 인증 완료 확인</button>
                 <button onclick="resendVerification()" style="background:none; border:1px solid #E8E0D8; padding:0.5rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.5rem; color:#6B5744;" data-i18n="auth.resend_verify">인증 메일 재발송</button>
             </div>
         </div>
@@ -244,7 +244,7 @@
         <div class="search-overlay-content">
             <div class="search-header">
                 <input type="text" id="global-search-input" placeholder="검색..." class="search-input" data-i18n-placeholder="search.placeholder">
-                <button onclick="closeGlobalSearch()" class="search-close-btn">✕</button>
+                <button onclick="closeGlobalSearch()" class="search-close-btn"><i data-lucide="x"></i></button>
             </div>
             <div id="search-results" class="search-results"></div>
         </div>
@@ -366,8 +366,8 @@
             <!-- Wallet Selector -->
             <div style="background:#FFF8F0; padding:1.2rem; border-radius:12px; margin-bottom:1rem; box-shadow:0 2px 8px rgba(61,43,31,0.06);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
-                    <strong style="font-size:0.95rem;" data-i18n="wallet.my_wallets">📂 내 지갑</strong>
-                    <button onclick="showAddWalletModal()" style="background:#3D2B1F; color:#FFF8F0; border:none; padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight:600;" data-i18n="wallet.add_wallet">➕ 지갑 추가</button>
+                    <strong style="font-size:0.95rem;" data-i18n="wallet.my_wallets"><i data-lucide="folder"></i> 내 지갑</strong>
+                    <button onclick="showAddWalletModal()" style="background:#3D2B1F; color:#FFF8F0; border:none; padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight:600;" data-i18n="wallet.add_wallet"><i data-lucide="plus"></i> 지갑 추가</button>
                 </div>
                 <select id="wallet-selector" onchange="switchWallet()" style="width:100%; padding:0.8rem; border-radius:8px; border:1px solid #e0e0e0; font-size:0.9rem; background:#FFF8F0; cursor:pointer;">
                 </select>
@@ -397,7 +397,7 @@
                     
                     <div id="gas-subsidy-info" style="background:#F7F3ED; padding:0.6rem 0.8rem; border-radius:8px; margin-top:0.8rem; display:none;">
                         <p style="margin:0; font-size:0.8rem; color:#2e7d32;">
-                            ⛽ 가스비 대납 누적: <strong id="total-gas-subsidy">0</strong> MATIC
+                            <i data-lucide="fuel"></i> 가스비 대납 누적: <strong id="total-gas-subsidy">0</strong> MATIC
                         </p>
                     </div>
                 </div>
@@ -453,7 +453,7 @@
                             <strong class="token-balance" id="crny-balance">0</strong>
                         </div>
                         <div class="token-card" onclick="selectToken('fnc')" id="token-card-fnc">
-                            <div class="token-icon" style="background:linear-gradient(135deg,#5B7B8C,#1565C0); color:#FFF8F0; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:1.1rem;"><i data-lucide="image"></i></div>
+                            <div class="token-icon" style="background:linear-gradient(135deg,#5B7B8C,#5B7B8C); color:#FFF8F0; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:1.1rem;"><i data-lucide="image"></i></div>
                             <div class="token-info">
                                 <span class="token-name">FNC</span>
                                 <span class="token-desc" data-i18n="wallet.token.fnc">유틸리티 · 브릿지</span>
@@ -469,7 +469,7 @@
                             <strong class="token-balance" id="crfn-balance">0</strong>
                         </div>
                     </div>
-                    <button onclick="showSendModal()" class="btn-action" style="margin-top:0.5rem;" data-i18n="wallet.send_token">💸 선택한 토큰 전송</button>
+                    <button onclick="showSendModal()" class="btn-action" style="margin-top:0.5rem;" data-i18n="wallet.send_token"><i data-lucide="zap"></i> 선택한 토큰 전송</button>
                 </div>
 
                 <!-- <i data-lucide="flame"></i> 오프체인 유틸리티 포인트 -->
@@ -490,7 +490,7 @@
                             <strong class="token-balance" id="crtd-balance">0</strong>
                         </div>
                         <div class="token-card offchain-card" onclick="selectToken('crac')" id="token-card-crac" style="border-left:3px solid #B54534;">
-                            <div class="token-icon" style="background:linear-gradient(135deg,#B54534,#AD1457); color:#FFF8F0; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:1rem;"><i data-lucide="palette" style="width:20px;height:20px;stroke-width:2;"></i></div>
+                            <div class="token-icon" style="background:linear-gradient(135deg,#B54534,#B54534); color:#FFF8F0; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:1rem;"><i data-lucide="palette" style="width:20px;height:20px;stroke-width:2;"></i></div>
                             <div class="token-info">
                                 <span class="token-name">CRAC</span>
                                 <span class="token-desc" data-i18n="wallet.token.crac">엔터테인먼트</span>
@@ -505,8 +505,8 @@
                             </div>
                             <strong class="token-balance" id="crgc-balance">0</strong>
                         </div>
-                        <div class="token-card offchain-card" onclick="selectToken('creb')" id="token-card-creb" style="border-left:3px solid #2E7D32;">
-                            <div class="token-icon" style="background:linear-gradient(135deg,#66BB6A,#2E7D32); color:#FFF8F0; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:1rem;"><i data-lucide="leaf" style="width:20px;height:20px;stroke-width:2;"></i></div>
+                        <div class="token-card offchain-card" onclick="selectToken('creb')" id="token-card-creb" style="border-left:3px solid #6B8F3C;">
+                            <div class="token-icon" style="background:linear-gradient(135deg,#6B8F3C,#6B8F3C); color:#FFF8F0; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:1rem;"><i data-lucide="leaf" style="width:20px;height:20px;stroke-width:2;"></i></div>
                             <div class="token-info">
                                 <span class="token-name">CREB</span>
                                 <span class="token-desc" data-i18n="wallet.token.creb">에코 · 바이오</span>
@@ -529,7 +529,7 @@
                                 <option value="crac">CRAC (엔터)</option>
                                 <option value="crgc">CRGC (커머스)</option>
                                 <option value="creb">CREB (에코)</option>
-                                <option value="crny">CRNY → 포인트</option>
+                                <option value="crny">CRNY <i data-lucide="arrow-right"></i> 포인트</option>
                             </select>
                         </div>
                         <span style="font-size:1.3rem; padding-bottom:0.4rem;">⇄</span>
@@ -548,7 +548,7 @@
 
             <!-- 쿠폰 사용 -->
             <div style="background:linear-gradient(135deg,#FFF8F0,#FFF8F0); padding:1rem; border-radius:12px; margin-top:1rem; border:1px solid #ffcc80;">
-                <h4 style="margin:0 0 0.5rem; font-size:0.9rem;" data-i18n="wallet.coupon_title">🎟️ 쿠폰 사용</h4>
+                <h4 style="margin:0 0 0.5rem; font-size:0.9rem;" data-i18n="wallet.coupon_title"><i data-lucide="ticket"></i> 쿠폰 사용</h4>
                 <div style="display:flex; gap:0.5rem;">
                     <input type="text" id="coupon-code-input" placeholder="쿠폰 코드 입력" data-i18n-placeholder="wallet.coupon_placeholder" style="flex:1; padding:0.6rem; border:1px solid var(--border); border-radius:6px; font-size:0.85rem; text-transform:uppercase;">
                     <button onclick="redeemCoupon()" style="padding:0.6rem 1rem; background:#8B6914; color:#FFF8F0; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.85rem;" data-i18n="wallet.coupon_use">사용</button>
@@ -595,7 +595,7 @@
                             <div id="referral-earn-crtd" style="font-weight:700;font-size:0.9rem;">0</div>
                         </div>
                         <div style="background:#FFF8F0; padding:0.4rem; border-radius:6px; text-align:center;">
-                            <div style="font-size:0.65rem; color:#B54534;">🎭 CRAC</div>
+                            <div style="font-size:0.65rem; color:#B54534;"><i data-lucide="theater"></i> CRAC</div>
                             <div id="referral-earn-crac" style="font-weight:700;font-size:0.9rem;">0</div>
                         </div>
                         <div style="background:#FFF8F0; padding:0.4rem; border-radius:6px; text-align:center;">
@@ -603,7 +603,7 @@
                             <div id="referral-earn-crgc" style="font-weight:700;font-size:0.9rem;">0</div>
                         </div>
                         <div style="background:#FFF8F0; padding:0.4rem; border-radius:6px; text-align:center;">
-                            <div style="font-size:0.65rem; color:#2E7D32;">🌱 CREB</div>
+                            <div style="font-size:0.65rem; color:#6B8F3C;"><i data-lucide="leaf"></i> CREB</div>
                             <div id="referral-earn-creb" style="font-weight:700;font-size:0.9rem;">0</div>
                         </div>
                     </div>
@@ -611,8 +611,8 @@
                     <div id="referral-pending-rewards" style="display:none;"></div>
                 </div>
                 <div style="display:flex; gap:0.5rem;">
-                    <button onclick="generateReferralCode()" class="btn-primary" style="flex:1; background:#3D2B1F; color:#FFF8F0;" data-i18n="wallet.referral_generate">📎 소개 코드 생성</button>
-                    <button onclick="copyReferralCode()" class="btn-secondary" style="flex:1;" data-i18n="wallet.referral_copy">📋 코드 복사</button>
+                    <button onclick="generateReferralCode()" class="btn-primary" style="flex:1; background:#3D2B1F; color:#FFF8F0;" data-i18n="wallet.referral_generate"><i data-lucide="paperclip"></i> 소개 코드 생성</button>
+                    <button onclick="copyReferralCode()" class="btn-secondary" style="flex:1;" data-i18n="wallet.referral_copy">내 주문 코드 복사</button>
                 </div>
             </div>
         </section>
@@ -656,7 +656,7 @@
                 
                 <div class="chat-window" id="chat-window">
                     <div class="chat-header" id="chat-header">
-                        <div id="chat-header-back" class="chat-header-back" onclick="closeChatMobile()" style="display:none;">←</div>
+                        <div id="chat-header-back" class="chat-header-back" onclick="closeChatMobile()" style="display:none;"><i data-lucide="arrow-left"></i></div>
                         <div id="chat-username" style="flex:1;">
                             <div class="chat-empty-state">
                                 <div style="font-size:3rem;margin-bottom:1rem;"><i data-lucide="message-circle"></i></div>
@@ -664,13 +664,13 @@
                             </div>
                         </div>
                         <div class="chat-header-actions" id="chat-header-actions" style="display:none;">
-                            <button onclick="toggleChatSearch()" class="chat-header-btn" title="메시지 검색">🔍</button>
-                            <button onclick="showChatMenu()" class="chat-header-btn" title="메뉴">⋯</button>
+                            <button onclick="toggleChatSearch()" class="chat-header-btn" title="메시지 검색"><i data-lucide="search"></i></button>
+                            <button onclick="showChatMenu()" class="chat-header-btn" title="메뉴"><i data-lucide="more-vertical"></i></button>
                         </div>
                     </div>
                     <div class="chat-search-overlay" id="chat-search-overlay" style="display:none;">
                         <input type="text" id="msg-search-input" placeholder="메시지 검색..." oninput="searchMessagesInChat(this.value)">
-                        <button onclick="closeChatSearch()" class="chat-header-btn">✕</button>
+                        <button onclick="closeChatSearch()" class="chat-header-btn"><i data-lucide="x"></i></button>
                     </div>
                     <div class="chat-messages" id="chat-messages">
                         <div class="chat-empty-state">
@@ -689,23 +689,23 @@
                             <span id="reply-preview-name" style="font-weight:700;font-size:0.75rem;color:#3D2B1F;"></span>
                             <span id="reply-preview-text" style="font-size:0.8rem;color:#6B5744;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
                         </div>
-                        <button onclick="cancelReply()" style="background:none;border:none;cursor:pointer;font-size:1rem;color:#6B5744;">✕</button>
+                        <button onclick="cancelReply()" style="background:none;border:none;cursor:pointer;font-size:1rem;color:#6B5744;"><i data-lucide="x"></i></button>
                     </div>
                     <!-- Pinned message banner -->
                     <div id="pinned-message-banner" style="display:none;" class="pinned-message-banner">
                         <span style="font-size:0.75rem;"><i data-lucide="pin"></i></span>
                         <span id="pinned-message-text" style="flex:1;font-size:0.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;" onclick="scrollToPinnedMessage()"></span>
-                        <button onclick="document.getElementById('pinned-message-banner').style.display='none'" style="background:none;border:none;cursor:pointer;font-size:0.8rem;color:#6B5744;">✕</button>
+                        <button onclick="document.getElementById('pinned-message-banner').style.display='none'" style="background:none;border:none;cursor:pointer;font-size:0.8rem;color:#6B5744;"><i data-lucide="x"></i></button>
                     </div>
                     <div class="chat-input" id="chat-input-area" style="display:none;">
-                        <button onclick="showAttachMenu()" class="btn-send-token" title="파일 첨부" style="background:transparent;border:none;color:#6B5744;padding:0.5rem;border-radius:50%;cursor:pointer;font-size:1.2rem;">📎</button>
+                        <button onclick="showAttachMenu()" class="btn-send-token" title="파일 첨부" style="background:transparent;border:none;color:#6B5744;padding:0.5rem;border-radius:50%;cursor:pointer;font-size:1.2rem;"><i data-lucide="paperclip"></i></button>
                         <button id="voice-record-btn" class="btn-send-token chat-extra-btn" title="음성 메시지"
                             onmousedown="startVoiceRecord()" onmouseup="stopVoiceRecord()" onmouseleave="cancelVoiceRecord()"
-                            ontouchstart="startVoiceRecord()" ontouchend="stopVoiceRecord()" style="background:transparent;border:none;color:#6B5744;padding:0.5rem;border-radius:50%;cursor:pointer;font-size:1.2rem;">🎤</button>
+                            ontouchstart="startVoiceRecord()" ontouchend="stopVoiceRecord()" style="background:transparent;border:none;color:#6B5744;padding:0.5rem;border-radius:50%;cursor:pointer;font-size:1.2rem;"><i data-lucide="mic"></i></button>
                         <input type="text" id="message-input" placeholder="메시지..." style="font-size:16px;" data-i18n-placeholder="messenger.input_placeholder" onkeydown="if(event.key==='Enter'){event.preventDefault();sendMessage();}">
-                        <button onclick="showStickerGifPanel()" class="btn-send-token chat-extra-btn" title="스티커/GIF" style="background:transparent;border:none;color:#6B5744;padding:0.5rem;border-radius:50%;cursor:pointer;font-size:1.2rem;">😊</button>
+                        <button onclick="showStickerGifPanel()" class="btn-send-token chat-extra-btn" title="스티커/GIF" style="background:transparent;border:none;color:#6B5744;padding:0.5rem;border-radius:50%;cursor:pointer;font-size:1.2rem;"><i data-lucide="smile"></i></button>
                         <button onclick="sendTokenWithMessage()" class="btn-send-token chat-extra-btn" title="토큰 전송" style="background:transparent;border:none;color:#6B5744;padding:0.5rem;border-radius:50%;cursor:pointer;font-size:1.2rem;"><i data-lucide="coins"></i></button>
-                        <button onclick="sendMessage()" ontouchend="event.preventDefault();sendMessage();" class="btn-send-msg" title="전송" style="background:#3D2B1F;border:none;color:#FFF8F0;padding:0.5rem;border-radius:50%;cursor:pointer;font-size:1.2rem;">➤</button>
+                        <button onclick="sendMessage()" ontouchend="event.preventDefault();sendMessage();" class="btn-send-msg" title="전송" style="background:#3D2B1F;border:none;color:#FFF8F0;padding:0.5rem;border-radius:50%;cursor:pointer;font-size:1.2rem;"><i data-lucide="arrow-right"></i></button>
                     </div>
                     <!-- Voice recording indicator -->
                     <div id="voice-recording-ui" style="display:none;" class="voice-recording-ui">
@@ -722,7 +722,7 @@
             <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;">
                 <h2 style="margin:0;font-size:1.5rem;font-weight:800;color:var(--dark-gold,#8B6914);" data-i18n="social.title">Crowny</h2>
                 <div style="display:flex;gap:12px;">
-                    <button onclick="SHORTFORM.openUpload()" style="background:none;border:none;cursor:pointer;font-size:1.3rem;color:var(--dark-text,#3D2B1F);">➕</button>
+                    <button onclick="SHORTFORM.openUpload()" style="background:none;border:none;cursor:pointer;font-size:1.3rem;color:var(--dark-text,#3D2B1F);"><i data-lucide="plus"></i></button>
                     <button onclick="showPage('messenger')" style="background:none;border:none;cursor:pointer;font-size:1.3rem;color:var(--dark-text,#3D2B1F);"><i data-lucide="message-circle"></i></button>
                 </div>
             </div>
@@ -740,9 +740,9 @@
             <div class="social-tab-bar">
                 <button class="social-tab-item active" data-filter="all" onclick="showExploreTab(false);setSocialFilter('all')">전체</button>
                 <button class="social-tab-item" data-filter="following" onclick="showExploreTab(false);setSocialFilter('following')">팔로잉</button>
-                <button class="social-tab-item" data-filter="explore" onclick="showExploreTab(true)">🔍</button>
+                <button class="social-tab-item" data-filter="explore" onclick="showExploreTab(true)"><i data-lucide="search"></i></button>
                 <button class="social-tab-item" data-filter="notifications" onclick="showExploreTab(false);showSocialNotifications()" style="position:relative;"><i data-lucide="bell"></i><span id="social-notif-badge" class="tab-badge">0</span></button>
-                <button class="social-tab-item" data-filter="saved" onclick="showExploreTab(false);setSocialFilter('saved')">🔖</button>
+                <button class="social-tab-item" data-filter="saved" onclick="showExploreTab(false);setSocialFilter('saved')"><i data-lucide="bookmark"></i></button>
             </div>
             <!-- Old filter tabs hidden by CSS -->
             
@@ -757,12 +757,12 @@
             <div class="post-create">
                 <textarea id="post-text" placeholder="무슨 생각을 하고 계신가요? #해시태그 @멘션 가능" data-i18n-placeholder="social.post_placeholder" style="border:1px solid var(--border); border-radius:12px; padding:0.8rem; font-size:0.95rem; line-height:1.5; resize:none; min-height:60px; width:100%; margin-bottom:0.5rem;"></textarea>
                 <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
-                    <label for="post-image" style="display:flex; align-items:center; gap:0.3rem; padding:0.4rem 0.8rem; background:var(--bg); border-radius:20px; cursor:pointer; font-size:0.85rem; border:1px solid var(--border);" data-i18n="social.photo">📷 사진</label>
+                    <label for="post-image" style="display:flex; align-items:center; gap:0.3rem; padding:0.4rem 0.8rem; background:var(--bg); border-radius:20px; cursor:pointer; font-size:0.85rem; border:1px solid var(--border);" data-i18n="social.photo">사진 사진</label>
                     <input type="file" id="post-image" accept="image/*" multiple style="display:none;">
                     <label for="post-video" style="display:flex; align-items:center; gap:0.3rem; padding:0.4rem 0.8rem; background:var(--bg); border-radius:20px; cursor:pointer; font-size:0.85rem; border:1px solid var(--border);"><i data-lucide="clapperboard"></i> 영상</label>
                     <input type="file" id="post-video" accept="video/mp4,video/quicktime,video/webm" style="display:none;">
-                    <button onclick="showServiceLinkModal()" style="display:flex; align-items:center; gap:0.3rem; padding:0.4rem 0.8rem; background:var(--bg); border-radius:20px; cursor:pointer; font-size:0.85rem; border:1px solid var(--border);">🔗 서비스 연결</button>
-                    <input type="text" id="post-location" placeholder="📍 위치 태그" style="padding:0.4rem 0.8rem;border:1px solid var(--border);border-radius:20px;font-size:0.8rem;width:110px;">
+                    <button onclick="showServiceLinkModal()" style="display:flex; align-items:center; gap:0.3rem; padding:0.4rem 0.8rem; background:var(--bg); border-radius:20px; cursor:pointer; font-size:0.85rem; border:1px solid var(--border);"><i data-lucide="link"></i> 서비스 연결</button>
+                    <input type="text" id="post-location" placeholder="<i data-lucide="map-pin"></i> 위치 태그" style="padding:0.4rem 0.8rem;border:1px solid var(--border);border-radius:20px;font-size:0.8rem;width:110px;">
                     <span id="post-image-name" style="font-size:0.75rem; color:var(--accent); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></span>
                     <button onclick="createPost()" class="btn-primary" style="padding:0.5rem 1.2rem; border-radius:20px; font-size:0.85rem;" data-i18n="social.post_btn">게시</button>
                 </div>
@@ -798,7 +798,7 @@
                     // Show preview & open editor
                     const url = URL.createObjectURL(file);
                     preview.style.display = 'block';
-                    preview.innerHTML = `<div style="position:relative;display:inline-block;"><video src="${url}" style="max-width:200px;max-height:150px;border-radius:8px;" muted></video><button onclick="document.getElementById('post-video').value='';document.getElementById('post-video-preview').style.display='none';" style="position:absolute;top:4px;right:4px;background:rgba(61,43,31,0.6);color:#FFF8F0;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:14px;">✕</button><button onclick="openVideoEditor()" style="position:absolute;bottom:4px;right:4px;background:rgba(61,43,31,0.6);color:#FFF8F0;border:none;border-radius:12px;padding:2px 8px;cursor:pointer;font-size:12px;">✂️ 편집</button></div>`;
+                    preview.innerHTML = `<div style="position:relative;display:inline-block;"><video src="${url}" style="max-width:200px;max-height:150px;border-radius:8px;" muted></video><button onclick="document.getElementById('post-video').value='';document.getElementById('post-video-preview').style.display='none';" style="position:absolute;top:4px;right:4px;background:rgba(61,43,31,0.6);color:#FFF8F0;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:14px;"><i data-lucide="x"></i></button><button onclick="openVideoEditor()" style="position:absolute;bottom:4px;right:4px;background:rgba(61,43,31,0.6);color:#FFF8F0;border:none;border-radius:12px;padding:2px 8px;cursor:pointer;font-size:12px;"><i data-lucide="scissors"></i> 편집</button></div>`;
                     // Validate duration
                     const v = preview.querySelector('video');
                     v.onloadedmetadata = () => {
@@ -816,7 +816,7 @@
         <section id="reels" class="page" data-feature="reels">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
                 <h2 style="margin:0;" data-i18n="shortform.title"><i data-lucide="clapperboard"></i> REELS</h2>
-                <button onclick="SHORTFORM.openUpload()" style="padding:0.5rem 1rem;border:none;border-radius:20px;background:#3D2B1F;color:#FFF8F0;cursor:pointer;font-weight:600;font-size:0.85rem;">➕ 업로드</button>
+                <button onclick="SHORTFORM.openUpload()" style="padding:0.5rem 1rem;border:none;border-radius:20px;background:#3D2B1F;color:#FFF8F0;cursor:pointer;font-weight:600;font-size:0.85rem;"><i data-lucide="plus"></i> 업로드</button>
             </div>
             <div id="reels-container" style="width:100%;height:calc(100vh - 120px);background:#FFF8F0;border-radius:16px;overflow:hidden;position:relative;"></div>
         </section>
@@ -825,7 +825,7 @@
         <section id="art" class="page" data-feature="art">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                 <h2 style="margin:0;" data-i18n="art.title"><i data-lucide="palette"></i> ART</h2>
-                <button class="admin-register-btn" id="art-register-btn" onclick="openRegisterModal('art')" data-i18n="art.register">➕ 작품 등록</button>
+                <button class="admin-register-btn" id="art-register-btn" onclick="openRegisterModal('art')" data-i18n="art.register"><i data-lucide="plus"></i> 작품 등록</button>
             </div>
             
             <div class="section-banner" id="art-banner" style="background:linear-gradient(135deg, #F7F3ED, #E8E0D8); color: #3D2B1F;">
@@ -839,9 +839,9 @@
                 <div style="display:flex; gap:.4rem; margin-bottom:.8rem; flex-wrap:wrap; overflow-x:auto;">
                     <button onclick="loadMyCollection('my-artworks')" class="collection-tab-btn active" data-tab="my-artworks" style="padding:.4rem .8rem; border-radius:20px; border:1px solid var(--border); background:var(--text); color:#FFF8F0; cursor:pointer; font-size:.78rem; font-weight:600; white-space:nowrap;"><i data-lucide="palette"></i> 내 작품</button>
                     <button onclick="loadMyCollection('my-purchases')" class="collection-tab-btn" data-tab="my-purchases" style="padding:.4rem .8rem; border-radius:20px; border:1px solid var(--border); background:var(--bg); cursor:pointer; font-size:.78rem; font-weight:600; white-space:nowrap;"><i data-lucide="shopping-cart"></i> 구매 작품</button>
-                    <button onclick="loadMyCollection('my-nfts')" class="collection-tab-btn" data-tab="my-nfts" style="padding:.4rem .8rem; border-radius:20px; border:1px solid var(--border); background:var(--bg); cursor:pointer; font-size:.78rem; font-weight:600; white-space:nowrap;">🔗 NFT</button>
-                    <button onclick="loadMyCollection('my-reservations')" class="collection-tab-btn" data-tab="my-reservations" style="padding:.4rem .8rem; border-radius:20px; border:1px solid var(--border); background:var(--bg); cursor:pointer; font-size:.78rem; font-weight:600; white-space:nowrap;">📅 예약</button>
-                    <button onclick="loadMyCollection('my-transactions')" class="collection-tab-btn" data-tab="my-transactions" style="padding:.4rem .8rem; border-radius:20px; border:1px solid var(--border); background:var(--bg); cursor:pointer; font-size:.78rem; font-weight:600; white-space:nowrap;">📋 거래내역</button>
+                    <button onclick="loadMyCollection('my-nfts')" class="collection-tab-btn" data-tab="my-nfts" style="padding:.4rem .8rem; border-radius:20px; border:1px solid var(--border); background:var(--bg); cursor:pointer; font-size:.78rem; font-weight:600; white-space:nowrap;"><i data-lucide="link"></i> NFT</button>
+                    <button onclick="loadMyCollection('my-reservations')" class="collection-tab-btn" data-tab="my-reservations" style="padding:.4rem .8rem; border-radius:20px; border:1px solid var(--border); background:var(--bg); cursor:pointer; font-size:.78rem; font-weight:600; white-space:nowrap;"><i data-lucide="calendar"></i> 예약</button>
+                    <button onclick="loadMyCollection('my-transactions')" class="collection-tab-btn" data-tab="my-transactions" style="padding:.4rem .8rem; border-radius:20px; border:1px solid var(--border); background:var(--bg); cursor:pointer; font-size:.78rem; font-weight:600; white-space:nowrap;">내 주문 거래내역</button>
                 </div>
                 <div id="my-collection-content">
                     <div class="art-empty-state"><span class="icon"><i data-lucide="package"></i></span><p>로그인하면 내 컬렉션을 확인할 수 있습니다</p></div>
@@ -852,13 +852,13 @@
             <div style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
                 <select id="art-filter-category" onchange="loadArtGallery()" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px; flex:1; min-width:80px;">
                     <option value="all" data-i18n="art.filter.all">전체</option>
-                    <option value="painting" data-i18n="art.filter.painting">🖌️ 회화</option>
-                    <option value="digital" data-i18n="art.filter.digital">💻 디지털</option>
-                    <option value="photo" data-i18n="art.filter.photo">📷 사진</option>
+                    <option value="painting" data-i18n="art.filter.painting">회화 회화</option>
+                    <option value="digital" data-i18n="art.filter.digital">디지털 디지털</option>
+                    <option value="photo" data-i18n="art.filter.photo">사진 사진</option>
                     <option value="illustration" data-i18n="art.filter.illustration">일러스트</option>
-                    <option value="ai" data-i18n="art.filter.ai">🤖 AI</option>
-                    <option value="generative" data-i18n="art.filter.generative">🌀 제너러티브</option>
-                    <option value="kpop" data-i18n="art.filter.kpop">💜 K-팝</option>
+                    <option value="ai" data-i18n="art.filter.ai">AI AI</option>
+                    <option value="generative" data-i18n="art.filter.generative">제너러티브 제너러티브</option>
+                    <option value="kpop" data-i18n="art.filter.kpop">K-팝 K-팝</option>
                 </select>
                 <select id="art-filter-sort" onchange="loadArtGallery()" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
                     <option value="newest" data-i18n="art.sort.newest">최신순</option>
@@ -869,7 +869,7 @@
                 </select>
                 <select id="art-filter-nft" onchange="loadArtGallery()" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
                     <option value="all">전체</option>
-                    <option value="nft" data-i18n="art.nft_only">🔗 NFT만</option>
+                    <option value="nft" data-i18n="art.nft_only"><i data-lucide="link"></i> NFT만</option>
                     <option value="non-nft" data-i18n="art.non_nft">일반만</option>
                 </select>
                 <button onclick="loadArtGallery()" style="background:var(--primary); color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:6px; cursor:pointer;"><i data-lucide="refresh-cw"></i></button>
@@ -885,11 +885,11 @@
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                 <h2 style="margin:0;" data-i18n="mall.title"><i data-lucide="shopping-cart"></i> MALL</h2>
                 <div style="display:flex; gap:0.4rem; align-items:center;">
-                    <button onclick="showPage('buyer-orders'); loadBuyerOrders();" style="background:none; border:1px solid #6B8F3C; color:#6B8F3C; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem;">📋</button>
-                    <button onclick="showPage('wishlist'); loadWishlist();" style="background:none; border:1px solid #e91e63; color:#e91e63; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem;">❤️</button>
+                    <button onclick="showPage('buyer-orders'); loadBuyerOrders();" style="background:none; border:1px solid #6B8F3C; color:#6B8F3C; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem;">내 주문</button>
+                    <button onclick="showPage('wishlist'); loadWishlist();" style="background:none; border:1px solid #e91e63; color:#e91e63; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem;"><i data-lucide="heart"></i></button>
                     <button onclick="showPage('cart'); loadCart();" style="background:none; border:1px solid #3D2B1F; color:#3D2B1F; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem; position:relative;"><i data-lucide="shopping-cart"></i> <span id="cart-badge" style="display:none; position:absolute; top:-6px; right:-6px; background:#e53935; color:#FFF8F0; font-size:0.6rem; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;">0</span></button>
                     <button onclick="showPage('my-shop'); loadMyShopDashboard();" style="background:none; border:1px solid #C4841D; color:#C4841D; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem;"><i data-lucide="store"></i></button>
-                    <button class="admin-register-btn" id="mall-register-btn" onclick="openRegisterModal('mall')" data-i18n="mall.register">➕ 상품 등록</button>
+                    <button class="admin-register-btn" id="mall-register-btn" onclick="openRegisterModal('mall')" data-i18n="mall.register"><i data-lucide="plus"></i> 상품 등록</button>
                 </div>
             </div>
             
@@ -901,12 +901,12 @@
             <!-- 브랜드 카테고리 -->
             <div id="mall-brand-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:0.5rem; margin-bottom:1rem;">
                 <div onclick="filterMallBrand(null)" class="mall-brand-card active" data-brand="all" style="background:#6B5744; color:#FFF8F0; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong><i data-lucide="store"></i> 전체</strong><br><span style="opacity:0.7;">ALL</span></div>
-                <div onclick="filterMallBrand('present')" class="mall-brand-card" data-brand="present" style="background:#FDEBD0; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>💄 프레즌트</strong><br><span style="color:var(--accent);">화장품</span></div>
-                <div onclick="filterMallBrand('doctor')" class="mall-brand-card" data-brand="doctor" style="background:#D5F5E3; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>💊 포닥터</strong><br><span style="color:var(--accent);">건강기능식품</span></div>
-                <div onclick="filterMallBrand('medical')" class="mall-brand-card" data-brand="medical" style="background:#D6EAF8; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>🏥 메디컬</strong><br><span style="color:var(--accent);">의료기기</span></div>
+                <div onclick="filterMallBrand('present')" class="mall-brand-card" data-brand="present" style="background:#FDEBD0; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>프레즌트 프레즌트</strong><br><span style="color:var(--accent);">화장품</span></div>
+                <div onclick="filterMallBrand('doctor')" class="mall-brand-card" data-brand="doctor" style="background:#D5F5E3; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>포닥터 포닥터</strong><br><span style="color:var(--accent);">건강기능식품</span></div>
+                <div onclick="filterMallBrand('medical')" class="mall-brand-card" data-brand="medical" style="background:#D6EAF8; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>메디컬 메디컬</strong><br><span style="color:var(--accent);">의료기기</span></div>
                 <div onclick="filterMallBrand('avls')" class="mall-brand-card" data-brand="avls" style="background:#E8DAEF; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong><i data-lucide="clapperboard"></i> AVLs</strong><br><span style="color:var(--accent);">음향/영상/조명</span></div>
-                <div onclick="filterMallBrand('solution')" class="mall-brand-card" data-brand="solution" style="background:#F2F3F4; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>🔐 프라이빗</strong><br><span style="color:var(--accent);">방송/보안</span></div>
-                <div onclick="filterMallBrand('architect')" class="mall-brand-card" data-brand="architect" style="background:#FADBD8; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>🏗️ 아키텍트</strong><br><span style="color:var(--accent);">건축</span></div>
+                <div onclick="filterMallBrand('solution')" class="mall-brand-card" data-brand="solution" style="background:#F2F3F4; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>프라이빗 프라이빗</strong><br><span style="color:var(--accent);">방송/보안</span></div>
+                <div onclick="filterMallBrand('architect')" class="mall-brand-card" data-brand="architect" style="background:#FADBD8; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>아키텍트 아키텍트</strong><br><span style="color:var(--accent);">건축</span></div>
                 <div onclick="filterMallBrand('mall')" class="mall-brand-card" data-brand="mall" style="background:#FCF3CF; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong><i data-lucide="shopping-cart"></i> 크라우니몰</strong><br><span style="color:var(--accent);">식품/가전</span></div>
                 <div onclick="filterMallBrand('designers')" class="mall-brand-card" data-brand="designers" style="background:#EBDEF0; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong><i data-lucide="shirt"></i> 디자이너스</strong><br><span style="color:var(--accent);">의류/잡화</span></div>
             </div>
@@ -914,7 +914,7 @@
             <!-- 검색/정렬 -->
             <div style="display:flex; gap:0.5rem; margin-bottom:0.5rem; flex-wrap:wrap;">
                 <div style="flex:1; min-width:140px; position:relative;">
-                    <input type="text" id="mall-search" placeholder="🔍 상품 검색..." data-i18n-placeholder="mall.search_placeholder" style="width:100%; padding:0.6rem; border:1px solid var(--border); border-radius:6px; font-size:0.85rem; box-sizing:border-box;">
+                    <input type="text" id="mall-search" placeholder="<i data-lucide="search"></i> 상품 검색..." data-i18n-placeholder="mall.search_placeholder" style="width:100%; padding:0.6rem; border:1px solid var(--border); border-radius:6px; font-size:0.85rem; box-sizing:border-box;">
                 </div>
                 <select id="mall-sort" onchange="loadMallProducts()" style="padding:0.6rem; border:1px solid var(--border); border-radius:6px; font-size:0.85rem;">
                     <option value="newest" data-i18n="mall.sort.newest">최신순</option>
@@ -933,12 +933,12 @@
                         <label style="font-size:0.7rem; color:var(--accent);">카테고리</label>
                         <select id="mall-filter-category" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:6px; font-size:0.8rem;">
                             <option value="">전체</option>
-                            <option value="present">💄 프레즌트</option>
-                            <option value="doctor">💊 포닥터</option>
-                            <option value="medical">🏥 메디컬</option>
+                            <option value="present">프레즌트 프레즌트</option>
+                            <option value="doctor">포닥터 포닥터</option>
+                            <option value="medical">메디컬 메디컬</option>
                             <option value="avls"><i data-lucide="clapperboard"></i> AVLs</option>
-                            <option value="solution">🔐 프라이빗</option>
-                            <option value="architect">🏗️ 아키텍트</option>
+                            <option value="solution">프라이빗 프라이빗</option>
+                            <option value="architect">아키텍트 아키텍트</option>
                             <option value="mall"><i data-lucide="shopping-cart"></i> 크라우니몰</option>
                             <option value="designers"><i data-lucide="shirt"></i> 디자이너스</option>
                         </select>
@@ -977,11 +977,11 @@
             <div id="mall-products" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:0.8rem;"></div>
             
             <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-top:1.5rem;">
-                <h3 style="margin-bottom:1rem;" data-i18n="mall.my_orders_title">📋 내 주문/판매</h3>
+                <h3 style="margin-bottom:1rem;" data-i18n="mall.my_orders_title">내 주문 내 주문/판매</h3>
                 <div style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
                     <button onclick="loadMyOrders()" class="btn-primary" style="flex:1;" data-i18n="mall.my_orders"><i data-lucide="shopping-cart"></i> 주문 내역</button>
                     <button onclick="loadMyProducts()" class="btn-secondary" style="flex:1;" data-i18n="mall.my_products"><i data-lucide="package"></i> 내 상품</button>
-                    <button onclick="loadSellerOrders()" style="flex:1; background:#C4841D; color:#FFF8F0; border:none; padding:0.6rem; border-radius:6px; cursor:pointer; font-weight:600;" data-i18n="mall.seller_orders">📬 받은 주문</button>
+                    <button onclick="loadSellerOrders()" style="flex:1; background:#C4841D; color:#FFF8F0; border:none; padding:0.6rem; border-radius:6px; cursor:pointer; font-weight:600;" data-i18n="mall.seller_orders"><i data-lucide="mailbox"></i> 받은 주문</button>
                 </div>
                 <div id="mall-my-list"></div>
             </div>
@@ -1027,7 +1027,7 @@
             <div style="max-width:600px; margin:0 auto;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                     <h2 style="margin:0;"><i data-lucide="shopping-cart"></i> 장바구니</h2>
-                    <button onclick="showPage('mall')" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">← 쇼핑 계속</button>
+                    <button onclick="showPage('mall')" style="background:none; border:none; font-size:1.2rem; cursor:pointer;"><i data-lucide="arrow-left"></i> 쇼핑 계속</button>
                 </div>
                 <div id="cart-items" style="margin-bottom:1rem;"></div>
                 <div id="cart-summary" style="display:none; background:#FFF8F0; padding:1rem; border-radius:12px; box-shadow:0 2px 8px rgba(61,43,31,0.08);">
@@ -1044,8 +1044,8 @@
         <section id="wishlist" class="page">
             <div style="max-width:600px; margin:0 auto;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-                    <h2 style="margin:0;">❤️ 찜 목록</h2>
-                    <button onclick="showPage('mall')" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">← 쇼핑 계속</button>
+                    <h2 style="margin:0;"><i data-lucide="heart"></i> 찜 목록</h2>
+                    <button onclick="showPage('mall')" style="background:none; border:none; font-size:1.2rem; cursor:pointer;"><i data-lucide="arrow-left"></i> 쇼핑 계속</button>
                 </div>
                 <div id="wishlist-items"></div>
             </div>
@@ -1055,7 +1055,7 @@
         <section id="fundraise" class="page" data-feature="business">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                 <h2 style="margin:0;" data-i18n="fundraise.title"><i data-lucide="heart"></i> FUNDRAISE</h2>
-                <button class="admin-register-btn" id="fundraise-register-btn" onclick="openRegisterModal('fundraise')" data-i18n="fundraise.create">➕ 캠페인 만들기</button>
+                <button class="admin-register-btn" id="fundraise-register-btn" onclick="openRegisterModal('fundraise')" data-i18n="fundraise.create"><i data-lucide="plus"></i> 캠페인 만들기</button>
             </div>
             
             <div class="section-banner" id="fundraise-banner" style="background:linear-gradient(135deg, #3D2B1F, #6B5744);">
@@ -1066,23 +1066,23 @@
             <!-- 관심 필터 -->
             <div style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
                 <select id="fund-filter-interest" onchange="loadCampaigns()" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px; flex:1;">
-                    <option value="all" data-i18n="fundraise.filter.all">🌎 전체</option>
+                    <option value="all" data-i18n="fundraise.filter.all"><i data-lucide="globe"></i> 전체</option>
                     <option value="best" data-i18n="fundraise.filter.best"><i data-lucide="trophy"></i> 세계 베스트</option>
                     <option value="charity" data-i18n="fundraise.filter.charity"><i data-lucide="handshake"></i> 자선/구호</option>
-                    <option value="medical" data-i18n="fundraise.filter.medical">🏥 의료/치료</option>
-                    <option value="education" data-i18n="fundraise.filter.education">📖 교육</option>
-                    <option value="environment" data-i18n="fundraise.filter.environment">🌱 환경</option>
-                    <option value="startup" data-i18n="fundraise.filter.startup">🚀 창업</option>
-                    <option value="community" data-i18n="fundraise.filter.community">👥 커뮤니티</option>
+                    <option value="medical" data-i18n="fundraise.filter.medical">메디컬 의료/치료</option>
+                    <option value="education" data-i18n="fundraise.filter.education"><i data-lucide="book-open"></i> 교육</option>
+                    <option value="environment" data-i18n="fundraise.filter.environment"><i data-lucide="leaf"></i> 환경</option>
+                    <option value="startup" data-i18n="fundraise.filter.startup"><i data-lucide="rocket"></i> 창업</option>
+                    <option value="community" data-i18n="fundraise.filter.community"><i data-lucide="users"></i> 커뮤니티</option>
                     <option value="animal" data-i18n="fundraise.filter.animal">🐾 동물보호</option>
-                    <option value="disaster" data-i18n="fundraise.filter.disaster">🆘 재난구호</option>
+                    <option value="disaster" data-i18n="fundraise.filter.disaster"><i data-lucide="alert-circle"></i> 재난구호</option>
                 </select>
                 <select id="fund-filter-country" onchange="loadCampaigns()" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
-                    <option value="all">🌐 전체 국가</option>
-                    <option value="KR">🇰🇷 한국</option>
-                    <option value="US">🇺🇸 미국</option>
-                    <option value="JP">🇯🇵 일본</option>
-                    <option value="PH">🇵🇭 필리핀</option>
+                    <option value="all"><i data-lucide="globe"></i> 전체 국가</option>
+                    <option value="KR"></option>
+                    <option value="US"></option>
+                    <option value="JP"></option>
+                    <option value="PH"></option>
                     <option value="other">기타</option>
                 </select>
             </div>
@@ -1098,12 +1098,12 @@
         <!-- ========== CREB LABS - 미래기술 투자 ========== -->
         <section id="energy" class="page" data-feature="energy">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-                <h2 style="margin:0;" data-i18n="energy.title">🔬 CREB LABS</h2>
-                <button class="admin-register-btn" id="energy-register-btn" onclick="openRegisterModal('energy')" data-i18n="energy.register">➕ 프로젝트 등록</button>
+                <h2 style="margin:0;" data-i18n="energy.title"><i data-lucide="beaker"></i> CREB LABS</h2>
+                <button class="admin-register-btn" id="energy-register-btn" onclick="openRegisterModal('energy')" data-i18n="energy.register"><i data-lucide="plus"></i> 프로젝트 등록</button>
             </div>
             
             <div class="section-banner" id="energy-banner" style="background:linear-gradient(135deg, #0d2137, #1a5276, #2e86c1);">
-                <h3 data-i18n="energy.banner_title">🔬 CREB LABS — 미래를 위한 투자 플랫폼</h3>
+                <h3 data-i18n="energy.banner_title"><i data-lucide="beaker"></i> CREB LABS — 미래를 위한 투자 플랫폼</h3>
                 <p data-i18n="energy.banner_desc">에너지 · 유전공학 · 생명공학 · AI·로보틱스 — CREB로 미래에 투자하세요</p>
             </div>
             
@@ -1112,8 +1112,8 @@
                 <button onclick="filterCrebCategory('all')" class="creb-tab active" data-cat="all" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #6B5744; background:#FFF8F0; cursor:pointer; white-space:nowrap; font-size:0.85rem;"><i data-lucide="globe"></i> 전체</button>
                 <button onclick="filterCrebCategory('energy')" class="creb-tab" data-cat="energy" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #C4841D; background:#FFF8F0; cursor:pointer; white-space:nowrap; font-size:0.85rem; color:#C4841D;"><i data-lucide="zap"></i> 에너지</button>
                 <button onclick="filterCrebCategory('genetics')" class="creb-tab" data-cat="genetics" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #B54534; background:#FFF8F0; cursor:pointer; white-space:nowrap; font-size:0.85rem; color:#B54534;"><i data-lucide="dna"></i> 유전공학</button>
-                <button onclick="filterCrebCategory('biotech')" class="creb-tab" data-cat="biotech" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #6B8F3C; background:#FFF8F0; cursor:pointer; white-space:nowrap; font-size:0.85rem; color:#6B8F3C;">🔬 생명공학</button>
-                <button onclick="filterCrebCategory('ai_robotics')" class="creb-tab" data-cat="ai_robotics" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #5B7B8C; background:#FFF8F0; cursor:pointer; white-space:nowrap; font-size:0.85rem; color:#5B7B8C;">🤖 AI·로보틱스</button>
+                <button onclick="filterCrebCategory('biotech')" class="creb-tab" data-cat="biotech" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #6B8F3C; background:#FFF8F0; cursor:pointer; white-space:nowrap; font-size:0.85rem; color:#6B8F3C;"><i data-lucide="beaker"></i> 생명공학</button>
+                <button onclick="filterCrebCategory('ai_robotics')" class="creb-tab" data-cat="ai_robotics" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #5B7B8C; background:#FFF8F0; cursor:pointer; white-space:nowrap; font-size:0.85rem; color:#5B7B8C;">AI AI·로보틱스</button>
             </div>
             
             <!-- 시뮬레이션 모드 배지 -->
@@ -1161,10 +1161,10 @@
             
             <!-- 프로젝트 -->
             <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px;">
-                <h3 style="margin-bottom:1rem;" data-i18n="energy.projects_title">🔬 CREB LABS 프로젝트</h3>
+                <h3 style="margin-bottom:1rem;" data-i18n="energy.projects_title"><i data-lucide="beaker"></i> CREB LABS 프로젝트</h3>
                 <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
                     <button onclick="loadEnergyProjects()" class="btn-primary" style="flex:1;" data-i18n="energy.refresh_projects"><i data-lucide="refresh-cw"></i> 프로젝트 새로고침</button>
-                    <button onclick="loadMyEnergyInvestments()" class="btn-secondary" style="flex:1;" data-i18n="energy.my_investments">📋 내 투자 내역</button>
+                    <button onclick="loadMyEnergyInvestments()" class="btn-secondary" style="flex:1;" data-i18n="energy.my_investments">내 주문 내 투자 내역</button>
                 </div>
                 <div id="energy-my-investments" style="margin-bottom:1rem;"></div>
                 <div id="energy-projects"></div>
@@ -1175,12 +1175,12 @@
         <!-- ========== BUSINESS - 크라우니 생태계 ========== -->
         <section id="business" class="page" data-feature="business">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-                <h2 style="margin:0;" data-i18n="business.title">🏢 BUSINESS</h2>
-                <button class="admin-register-btn" id="business-register-btn" onclick="openRegisterModal('business')" data-i18n="business.register">➕ 사업체 등록</button>
+                <h2 style="margin:0;" data-i18n="business.title"><i data-lucide="building-2"></i> BUSINESS</h2>
+                <button class="admin-register-btn" id="business-register-btn" onclick="openRegisterModal('business')" data-i18n="business.register"><i data-lucide="plus"></i> 사업체 등록</button>
             </div>
             
             <div class="section-banner" id="business-banner" style="background:linear-gradient(135deg, #3D2B1F, #C4841D);">
-                <h3 data-i18n="business.banner_title">🏢 BUSINESS — 투자하고 성장하세요</h3>
+                <h3 data-i18n="business.banner_title"><i data-lucide="building-2"></i> BUSINESS — 투자하고 성장하세요</h3>
                 <p data-i18n="business.banner_desc">153개국 크라우니 사업 네트워크 · 국가별 사업체에 투자</p>
             </div>
             
@@ -1190,12 +1190,12 @@
         <!-- ========== ARTIST - 엔터테인먼트 ========== -->
         <section id="artist" class="page" data-feature="artist">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-                <h2 style="margin:0;" data-i18n="artist.title">🎵 ARTIST</h2>
-                <button class="admin-register-btn" id="artist-register-btn" onclick="openRegisterModal('artist')" data-i18n="artist.register">➕ 아티스트 등록</button>
+                <h2 style="margin:0;" data-i18n="artist.title"><i data-lucide="music"></i> ARTIST</h2>
+                <button class="admin-register-btn" id="artist-register-btn" onclick="openRegisterModal('artist')" data-i18n="artist.register"><i data-lucide="plus"></i> 아티스트 등록</button>
             </div>
             
             <div class="section-banner" id="artist-banner" style="background:linear-gradient(135deg, #e91e63, #9c27b0);">
-                <h3 data-i18n="artist.banner_title">🎵 ARTIST — 크라우니의 아티스트들</h3>
+                <h3 data-i18n="artist.banner_title"><i data-lucide="music"></i> ARTIST — 크라우니의 아티스트들</h3>
                 <p data-i18n="artist.banner_desc">아티스트를 직접 후원하세요 · 후원 시 디지털아트 우선 구입 또는 무료 지급</p>
             </div>
             
@@ -1208,7 +1208,7 @@
                 <h2 style="margin:0;" data-i18n="books.title"><i data-lucide="book-open"></i> BOOKS</h2>
                 <div style="display:flex;gap:0.5rem;">
                     <button onclick="showMyLibrary()" style="background:#C4841D;color:#FFF8F0;border:none;padding:0.5rem 0.8rem;border-radius:8px;cursor:pointer;font-size:0.8rem;font-weight:700;"><i data-lucide="book-open"></i> 내 서재</button>
-                    <button onclick="showBookCreator()" style="background:#6B8F3C;color:#FFF8F0;border:none;padding:0.5rem 0.8rem;border-radius:8px;cursor:pointer;font-size:0.8rem;font-weight:700;">✍️ 집필하기</button>
+                    <button onclick="showBookCreator()" style="background:#6B8F3C;color:#FFF8F0;border:none;padding:0.5rem 0.8rem;border-radius:8px;cursor:pointer;font-size:0.8rem;font-weight:700;"><i data-lucide="pen-tool"></i> 집필하기</button>
                 </div>
             </div>
             
@@ -1237,7 +1237,7 @@
             
             <!-- 4개 서비스 탭 -->
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1fr; gap:0.3rem; margin-bottom:1rem;">
-                <button onclick="showCreditTab('exchange')" class="credit-tab active" id="tab-exchange" style="padding:0.6rem; border:2px solid var(--primary); background:var(--primary); color:#FFF8F0; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight:700;" data-i18n="credit.tab_exchange">💱 환전</button>
+                <button onclick="showCreditTab('exchange')" class="credit-tab active" id="tab-exchange" style="padding:0.6rem; border:2px solid var(--primary); background:var(--primary); color:#FFF8F0; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight:700;" data-i18n="credit.tab_exchange"><i data-lucide="arrow-right-left"></i> 환전</button>
                 <button onclick="showCreditTab('pumasi')" class="credit-tab" id="tab-pumasi" style="padding:0.6rem; border:2px solid var(--border); background:#FFF8F0; border-radius:6px; cursor:pointer; font-size:0.8rem;" data-i18n="credit.tab_pumasi"><i data-lucide="handshake"></i> 품앗이</button>
                 <button onclick="showCreditTab('insurance')" class="credit-tab" id="tab-insurance" style="padding:0.6rem; border:2px solid var(--border); background:#FFF8F0; border-radius:6px; cursor:pointer; font-size:0.8rem;" data-i18n="credit.tab_insurance"><i data-lucide="shield"></i> 보험</button>
                 <button onclick="showCreditTab('donate')" class="credit-tab" id="tab-donate" style="padding:0.6rem; border:2px solid var(--border); background:#FFF8F0; border-radius:6px; cursor:pointer; font-size:0.8rem;" data-i18n="credit.tab_donate"><i data-lucide="heart"></i> 기부</button>
@@ -1247,7 +1247,7 @@
             <!-- 환전 -->
             <div id="credit-exchange" class="credit-panel">
                 <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
-                    <h3 style="margin-bottom:0.5rem;" data-i18n="credit.exchange_title">💱 토큰 환전</h3>
+                    <h3 style="margin-bottom:0.5rem;" data-i18n="credit.exchange_title"><i data-lucide="arrow-right-left"></i> 토큰 환전</h3>
                     <p style="font-size:0.85rem; color:var(--accent); margin-bottom:1rem;" data-i18n="credit.exchange_desc">수수료 없이 CRNY ↔ FNC ↔ CRFN 교환</p>
                     <div style="display:grid; gap:0.8rem;">
                         <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:0.5rem; align-items:end;">
@@ -1258,7 +1258,7 @@
                                     <optgroup label="<i data-lucide="flame"></i> 오프체인"><option value="crtd">CRTD</option><option value="crac">CRAC</option><option value="crgc">CRGC</option><option value="creb">CREB</option></optgroup>
                                 </select>
                             </div>
-                            <span style="font-size:1.5rem; padding-bottom:0.5rem;">→</span>
+                            <span style="font-size:1.5rem; padding-bottom:0.5rem;"><i data-lucide="arrow-right"></i></span>
                             <div>
                                 <label style="font-size:0.8rem; color:var(--accent);" data-i18n="credit.exchange_to">받는 토큰</label>
                                 <select id="swap-to" style="width:100%; padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
@@ -1269,7 +1269,7 @@
                         </div>
                         <input type="number" id="swap-amount" placeholder="수량" data-i18n-placeholder="placeholder.amount" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                         <p style="font-size:0.8rem; color:#6B8F3C; font-weight:700;" data-i18n="credit.exchange_fee"<i data-lucide="check-circle" style="width:14px;height:14px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> 환전 수수료: 0%</p>
-                        <button onclick="swapTokens()" class="btn-primary" data-i18n="credit.exchange_btn">💱 환전하기</button>
+                        <button onclick="swapTokens()" class="btn-primary" data-i18n="credit.exchange_btn"><i data-lucide="arrow-right-left"></i> 환전하기</button>
                     </div>
                 </div>
             </div>
@@ -1301,15 +1301,15 @@
                     <p style="font-size:0.85rem; color:var(--accent); margin-bottom:1rem;" data-i18n-html="credit.insurance_desc">급한 자금 필요 시 사전 정한 금액을 선지급<br>공동체가 나누어 채우는 상호부조 보험</p>
                     <div style="display:grid; gap:0.8rem;">
                         <select id="insurance-type" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                            <option value="medical">🏥 의료비</option>
-                            <option value="disaster">🆘 재난/사고</option>
-                            <option value="education">📖 교육비</option>
+                            <option value="medical">메디컬 의료비</option>
+                            <option value="disaster"><i data-lucide="alert-circle"></i> 재난/사고</option>
+                            <option value="education"><i data-lucide="book-open"></i> 교육비</option>
                             <option value="housing"><i data-lucide="home"></i> 주거비</option>
-                            <option value="other">📋 기타</option>
+                            <option value="other">내 주문 기타</option>
                         </select>
                         <input type="number" id="insurance-amount" placeholder="필요 금액 (CRNY)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                         <textarea id="insurance-reason" placeholder="사유 (중간 관리자가 검토합니다)" rows="2" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px; resize:vertical;"></textarea>
-                        <p style="font-size:0.8rem; color:var(--accent);"><i data-lucide="shield"></i> 보험금 선수령 → 공동체가 후에 채움</p>
+                        <p style="font-size:0.8rem; color:var(--accent);"><i data-lucide="shield"></i> 보험금 선수령 <i data-lucide="arrow-right"></i> 공동체가 후에 채움</p>
                         <button onclick="requestInsurance()" class="btn-primary" data-i18n="credit.insurance_btn"><i data-lucide="shield"></i> 보험 신청</button>
                     </div>
                 </div>
@@ -1318,7 +1318,7 @@
                 <div id="insurance-admin-list" style="background:#FFF8F0; padding:1rem; border-radius:12px; margin-top:1rem;"></div>
                 <!-- 내 보험 신청 내역 -->
                 <div style="background:#FFF8F0; padding:1rem; border-radius:12px; margin-top:1rem;">
-                    <h4 style="margin-bottom:0.5rem;">📋 내 보험 신청 내역</h4>
+                    <h4 style="margin-bottom:0.5rem;">내 주문 내 보험 신청 내역</h4>
                     <div id="my-insurance-claims"></div>
                 </div>
             </div>
@@ -1341,7 +1341,7 @@
                             </div>
                         </div>
                         <select id="donate-target" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                            <option value="open">🌐 오픈 기부 (시스템 우선순위)</option>
+                            <option value="open"><i data-lucide="globe"></i> 오픈 기부 (시스템 우선순위)</option>
                             <option value="designated"><i data-lucide="target"></i> 지정 대상 기부</option>
                         </select>
                         <input type="email" id="donate-target-email" placeholder="지정 대상 이메일 (선택)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
@@ -1386,7 +1386,7 @@
                     </div>
                 </div>
                 <!-- 크레딧 점수 상세 분석 -->
-                <h4 style="margin-bottom:0.5rem;" data-i18n="credit.score_detail">🔍 점수 상세 분석</h4>
+                <h4 style="margin-bottom:0.5rem;" data-i18n="credit.score_detail"><i data-lucide="search"></i> 점수 상세 분석</h4>
                 <div id="credit-score-breakdown"><p style="color:var(--accent); font-size:0.85rem;">로딩...</p></div>
             </div>
         </section>
@@ -1440,7 +1440,7 @@
                     
                     <!-- 탭 설정 + 타임존 -->
                     <div style="display:flex; flex-wrap:wrap; gap:4px; padding:6px 10px; background:#F7F3ED; border-radius:8px; margin-bottom:4px; align-items:center;">
-                        <select id="tab-symbol" onchange="updateTabSetting('symbol')" style="background:#6B5744; color:#00ff88; border:1px solid #3D2B1F; border-radius:4px; padding:3px 6px; font-size:0.75rem; font-weight:700;">
+                        <select id="tab-symbol" onchange="updateTabSetting('symbol')" style="background:#6B5744; color:#6B8F3C; border:1px solid #3D2B1F; border-radius:4px; padding:3px 6px; font-size:0.75rem; font-weight:700;">
                             <option value="NQ">NQ ×$20</option>
                             <option value="MNQ" selected>MNQ ×$2</option>
                         </select>
@@ -1462,21 +1462,21 @@
                         </select>
                         <div style="flex:1;"></div>
                         <select id="tz-selector" onchange="changeTimezone(this.value)" style="background:#6B5744; color:#E8E0D8; border:1px solid #3D2B1F; border-radius:4px; padding:2px 6px; font-size:0.7rem;">
-                            <option value="KR" data-i18n="trading.timezone.seoul">🇰🇷 서울</option>
-                            <option value="US" data-i18n="trading.timezone.newyork">🇺🇸 뉴욕</option>
-                            <option value="JP" data-i18n="trading.timezone.tokyo">🇯🇵 도쿄</option>
-                            <option value="UK" data-i18n="trading.timezone.london">🇬🇧 런던</option>
-                            <option value="UTC">🌐 UTC</option>
+                            <option value="KR" data-i18n="trading.timezone.seoul"><i data-lucide="flag"></i> 서울</option>
+                            <option value="US" data-i18n="trading.timezone.newyork"><i data-lucide="flag"></i> 뉴욕</option>
+                            <option value="JP" data-i18n="trading.timezone.tokyo"><i data-lucide="flag"></i> 도쿄</option>
+                            <option value="UK" data-i18n="trading.timezone.london"><i data-lucide="flag"></i> 런던</option>
+                            <option value="UTC"><i data-lucide="globe"></i> UTC</option>
                         </select>
                         <div style="display:flex; gap:4px; margin-left:auto;">
-                            <button onclick="scrollToLatest()" style="background:#6B5744; color:#00ff88; border:1px solid #3D2B1F; border-radius:4px; padding:2px 8px; font-size:0.7rem; cursor:pointer;">▶ 정렬</button>
-                            <button onclick="toggleMASettings()" style="background:#6B5744; color:#ffab40; border:1px solid #3D2B1F; border-radius:4px; padding:2px 8px; font-size:0.7rem; cursor:pointer;">MA</button>
+                            <button onclick="scrollToLatest()" style="background:#6B5744; color:#6B8F3C; border:1px solid #3D2B1F; border-radius:4px; padding:2px 8px; font-size:0.7rem; cursor:pointer;">▶ 정렬</button>
+                            <button onclick="toggleMASettings()" style="background:#6B5744; color:#C4841D; border:1px solid #3D2B1F; border-radius:4px; padding:2px 8px; font-size:0.7rem; cursor:pointer;">MA</button>
                         </div>
                     </div>
                     
                     <!-- MA 세팅 패널 -->
                     <div id="ma-settings" style="display:none; padding:8px 10px; background:#F7F3ED; border-radius:8px; margin-bottom:4px;">
-                        <span style="color:#00ff88; font-size:0.7rem; font-weight:700;">이동평균선</span>
+                        <span style="color:#6B8F3C; font-size:0.7rem; font-weight:700;">이동평균선</span>
                         <label style="float:right; font-size:0.65rem; color:#6B5744; cursor:pointer;"><input type="checkbox" id="nq-ma-label-show" onchange="applyMASettings()" style="margin:0 2px 0 0; vertical-align:middle;"> 이름표시</label>
                         <div style="display:flex; flex-wrap:wrap; gap:4px; align-items:center; margin-top:4px;">
                             <input type="checkbox" id="nq-ma1-show" checked onchange="applyMASettings()" style="margin:0;">
@@ -1494,7 +1494,7 @@
                             <input type="number" id="nq-ma3-period" value="60" style="width:32px; background:#6B5744; color:#FFF8F0; border:1px solid #3D2B1F; border-radius:3px; padding:1px 3px; font-size:0.7rem; text-align:center;">
                             <input type="color" id="nq-ma3-color" value="#FF3333" onchange="applyMASettings()" style="width:20px; height:20px; border:none; cursor:pointer; padding:0;">
                         </div>
-                        <button onclick="applyMASettings(); this.textContent='✅ 저장됨!'; setTimeout(()=>this.textContent='✅ 적용',1500);" style="background:#6B5744; color:#E8E0D8; border:none; border-radius:4px; padding:8px 12px; font-size:0.8rem; cursor:pointer; margin-top:6px; width:100%; touch-action:manipulation; -webkit-tap-highlight-color:transparent;">✅ 적용</button>
+                        <button onclick="applyMASettings(); this.textContent='<i data-lucide="check-circle"></i> 저장됨!'; setTimeout(()=>this.textContent='<i data-lucide="check-circle"></i> 적용',1500);" style="background:#6B5744; color:#E8E0D8; border:none; border-radius:4px; padding:8px 12px; font-size:0.8rem; cursor:pointer; margin-top:6px; width:100%; touch-action:manipulation; -webkit-tap-highlight-color:transparent;"><i data-lucide="check-circle"></i> 적용</button>
                     </div>
                     
                     <!-- 가격 + 시간 바 -->
@@ -1502,9 +1502,9 @@
                         <div>
                             <div style="display:flex; align-items:baseline; gap:8px;">
                                 <span id="chart-symbol-label" style="color:#6B5744; font-size:0.7rem;">MNQ 1분봉</span>
-                                <span id="live-clock" style="font-size:0.75rem; color:#00ff88;">--:--:--</span>
+                                <span id="live-clock" style="font-size:0.75rem; color:#6B8F3C;">--:--:--</span>
                             </div>
-                            <div id="live-price" style="font-size:1.4rem; font-weight:700; color:#00ff88;">--</div>
+                            <div id="live-price" style="font-size:1.4rem; font-weight:700; color:#6B8F3C;">--</div>
                         </div>
                         <div style="display:flex; gap:12px;">
                             <div style="text-align:center;">
@@ -1517,7 +1517,7 @@
                             </div>
                             <div style="text-align:center;">
                                 <span style="color:#6B5744; font-size:0.65rem;">SPREAD</span>
-                                <div id="live-spread" style="color:#ffab40; font-weight:600; font-size:0.85rem;">--</div>
+                                <div id="live-spread" style="color:#C4841D; font-weight:600; font-size:0.85rem;">--</div>
                             </div>
                         </div>
                         <div style="text-align:right;">
@@ -1549,7 +1549,7 @@
                     <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-top:4px; padding:0 4px;">
                         <button id="btn-chart-buy" onclick="quickChartTrade('BUY')" style="background:#3D2B1F; color:#FFF8F0; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">BUY</button>
                         <button id="btn-chart-sell" onclick="quickChartTrade('SELL')" style="background:#cc0000; color:#FFF8F0; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">SELL</button>
-                        <button onclick="closeAllPositions(getActiveTabSymbol())" style="background:#6B5744; color:#FFF8F0; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">✕ CLOSE</button>
+                        <button onclick="closeAllPositions(getActiveTabSymbol())" style="background:#6B5744; color:#FFF8F0; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;"><i data-lucide="x"></i> CLOSE</button>
                     </div>
                     
                     <!-- 실시간 손익 -->
@@ -1561,7 +1561,7 @@
                         </div>
                     </div>
                     
-                    <!-- 🤖 멘토 패널 -->
+                    <!-- AI 멘토 패널 -->
                     <div id="mentor-settings-bar" style="margin-top:8px; display:flex; gap:6px; justify-content:flex-end; align-items:center;">
                         <label style="font-size:0.65rem; color:#6B5744; display:flex; align-items:center; gap:3px; cursor:pointer;">
                             <input type="checkbox" id="mentor-toggle-panel" checked onchange="toggleMentorSetting('panel')" style="width:14px;height:14px;accent-color:#C9A84C;" data-i18n="trading.mentor_bot"> 멘토봇
@@ -1574,7 +1574,7 @@
                         </label>
                     </div>
                     <div id="mentor-panel" style="margin-top:4px; padding:8px; background:#F7F3ED; border-radius:8px;">
-                        <div style="color:#6B5744; font-size:0.7rem; text-align:center; padding:8px;" data-i18n="mentor.loading">🤖 멘토 분석 로딩 중...</div>
+                        <div style="color:#6B5744; font-size:0.7rem; text-align:center; padding:8px;" data-i18n="mentor.loading">AI 멘토 분석 로딩 중...</div>
                     </div>
                 </div>
                 
@@ -1676,10 +1676,10 @@
                     <!-- Close / Flatten Buttons -->
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin-top:0.8rem;">
                         <button id="btn-close-last" onclick="closeLastPosition()" style="background:#C4841D; color:#FFF8F0; padding:0.9rem; border:none; border-radius:6px; cursor:pointer; font-size:0.95rem; font-weight:bold;">
-                            ✕ CLOSE
+                            <i data-lucide="x"></i> CLOSE
                         </button>
                         <button id="btn-flatten" onclick="flattenAllPositions()" style="background:#b71c1c; color:#FFF8F0; padding:0.9rem; border:none; border-radius:6px; cursor:pointer; font-size:0.95rem; font-weight:bold;">
-                            🚨 FLATTEN
+                            <i data-lucide="alert-circle"></i> FLATTEN
                         </button>
                     </div>
                     
@@ -1697,7 +1697,7 @@
                 
                 <!-- Trade History -->
                 <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-top:1rem;">
-                    <h4 style="margin-bottom:1rem;" data-i18n="trading.trade_history">📋 거래 내역</h4>
+                    <h4 style="margin-bottom:1rem;" data-i18n="trading.trade_history">내 주문 거래 내역</h4>
                     <div id="trade-history"></div>
                 </div>
             </div>
@@ -1706,7 +1706,7 @@
             <div id="trading-challenges"></div>
             
             <div style="text-align:center; margin-top:2rem;">
-                <button onclick="showCreateChallenge()" class="btn-primary" data-i18n="trading.create_challenge">➕ 새 챌린지 생성</button>
+                <button onclick="showCreateChallenge()" class="btn-primary" data-i18n="trading.create_challenge"><i data-lucide="plus"></i> 새 챌린지 생성</button>
             </div>
         </section>
 
@@ -1731,7 +1731,7 @@
             </div>
             <div class="section-banner" style="background:linear-gradient(135deg, #3D2B1F, #6B5744);">
                 <h3><i data-lucide="brain" style="width:20px;height:20px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> 크라우니브레인 — 나를 발견하는 3단계</h3>
-                <p>4기질 → 243유형(애니어그램) → 8,192유형(브레인OS)</p>
+                <p>4기질 <i data-lucide="arrow-right"></i> 243유형(애니어그램) <i data-lucide="arrow-right"></i> 8,192유형(브레인OS)</p>
             </div>
             <div id="brain-content" style="margin-top:1rem;">
                 <p style="text-align:center;color:var(--accent);padding:2rem;">로딩 중...</p>
@@ -1745,7 +1745,7 @@
             </div>
             <div class="section-banner" style="background:linear-gradient(135deg, #E17055, #FDCB6E);">
                 <h3><i data-lucide="zap"></i> 크라우니무브먼트 — 500회 프로세스</h3>
-                <p>프레시전 → 액티브 → 코어 무브먼트</p>
+                <p>프레시전 <i data-lucide="arrow-right"></i> 액티브 <i data-lucide="arrow-right"></i> 코어 무브먼트</p>
             </div>
             <div id="movement-content" style="margin-top:1rem;">
                 <p style="text-align:center;color:var(--accent);padding:2rem;">로딩 중...</p>
@@ -1759,7 +1759,7 @@
             </div>
             <div class="section-banner" style="background:linear-gradient(135deg, #B54534, #FF6090);">
                 <h3><i data-lucide="sparkles"></i> 뷰티매니저 — 피부 분석 & 변화 추적</h3>
-                <p>부위별 피부 촬영 → 전문가/AI 분석 → 타임라인으로 변화 확인</p>
+                <p>부위별 피부 촬영 <i data-lucide="arrow-right"></i> 전문가/AI 분석 <i data-lucide="arrow-right"></i> 타임라인으로 변화 확인</p>
             </div>
             <div id="beauty-manager-content" style="margin-top:1rem;">
                 <p style="text-align:center;color:var(--accent);padding:2rem;">로딩 중...</p>
@@ -1776,7 +1776,7 @@
             <div id="ai-chat-messages" class="ai-chat-messages"></div>
             <div class="ai-input-bar">
                 <input type="text" id="ai-input" placeholder="메시지를 입력하세요..." onkeydown="AI_ASSISTANT.handleKeydown(event)" autocomplete="off">
-                <button onclick="AI_ASSISTANT.handleSend()" class="ai-send-btn">➤</button>
+                <button onclick="AI_ASSISTANT.handleSend()" class="ai-send-btn"><i data-lucide="arrow-right"></i></button>
             </div>
         </section>
 
@@ -1802,12 +1802,12 @@
                 <textarea id="product-desc" placeholder="상품 설명" data-i18n-placeholder="mall.product_desc" rows="2" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px; resize:vertical;"></textarea>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
                     <select id="product-category" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                        <option value="present">💄 프레즌트 (화장품)</option>
-                        <option value="doctor">💊 포닥터 (건강기능식품)</option>
-                        <option value="medical">🏥 메디컬디바이스</option>
+                        <option value="present">프레즌트 프레즌트 (화장품)</option>
+                        <option value="doctor">포닥터 포닥터 (건강기능식품)</option>
+                        <option value="medical">메디컬 메디컬디바이스</option>
                         <option value="avls"><i data-lucide="clapperboard"></i> AVLs (음향/영상/조명)</option>
-                        <option value="solution">🔐 프라이빗솔루션</option>
-                        <option value="architect">🏗️ 아키텍트 (건축)</option>
+                        <option value="solution">프라이빗 프라이빗솔루션</option>
+                        <option value="architect">아키텍트 아키텍트 (건축)</option>
                         <option value="mall"><i data-lucide="shopping-cart"></i> 크라우니몰 (식품/가전)</option>
                         <option value="designers"><i data-lucide="shirt"></i> 디자이너스 (의류/잡화)</option>
                         <option value="other"><i data-lucide="package"></i> 기타</option>
@@ -1820,7 +1820,7 @@
                     <span style="padding:0.7rem; background:var(--bg); border-radius:6px; font-weight:700; color:#6B8F3C;">CRGC</span>
                 </div>
                 <div>
-                    <label style="font-size:0.8rem; color:var(--accent); margin-bottom:0.3rem; display:block;">📷 상품 이미지 (최대 5장, 첫번째가 대표)</label>
+                    <label style="font-size:0.8rem; color:var(--accent); margin-bottom:0.3rem; display:block;">사진 상품 이미지 (최대 5장, 첫번째가 대표)</label>
                     <input type="file" id="product-image" accept="image/*" multiple style="padding:0.5rem; border:1px solid var(--border); border-radius:6px; width:100%;">
                     <div id="product-image-preview" style="display:flex; gap:0.4rem; margin-top:0.4rem; flex-wrap:wrap;"></div>
                 </div>
@@ -1833,24 +1833,24 @@
     <div class="register-modal-overlay" id="modal-art">
         <div class="register-modal-content">
             <button class="modal-close-btn" onclick="closeRegisterModal('art')">&times;</button>
-            <h3 style="margin-bottom:1rem;" data-i18n="modal.art_register">🖼️ 작품 등록</h3>
+            <h3 style="margin-bottom:1rem;" data-i18n="modal.art_register"> 작품 등록</h3>
             <div style="display:grid; gap:0.8rem;">
                 <input type="text" id="art-title" placeholder="작품 제목" data-i18n-placeholder="art.artwork_title" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                 <textarea id="art-description" placeholder="작품 설명 (재료, 크기, 의미 등)" data-i18n-placeholder="art.artwork_desc" rows="3" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px; resize:vertical;"></textarea>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
                     <select id="art-category" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                        <option value="painting">🖌️ 회화</option>
-                        <option value="digital">💻 디지털 아트</option>
-                        <option value="photo">📷 사진</option>
-                        <option value="sculpture">🗿 조각/설치</option>
+                        <option value="painting">회화 회화</option>
+                        <option value="digital">디지털 디지털 아트</option>
+                        <option value="photo">사진 사진</option>
+                        <option value="sculpture"> 조각/설치</option>
                         <option value="illustration">일러스트</option>
-                        <option value="calligraphy">🖋️ 서예/캘리</option>
-                        <option value="mixed">🎭 혼합 매체</option>
-                        <option value="ai">🤖 AI 아트</option>
-                        <option value="music">🎵 뮤직/사운드</option>
+                        <option value="calligraphy"> 서예/캘리</option>
+                        <option value="mixed"><i data-lucide="theater"></i> 혼합 매체</option>
+                        <option value="ai">AI AI 아트</option>
+                        <option value="music"><i data-lucide="music"></i> 뮤직/사운드</option>
                         <option value="video"><i data-lucide="clapperboard"></i> 비디오 아트</option>
-                        <option value="generative">🌀 제너러티브</option>
-                        <option value="kpop">💜 K-팝 굿즈</option>
+                        <option value="generative">제너러티브 제너러티브</option>
+                        <option value="kpop">K-팝 K-팝 굿즈</option>
                         <option value="other"><i data-lucide="palette"></i> 기타</option>
                     </select>
                     <select id="art-sale-type" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;" onchange="toggleArtSaleOptions()">
@@ -1882,7 +1882,7 @@
                 <div style="background:linear-gradient(135deg, rgba(138,43,226,0.08), rgba(102,126,234,0.08)); padding:1rem; border-radius:8px; border:1px solid rgba(138,43,226,0.2);">
                     <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; font-weight:600;">
                         <input type="checkbox" id="art-mint-nft" onchange="toggleNFTOptions()" style="width:18px; height:18px; accent-color:#8B2BE2;">
-                        🔗 NFT로 민팅 (Polygon)
+                        <i data-lucide="link"></i> NFT로 민팅 (Polygon)
                     </label>
                     <div id="art-nft-options" style="display:none; margin-top:0.8rem;">
                         <div style="display:grid; gap:0.6rem;">
@@ -1911,7 +1911,7 @@
                         </div>
                     </div>
                 </div>
-                <p style="font-size:0.75rem; color:var(--accent);" data-i18n="art.donation_notice">⚠️ 거래 시 10 CRAC 이상이 자동 기부됩니다</p>
+                <p style="font-size:0.75rem; color:var(--accent);" data-i18n="art.donation_notice"><i data-lucide="alert-circle"></i> 거래 시 10 CRAC 이상이 자동 기부됩니다</p>
                 <div id="art-upload-status" style="font-size:0.8rem; color:#8B2BE2; min-height:1.2em;"></div>
                 <button onclick="uploadArtwork()" class="btn-primary" data-i18n="art.upload_title"><i data-lucide="palette"></i> 작품 등록</button>
             </div>
@@ -1929,13 +1929,13 @@
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
                     <select id="fund-category" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                         <option value="charity"><i data-lucide="handshake"></i> 자선/구호</option>
-                        <option value="medical">🏥 의료/치료</option>
-                        <option value="education">📖 교육</option>
-                        <option value="environment">🌱 환경</option>
-                        <option value="startup">🚀 창업</option>
-                        <option value="community">👥 커뮤니티</option>
-                        <option value="animal">🐾 동물보호</option>
-                        <option value="disaster">🆘 재난구호</option>
+                        <option value="medical">메디컬 의료/치료</option>
+                        <option value="education">교육</option>
+                        <option value="environment">환경</option>
+                        <option value="startup"><i data-lucide="rocket"></i> 창업</option>
+                        <option value="community"><i data-lucide="users"></i> 커뮤니티</option>
+                        <option value="animal">동물보호</option>
+                        <option value="disaster">재난구호</option>
                     </select>
                     <input type="number" id="fund-goal" placeholder="목표 금액" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                 </div>
@@ -1944,10 +1944,10 @@
                     <input type="hidden" id="fund-token" value="CRGC">
                     <span style="padding:0.7rem; background:var(--bg); border-radius:6px; font-weight:700; color:#6B8F3C;">CRGC</span>
                     <select id="fund-country" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                        <option value="KR">🇰🇷</option>
-                        <option value="US">🇺🇸</option>
-                        <option value="JP">🇯🇵</option>
-                        <option value="PH">🇵🇭</option>
+                        <option value="KR"><i data-lucide="flag"></i></option>
+                        <option value="US"><i data-lucide="flag"></i></option>
+                        <option value="JP"><i data-lucide="flag"></i></option>
+                        <option value="PH"><i data-lucide="flag"></i></option>
                         <option value="other">기타</option>
                     </select>
                 </div>
@@ -1966,14 +1966,14 @@
     <div class="register-modal-overlay" id="modal-energy">
         <div class="register-modal-content">
             <button class="modal-close-btn" onclick="closeRegisterModal('energy')">&times;</button>
-            <h3 style="margin-bottom:1rem;" data-i18n="modal.energy_register">🔬 프로젝트 등록</h3>
+            <h3 style="margin-bottom:1rem;" data-i18n="modal.energy_register"><i data-lucide="beaker"></i> 프로젝트 등록</h3>
             <div style="display:grid; gap:0.8rem;">
                 <input type="text" id="energy-title" placeholder="프로젝트명" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                 <select id="energy-category" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                     <option value="energy"><i data-lucide="zap"></i> 에너지</option>
                     <option value="genetics"><i data-lucide="dna"></i> 유전공학</option>
-                    <option value="biotech">🔬 생명공학</option>
-                    <option value="ai_robotics">🤖 AI·로보틱스</option>
+                    <option value="biotech"><i data-lucide="beaker"></i> 생명공학</option>
+                    <option value="ai_robotics">AI AI·로보틱스</option>
                 </select>
                 <select id="energy-invest-type" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                     <option value="return"><i data-lucide="coins"></i> 수익형</option>
@@ -1986,7 +1986,7 @@
                     <input type="number" id="energy-return" placeholder="수익률 (%)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                 </div>
                 <input type="number" id="energy-goal" placeholder="목표 금액 (CREB)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                <button onclick="createEnergyProject(); closeRegisterModal('energy');" class="btn-primary" data-i18n="modal.energy_register">🔬 프로젝트 등록</button>
+                <button onclick="createEnergyProject(); closeRegisterModal('energy');" class="btn-primary" data-i18n="modal.energy_register"><i data-lucide="beaker"></i> 프로젝트 등록</button>
             </div>
         </div>
     </div>
@@ -2002,20 +2002,20 @@
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
                     <select id="biz-category" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                         <option value="retail"><i data-lucide="store"></i> 소매</option>
-                        <option value="food">🍽️ 요식업</option>
-                        <option value="service">🔧 서비스</option>
-                        <option value="tech">💻 테크</option>
-                        <option value="education">📖 교육</option>
-                        <option value="health">💊 헬스/뷰티</option>
-                        <option value="logistics">🚚 물류</option>
-                        <option value="entertainment">🎭 엔터</option>
-                        <option value="other">🏢 기타</option>
+                        <option value="food">요식업</option>
+                        <option value="service"><i data-lucide="wrench"></i> 서비스</option>
+                        <option value="tech">디지털 테크</option>
+                        <option value="education">교육</option>
+                        <option value="health">포닥터 헬스/뷰티</option>
+                        <option value="logistics"><i data-lucide="truck"></i> 물류</option>
+                        <option value="entertainment">엔터</option>
+                        <option value="other"><i data-lucide="building-2"></i> 기타</option>
                     </select>
                     <input type="text" id="biz-country" placeholder="국가/지역" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                 </div>
                 <input type="text" id="biz-website" placeholder="웹사이트 (선택)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                 <input type="file" id="biz-image" accept="image/*" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
-                <button onclick="registerBusiness(); closeRegisterModal('business');" class="btn-primary" data-i18n="modal.business_register">🏢 사업체 등록</button>
+                <button onclick="registerBusiness(); closeRegisterModal('business');" class="btn-primary" data-i18n="modal.business_register"><i data-lucide="building-2"></i> 사업체 등록</button>
             </div>
         </div>
     </div>
@@ -2024,22 +2024,22 @@
     <div class="register-modal-overlay" id="modal-artist">
         <div class="register-modal-content">
             <button class="modal-close-btn" onclick="closeRegisterModal('artist')">&times;</button>
-            <h3 style="margin-bottom:1rem;" data-i18n="modal.artist_register">🎭 아티스트 등록</h3>
+            <h3 style="margin-bottom:1rem;" data-i18n="modal.artist_register"><i data-lucide="theater"></i> 아티스트 등록</h3>
             <div style="display:grid; gap:0.8rem;">
                 <input type="text" id="artist-name" placeholder="활동명 / 아티스트명" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                 <textarea id="artist-bio" placeholder="소개 (장르, 활동 이력)" rows="2" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px; resize:vertical;"></textarea>
                 <select id="artist-genre" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                    <option value="music">🎵 음악</option>
-                    <option value="dance">💃 댄스</option>
+                    <option value="music">음악</option>
+                    <option value="dance">댄스</option>
                     <option value="acting"><i data-lucide="clapperboard"></i> 연기</option>
-                    <option value="comedy">😂 코미디</option>
-                    <option value="creator">📹 크리에이터</option>
-                    <option value="model">📷 모델</option>
-                    <option value="dj">🎧 DJ</option>
-                    <option value="other">🌟 기타</option>
+                    <option value="comedy">코미디</option>
+                    <option value="creator">크리에이터</option>
+                    <option value="model">사진 모델</option>
+                    <option value="dj">DJ</option>
+                    <option value="other"><i data-lucide="star"></i> 기타</option>
                 </select>
                 <input type="file" id="artist-photo" accept="image/*" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
-                <button onclick="registerArtist(); closeRegisterModal('artist');" class="btn-primary" data-i18n="modal.artist_register">🌟 아티스트 등록</button>
+                <button onclick="registerArtist(); closeRegisterModal('artist');" class="btn-primary" data-i18n="modal.artist_register"><i data-lucide="star"></i> 아티스트 등록</button>
             </div>
         </div>
     </div>
@@ -2048,21 +2048,21 @@
     <div class="register-modal-overlay" id="modal-books">
         <div class="register-modal-content">
             <button class="modal-close-btn" onclick="closeRegisterModal('books')">&times;</button>
-            <h3 style="margin-bottom:1rem;" data-i18n="modal.book_register">✍️ 책 등록</h3>
+            <h3 style="margin-bottom:1rem;" data-i18n="modal.book_register"><i data-lucide="pen-tool"></i> 책 등록</h3>
             <div style="display:grid; gap:0.8rem;">
                 <input type="text" id="book-title" placeholder="책 제목" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                 <input type="text" id="book-author" placeholder="저자명" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                 <textarea id="book-desc" placeholder="책 소개" rows="2" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px; resize:vertical;"></textarea>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
                     <select id="book-genre" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                        <option value="novel">📕 소설</option>
-                        <option value="essay">📗 에세이</option>
-                        <option value="selfhelp">📘 자기계발</option>
-                        <option value="business">📙 비즈니스</option>
-                        <option value="tech">💻 기술</option>
-                        <option value="poetry">🖋️ 시</option>
-                        <option value="children">🧒 아동</option>
-                        <option value="comic">📒 만화/웹툰</option>
+                        <option value="novel">소설</option>
+                        <option value="essay">에세이</option>
+                        <option value="selfhelp">자기계발</option>
+                        <option value="business">비즈니스</option>
+                        <option value="tech">디지털 기술</option>
+                        <option value="poetry">시</option>
+                        <option value="children">아동</option>
+                        <option value="comic">만화/웹툰</option>
                         <option value="other"><i data-lucide="book-open"></i> 기타</option>
                     </select>
                     <div style="display:flex; gap:0.3rem;">
@@ -2073,7 +2073,7 @@
                 </div>
                 <input type="file" id="book-cover" accept="image/*" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
                 <input type="file" id="book-pdf" accept=".pdf" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
-                <p style="font-size:0.75rem; color:var(--accent);">📎 PDF 파일 업로드 (전자책 본문)</p>
+                <p style="font-size:0.75rem; color:var(--accent);"><i data-lucide="paperclip"></i> PDF 파일 업로드 (전자책 본문)</p>
                 <button onclick="registerBook(); closeRegisterModal('books');" class="btn-primary" data-i18n="modal.book_register"><i data-lucide="book-open"></i> 책 등록</button>
             </div>
         </div>
@@ -2305,10 +2305,10 @@
         sheet.innerHTML = `
             <div class="bottom-sheet-handle"></div>
             <div style="padding:12px 0;">
-                <div style="padding:12px 16px;font-weight:700;font-size:1rem;color:var(--text,#3D2B1F);">➕ 새로 만들기</div>
+                <div style="padding:12px 16px;font-weight:700;font-size:1rem;color:var(--text,#3D2B1F);"><i data-lucide="plus"></i> 새로 만들기</div>
                 <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('social');setTimeout(()=>{const t=document.getElementById('post-text');if(t){t.focus();t.scrollIntoView({behavior:'smooth',block:'center'})}},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:var(--text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;"><i data-lucide="camera" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 소셜 게시물</button>
                 <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('reels');setTimeout(()=>{if(typeof SHORTFORM!=='undefined'&&SHORTFORM.openUpload)SHORTFORM.openUpload()},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:var(--text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;"><i data-lucide="clapperboard"></i> 숏폼 영상</button>
-                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('social');setTimeout(()=>{if(typeof openStoryUpload==='function')openStoryUpload()},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:var(--text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;">📖 스토리</button>
+                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('social');setTimeout(()=>{if(typeof openStoryUpload==='function')openStoryUpload()},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:var(--text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;"><i data-lucide="book-open"></i> 스토리</button>
                 <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();" style="width:100%;padding:14px 16px;border:none;background:none;color:#6B5744;font-size:0.95rem;cursor:pointer;text-align:left;">취소</button>
             </div>`;
         document.body.appendChild(overlay);
