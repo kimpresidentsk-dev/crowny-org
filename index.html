@@ -28,7 +28,7 @@
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     
     <!-- CSS Modules (organized by section) -->
-    <link rel="stylesheet" href="css/base.css?v=20260215-002">
+    <link rel="stylesheet" href="css/base.css?v=20260215-003">
     <link rel="stylesheet" href="css/home.css?v=22.0">
     <link rel="stylesheet" href="css/wallet.css?v=22.0">
     <link rel="stylesheet" href="css/social.css?v=22.0">
@@ -80,6 +80,19 @@
         }
         .nav-item:hover {
             color: #8B6914 !important;
+        }
+        /* 🔧 HOTFIX: 새로 만들기 버튼 가독성 개선 */
+        .bottom-sheet div[style*="새로 만들기"] {
+            color: #2A1A0F !important;
+            font-weight: 700 !important;
+        }
+        .bottom-sheet button {
+            color: #3D2B1F !important;
+            font-weight: 600 !important;
+        }
+        .bottom-sheet button:last-child {
+            color: #6B5744 !important;
+            font-weight: 500 !important;
         }
     </style>
     
@@ -2347,11 +2360,11 @@
         sheet.innerHTML = `
             <div class="bottom-sheet-handle"></div>
             <div style="padding:12px 0;">
-                <div style="padding:12px 16px;font-weight:700;font-size:1rem;color:var(--text,#3D2B1F);"><i data-lucide="plus"></i> 새로 만들기</div>
-                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('social');setTimeout(()=>{const t=document.getElementById('post-text');if(t){t.focus();t.scrollIntoView({behavior:'smooth',block:'center'})}},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:var(--text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;"><i data-lucide="camera" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 소셜 게시물</button>
-                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('reels');setTimeout(()=>{if(typeof SHORTFORM!=='undefined'&&SHORTFORM.openUpload)SHORTFORM.openUpload()},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:var(--text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;"><i data-lucide="clapperboard"></i> 숏폼 영상</button>
-                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('social');setTimeout(()=>{if(typeof openStoryUpload==='function')openStoryUpload()},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:var(--text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;"><i data-lucide="book-open"></i> 스토리</button>
-                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();" style="width:100%;padding:14px 16px;border:none;background:none;color:#6B5744;font-size:0.95rem;cursor:pointer;text-align:left;">취소</button>
+                <div style="padding:12px 16px;font-weight:700;font-size:1rem;color:#2A1A0F;"><i data-lucide="plus"></i> 새로 만들기</div>
+                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('social');setTimeout(()=>{const t=document.getElementById('post-text');if(t){t.focus();t.scrollIntoView({behavior:'smooth',block:'center'})}},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:#3D2B1F;font-size:0.95rem;cursor:pointer;text-align:left;font-weight:600;"><i data-lucide="camera" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 소셜 게시물</button>
+                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('reels');setTimeout(()=>{if(typeof SHORTFORM!=='undefined'&&SHORTFORM.openUpload)SHORTFORM.openUpload()},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:#3D2B1F;font-size:0.95rem;cursor:pointer;text-align:left;font-weight:600;"><i data-lucide="clapperboard"></i> 숏폼 영상</button>
+                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('social');setTimeout(()=>{if(typeof openStoryUpload==='function')openStoryUpload()},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:#3D2B1F;font-size:0.95rem;cursor:pointer;text-align:left;font-weight:600;"><i data-lucide="book-open"></i> 스토리</button>
+                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();" style="width:100%;padding:14px 16px;border:none;background:none;color:#6B5744;font-size:0.95rem;cursor:pointer;text-align:left;font-weight:500;">취소</button>
             </div>`;
         document.body.appendChild(overlay);
         document.body.appendChild(sheet);
