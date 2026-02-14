@@ -1,63 +1,104 @@
 // ===== dashboard.js v1.0 - 대시보드 페이지 =====
 
 async function loadDashboard() {
-    console.log('[Dashboard] 로딩 시작, currentUser:', !!currentUser);
+    console.log('[Dashboard] 로딩 시작');
+    console.log('[Dashboard] currentUser:', currentUser ? currentUser.email : 'null');
+    console.log('[Dashboard] userWallet:', !!window.userWallet);
+    console.log('[Dashboard] db:', !!window.db);
+    console.log('[Dashboard] firebase auth:', !!window.auth);
+    
     if (!currentUser) {
         console.warn('[Dashboard] currentUser 없음 - 로딩 중단');
+        const container = document.getElementById('dashboard-content');
+        if (container) {
+            container.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--error);">
+                <h3>로그인이 필요합니다</h3>
+                <button onclick="document.getElementById('auth-modal').style.display='flex'" style="background:var(--gold);color:#FFF8F0;border:none;padding:0.8rem 1.5rem;border-radius:6px;margin-top:1rem;cursor:pointer;">로그인</button>
+            </div>`;
+        }
         return;
     }
     
     const container = document.getElementById('dashboard-content');
     if (!container) {
-        console.warn('[Dashboard] dashboard-content 컨테이너 없음');
+        console.error('[Dashboard] dashboard-content 컨테이너 없음');
         return;
     }
     
     // 초기 로딩 표시
     container.innerHTML = `<p style="text-align:center;padding:2rem;color:var(--accent);"><i data-lucide="loader" style="width:16px;height:16px;display:inline-block;vertical-align:middle;animation:spin 1s linear infinite;"></i> 대시보드 로딩 중...</p>`;
+    if (window.lucide) lucide.createIcons();
     
     try {
     // 1. Welcome + Avatar
-    const userDoc = await db.collection('users').doc(currentUser.uid).get();
-    const userData = userDoc.exists ? userDoc.data() : {};
-    const nickname = userData.nickname || userData.displayName || currentUser.email?.split('@')[0] || t('social.user', '사용자');
-    const photoURL = userData.photoURL || '';
+    console.log('[Dashboard] Step 1: 사용자 데이터 로딩 중...');
+    let userDoc, userData, nickname, photoURL;
+    try {
+        if (!window.db) throw new Error('Firestore DB 없음');
+        userDoc = await db.collection('users').doc(currentUser.uid).get();
+        userData = userDoc.exists ? userDoc.data() : {};
+        nickname = userData.nickname || userData.displayName || currentUser.email?.split('@')[0] || 'Guest';
+        photoURL = userData.photoURL || '';
+        console.log('[Dashboard] 사용자 데이터 로드 완료:', { nickname, hasPhoto: !!photoURL });
+    } catch (e) {
+        console.error('[Dashboard] 사용자 데이터 로드 실패:', e);
+        nickname = currentUser.email?.split('@')[0] || 'Guest';
+        photoURL = '';
+    }
     
     // 2. Token balances
+    console.log('[Dashboard] Step 2: 토큰 잔고 로딩 중...');
     const offchain = (userWallet && userWallet.offchainBalances) || {};
     const onchain = (userWallet && userWallet.balances) || { crny: 0, fnc: 0, crfn: 0 };
+    console.log('[Dashboard] 토큰 잔고:', { offchain, onchain });
     
     // 3. Recent activity
+    console.log('[Dashboard] Step 3: 최근 활동 로딩 중...');
     let recentTx = [];
     let recentOrders = [];
     let recentSocial = [];
     
     try {
+        console.log('[Dashboard] 거래 내역 조회 중...');
         const txSnap = await db.collection('transactions')
             .where('userId', '==', currentUser.uid)
             .orderBy('createdAt', 'desc').limit(5).get();
         recentTx = txSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    } catch(e) { console.warn("[catch]", e); }
+        console.log('[Dashboard] 거래 내역:', recentTx.length, '건');
+    } catch(e) { 
+        console.warn('[Dashboard] 거래 내역 조회 실패 (인덱스 없을 수 있음):', e.message); 
+    }
     
     try {
+        console.log('[Dashboard] 주문 내역 조회 중...');
         const orderSnap = await db.collection('orders')
             .where('buyerId', '==', currentUser.uid)
             .orderBy('createdAt', 'desc').limit(3).get();
         recentOrders = orderSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    } catch(e) { console.warn("[catch]", e); }
+        console.log('[Dashboard] 주문 내역:', recentOrders.length, '건');
+    } catch(e) { 
+        console.warn('[Dashboard] 주문 내역 조회 실패 (인덱스 없을 수 있음):', e.message); 
+    }
     
     try {
+        console.log('[Dashboard] 소셜 알림 조회 중...');
         const socialSnap = await db.collection('social_notifications')
             .where('targetUid', '==', currentUser.uid)
             .orderBy('createdAt', 'desc').limit(5).get();
         recentSocial = socialSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    } catch(e) { console.warn("[catch]", e); }
+        console.log('[Dashboard] 소셜 알림:', recentSocial.length, '건');
+    } catch(e) { 
+        console.warn('[Dashboard] 소셜 알림 조회 실패 (인덱스 없을 수 있음):', e.message); 
+    }
     
     // 4. Notifications
-    const unread = (typeof unreadCount !== 'undefined') ? unreadCount : 0;
-    const recentNotifs = (typeof notifications !== 'undefined') ? notifications.slice(0, 3) : [];
+    console.log('[Dashboard] Step 4: 알림 데이터 로딩 중...');
+    const unread = (typeof window.unreadCount !== 'undefined') ? window.unreadCount : 0;
+    const recentNotifs = (typeof window.notifications !== 'undefined') ? window.notifications.slice(0, 3) : [];
+    console.log('[Dashboard] 알림:', { unread, recentNotifs: recentNotifs.length });
     
     // 5. Stats
+    console.log('[Dashboard] Step 5: 통계 데이터 로딩 중...');
     let totalUsers = '—';
     let totalTx = '—';
     try {
@@ -67,20 +108,29 @@ async function loadDashboard() {
             totalUsers = s.totalUsers || '—';
             totalTx = s.totalTransactions || '—';
         }
-    } catch(e) { console.warn("[catch]", e); }
+        console.log('[Dashboard] 통계 로드 완료:', { totalUsers, totalTx });
+    } catch(e) { 
+        console.warn('[Dashboard] 통계 조회 실패:', e.message);
+    }
     
     // 6. Trading positions
+    console.log('[Dashboard] Step 6: 트레이딩 포지션 확인 중...');
     let positionSummary = '';
-    if (typeof myParticipation !== 'undefined' && myParticipation) {
-        const pos = myParticipation;
+    if (typeof window.myParticipation !== 'undefined' && window.myParticipation) {
+        const pos = window.myParticipation;
+        console.log('[Dashboard] 트레이딩 포지션 발견:', pos);
         positionSummary = `
             <div class="dash-card">
-                <h4><i data-lucide="bar-chart-3" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> ${t('dashboard.trading_position', '트레이딩 포지션')}</h4>
-                <p>${t('dashboard.balance', '잔고')}: <strong>$${(pos.balance || 0).toLocaleString()}</strong></p>
-                <p>${t('dashboard.pnl', '수익')}: <strong style="color:${(pos.totalPnl || 0) >= 0 ? '#2e7d32' : '#c62828'}">$${(pos.totalPnl || 0).toFixed(2)}</strong></p>
-                <button onclick="showPage('prop-trading')" class="dash-shortcut-btn">→ ${t('dashboard.go_trading', '트레이딩으로')}</button>
+                <h4><i data-lucide="bar-chart-3" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> 트레이딩 포지션</h4>
+                <p>잔고: <strong>$${(pos.balance || 0).toLocaleString()}</strong></p>
+                <p>수익: <strong style="color:${(pos.totalPnl || 0) >= 0 ? '#2e7d32' : '#c62828'}">$${(pos.totalPnl || 0).toFixed(2)}</strong></p>
+                <button onclick="showPage('prop-trading')" class="dash-shortcut-btn">→ 트레이딩으로</button>
             </div>`;
+    } else {
+        console.log('[Dashboard] 트레이딩 포지션 없음');
     }
+    
+    console.log('[Dashboard] Step 7: HTML 생성 중...');
     
     // Build HTML
     container.innerHTML = `
@@ -89,15 +139,15 @@ async function loadDashboard() {
                 ${photoURL ? `<img src="${photoURL}" class="dash-avatar" loading="lazy">` : '<div class="dash-avatar-placeholder">👤</div>'}
             </div>
             <div>
-                <h2>${t('dashboard.welcome', '환영합니다')}, ${nickname}!</h2>
-                <p class="dash-subtitle">${t('dashboard.subtitle', '크라우니에서의 활동을 한눈에 확인하세요')}</p>
+                <h2>환영합니다, ${nickname}!</h2>
+                <p class="dash-subtitle">크라우니에서의 활동을 한눈에 확인하세요</p>
             </div>
         </div>
         
         <div class="dash-grid">
             <!-- Token Portfolio -->
             <div class="dash-card dash-card-wide">
-                <h4><i data-lucide="gem" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${t('dashboard.portfolio', '토큰 포트폴리오')}</h4>
+                <h4><i data-lucide="gem" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 토큰 포트폴리오</h4>
                 <div class="dash-tokens">
                     <div class="dash-token" onclick="showPage('wallet')">
                         <span class="dash-token-icon"><i data-lucide="coins" style="width:20px;height:20px;color:#8B6914;"></i></span>
@@ -125,8 +175,8 @@ async function loadDashboard() {
             
             <!-- Recent Activity -->
             <div class="dash-card">
-                <h4>📋 ${t('dashboard.recent_activity', '최근 활동')}</h4>
-                ${recentTx.length === 0 && recentOrders.length === 0 ? `<p class="dash-empty">${t('dashboard.no_activity', '최근 활동이 없습니다')}</p>` : ''}
+                <h4>📋 최근 활동</h4>
+                ${recentTx.length === 0 && recentOrders.length === 0 ? `<p class="dash-empty">최근 활동이 없습니다</p>` : ''}
                 ${recentTx.map(tx => `<div class="dash-activity-item">
                     <span>${tx.type === 'send' ? '📤' : '📥'} ${tx.tokenKey || 'CRNY'}</span>
                     <span>${Number(tx.amount || 0).toLocaleString()}</span>
@@ -139,8 +189,8 @@ async function loadDashboard() {
             
             <!-- Notifications -->
             <div class="dash-card">
-                <h4><i data-lucide="bell" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> ${t('dashboard.notifications', '알림')} <span class="dash-badge">${unread}</span></h4>
-                ${recentNotifs.length === 0 ? `<p class="dash-empty">${t('dashboard.no_notifications', '새 알림 없음')}</p>` : ''}
+                <h4><i data-lucide="bell" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> 알림 <span class="dash-badge">${unread}</span></h4>
+                ${recentNotifs.length === 0 ? `<p class="dash-empty">새 알림 없음</p>` : ''}
                 ${recentNotifs.map(n => `<div class="dash-notif-item ${n.read ? '' : 'unread'}">${n.message || n.text || ''}</div>`).join('')}
             </div>
             
@@ -157,13 +207,13 @@ async function loadDashboard() {
             
             <!-- Crowny Stats -->
             <div class="dash-card">
-                <h4><i data-lucide="trending-up" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> ${t('dashboard.stats', '크라우니 통계')}</h4>
+                <h4><i data-lucide="trending-up" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> 크라우니 통계</h4>
                 <div class="dash-stat-row">
-                    <span>${t('dashboard.total_users', '전체 사용자')}</span>
+                    <span>전체 사용자</span>
                     <strong>${totalUsers}</strong>
                 </div>
                 <div class="dash-stat-row">
-                    <span>${t('dashboard.total_tx', '전체 거래')}</span>
+                    <span>전체 거래</span>
                     <strong>${totalTx}</strong>
                 </div>
             </div>
