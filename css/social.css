@@ -220,7 +220,7 @@
     background: linear-gradient(135deg, #8B6914, #6B5744, #3D2B1F);
 }
 .friend-avatar-wrap img, .friend-avatar-wrap div {
-    border: 2px solid white;
+    border: 2px solid #FFF8F0;
 }
 
 /* Friend Request Item */
@@ -710,7 +710,7 @@
     height: 32px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid white;
+    border: 2px solid #FFF8F0;
 }
 .reel-author-name {
     font-weight: 700;
@@ -718,8 +718,8 @@
 }
 .reel-follow-btn {
     background: transparent;
-    border: 1px solid white;
-    color: #FFF8F08F0;
+    border: 1px solid #FFF8F0;
+    color: #FFF8F0;
     padding: 2px 10px;
     border-radius: 4px;
     font-size: 0.75rem;
@@ -769,7 +769,7 @@
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid white;
+    border: 2px solid #FFF8F0;
 }
 .reel-mute-toggle {
     position: absolute;

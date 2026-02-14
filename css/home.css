@@ -254,7 +254,7 @@ body {
 .landing-features{padding:2rem 0}
 .landing-section-title{text-align:center;font-size:1.1rem;font-weight:800;margin-bottom:1.5rem;color:#3D2B1F;letter-spacing:1px}
 .landing-feature-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem}
-.landing-feature-card{background:#fff;border-radius:14px;padding:1.2rem 1rem;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.05);transition:transform .2s}
+.landing-feature-card{background:#FFF8F0;border-radius:14px;padding:1.2rem 1rem;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.05);transition:transform .2s}
 .landing-feature-card:active{transform:scale(.97)}
 .landing-feat-icon{font-size:2rem;margin-bottom:.4rem}
 .landing-feature-card h3{font-size:.9rem;font-weight:700;margin-bottom:.25rem;color:#3D2B1F}
