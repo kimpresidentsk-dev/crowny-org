@@ -2711,7 +2711,7 @@ function updateChartRulesOverlay() {
     });
     
     overlay.innerHTML = `
-        <div style="font-weight:700; color:#FFD700; margin-bottom:3px; font-size:0.76rem;">💎 ${cfg.tier}군 · ${cfg.deposit} CRTD</div>
+        <div style="font-weight:700; color:#8B6914; margin-bottom:3px; font-size:0.76rem;">💎 ${cfg.tier}군 · ${cfg.deposit} CRTD</div>
         <div>📊 ${products.join(' + ') || '미설정'}</div>
         <div style="color:#ff4444;">🔴 일일 -$${p.dailyLossLimit || 500}</div>
         <div style="color:#ff6666;">💀 청산 -$${cfg.liquidation.toLocaleString()}</div>

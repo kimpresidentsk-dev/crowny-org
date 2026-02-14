@@ -1839,7 +1839,7 @@ async function editPost(postId) {
         overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
         overlay.innerHTML = `<div class="modal-content" style="max-width:500px;width:90%;padding:1.5rem;">
             <h3 style="margin-bottom:1rem;">✏️ 게시물 수정</h3>
-            <textarea id="edit-post-text" style="width:100%;min-height:120px;padding:0.8rem;border:1px solid var(--border,#333);border-radius:10px;font-size:0.95rem;resize:vertical;background:var(--card-bg,#1a1a2e);color:var(--text,#fff);box-sizing:border-box;">${data.text || ''}</textarea>
+            <textarea id="edit-post-text" style="width:100%;min-height:120px;padding:0.8rem;border:1px solid var(--border,#333);border-radius:10px;font-size:0.95rem;resize:vertical;background:var(--card-bg,#3D2B1F);color:var(--text,#FFF8F0);box-sizing:border-box;">${data.text || ''}</textarea>
             <div style="display:flex;gap:0.5rem;justify-content:flex-end;margin-top:1rem;">
                 <button onclick="this.closest('.modal-overlay').remove();" style="padding:0.6rem 1.2rem;border:1px solid var(--border,#333);border-radius:8px;background:none;color:var(--text,#fff);cursor:pointer;">취소</button>
                 <button onclick="saveEditPost('${postId}');" style="padding:0.6rem 1.2rem;border:none;border-radius:8px;background:#D4AF37;color:#000;font-weight:600;cursor:pointer;">저장</button>
@@ -2018,7 +2018,7 @@ function openVideoEditor() {
             <div style="margin-bottom:0.8rem;">
                 <label style="font-size:0.8rem;color:var(--text-muted,#888);">필터</label>
                 <div style="display:flex;gap:0.5rem;margin-top:0.3rem;">
-                    <button onclick="setVideoFilter('none')" class="vfilter-btn active" style="padding:0.3rem 0.6rem;border:2px solid #1a1a2e;border-radius:8px;font-size:0.75rem;cursor:pointer;background:var(--bg-card,#3D2B1F);">원본</button>
+                    <button onclick="setVideoFilter('none')" class="vfilter-btn active" style="padding:0.3rem 0.6rem;border:2px solid #3D2B1F;border-radius:8px;font-size:0.75rem;cursor:pointer;background:var(--bg-card,#3D2B1F);">원본</button>
                     <button onclick="setVideoFilter('grayscale(100%)')" class="vfilter-btn" style="padding:0.3rem 0.6rem;border:2px solid #ddd;border-radius:8px;font-size:0.75rem;cursor:pointer;background:var(--bg-card,#3D2B1F);">흑백</button>
                     <button onclick="setVideoFilter('sepia(40%) saturate(1.4)')" class="vfilter-btn" style="padding:0.3rem 0.6rem;border:2px solid #ddd;border-radius:8px;font-size:0.75rem;cursor:pointer;background:var(--bg-card,#3D2B1F);">따뜻한</button>
                     <button onclick="setVideoFilter('saturate(0.8) hue-rotate(20deg)')" class="vfilter-btn" style="padding:0.3rem 0.6rem;border:2px solid #ddd;border-radius:8px;font-size:0.75rem;cursor:pointer;background:var(--bg-card,#3D2B1F);">시원한</button>
@@ -2072,7 +2072,7 @@ function setVideoFilter(filter) {
     if (v) v.style.filter = filter;
     document.querySelectorAll('.vfilter-btn').forEach(b => { b.classList.remove('active'); b.style.borderColor = '#ddd'; });
     event.target.classList.add('active');
-    event.target.style.borderColor = '#1a1a2e';
+    event.target.style.borderColor = '#3D2B1F';
 }
 
 function updateTextOverlay() {
@@ -2765,7 +2765,7 @@ async function showFullProfile(uid) {
             if (post.imageUrl) {
                 html += `<div class="insta-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><img src="${post.imageUrl}" loading="lazy"></div>`;
             } else {
-                html += `<div class="insta-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><div style="width:100%;height:100%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;padding:0.5rem;"><span style="color:white;font-size:0.7rem;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;">${(post.text || '').substring(0, 60)}</span></div></div>`;
+                html += `<div class="insta-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><div style="width:100%;height:100%;background:linear-gradient(135deg,#8B6914,#6B5744);display:flex;align-items:center;justify-content:center;padding:0.5rem;"><span style="color:white;font-size:0.7rem;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;">${(post.text || '').substring(0, 60)}</span></div></div>`;
             }
         }
         html += '</div>';
@@ -2795,7 +2795,7 @@ async function switchProfileTab(tab, uid) {
                 if (post.imageUrl) {
                     grid.innerHTML += `<div class="insta-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><img src="${post.imageUrl}" loading="lazy"></div>`;
                 } else {
-                    grid.innerHTML += `<div class="insta-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><div style="width:100%;height:100%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;padding:0.5rem;"><span style="color:white;font-size:0.7rem;">${(post.text || '').substring(0, 60)}</span></div></div>`;
+                    grid.innerHTML += `<div class="insta-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><div style="width:100%;height:100%;background:linear-gradient(135deg,#8B6914,#6B5744);display:flex;align-items:center;justify-content:center;padding:0.5rem;"><span style="color:white;font-size:0.7rem;">${(post.text || '').substring(0, 60)}</span></div></div>`;
                 }
             }
             if (posts.length === 0) grid.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--accent);">게시물이 없습니다</p>';
