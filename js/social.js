@@ -769,10 +769,10 @@ async function openChat(chatId, otherId) {
                             ${sc.imageUrl ? `<img src="${sc.imageUrl}" style="width:100%;height:100px;object-fit:cover;">` : ''}
                             <div style="padding:0.4rem 0.6rem;"><div style="font-size:0.8rem;font-weight:600;">${sc.name}</div>${sc.price ? `<div style="font-size:0.75rem;color:#e65100;">${sc.price}</div>` : ''}<div style="font-size:0.7rem;color:#3D2B1F;margin-top:0.2rem;">🛒 보기</div></div></div>`;
                     } else if (msgType === 'transfer') {
-                        content += `<div style="background:linear-gradient(135deg,#8B6914,#FFA000);color:var(--text,#3D2B1F);padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
+                        content += `<div style="background:linear-gradient(135deg,#8B6914,#F0C060);color:#FFF8F0;padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
                     }
                     if (msg.tokenAmount && msg.type !== 'transfer') {
-                        content += `<div style="background:linear-gradient(135deg,#8B6914,#FFA000);color:var(--text,#3D2B1F);padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
+                        content += `<div style="background:linear-gradient(135deg,#8B6914,#F0C060);color:#FFF8F0;padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
                     }
                     // Text (skip for sticker/gif)
                     const displayText = msg._decryptedText || msg.text;

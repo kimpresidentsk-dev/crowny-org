@@ -83,7 +83,7 @@ const BEAUTY = (() => {
                         👩‍⚕️ 전문가에게 분석 받기
                     </button>
                     <button onclick="BEAUTY.requestAIAnalysis()" 
-                        style="width:100%;padding:0.8rem;border:none;border-radius:10px;background:linear-gradient(135deg,#E91E63,#FF6090);color:#FFF8F0;font-weight:700;cursor:pointer;font-size:0.85rem;">
+                        style="width:100%;padding:0.8rem;border:none;border-radius:10px;background:linear-gradient(135deg,#8B6914,#F0C060);color:#FFF8F0;font-weight:700;cursor:pointer;font-size:0.85rem;">
                         ✨ 크라우니걸 AI 분석
                     </button>
                 </div>
@@ -109,15 +109,15 @@ const BEAUTY = (() => {
             <div style="background:var(--card-bg,#F7F3ED);border-radius:12px;padding:1.2rem;margin-bottom:1.2rem;">
                 <h3 style="margin:0 0 0.8rem 0;font-size:1rem;">🎁 크라우니 뷰티 추천</h3>
                 <div style="display:grid;gap:0.5rem;">
-                    <div onclick="showPage('mall')" style="display:flex;align-items:center;gap:0.8rem;padding:0.8rem;background:linear-gradient(135deg,#fce4ec,#FFF8F0);border-radius:10px;cursor:pointer;">
+                    <div onclick="showPage('mall')" style="display:flex;align-items:center;gap:0.8rem;padding:0.8rem;background:linear-gradient(135deg,#FFF8F0,#F7F3ED);border-radius:10px;cursor:pointer;">
                         <span style="font-size:1.5rem;">🎭</span>
                         <div><div style="font-weight:600;font-size:0.9rem;">프레즌트 마스크팩</div><div style="font-size:0.75rem;color:var(--accent);">피부 타입별 맞춤 추천 · crowny.kr</div></div>
                     </div>
-                    <div onclick="showPage('care')" style="display:flex;align-items:center;gap:0.8rem;padding:0.8rem;background:linear-gradient(135deg,#e8f5e9,#FFF8F0);border-radius:10px;cursor:pointer;">
+                    <div onclick="showPage('care')" style="display:flex;align-items:center;gap:0.8rem;padding:0.8rem;background:linear-gradient(135deg,#FFF8F0,#F7F3ED);border-radius:10px;cursor:pointer;">
                         <span style="font-size:1.5rem;">💊</span>
                         <div><div style="font-weight:600;font-size:0.9rem;">포닥터 건강기능식품</div><div style="font-size:0.75rem;color:var(--accent);">내면부터 빛나는 피부 관리</div></div>
                     </div>
-                    <div onclick="showPage('movement')" style="display:flex;align-items:center;gap:0.8rem;padding:0.8rem;background:linear-gradient(135deg,#fff3e0,#FFF8F0);border-radius:10px;cursor:pointer;">
+                    <div onclick="showPage('movement')" style="display:flex;align-items:center;gap:0.8rem;padding:0.8rem;background:linear-gradient(135deg,#FFF8F0,#F7F3ED);border-radius:10px;cursor:pointer;">
                         <span style="font-size:1.5rem;">💪</span>
                         <div><div style="font-weight:600;font-size:0.9rem;">크라우니 무브먼트</div><div style="font-size:0.75rem;color:var(--accent);">신체 아름다움의 완성 · 500회 프로세스</div></div>
                     </div>

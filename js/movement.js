@@ -176,11 +176,11 @@ const MOVEMENT = (() => {
                 <p id="movement-status" style="font-size:0.9rem;color:var(--accent);margin-top:0.5rem;">준비되셨나요?</p>
                 <div style="display:flex;justify-content:center;gap:1rem;margin-top:1.5rem;">
                     <button id="movement-start-btn" onclick="MOVEMENT.toggleTimer()" 
-                        style="padding:0.8rem 2rem;border:none;border-radius:10px;background:linear-gradient(135deg,#00B894,#55EFC4);color:#FFF8F0;font-weight:700;cursor:pointer;font-size:1rem;">
+                        style="padding:0.8rem 2rem;border:none;border-radius:10px;background:linear-gradient(135deg,#8B6914,#6B5744);color:#FFF8F0;font-weight:700;cursor:pointer;font-size:1rem;">
                         ▶️ 시작
                     </button>
                     <button onclick="MOVEMENT.completeSession()" 
-                        style="padding:0.8rem 2rem;border:none;border-radius:10px;background:linear-gradient(135deg,#E91E63,#FF6090);color:#FFF8F0;font-weight:700;cursor:pointer;font-size:1rem;">
+                        style="padding:0.8rem 2rem;border:none;border-radius:10px;background:linear-gradient(135deg,#8B6914,#6B5744);color:#FFF8F0;font-weight:700;cursor:pointer;font-size:1rem;">
                         ✅ 완료
                     </button>
                 </div>

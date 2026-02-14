@@ -2501,7 +2501,7 @@ async function showCreateChallenge() {
                 </div>
                 
                 <!-- ★ 티어 설정 -->
-                <div style="background:linear-gradient(135deg, rgba(138,43,226,0.05), rgba(0,102,204,0.05)); padding:1rem; border-radius:8px; border:1px solid rgba(138,43,226,0.2);">
+                <div style="background:linear-gradient(135deg, rgba(139,105,20,0.05), rgba(107,87,68,0.05)); padding:1rem; border-radius:8px; border:1px solid rgba(139,105,20,0.2);">
                     <h4 style="margin-bottom:0.8rem;">💎 CRTD 티어 설정</h4>
                     <p style="font-size:0.75rem; color:var(--accent); margin-bottom:0.8rem;">사용하지 않을 티어는 참가비를 0으로 설정</p>
                     
@@ -3194,8 +3194,8 @@ async function loadSuperAdminWallets() {
             const isActive = activeWallet === type;
             const exists = !!data;
             return `
-                <div style="background:${isActive ? `linear-gradient(135deg,${color}15,${color}08)` : 'white'};padding:1.2rem;border-radius:12px;border:2px solid ${isActive ? color : '#E8E0D8'};position:relative;">
-                    ${isActive ? `<span style="position:absolute;top:8px;right:8px;background:${color};color:#FFF8F0;padding:2px 8px;border-radius:10px;font-size:0.65rem;font-weight:700;">활성</span>` : ''}
+                <div style="background:${isActive ? `linear-gradient(135deg,#8B691415,#8B691408)` : 'white'};padding:1.2rem;border-radius:12px;border:2px solid ${isActive ? '#8B6914' : '#E8E0D8'};position:relative;">
+                    ${isActive ? `<span style="position:absolute;top:8px;right:8px;background:#8B6914;color:#FFF8F0;padding:2px 8px;border-radius:10px;font-size:0.65rem;font-weight:700;">활성</span>` : ''}
                     <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.8rem;">
                         <span style="font-size:1.5rem;">${icon}</span>
                         <div>
@@ -3205,8 +3205,8 @@ async function loadSuperAdminWallets() {
                     </div>
                     <div style="margin-bottom:0.8rem;">${formatBal(data)}</div>
                     <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
-                        ${!exists ? `<button onclick="createSuperWallet('${type}')" style="background:${color};color:#FFF8F0;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;">➕ 생성</button>` : ''}
-                        ${exists && !isActive ? `<button onclick="switchActiveWallet('${type}')" style="background:${color};color:#FFF8F0;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;">🔄 활성화</button>` : ''}
+                        ${!exists ? `<button onclick="createSuperWallet('${type}')" style="background:#8B6914;color:#FFF8F0;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;">➕ 생성</button>` : ''}
+                        ${exists && !isActive ? `<button onclick="switchActiveWallet('${type}')" style="background:#8B6914;color:#FFF8F0;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;">🔄 활성화</button>` : ''}
                         ${exists ? `<button onclick="showInternalTransfer('${type}')" style="background:#455a64;color:#FFF8F0;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.78rem;">↔️ 이체</button>` : ''}
                     </div>
                 </div>`;
@@ -3218,9 +3218,9 @@ async function loadSuperAdminWallets() {
                 <p style="font-size:0.78rem;color:#6B5744;margin-bottom:1.2rem;">오리지널 계좌(금고)와 운영 계좌를 분리 관리합니다. 오리지널 계좌 출금 시 2단계 확인이 필요합니다.</p>
                 
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;">
-                    ${walletCard('original', '오리지널 계좌', '🔐', '#FF6D00', wallets.original)}
-                    ${walletCard('operating', '운영 계좌', '⚡', '#1565C0', wallets.operating)}
-                    ${walletCard('default', '기본 지갑', '💼', '#2E7D32', wallets.default)}
+                    ${walletCard('original', '오리지널 계좌', '🔐', '#8B6914', wallets.original)}
+                    ${walletCard('operating', '운영 계좌', '⚡', '#8B6914', wallets.operating)}
+                    ${walletCard('default', '기본 지갑', '💼', '#8B6914', wallets.default)}
                 </div>
             </div>
             
@@ -3299,7 +3299,7 @@ async function showInternalTransfer(fromType) {
             ${fromType === 'original' ? '<p style="font-size:0.75rem;color:#FF6D00;margin-bottom:0.8rem;">⚠️ 오리지널 계좌 출금: 2단계 확인 필요</p>' : ''}
             
             <div style="display:flex;gap:0.5rem;">
-                <button id="transfer-submit" style="flex:1;padding:0.7rem;background:#1565C0;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:700;">💸 이체</button>
+                <button id="transfer-submit" style="flex:1;padding:0.7rem;background:#8B6914;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:700;">💸 이체</button>
                 <button id="transfer-cancel" style="flex:1;padding:0.7rem;border:1px solid #E8E0D8;border-radius:8px;cursor:pointer;background:#FFF8F0;">취소</button>
             </div>
         </div>`;
@@ -3632,7 +3632,7 @@ function renderDashboardStats(stats) {
             const dayLabel = new Date(date + 'T00:00:00').toLocaleDateString('ko-KR', { weekday: 'short' });
             return `<div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
                 <span style="font-size:0.7rem; font-weight:700; color:#1565c0;">${count}</span>
-                <div style="width:100%; background:linear-gradient(180deg,#42a5f5,#1565c0); border-radius:4px 4px 0 0; height:${pct}%; min-height:4px; transition:height 0.3s;"></div>
+                <div style="width:100%; background:linear-gradient(180deg,#F0C060,#8B6914); border-radius:4px 4px 0 0; height:${pct}%; min-height:4px; transition:height 0.3s;"></div>
                 <span style="font-size:0.65rem; color:#6B5744;">${dayLabel}</span>
             </div>`;
         }).join('');

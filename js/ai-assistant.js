@@ -276,7 +276,7 @@ delay: 첫 번째 0~500, 이후 +800~2000씩 증가 (자연스러운 타이밍)`
         if (header) {
             header.innerHTML = `<div class="panel-chat-header-left">
                 <button class="panel-back-btn" onclick="AI_ASSISTANT.backToSelect()">←</button>
-                <div class="panel-chat-avatar" style="background:linear-gradient(135deg,#00BCD4,#0097A7);">🎓</div>
+                <div class="panel-chat-avatar" style="background:linear-gradient(135deg,#8B6914,#6B5744);">🎓</div>
                 <div><div class="panel-chat-name">My Tutor 설정</div><div class="panel-chat-role">학습 프로필 설정</div></div>
             </div><div></div>`;
         }

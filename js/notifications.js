@@ -21,19 +21,19 @@ const NOTIF_TYPES = {
 };
 
 const NOTIF_STYLES = {
-    [NOTIF_TYPES.MESSENGER]: { icon: '💬', color: '#2196F3', bg: 'linear-gradient(135deg, #2196F3, #1976D2)', label: t('notif.messenger','메신저') },
-    [NOTIF_TYPES.SOCIAL_COMMENT]: { icon: '💬', color: '#9C27B0', bg: 'linear-gradient(135deg, #9C27B0, #7B1FA2)', label: t('notif.comment','댓글') },
-    [NOTIF_TYPES.SOCIAL_LIKE]: { icon: '❤️', color: '#E91E63', bg: 'linear-gradient(135deg, #E91E63, #C2185B)', label: t('notif.like','좋아요') },
-    [NOTIF_TYPES.SOCIAL_FOLLOW]: { icon: '👤', color: '#00BCD4', bg: 'linear-gradient(135deg, #00BCD4, #0097A7)', label: t('notif.follow','팔로우') },
-    [NOTIF_TYPES.SOCIAL_MENTION]: { icon: '📢', color: '#FF5722', bg: 'linear-gradient(135deg, #FF5722, #E64A19)', label: t('notif.mention','멘션') },
-    [NOTIF_TYPES.TRADING_SIGNAL]: { icon: '📊', color: '#FF9800', bg: 'linear-gradient(135deg, #FF9800, #F57C00)', label: t('notif.signal','시그널') },
-    [NOTIF_TYPES.TRADING_ORDER]: { icon: '📈', color: '#4CAF50', bg: 'linear-gradient(135deg, #4CAF50, #388E3C)', label: t('notif.order','주문') },
-    [NOTIF_TYPES.ORDER_STATUS]: { icon: '📦', color: '#795548', bg: 'linear-gradient(135deg, #795548, #5D4037)', label: t('notif.order_status','주문상태') },
-    [NOTIF_TYPES.ART_SOLD]: { icon: '🎨', color: '#E91E63', bg: 'linear-gradient(135deg, #E91E63, #AD1457)', label: t('notif.art_sold','작품판매') },
-    [NOTIF_TYPES.BOOK_SOLD]: { icon: '📚', color: '#FF9800', bg: 'linear-gradient(135deg, #FF9800, #E65100)', label: t('notif.book_sold','책판매') },
-    [NOTIF_TYPES.DONATION]: { icon: '💝', color: '#4CAF50', bg: 'linear-gradient(135deg, #4CAF50, #2E7D32)', label: t('notif.donation','기부') },
-    [NOTIF_TYPES.FRIEND_REQUEST]: { icon: '🤝', color: '#3F51B5', bg: 'linear-gradient(135deg, #3F51B5, #283593)', label: t('notif.friend_request','친구요청') },
-    [NOTIF_TYPES.SYSTEM]: { icon: '🔔', color: '#607D8B', bg: 'linear-gradient(135deg, #607D8B, #455A64)', label: t('notif.system','시스템') },
+    [NOTIF_TYPES.MESSENGER]: { icon: '💬', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.messenger','메신저') },
+    [NOTIF_TYPES.SOCIAL_COMMENT]: { icon: '💬', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.comment','댓글') },
+    [NOTIF_TYPES.SOCIAL_LIKE]: { icon: '❤️', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.like','좋아요') },
+    [NOTIF_TYPES.SOCIAL_FOLLOW]: { icon: '👤', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.follow','팔로우') },
+    [NOTIF_TYPES.SOCIAL_MENTION]: { icon: '📢', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.mention','멘션') },
+    [NOTIF_TYPES.TRADING_SIGNAL]: { icon: '📊', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #F0C060)', label: t('notif.signal','시그널') },
+    [NOTIF_TYPES.TRADING_ORDER]: { icon: '📈', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.order','주문') },
+    [NOTIF_TYPES.ORDER_STATUS]: { icon: '📦', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.order_status','주문상태') },
+    [NOTIF_TYPES.ART_SOLD]: { icon: '🎨', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.art_sold','작품판매') },
+    [NOTIF_TYPES.BOOK_SOLD]: { icon: '📚', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.book_sold','책판매') },
+    [NOTIF_TYPES.DONATION]: { icon: '💝', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.donation','기부') },
+    [NOTIF_TYPES.FRIEND_REQUEST]: { icon: '🤝', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.friend_request','친구요청') },
+    [NOTIF_TYPES.SYSTEM]: { icon: '🔔', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.system','시스템') },
 };
 
 // Client-side notification store (session only)
