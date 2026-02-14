@@ -29,8 +29,8 @@ const BOOK_SOUND_OPTIONS = [
 ];
 
 const BOOK_GENRES = {
-    novel: '📕 소설', essay: '📗 에세이', selfhelp: '📘 자기계발',
-    business: '📙 비즈니스', tech: '💻 기술', poetry: '🖋️ 시',
+    novel: '<i data-lucide="book-open" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 소설', essay: '📗 에세이', selfhelp: '📘 자기계발',
+    business: '📙 비즈니스', tech: '<i data-lucide="monitor" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 기술', poetry: '🖋️ 시',
     children: '🧒 아동', comic: '📒 만화', fantasy: '🧙 판타지',
     romance: '💕 로맨스', horror: '👻 공포', mystery: '🔍 미스터리',
     other: '📚 기타'
@@ -41,6 +41,11 @@ let _bookCreatorData = null;
 let _bookReaderState = null;
 let _bookAudio = null;
 let _bookTTSActive = false;
+
+// Helper function to create Lucide icon HTML
+function createLucideIcon(name, size = 14) {
+    return `<i data-lucide="${name}" style="width:${size}px;height:${size}px;display:inline-block;vertical-align:middle;"></i>`;
+}
 
 // ========== GALLERY (replaces loadBooksList) ==========
 
@@ -61,7 +66,7 @@ async function loadBooksGallery() {
         }
 
         if (snap.empty) {
-            c.innerHTML = '<p style="text-align:center;color:var(--accent);padding:2rem;">아직 등록된 책이 없습니다</p>';
+            c.innerHTML = `<p style="text-align:center;color:var(--accent);padding:2rem;">아직 등록된 책이 없습니다</p>`;
             return;
         }
 
@@ -95,6 +100,7 @@ async function loadBooksGallery() {
         c.innerHTML = html;
         // Store for filtering
         c._allBooks = books;
+        if (window.lucide) setTimeout(() => lucide.createIcons(), 50);
     } catch (e) {
         c.innerHTML = `<p style="color:red;padding:1rem;">${e.message}</p>`;
     }
@@ -159,6 +165,7 @@ function filterBooksGallery() {
     grid.innerHTML = filtered.length
         ? filtered.map(b => _renderBookCard(b)).join('')
         : '<p style="grid-column:1/-1;text-align:center;color:var(--accent);">검색 결과가 없습니다</p>';
+    if (window.lucide) setTimeout(() => lucide.createIcons(), 50);
 }
 
 // ========== BOOK DETAIL V2 ==========
@@ -195,7 +202,7 @@ async function viewBookDetailV2(id) {
 
     modal.innerHTML = `<div style="background:#FFF8F0;border-radius:16px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;">
         <div style="height:280px;background:#f5f0e8;display:flex;align-items:center;justify-content:center;position:relative;">
-            ${b.coverImage || b.imageData ? `<img src="${b.coverImage || b.imageData}" loading="lazy" style="max-width:100%;max-height:100%;object-fit:contain;">` : `<span style="font-size:5rem;">${(BOOK_GENRES[b.genre] || '📚').charAt(0)}</span>`}
+            ${b.coverImage || b.imageData ? `<img src="${b.coverImage || b.imageData}" loading="lazy" style="max-width:100%;max-height:100%;object-fit:contain;">` : `<span style="font-size:5rem;">📚</span>`}
             ${b.edition === 'limited' ? `<div style="position:absolute;top:12px;left:12px;background:gold;color:#3D2B1F;padding:4px 10px;border-radius:6px;font-weight:700;font-size:0.8rem;">🏆 한정판 ${sold}/${supply}</div>` : ''}
             ${isSoldOut ? `<div style="position:absolute;top:12px;right:12px;background:red;color:#FFF8F0;padding:4px 10px;border-radius:6px;font-weight:700;font-size:0.8rem;">SOLD OUT</div>` : ''}
         </div>
@@ -1219,7 +1226,7 @@ async function _loadLibraryTreasures() {
     c.innerHTML = '로딩...';
     try {
         const snap = await db.collection('users').doc(currentUser.uid).collection('foundTreasures').orderBy('foundAt', 'desc').limit(50).get();
-        if (snap.empty) { c.innerHTML = '<p style="color:var(--accent);text-align:center;padding:2rem;">아직 발견한 보물이 없습니다<br>책을 읽으며 숨겨진 보물을 찾아보세요! <i data-lucide="target"></i></p>'; return; }
+        if (snap.empty) { c.innerHTML = `<p style="color:var(--accent);text-align:center;padding:2rem;">아직 발견한 보물이 없습니다<br>책을 읽으며 숨겨진 보물을 찾아보세요! ${createLucideIcon('target')}</p>`; return; }
         let html = '<div style="display:grid;gap:0.5rem;">';
         let total = 0;
         snap.forEach(d => {
@@ -1231,7 +1238,7 @@ async function _loadLibraryTreasures() {
         });
         html = `<div style="background:#C4841D;color:#FFF8F0;padding:1rem;border-radius:10px;text-align:center;margin-bottom:1rem;"><h3 style="margin:0;">🏆 총 보물 보상: ${total} CRGC</h3></div>` + html;
         c.innerHTML = html + '</div>';
-        if(window.lucide) lucide.createIcons();
+        if (window.lucide) setTimeout(() => lucide.createIcons(), 50);
     } catch (e) { c.innerHTML = `<p style="color:red;">${e.message}</p>`; }
 }
 

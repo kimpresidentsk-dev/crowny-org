@@ -40,15 +40,15 @@ const ART_CONFIG = {
 
 // ─── CATEGORIES ───
 const ART_CATEGORIES = {
-    painting:     t('art.cat.painting','🖌️ 회화'),
-    digital:      t('art.cat.digital','💻 디지털 아트'),
+    painting:     t('art.cat.painting','<i data-lucide="paintbrush" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 회화'),
+    digital:      t('art.cat.digital','<i data-lucide="monitor" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 디지털 아트'),
     photo:        t('art.cat.photo','📷 사진'),
     sculpture:    t('art.cat.sculpture','🗿 조각/설치'),
     illustration: t('art.cat.illustration','✏️ 일러스트'),
     calligraphy:  t('art.cat.calligraphy','🖋️ 서예/캘리'),
-    mixed:        t('art.cat.mixed','🎭 혼합 매체'),
-    ai:           t('art.cat.ai','🤖 AI 아트'),
-    music:        t('art.cat.music','🎵 뮤직/사운드'),
+    mixed:        t('art.cat.mixed','<i data-lucide="theater" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 혼합 매체'),
+    ai:           t('art.cat.ai','<i data-lucide="bot" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> AI 아트'),
+    music:        t('art.cat.music','<i data-lucide="music" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 뮤직/사운드'),
     video:        t('art.cat.video','🎬 비디오 아트'),
     generative:   t('art.cat.generative','🌀 제너러티브'),
     kpop:         t('art.cat.kpop','💜 K-팝 굿즈'),
@@ -109,6 +109,11 @@ async function initArtModule() {
 
     artModuleReady = true;
     console.log('🎨 [ART] Module Ready ✅');
+}
+
+// Helper function to create Lucide icon HTML
+function createLucideIcon(name, size = 14) {
+    return `<i data-lucide="${name}" style="width:${size}px;height:${size}px;display:inline-block;vertical-align:middle;"></i>`;
 }
 
 if (document.readyState === 'loading') {
@@ -300,6 +305,9 @@ function updateBasePricePreview() {
 
 async function uploadArtwork() {
     if (!currentUser) { showToast(t('common.login_required','로그인이 필요합니다'), 'warning'); return; }
+    
+    // Ensure Lucide icons are created
+    if (window.lucide) setTimeout(() => lucide.createIcons(), 100);
 
     const title       = document.getElementById('art-title')?.value.trim();
     const description = document.getElementById('art-description')?.value.trim();
@@ -513,7 +521,7 @@ async function mintExistingArtwork(artworkId) {
 async function loadArtGallery() {
     const container = document.getElementById('art-gallery');
     if (!container) return;
-    container.innerHTML = '<p style="text-align:center; color:var(--accent); grid-column:1/-1;"><i data-lucide="palette"></i> 로딩 중...</p>';
+    container.innerHTML = `<p style="text-align:center; color:var(--accent); grid-column:1/-1;">${createLucideIcon('palette')} 로딩 중...</p>`;
 
     try {
         const filterCat  = document.getElementById('art-filter-category')?.value || 'all';
@@ -536,7 +544,7 @@ async function loadArtGallery() {
         }
 
         if (snapshot.empty) {
-            container.innerHTML = '<p style="text-align:center; color:var(--accent); grid-column:1/-1;">아직 등록된 작품이 없습니다. 첫 작품을 등록해보세요! <i data-lucide="palette"></i></p>';
+            container.innerHTML = `<p style="text-align:center; color:var(--accent); grid-column:1/-1;">아직 등록된 작품이 없습니다. 첫 작품을 등록해보세요! ${createLucideIcon('palette')}</p>`;
             return;
         }
 
@@ -551,7 +559,7 @@ async function loadArtGallery() {
         if (filterSort === 'auction')    items = items.filter(a => a.saleType === 'auction');
 
         container.innerHTML = items.map(art => _renderArtCard(art)).join('');
-        if(window.lucide) lucide.createIcons();
+        if (window.lucide) setTimeout(() => lucide.createIcons(), 50);
     } catch (error) {
         container.innerHTML = `<p style="color:red; grid-column:1/-1;">로드 실패: ${error.message}</p>`;
     }
@@ -1258,7 +1266,7 @@ async function _loadMyArtworks(container) {
         }
 
         if (arts.empty) {
-            container.innerHTML = '<div class="art-empty-state"><span class="icon"><i data-lucide="palette"></i></span><p>등록한 작품이 없습니다<br><small>작품 등록 버튼을 눌러 첫 작품을 올려보세요!</small></p></div>';
+            container.innerHTML = `<div class="art-empty-state"><span class="icon">${createLucideIcon('palette')}</span><p>등록한 작품이 없습니다<br><small>작품 등록 버튼을 눌러 첫 작품을 올려보세요!</small></p></div>`;
             return;
         }
 
@@ -1269,7 +1277,7 @@ async function _loadMyArtworks(container) {
             const status = art.status === 'sold' ? '✅ 판매됨' : art.status === 'active' ? '🟢 판매 중' : '⬜';
             html += `
                 <div onclick="viewArtwork('${art.id}')" class="collection-card">
-                    ${art.isNFT ? '<div class="collection-nft-badge">🔗 NFT</div>' : ''}
+                    ${art.isNFT ? `<div class="collection-nft-badge">${createLucideIcon('link', 12)} NFT</div>` : ''}
                     <img src="${img}" loading="lazy">
                     <div class="collection-card-info">
                         <div class="collection-card-title">${art.title}</div>
@@ -1278,7 +1286,7 @@ async function _loadMyArtworks(container) {
                 </div>`;
         });
         container.innerHTML = html + '</div>';
-        if(window.lucide) lucide.createIcons();
+        if (window.lucide) setTimeout(() => lucide.createIcons(), 50);
     } catch (e) {
         container.innerHTML = `<div class="art-empty-state"><span class="icon">⚠️</span><p>로드 실패: ${e.message}</p></div>`;
     }
@@ -1299,7 +1307,7 @@ async function _loadMyPurchases(container) {
         }
 
         if (arts.empty) {
-            container.innerHTML = '<div class="art-empty-state"><span class="icon"><i data-lucide="shopping-cart"></i></span><p>구매한 작품이 없습니다<br><small>갤러리에서 마음에 드는 작품을 찾아보세요!</small></p></div>';
+            container.innerHTML = `<div class="art-empty-state"><span class="icon">${createLucideIcon('shopping-cart')}</span><p>구매한 작품이 없습니다<br><small>갤러리에서 마음에 드는 작품을 찾아보세요!</small></p></div>`;
             return;
         }
 
@@ -1312,12 +1320,12 @@ async function _loadMyPurchases(container) {
                     <img src="${img}" loading="lazy">
                     <div class="collection-card-info">
                         <div class="collection-card-title">${art.title}</div>
-                        <div class="collection-card-meta">🎨 ${art.artistNickname || '익명'} ${art.isNFT ? '🔗' : ''}</div>
+                        <div class="collection-card-meta">🎨 ${art.artistNickname || '익명'} ${art.isNFT ? createLucideIcon('link', 12) : ''}</div>
                     </div>
                 </div>`;
         });
         container.innerHTML = html + '</div>';
-        if(window.lucide) lucide.createIcons();
+        if (window.lucide) setTimeout(() => lucide.createIcons(), 50);
     } catch (e) {
         container.innerHTML = `<div class="art-empty-state"><span class="icon">⚠️</span><p>로드 실패: ${e.message}</p></div>`;
     }
@@ -1348,7 +1356,7 @@ async function _loadMyNFTs(container) {
 
         const items = Array.from(nfts.values());
         if (!items.length) {
-            container.innerHTML = '<div class="art-empty-state"><span class="icon"><i data-lucide="link"></i></span><p>보유한 NFT가 없습니다<br><small>작품을 NFT로 민팅하거나 NFT를 구매해보세요!</small></p></div>';
+            container.innerHTML = `<div class="art-empty-state"><span class="icon">${createLucideIcon('link')}</span><p>보유한 NFT가 없습니다<br><small>작품을 NFT로 민팅하거나 NFT를 구매해보세요!</small></p></div>`;
             return;
         }
 
@@ -1361,12 +1369,12 @@ async function _loadMyNFTs(container) {
                     <img src="${img}" loading="lazy">
                     <div class="collection-card-info">
                         <div class="collection-card-title">${art.title}</div>
-                        <div class="collection-card-meta" style="color:#8B2BE2">🔗 #${art.nftTokenId || '?'} · ${typeLabel}</div>
+                        <div class="collection-card-meta" style="color:#8B2BE2">${createLucideIcon('link', 12)} #${art.nftTokenId || '?'} · ${typeLabel}</div>
                     </div>
                 </div>`;
         });
         container.innerHTML = html + '</div>';
-        if(window.lucide) lucide.createIcons();
+        if (window.lucide) setTimeout(() => lucide.createIcons(), 50);
     } catch (e) {
         container.innerHTML = `<div class="art-empty-state"><span class="icon">⚠️</span><p>로드 실패: ${e.message}</p></div>`;
     }
@@ -1459,7 +1467,7 @@ async function _loadMyTransactions(container) {
         });
 
         if (!txs.length) {
-            container.innerHTML = '<div class="art-empty-state"><span class="icon"><i data-lucide="clipboard"></i></span><p>거래 내역이 없습니다</p></div>';
+            container.innerHTML = `<div class="art-empty-state"><span class="icon">${createLucideIcon('clipboard')}</span><p>거래 내역이 없습니다</p></div>`;
             return;
         }
 
