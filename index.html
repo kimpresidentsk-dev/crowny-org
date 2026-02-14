@@ -1109,7 +1109,7 @@
             
             <!-- 카테고리 탭 -->
             <div id="creb-category-tabs" style="display:flex; gap:0.4rem; margin-bottom:1rem; overflow-x:auto; padding-bottom:0.3rem;">
-                <button onclick="filterCrebCategory('all')" class="creb-tab active" data-cat="all" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #666; background:#FFF8F0; cursor:pointer; white-space:nowrap; font-size:0.85rem;">🌍 전체</button>
+                <button onclick="filterCrebCategory('all')" class="creb-tab active" data-cat="all" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #6B5744; background:#FFF8F0; cursor:pointer; white-space:nowrap; font-size:0.85rem;">🌍 전체</button>
                 <button onclick="filterCrebCategory('energy')" class="creb-tab" data-cat="energy" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #ff9800; background:#FFF8F0; cursor:pointer; white-space:nowrap; font-size:0.85rem; color:#ff9800;">⚡ 에너지</button>
                 <button onclick="filterCrebCategory('genetics')" class="creb-tab" data-cat="genetics" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #E91E63; background:#FFF8F0; cursor:pointer; white-space:nowrap; font-size:0.85rem; color:#E91E63;">🧬 유전공학</button>
                 <button onclick="filterCrebCategory('biotech')" class="creb-tab" data-cat="biotech" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #4CAF50; background:#FFF8F0; cursor:pointer; white-space:nowrap; font-size:0.85rem; color:#4CAF50;">🔬 생명공학</button>
@@ -1136,7 +1136,7 @@
                     </div>
                 </div>
                 <div id="impact-category-bars" style="margin-bottom:0.8rem;"></div>
-                <div id="impact-messages" style="font-size:0.8rem; color:#555;"></div>
+                <div id="impact-messages" style="font-size:0.8rem; color:#6B5744;"></div>
                 <div id="impact-sdg-badges" style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.5rem;"></div>
             </div>
             
@@ -1534,11 +1534,11 @@
                         <span style="color:#ff4444; font-weight:600;">SL</span>
                         <input type="number" id="stop-loss-points" value="50" step="5" min="1" style="width:50px; background:#0f0f23; color:#ff4444; border:1px solid #3D2B1F; border-radius:3px; padding:3px 5px; text-align:center; font-size:0.8rem;">
                         <span style="color:#6B5744;">pt</span>
-                        <span style="color:#555;">|</span>
+                        <span style="color:#6B5744;">|</span>
                         <span style="color:#00cc00; font-weight:600;">TP</span>
                         <input type="number" id="take-profit-points" value="100" step="5" min="1" style="width:50px; background:#0f0f23; color:#00cc00; border:1px solid #3D2B1F; border-radius:3px; padding:3px 5px; text-align:center; font-size:0.8rem;">
                         <span style="color:#6B5744;">pt</span>
-                        <span style="color:#555;">|</span>
+                        <span style="color:#6B5744;">|</span>
                         <label style="display:flex; align-items:center; gap:3px; cursor:pointer;">
                             <input type="checkbox" id="use-trailing-stop" style="accent-color:#ff9800;">
                             <span style="color:#ff9800; font-size:0.7rem;">트레일</span>
@@ -1549,7 +1549,7 @@
                     <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-top:4px; padding:0 4px;">
                         <button id="btn-chart-buy" onclick="quickChartTrade('BUY')" style="background:#3D2B1F; color:#FFF8F0; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">📈 BUY</button>
                         <button id="btn-chart-sell" onclick="quickChartTrade('SELL')" style="background:#cc0000; color:#FFF8F0; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">📉 SELL</button>
-                        <button onclick="closeAllPositions(getActiveTabSymbol())" style="background:#555; color:#FFF8F0; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">✕ CLOSE</button>
+                        <button onclick="closeAllPositions(getActiveTabSymbol())" style="background:#6B5744; color:#FFF8F0; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">✕ CLOSE</button>
                     </div>
                     
                     <!-- 실시간 손익 -->

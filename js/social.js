@@ -1273,7 +1273,7 @@ function showStickerGifPanel() {
 function showStickerTab() {
     document.querySelectorAll('.sticker-tab-btn').forEach(b => { b.classList.remove('active'); b.style.borderBottomColor = 'transparent'; });
     document.querySelectorAll('.sticker-tab-btn')[0].classList.add('active');
-    document.querySelectorAll('.sticker-tab-btn')[0].style.borderBottomColor = '#333';
+    document.querySelectorAll('.sticker-tab-btn')[0].style.borderBottomColor = '#3D2B1F';
     const stickers = ['😀','😂','🥰','😎','🤔','😱','🥺','👍','❤️','🔥','🎉','💯','🙏','✨','💪','🎵'];
     const content = document.getElementById('sticker-gif-content');
     content.innerHTML = `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;">${stickers.map(s =>
@@ -1284,7 +1284,7 @@ function showStickerTab() {
 function showGifTab() {
     document.querySelectorAll('.sticker-tab-btn').forEach(b => { b.classList.remove('active'); b.style.borderBottomColor = 'transparent'; });
     document.querySelectorAll('.sticker-tab-btn')[1].classList.add('active');
-    document.querySelectorAll('.sticker-tab-btn')[1].style.borderBottomColor = '#333';
+    document.querySelectorAll('.sticker-tab-btn')[1].style.borderBottomColor = '#3D2B1F';
     const content = document.getElementById('sticker-gif-content');
     content.innerHTML = `
         <div style="display:flex;gap:0.3rem;margin-bottom:0.5rem;">
@@ -1699,7 +1699,7 @@ async function loadSocialFeed() {
             if (post.serviceLink) {
                 const sl = post.serviceLink;
                 const cfg = SERVICE_LINK_CONFIG[sl.type] || {};
-                serviceLinkHTML = `<div style="padding:0 14px 4px;"><button onclick="navigateServiceLink('${sl.type}','${sl.id}')" style="width:100%;padding:0.5rem;border:none;border-radius:8px;background:${cfg.color || '#333'};color:#FFF8F0;font-weight:700;font-size:0.85rem;cursor:pointer;">${cfg.action || sl.action} — ${sl.title || ''}</button></div>`;
+                serviceLinkHTML = `<div style="padding:0 14px 4px;"><button onclick="navigateServiceLink('${sl.type}','${sl.id}')" style="width:100%;padding:0.5rem;border:none;border-radius:8px;background:${cfg.color || '#3D2B1F'};color:#FFF8F0;font-weight:700;font-size:0.85rem;cursor:pointer;">${cfg.action || sl.action} — ${sl.title || ''}</button></div>`;
             }
 
             const postEl = document.createElement('div');
@@ -2285,7 +2285,7 @@ function renderShortsViewer() {
     let serviceLinkHTML = '';
     if (sl) {
         const cfg = SERVICE_LINK_CONFIG[sl.type] || {};
-        serviceLinkHTML = `<button onclick="event.stopPropagation();navigateServiceLink('${sl.type}','${sl.id}')" style="position:absolute;bottom:80px;left:50%;transform:translateX(-50%);padding:0.7rem 1.5rem;border:none;border-radius:24px;background:${cfg.color || '#333'};color:#FFF8F0;font-weight:700;font-size:0.95rem;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.3);z-index:10;white-space:nowrap;">${cfg.action || sl.action}</button>`;
+        serviceLinkHTML = `<button onclick="event.stopPropagation();navigateServiceLink('${sl.type}','${sl.id}')" style="position:absolute;bottom:80px;left:50%;transform:translateX(-50%);padding:0.7rem 1.5rem;border:none;border-radius:24px;background:${cfg.color || '#3D2B1F'};color:#FFF8F0;font-weight:700;font-size:0.95rem;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.3);z-index:10;white-space:nowrap;">${cfg.action || sl.action}</button>`;
     }
 
     overlay.innerHTML = `

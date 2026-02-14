@@ -179,7 +179,7 @@ async function renderProductDetail(id) {
                             <span>${renderStars(rv.rating, '0.8rem')}</span>
                         </div>
                         <div style="font-size:0.7rem; color:var(--accent); margin-top:0.1rem;">${dateStr}</div>
-                        ${rv.comment ? `<p style="font-size:0.85rem; margin-top:0.3rem; color:#555;">${rv.comment}</p>` : ''}
+                        ${rv.comment ? `<p style="font-size:0.85rem; margin-top:0.3rem; color:#6B5744;">${rv.comment}</p>` : ''}
                         ${rv.imageData ? `<img src="${rv.imageData}" style="width:100px;height:100px;object-fit:cover;border-radius:8px;margin-top:0.4rem;cursor:pointer;" onclick="window.open(this.src)">` : ''}
                         <div style="margin-top:0.4rem;display:flex;gap:0.4rem;">
                             <button onclick="helpfulReview('${r.id}')" style="background:none;border:1px solid #E8E0D8;border-radius:12px;padding:0.2rem 0.6rem;cursor:pointer;font-size:0.75rem;color:var(--accent);">👍 도움이 돼요 ${rv.helpful||0}</button>
@@ -244,7 +244,7 @@ async function renderProductDetail(id) {
                 </div>
                 <p style="color:var(--accent); font-size:0.85rem; margin:0.5rem 0;">${[MALL_CATEGORIES[p.category], sellerLink].filter(Boolean).join(' · ')}</p>
                 ${ratingDisplay}
-                ${p.description ? `<p style="font-size:0.95rem; margin:1rem 0; line-height:1.6; color:#444;">${p.description}</p>` : ''}
+                ${p.description ? `<p style="font-size:0.95rem; margin:1rem 0; line-height:1.6; color:#6B5744;">${p.description}</p>` : ''}
                 <div style="font-size:1.4rem; font-weight:700; color:#3D2B1F; margin:1rem 0;">${p.price} CRGC</div>
                 <div style="font-size:0.85rem; color:var(--accent); margin-bottom:1rem;">재고: ${remaining}개 · 판매: ${p.sold||0}개</div>
                 ${!isOwner && remaining > 0 ? `
@@ -531,7 +531,7 @@ async function loadSellerOrders() {
             const nextActions = [];
             if (x.status === 'paid') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','shipping')" style="background:#2196f3; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.process_shipping','🚚 배송처리')}</button>`);
             if (x.status === 'shipping') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','delivered')" style="background:#4CAF50; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.mark_delivered','✅ 배송완료')}</button>`);
-            const shipInfo = x.shippingInfo ? `<div style="font-size:0.7rem; color:#555; margin-top:0.2rem;">📦 ${x.shippingInfo.name} · ${x.shippingInfo.phone} · ${x.shippingInfo.address}${x.shippingInfo.memo ? ' · '+x.shippingInfo.memo : ''}</div>` : '';
+            const shipInfo = x.shippingInfo ? `<div style="font-size:0.7rem; color:#6B5744; margin-top:0.2rem;">📦 ${x.shippingInfo.name} · ${x.shippingInfo.phone} · ${x.shippingInfo.address}${x.shippingInfo.memo ? ' · '+x.shippingInfo.memo : ''}</div>` : '';
             c.innerHTML += `<div style="padding:0.6rem; background:var(--bg); border-radius:6px; margin-bottom:0.4rem; font-size:0.85rem;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.3rem;">
                     <div><strong>${x.productTitle}</strong> — ${x.amount} ${x.token}<br><span style="font-size:0.75rem; color:var(--accent);">구매자: ${x.buyerEmail}</span>${shipInfo}</div>
@@ -717,7 +717,7 @@ function filterCrebCategory(cat) {
     _crebCurrentFilter = cat;
     document.querySelectorAll('.creb-tab').forEach(b => {
         b.classList.toggle('active', b.dataset.cat === cat);
-        if (b.dataset.cat === cat) { b.style.background = cat === 'all' ? '#333' : (CREB_CATEGORIES[cat]?.color || '#333'); b.style.color = 'white'; }
+        if (b.dataset.cat === cat) { b.style.background = cat === 'all' ? '#3D2B1F' : (CREB_CATEGORIES[cat]?.color || '#3D2B1F'); b.style.color = 'white'; }
         else { b.style.background = 'white'; b.style.color = b.dataset.cat === 'all' ? '#6B5744' : (CREB_CATEGORIES[b.dataset.cat]?.color || '#6B5744'); }
     });
     loadEnergyProjects();
@@ -739,7 +739,7 @@ function renderMilestones(milestones) {
     if (!milestones || !milestones.length) return '';
     return milestones.map(m => {
         const pct = Math.min(100, Math.round((m.current / m.target) * 100));
-        return `<div style="margin-top:0.3rem;"><div style="font-size:0.7rem; color:#555;">${m.name} (${pct}%)</div><div style="background:#e0e0e0; height:4px; border-radius:2px;"><div style="background:#2196F3; height:100%; border-radius:2px; width:${pct}%;"></div></div></div>`;
+        return `<div style="margin-top:0.3rem;"><div style="font-size:0.7rem; color:#6B5744;">${m.name} (${pct}%)</div><div style="background:#e0e0e0; height:4px; border-radius:2px;"><div style="background:#2196F3; height:100%; border-radius:2px; width:${pct}%;"></div></div></div>`;
     }).join('');
 }
 
@@ -1157,7 +1157,7 @@ async function loadInsuranceAdmin() {
                     <div><strong>${r.requesterNickname || r.requesterEmail}</strong> <span style="font-size:0.75rem; color:var(--accent);">${TYPES[r.type] || r.type}</span></div>
                     <span style="font-weight:700; color:#e65100;">${r.amount} CRTD</span>
                 </div>
-                <p style="font-size:0.85rem; color:#555; margin:0.3rem 0;">${r.reason}</p>
+                <p style="font-size:0.85rem; color:#6B5744; margin:0.3rem 0;">${r.reason}</p>
                 <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
                     <button onclick="approveInsurance('${d.id}')" style="flex:1; background:#4CAF50; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; font-weight:600;">✅ 승인</button>
                     <button onclick="rejectInsurance('${d.id}')" style="flex:1; background:#f44336; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; font-weight:600;">❌ 거절</button>
@@ -2512,7 +2512,7 @@ async function loadMyShopDashboard() {
             const nextActions = [];
             if (o.status === 'paid') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','shipping')" style="background:#2196f3; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.7rem;">🚚 배송</button>`);
             if (o.status === 'shipping') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','delivered')" style="background:#4CAF50; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.7rem;">✅ 완료</button>`);
-            const shipInfo = o.shippingInfo ? `<div style="font-size:0.65rem; color:#555;">📦 ${o.shippingInfo.name} · ${o.shippingInfo.phone} · ${o.shippingInfo.address}</div>` : '';
+            const shipInfo = o.shippingInfo ? `<div style="font-size:0.65rem; color:#6B5744;">📦 ${o.shippingInfo.name} · ${o.shippingInfo.phone} · ${o.shippingInfo.address}</div>` : '';
             ordersHtml += `<div style="padding:0.5rem; background:var(--bg); border-radius:6px; margin-bottom:0.3rem; font-size:0.8rem;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.2rem;">
                     <div><strong>${o.productTitle}</strong> — ${o.amount} ${o.token}<br><span style="font-size:0.7rem; color:var(--accent);">${o.buyerEmail}</span>${shipInfo}</div>
@@ -2834,7 +2834,7 @@ async function showOrderDetail(orderId) {
             const retColor = {requested:'#ff9800',approved:'#4CAF50',rejected:'#f44336',completed:'#2196f3'};
             returnHtml = `<div style="background:${retColor[ret.status]}15;border-left:4px solid ${retColor[ret.status]};padding:0.8rem;border-radius:0 8px 8px 0;margin-bottom:1rem;">
                 <div style="font-weight:700;color:${retColor[ret.status]};">${retStatus[ret.status] || ret.status}</div>
-                <div style="font-size:0.8rem;color:#555;margin-top:0.2rem;">사유: ${ret.reasonCategory} — ${ret.reasonDetail||''}</div>
+                <div style="font-size:0.8rem;color:#6B5744;margin-top:0.2rem;">사유: ${ret.reasonCategory} — ${ret.reasonDetail||''}</div>
             </div>`;
         }
 
@@ -2963,7 +2963,7 @@ async function loadSellerReturns() {
                     <div><strong>${r.productTitle}</strong> — ${r.amount} ${r.token}</div>
                     <span style="font-size:0.75rem;color:var(--accent);">${dateStr}</span>
                 </div>
-                <div style="font-size:0.8rem;color:#555;margin:0.3rem 0;">${r.buyerEmail} · ${r.reasonCategory}: ${r.reasonDetail||''}</div>
+                <div style="font-size:0.8rem;color:#6B5744;margin:0.3rem 0;">${r.buyerEmail} · ${r.reasonCategory}: ${r.reasonDetail||''}</div>
                 <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
                     <button onclick="approveReturn('${d.id}')" style="flex:1;background:#4CAF50;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.8rem;">✅ 승인 (환불)</button>
                     <button onclick="rejectReturn('${d.id}')" style="flex:1;background:#f44336;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.8rem;">❌ 거절</button>
@@ -3086,7 +3086,7 @@ async function renderBrandLanding(brand) {
             <div style="background:${bgColor};padding:2rem 1.5rem;border-radius:16px;text-align:center;margin-bottom:1.5rem;position:relative;overflow:hidden;">
                 <div style="font-size:3rem;margin-bottom:0.5rem;">${icon}</div>
                 <h2 style="margin:0;font-size:1.5rem;">${brandName}</h2>
-                <p style="color:#555;font-size:0.95rem;margin-top:0.3rem;font-style:italic;">"${slogan}"</p>
+                <p style="color:#6B5744;font-size:0.95rem;margin-top:0.3rem;font-style:italic;">"${slogan}"</p>
                 <div style="font-size:0.8rem;color:var(--accent);margin-top:0.5rem;">${items.length}개 상품</div>
             </div>
             <!-- Popular -->

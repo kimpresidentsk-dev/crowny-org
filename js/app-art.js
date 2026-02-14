@@ -736,7 +736,7 @@ async function viewArtwork(artId) {
                     <div style="font-size:.85rem;color:var(--accent);margin-bottom:.8rem">
                         ${catLabel} · 🎨 <span onclick="viewArtistProfile('${art.artistId}')" style="cursor:pointer;text-decoration:underline">${art.artistNickname || t('art.anonymous','익명')}</span> · 👁️ ${(art.views||0)+1} · ❤️ ${art.likes||0}
                     </div>
-                    ${art.description ? `<p style="font-size:.9rem;line-height:1.6;margin-bottom:1rem;color:#333">${art.description}</p>` : ''}
+                    ${art.description ? `<p style="font-size:.9rem;line-height:1.6;margin-bottom:1rem;color:#3D2B1F">${art.description}</p>` : ''}
                     ${supplyHtml}
                     ${priceInfoHtml}
                     ${nftInfoHtml}

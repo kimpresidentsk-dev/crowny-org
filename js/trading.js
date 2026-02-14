@@ -725,12 +725,12 @@ async function initTradingViewChart() {
             grid: { vertLines: { color: '#1a1a2a', style: 1 }, horzLines: { color: '#1a1a2a', style: 1 } },
             crosshair: {
                 mode: LightweightCharts.CrosshairMode.Normal,
-                vertLine: { color: '#FFF8F044', width: 1, style: 2, labelBackgroundColor: '#333' },
+                vertLine: { color: '#FFF8F044', width: 1, style: 2, labelBackgroundColor: '#3D2B1F' },
                 horzLine: { color: '#FFF8F044', width: 1, style: 2, labelBackgroundColor: '#3D2B1F' },
             },
-            rightPriceScale: { borderColor: '#333', scaleMargins: { top: 0.05, bottom: 0.15 }, autoScale: true },
+            rightPriceScale: { borderColor: '#3D2B1F', scaleMargins: { top: 0.05, bottom: 0.15 }, autoScale: true },
             timeScale: {
-                borderColor: '#333', timeVisible: true, secondsVisible: false,
+                borderColor: '#3D2B1F', timeVisible: true, secondsVisible: false,
                 barSpacing: 6, minBarSpacing: 3, rightOffset: 5,
                 tickMarkFormatter: (time) => {
                     const d = new Date((time + tzOffset) * 1000);
@@ -754,7 +754,7 @@ async function initTradingViewChart() {
         
         const candleSeries = chart.addCandlestickSeries({
             upColor: '#3D2B1F', downColor: '#cc0000',
-            wickUpColor: '#444444', wickDownColor: '#444444',
+            wickUpColor: '#6B5744', wickDownColor: '#6B5744',
             borderUpColor: '#3D2B1F', borderDownColor: '#cc0000',
         });
         
@@ -1071,7 +1071,7 @@ function updateLiveCandleChart() {
                 // body가 전체 범위의 20% 미만 → 회색 (도지/팽이)
                 c.color = '#6B5744';
                 c.borderColor = '#6B5744';
-                c.wickColor = '#444444';
+                c.wickColor = '#6B5744';
             }
         }
         window.liveCandleSeries.setData(candles);
@@ -1873,7 +1873,7 @@ function updateOpenPositions() {
                             ${ts.activated ? '🔄 ON' : '⏸ OFF'}
                         </button>
                     ` : `
-                        <button onclick="enableTrailingForTrade(${actualIndex})" style="background:#444; color:#6B5744; border:none; padding:0.3rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.6rem;">
+                        <button onclick="enableTrailingForTrade(${actualIndex})" style="background:#6B5744; color:#6B5744; border:none; padding:0.3rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.6rem;">
                             +트레일
                         </button>
                     `}

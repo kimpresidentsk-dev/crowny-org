@@ -204,7 +204,7 @@ async function viewBookDetailV2(id) {
             <p style="color:var(--accent);font-size:0.9rem;margin:0 0 0.5rem;">${b.author || '저자 미상'} · ${BOOK_GENRES[b.genre] || ''} · ${chapterCount}챕터</p>
             <p style="font-size:1.2rem;font-weight:700;color:#3D2B1F;margin:0.5rem 0;">${price > 0 ? price + ' CRGC' : '무료'}</p>
             ${editionNumber ? `<p style="font-size:0.8rem;color:#6B5744;margin:0;">📖 내 에디션: #${editionNumber} of ${supply || '∞'}</p>` : ''}
-            ${b.description ? `<p style="font-size:0.9rem;margin:0.8rem 0;line-height:1.6;color:#555;">${b.description}</p>` : ''}
+            ${b.description ? `<p style="font-size:0.9rem;margin:0.8rem 0;line-height:1.6;color:#6B5744;">${b.description}</p>` : ''}
             
             ${translations.length > 1 ? `<div style="margin:0.5rem 0;font-size:0.8rem;">🌍 번역: ${translations.map(l => _langLabel(l)).join(', ')}</div>` : ''}
             
@@ -775,9 +775,9 @@ function _renderBookReader() {
             <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
                 <button onclick="_adjustFontSize(-0.1)" style="background:#3D2B1F;color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">A-</button>
                 <button onclick="_adjustFontSize(0.1)" style="background:#3D2B1F;color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">A+</button>
-                <button onclick="_toggleEffects()" id="btn-effects-toggle" style="background:${s.effectsEnabled ? '#4CAF50' : '#555'};color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">✨</button>
-                <button onclick="_toggleSound()" id="btn-sound-toggle" style="background:${s.soundEnabled ? '#4CAF50' : '#555'};color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">🔊</button>
-                ${s.book.featureCodes?.ttsEnabled ? `<button onclick="_toggleTTS()" id="btn-tts-toggle" style="background:${s.ttsActive ? '#ff9800' : '#555'};color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">🗣️ TTS</button>
+                <button onclick="_toggleEffects()" id="btn-effects-toggle" style="background:${s.effectsEnabled ? '#4CAF50' : '#6B5744'};color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">✨</button>
+                <button onclick="_toggleSound()" id="btn-sound-toggle" style="background:${s.soundEnabled ? '#4CAF50' : '#6B5744'};color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">🔊</button>
+                ${s.book.featureCodes?.ttsEnabled ? `<button onclick="_toggleTTS()" id="btn-tts-toggle" style="background:${s.ttsActive ? '#ff9800' : '#6B5744'};color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">🗣️ TTS</button>
                 <select onchange="_bookReaderState.ttsRate=parseFloat(this.value)" style="background:#3D2B1F;color:#FFF8F0;border:none;padding:0.3rem;border-radius:4px;">
                     <option value="0.7">0.7x</option><option value="1" selected>1x</option><option value="1.3">1.3x</option><option value="1.5">1.5x</option><option value="2">2x</option>
                 </select>` : ''}
@@ -794,9 +794,9 @@ function _renderBookReader() {
         </div>
         
         <div style="background:rgba(0,0,0,0.3);padding:0.8rem 1rem;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
-            <button onclick="_navigateScene(-1)" style="background:${s.currentScene > 0 ? '#333' : '#222'};color:${s.currentScene > 0 ? 'white' : '#555'};border:none;padding:0.5rem 1.5rem;border-radius:8px;cursor:pointer;" ${s.currentScene <= 0 ? 'disabled' : ''}>← 이전</button>
+            <button onclick="_navigateScene(-1)" style="background:${s.currentScene > 0 ? '#333' : '#222'};color:${s.currentScene > 0 ? 'white' : '#6B5744'};border:none;padding:0.5rem 1.5rem;border-radius:8px;cursor:pointer;" ${s.currentScene <= 0 ? 'disabled' : ''}>← 이전</button>
             <span style="color:#6B5744;font-size:0.8rem;">${s.currentScene + 1} / ${s.allScenes.length}</span>
-            <button onclick="_navigateScene(1)" style="background:${s.currentScene < s.allScenes.length - 1 ? '#3D2B1F' : '#222'};color:${s.currentScene < s.allScenes.length - 1 ? 'white' : '#555'};border:none;padding:0.5rem 1.5rem;border-radius:8px;cursor:pointer;" ${s.currentScene >= s.allScenes.length - 1 ? 'disabled' : ''}>다음 →</button>
+            <button onclick="_navigateScene(1)" style="background:${s.currentScene < s.allScenes.length - 1 ? '#3D2B1F' : '#222'};color:${s.currentScene < s.allScenes.length - 1 ? 'white' : '#6B5744'};border:none;padding:0.5rem 1.5rem;border-radius:8px;cursor:pointer;" ${s.currentScene >= s.allScenes.length - 1 ? 'disabled' : ''}>다음 →</button>
         </div>
     `;
     document.body.appendChild(modal);
@@ -950,7 +950,7 @@ function _toggleEffects() {
     if (!_bookReaderState) return;
     _bookReaderState.effectsEnabled = !_bookReaderState.effectsEnabled;
     const btn = document.getElementById('btn-effects-toggle');
-    if (btn) btn.style.background = _bookReaderState.effectsEnabled ? '#4CAF50' : '#555';
+    if (btn) btn.style.background = _bookReaderState.effectsEnabled ? '#4CAF50' : '#6B5744';
     const layer = document.getElementById('reader-effects-layer');
     if (layer) {
         if (_bookReaderState.effectsEnabled) {
@@ -965,7 +965,7 @@ function _toggleSound() {
     if (!_bookReaderState) return;
     _bookReaderState.soundEnabled = !_bookReaderState.soundEnabled;
     const btn = document.getElementById('btn-sound-toggle');
-    if (btn) btn.style.background = _bookReaderState.soundEnabled ? '#4CAF50' : '#555';
+    if (btn) btn.style.background = _bookReaderState.soundEnabled ? '#4CAF50' : '#6B5744';
     if (!_bookReaderState.soundEnabled) _stopSound();
     else _playSound(_bookReaderState.allScenes[_bookReaderState.currentScene]?.sound);
 }
@@ -974,7 +974,7 @@ function _toggleTTS() {
     if (!_bookReaderState) return;
     _bookReaderState.ttsActive = !_bookReaderState.ttsActive;
     const btn = document.getElementById('btn-tts-toggle');
-    if (btn) btn.style.background = _bookReaderState.ttsActive ? '#ff9800' : '#555';
+    if (btn) btn.style.background = _bookReaderState.ttsActive ? '#ff9800' : '#6B5744';
 
     if (_bookReaderState.ttsActive) {
         _startTTS();
@@ -1010,7 +1010,7 @@ function _startTTS() {
     utterance.onend = () => {
         _bookReaderState.ttsActive = false;
         const btn = document.getElementById('btn-tts-toggle');
-        if (btn) btn.style.background = '#555';
+        if (btn) btn.style.background = '#6B5744';
         _clearHighlight();
     };
 

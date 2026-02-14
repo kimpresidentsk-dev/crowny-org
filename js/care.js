@@ -995,7 +995,7 @@ window.CARE = (function() {
                     <div class="sos-location-status">
                         📍 ${t('care.location_sharing','위치 공유 중...')} (<span id="sos-location-timer">${sosLocationMinutesLeft}${t('care.minutes_left','분 남음')}</span>)
                     </div>
-                    <div style="font-size:1rem; color:#555; margin-top:0.3rem;">
+                    <div style="font-size:1rem; color:#6B5744; margin-top:0.3rem;">
                         ${t('care.latitude','위도')}: <span id="sos-lat">${lat}</span> &nbsp; ${t('care.longitude','경도')}: <span id="sos-lng">${lng}</span>
                     </div>
                     <a id="sos-map-link" href="${mapsUrl}" target="_blank" class="sos-map-btn">🗺️ ${t('care.view_map','지도 보기')}</a>

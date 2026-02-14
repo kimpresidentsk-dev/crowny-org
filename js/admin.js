@@ -3689,7 +3689,7 @@ async function loadAdminPendingProducts() {
                     <div style="flex:1;">
                         <div style="font-weight:700;">${p.title}</div>
                         <div style="font-size:0.8rem;color:var(--accent);">${p.sellerNickname || p.sellerEmail} · ${p.price} CRGC · 재고 ${p.stock} · ${dateStr}</div>
-                        ${p.description ? `<div style="font-size:0.8rem;color:#555;margin-top:0.2rem;">${p.description.slice(0,80)}${p.description.length>80?'...':''}</div>` : ''}
+                        ${p.description ? `<div style="font-size:0.8rem;color:#6B5744;margin-top:0.2rem;">${p.description.slice(0,80)}${p.description.length>80?'...':''}</div>` : ''}
                     </div>
                 </div>
                 <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
@@ -3753,8 +3753,8 @@ async function loadAdminReports() {
                     </div>
                     <span style="font-size:0.8rem;color:var(--accent);">${TARGET_TYPE_LABELS[r.targetType] || r.targetType}: ${r.targetId?.slice(0,8)}...</span>
                 </div>
-                <div style="font-size:0.8rem;color:#555;margin:0.3rem 0;">신고자: ${r.reporterEmail || r.reporterId?.slice(0,8)}</div>
-                ${r.detail ? `<div style="font-size:0.8rem;color:#555;">상세: ${r.detail}</div>` : ''}
+                <div style="font-size:0.8rem;color:#6B5744;margin:0.3rem 0;">신고자: ${r.reporterEmail || r.reporterId?.slice(0,8)}</div>
+                ${r.detail ? `<div style="font-size:0.8rem;color:#6B5744;">상세: ${r.detail}</div>` : ''}
                 <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
                     <button onclick="handleReport('${d.id}','confirmed')" style="flex:1;background:#f44336;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-size:0.8rem;">🗑️ 삭제조치</button>
                     <button onclick="handleReport('${d.id}','dismissed')" style="flex:1;background:#6B5744;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-size:0.8rem;">무시</button>

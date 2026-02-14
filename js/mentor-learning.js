@@ -359,7 +359,7 @@ function renderMentorPerformanceUI(mentorId) {
                 <div style="background:${winColor}; height:100%; border-radius:2px; width:${gaugeWidth}%; transition:width 0.5s;"></div>
             </div>
             <div style="margin-bottom:4px;">최근: ${dots || '—'}</div>
-            ${adaptedText ? `<div style="color:#555; font-size:0.65rem;">🔧 마지막 최적화: ${adaptedText}</div>` : ''}
+            ${adaptedText ? `<div style="color:#6B5744; font-size:0.65rem;">🔧 마지막 최적화: ${adaptedText}</div>` : ''}
         </div>`;
 }
 

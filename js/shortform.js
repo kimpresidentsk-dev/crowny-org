@@ -481,7 +481,7 @@
         let ctaHTML = '';
         if (sl) {
             const cta = CTA_MAP[sl.type] || {};
-            ctaHTML = `<button onclick="SHORTFORM._navigateCTA('${sl.type}','${sl.id}')" style="position:absolute;bottom:90px;left:50%;transform:translateX(-50%);padding:0.7rem 1.5rem;border:none;border-radius:24px;background:${cta.color||'#333'};color:#FFF8F0;font-weight:700;font-size:0.95rem;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.3);z-index:10;white-space:nowrap;">${cta.label || '보기'}</button>`;
+            ctaHTML = `<button onclick="SHORTFORM._navigateCTA('${sl.type}','${sl.id}')" style="position:absolute;bottom:90px;left:50%;transform:translateX(-50%);padding:0.7rem 1.5rem;border:none;border-radius:24px;background:${cta.color||'#3D2B1F'};color:#FFF8F0;font-weight:700;font-size:0.95rem;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.3);z-index:10;white-space:nowrap;">${cta.label || '보기'}</button>`;
         }
 
         const filterStyle = reel.filter ? `filter:${reel.filter};` : '';
