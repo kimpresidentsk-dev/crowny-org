@@ -704,7 +704,9 @@
         height: 70vh !important;
         max-height: none !important;
     }
-    .chat-header-back {
+    .chat-header-back,
+    .messenger-container.chat-open .chat-header-back,
+    #chat-header-back {
         display: block !important;
     }
     
