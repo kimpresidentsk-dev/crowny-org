@@ -375,6 +375,13 @@ a:not(.nav-item) {
 .bottom-tab-item .tab-icon {
     font-size: 1.4rem;
     line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.bottom-tab-item .tab-icon svg {
+    width: 22px;
+    height: 22px;
 }
 .bottom-tab-item.create-btn .tab-icon {
     background: linear-gradient(135deg, #8B6914, #6B5744);
