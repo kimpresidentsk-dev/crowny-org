@@ -187,21 +187,21 @@ async function loadDashboard() {
         console.error('[Dashboard] 로딩 중 에러:', e);
         container.innerHTML = `<div style="text-align:center;padding:2rem;">
             <h2><i data-lucide="bar-chart-3" style="width:20px;height:20px;display:inline-block;vertical-align:middle;"></i> DASHBOARD</h2>
-            <p style="margin-top:1rem;color:var(--text);">환영합니다, ${currentUser?.email?.split('@')[0] || 'Guest'}님!</p>
+            <p style="margin-top:1rem;color:#3D2B1F;">환영합니다, ${currentUser?.email?.split('@')[0] || 'Guest'}님!</p>
             
             <div style="background:var(--bg-card);border-radius:12px;padding:1.5rem;margin:1.5rem 0;text-align:left;">
-                <h4 style="color:var(--text);margin-bottom:1rem;"><i data-lucide="zap" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> 빠른 바로가기</h4>
+                <h4 style="color:#3D2B1F;margin-bottom:1rem;"><i data-lucide="zap" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> 빠른 바로가기</h4>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;">
-                    <button onclick="showPage('wallet')" style="background:var(--bg-card-alt);border:1px solid var(--border);border-radius:8px;padding:1rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;color:var(--text);font-weight:600;font-size:0.9rem;">
+                    <button onclick="showPage('wallet')" style="background:var(--bg-card-alt);border:1px solid var(--border);border-radius:8px;padding:1rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;color:#3D2B1F;font-weight:600;font-size:0.9rem;">
                         <i data-lucide="coins" style="width:18px;height:18px;color:var(--gold);"></i> WALLET
                     </button>
-                    <button onclick="showPage('social')" style="background:var(--bg-card-alt);border:1px solid var(--border);border-radius:8px;padding:1rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;color:var(--text);font-weight:600;font-size:0.9rem;">
+                    <button onclick="showPage('social')" style="background:var(--bg-card-alt);border:1px solid var(--border);border-radius:8px;padding:1rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;color:#3D2B1F;font-weight:600;font-size:0.9rem;">
                         <i data-lucide="camera" style="width:18px;height:18px;color:var(--gold);"></i> SOCIAL
                     </button>
-                    <button onclick="showPage('mall')" style="background:var(--bg-card-alt);border:1px solid var(--border);border-radius:8px;padding:1rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;color:var(--text);font-weight:600;font-size:0.9rem;">
+                    <button onclick="showPage('mall')" style="background:var(--bg-card-alt);border:1px solid var(--border);border-radius:8px;padding:1rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;color:#3D2B1F;font-weight:600;font-size:0.9rem;">
                         <i data-lucide="shopping-cart" style="width:18px;height:18px;color:var(--gold);"></i> MALL
                     </button>
-                    <button onclick="showPage('prop-trading')" style="background:var(--bg-card-alt);border:1px solid var(--border);border-radius:8px;padding:1rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;color:var(--text);font-weight:600;font-size:0.9rem;">
+                    <button onclick="showPage('prop-trading')" style="background:var(--bg-card-alt);border:1px solid var(--border);border-radius:8px;padding:1rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;color:#3D2B1F;font-weight:600;font-size:0.9rem;">
                         <i data-lucide="trending-up" style="width:18px;height:18px;color:var(--gold);"></i> TRADING
                     </button>
                 </div>
