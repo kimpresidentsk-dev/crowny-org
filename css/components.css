@@ -138,9 +138,9 @@ input:checked + .notif-toggle-slider::before {
 /* ===== Notification Toast (colored) ===== */
 .notif-toast {
     box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-    border-radius: 10px !important;
-    padding: 0.7rem 1rem !important;
-    color: #FFF8F0 !important;
+    border-radius: 10px;
+    padding: 0.7rem 1rem;
+    color: #FFF8F0;
 }
 
 
@@ -416,23 +416,23 @@ a:not(.nav-item) {
 
 /* Toast messages */
 .notif-toast, .toast-message {
-    background: var(--bg-card, #F7F3ED) !important;
-    color: var(--text, #3D2B1F) !important;
-    border: 1px solid var(--border, #E8E0D8) !important;
-    border-radius: 12px !important;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.4) !important;
-    font-size: 0.9rem !important;
+    background: var(--bg-card, #F7F3ED);
+    color: var(--text, #3D2B1F);
+    border: 1px solid var(--border, #E8E0D8);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    font-size: 0.9rem;
 }
 
 /* Loading spinner - gold */
 .loading-spinner, .spinner {
-    border-color: var(--border, #E8E0D8) !important;
-    border-top-color: var(--gold, #8B6914) !important;
+    border-color: var(--border, #E8E0D8);
+    border-top-color: var(--gold, #8B6914);
 }
 
 /* Empty state unified */
 .empty-state, .art-empty-state, .chat-empty-state {
-    color: var(--text-muted, ‌#6B5744) !important;
+    color: var(--text-muted, ‌#6B5744);
 }
 .empty-state .icon, .art-empty-state .icon {
     opacity: 0.6;
@@ -440,17 +440,17 @@ a:not(.nav-item) {
 
 /* Post create "게시" button gold */
 .post-create .btn-primary {
-    background: var(--gold, #8B6914) !important;
-    color: #FFF8F0 !important;
+    background: var(--gold, #8B6914);
+    color: #FFF8F0;
     font-weight: 700;
 }
 
 /* Input fields unified */
 input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
 textarea, select {
-    background: var(--bg-card, #F7F3ED);
+    background: #FFF8F0;
     color: #3D2B1F;
-    border: 1px solid var(--border, #E8E0D8);
+    border: 1px solid #E8E0D8;
 }
 
 /* Auth form inputs */
@@ -463,228 +463,228 @@ textarea, select {
     opacity: 0.7;
 }
 input:focus, textarea:focus, select:focus {
-    border-color: var(--gold, #8B6914) !important;
+    border-color: #8B6914;
     outline: none;
 }
 
 /* Modal overlay unified */
 .modal, .register-modal-overlay, .bottom-sheet-overlay {
-    background: rgba(61,43,31,0.7) !important;
+    background: rgba(61,43,31,0.7);
 }
 
 /* Sidebar unified */
 
 /* Menu toggle dark */
 .menu-toggle {
-    background: var(--bg-card, #F7F3ED) !important;
-    color: var(--text, #3D2B1F) !important;
-    border-color: var(--border, #E8E0D8) !important;
+    background: var(--bg-card, #F7F3ED);
+    color: var(--text, #3D2B1F);
+    border-color: var(--border, #E8E0D8);
 }
 
 /* Unified secondary buttons */
 .btn-secondary {
-    background: var(--bg-card-alt, #FFF8F0) !important;
-    color: var(--text, #3D2B1F) !important;
-    border-color: var(--border, #E8E0D8) !important;
+    background: var(--bg-card-alt, #FFF8F0);
+    color: var(--text, #3D2B1F);
+    border-color: var(--border, #E8E0D8);
 }
 
 /* Profile modals dark */
 #profile-edit-modal > div,
 #add-contact-modal > div,
 .group-member-select-modal {
-    background: var(--bg-card, #F7F3ED) !important;
-    color: var(--text, #3D2B1F) !important;
+    background: var(--bg-card, #F7F3ED);
+    color: var(--text, #3D2B1F);
 }
 #profile-edit-modal input,
 #add-contact-modal input {
-    background: var(--bg-card-alt, #FFF8F0) !important;
-    color: var(--text, #3D2B1F) !important;
-    border-color: var(--border, #E8E0D8) !important;
+    background: var(--bg-card-alt, #FFF8F0);
+    color: var(--text, #3D2B1F);
+    border-color: var(--border, #E8E0D8);
 }
 
 /* Service card hover gold */
 .service-card:hover {
-    border-color: var(--gold, #8B6914) !important;
+    border-color: var(--gold, #8B6914);
 }
 
 /* Search overlay dark */
 .search-overlay-content {
-    background: var(--bg-card, #F7F3ED) !important;
-    color: var(--text, #3D2B1F) !important;
+    background: var(--bg-card, #F7F3ED);
+    color: var(--text, #3D2B1F);
 }
 
 /* Settings dark */
 .settings-card {
-    background: var(--bg-card, #F7F3ED) !important;
-    color: var(--text, #3D2B1F) !important;
+    background: var(--bg-card, #F7F3ED);
+    color: var(--text, #3D2B1F);
 }
 .settings-btn {
-    background: var(--bg-card-alt, #FFF8F0) !important;
-    color: var(--text, #3D2B1F) !important;
-    border-color: var(--border, #E8E0D8) !important;
+    background: var(--bg-card-alt, #FFF8F0);
+    color: var(--text, #3D2B1F);
+    border-color: var(--border, #E8E0D8);
 }
 
 /* Comment bottom sheet dark */
 .bottom-sheet {
-    background: #FFF8F0 !important;
-    color: #3D2B1F !important;
+    background: #FFF8F0;
+    color: #3D2B1F;
 }
 
 /* Link preview dark */
 .link-preview-card {
-    background: var(--bg-card-alt, #FFF8F0) !important;
-    border-color: var(--border, #E8E0D8) !important;
-    color: var(--text, #3D2B1F) !important;
+    background: var(--bg-card-alt, #FFF8F0);
+    border-color: var(--border, #E8E0D8);
+    color: var(--text, #3D2B1F);
 }
 
 /* All hardcoded white backgrounds → dark */
 .wallet-btn, .product-card, .credit-header, .trading-panel,
 .trading-header, .balance-item {
-    background: var(--bg-card, #F7F3ED) !important;
-    color: var(--text, #3D2B1F) !important;
-    border-color: var(--border, #E8E0D8) !important;
+    background: var(--bg-card, #F7F3ED);
+    color: var(--text, #3D2B1F);
+    border-color: var(--border, #E8E0D8);
 }
 
 /* Social post dropdown dark */
 .post-dropdown-menu {
-    background: var(--bg-card, #F7F3ED) !important;
-    border-color: var(--border, #E8E0D8) !important;
+    background: var(--bg-card, #F7F3ED);
+    border-color: var(--border, #E8E0D8);
 }
 .post-dropdown-menu div:hover {
-    background: var(--bg-card-alt, #FFF8F0) !important;
+    background: var(--bg-card-alt, #FFF8F0);
 }
 
 /* Reaction picker dark */
 .reaction-picker-popup {
-    background: var(--bg-card, #F7F3ED) !important;
-    border-color: var(--border, #E8E0D8) !important;
+    background: var(--bg-card, #F7F3ED);
+    border-color: var(--border, #E8E0D8);
 }
 
 /* Sticker/GIF panel dark */
 .sticker-gif-panel {
-    background: var(--bg-card, #F7F3ED) !important;
-    border-color: var(--border, #E8E0D8) !important;
-    color: var(--text, #3D2B1F) !important;
+    background: var(--bg-card, #F7F3ED);
+    border-color: var(--border, #E8E0D8);
+    color: var(--text, #3D2B1F);
 }
 
 /* Attach menu dark */
 .attach-menu-popup {
-    background: var(--bg-card, #F7F3ED) !important;
-    border-color: var(--border, #E8E0D8) !important;
-    color: var(--text, #3D2B1F) !important;
+    background: var(--bg-card, #F7F3ED);
+    border-color: var(--border, #E8E0D8);
+    color: var(--text, #3D2B1F);
 }
 
 /* Chat menu dark */
 .chat-menu-dropdown {
-    background: var(--bg-card, #F7F3ED) !important;
-    border-color: var(--border, #E8E0D8) !important;
+    background: var(--bg-card, #F7F3ED);
+    border-color: var(--border, #E8E0D8);
 }
 .chat-menu-item {
-    color: var(--text, #3D2B1F) !important;
+    color: var(--text, #3D2B1F);
 }
 .chat-menu-item:hover {
-    background: var(--bg-card-alt, #FFF8F0) !important;
+    background: var(--bg-card-alt, #FFF8F0);
 }
 
 /* Friend request item dark */
 .friend-request-item {
-    border-color: var(--border, #E8E0D8) !important;
+    border-color: var(--border, #E8E0D8);
 }
 
 /* Group info panel dark */
 .group-info-panel {
-    background: var(--bg-card, #F7F3ED) !important;
-    color: var(--text, #3D2B1F) !important;
-    border-color: var(--border, #E8E0D8) !important;
+    background: var(--bg-card, #F7F3ED);
+    color: var(--text, #3D2B1F);
+    border-color: var(--border, #E8E0D8);
 }
 
 /* Msg bubble colors fix for dark */
 .msg-actions-bar {
-    background: var(--bg-card, #F7F3ED) !important;
-    border-color: var(--border, #E8E0D8) !important;
+    background: var(--bg-card, #F7F3ED);
+    border-color: var(--border, #E8E0D8);
 }
 
 /* Reply preview bar dark */
 .reply-preview-bar {
-    background: var(--bg-card-alt, #FFF8F0) !important;
-    border-color: var(--gold, #8B6914) !important;
-    color: var(--text, #3D2B1F) !important;
+    background: var(--bg-card-alt, #FFF8F0);
+    border-color: var(--gold, #8B6914);
+    color: var(--text, #3D2B1F);
 }
 
 /* Pinned message dark */
 .pinned-message-banner {
-    background: var(--bg-card-alt, #FFF8F0) !important;
-    border-color: var(--gold, #8B6914) !important;
-    color: var(--text, #3D2B1F) !important;
+    background: var(--bg-card-alt, #FFF8F0);
+    border-color: var(--gold, #8B6914);
+    color: var(--text, #3D2B1F);
 }
 
 /* Dashboard shortcuts dark */
 .dash-shortcut-btn {
-    background: var(--bg-card-alt, #FFF8F0) !important;
-    color: var(--text, #3D2B1F) !important;
-    border-color: var(--border, #E8E0D8) !important;
+    background: var(--bg-card-alt, #FFF8F0);
+    color: var(--text, #3D2B1F);
+    border-color: var(--border, #E8E0D8);
 }
 
 /* Tab buttons dark */
 .tab-btn {
-    background: var(--bg-card-alt, #FFF8F0) !important;
-    color: var(--text, #3D2B1F) !important;
-    border-color: var(--border, #E8E0D8) !important;
+    background: var(--bg-card-alt, #FFF8F0);
+    color: var(--text, #3D2B1F);
+    border-color: var(--border, #E8E0D8);
 }
 .tab-btn.active {
-    background: var(--gold, #8B6914) !important;
-    color: #3D2B1F !important;
-    border-color: var(--gold, #8B6914) !important;
+    background: var(--gold, #8B6914);
+    color: #3D2B1F;
+    border-color: var(--gold, #8B6914);
 }
 
 /* Scrollbar dark */
 
 /* Contact/chat item border dark */
 .contact-item, .chat-item {
-    border-color: var(--border, #E8E0D8) !important;
+    border-color: var(--border, #E8E0D8);
 }
 
 /* System message dark */
 
 /* AI Assistant dark */
 .ai-input-bar {
-    background: var(--bg-card, #F7F3ED) !important;
-    border-color: var(--border, #E8E0D8) !important;
+    background: var(--bg-card, #F7F3ED);
+    border-color: var(--border, #E8E0D8);
 }
 .ai-bubble-bot {
-    background: var(--bg-card-alt, #FFF8F0) !important;
-    color: var(--text, #3D2B1F) !important;
+    background: var(--bg-card-alt, #FFF8F0);
+    color: var(--text, #3D2B1F);
 }
 .ai-quick-card {
-    background: var(--bg-card-alt, #FFF8F0) !important;
-    color: var(--text, #3D2B1F) !important;
-    border-color: var(--border, #E8E0D8) !important;
+    background: var(--bg-card-alt, #FFF8F0);
+    color: var(--text, #3D2B1F);
+    border-color: var(--border, #E8E0D8);
 }
 
 /* Date separator dark */
 .date-separator span {
-    background: var(--bg-card, #F7F3ED) !important;
-    color: var(--text-muted, ‌#6B5744) !important;
+    background: var(--bg-card, #F7F3ED);
+    color: var(--text-muted, ‌#6B5744);
 }
 
 /* Message highlight dark */
 .msg-highlight {
-    background: rgba(212, 175, 55, 0.3) !important;
+    background: rgba(212, 175, 55, 0.3);
 }
 
 /* Msg reaction chip dark */
 .msg-reaction-chip {
-    background: var(--bg-card-alt, #FFF8F0) !important;
-    border-color: var(--border, #E8E0D8) !important;
-    color: var(--text, #3D2B1F) !important;
+    background: var(--bg-card-alt, #FFF8F0);
+    border-color: var(--border, #E8E0D8);
+    color: var(--text, #3D2B1F);
 }
 
 /* ===== GLOBAL DARK MODE CLEANUP ===== */
 
 /* Ensure all system messages are dark */
 .system-message {
-    background: rgba(255,248,240,0.05) !important;
-    color: var(--text-muted) !important;
+    background: rgba(255,248,240,0.05);
+    color: var(--text-muted);
 }
 
 /* Sidebar dark */
@@ -708,19 +708,19 @@ input:focus, textarea:focus, select:focus {
 
 /* Bottom tab active gold */
 .bottom-tab-item.active {
-    color: var(--gold) !important;
+    color: var(--gold);
 }
 
 /* Tables dark */
 table, th, td {
-    border-color: var(--border) !important;
+    border-color: var(--border);
     color: var(--text);
 }
 th {
-    background: var(--bg-card-alt) !important;
+    background: var(--bg-card-alt);
 }
 td {
-    background: var(--bg-card) !important;
+    background: var(--bg-card);
 }
 
 /* Scrollbar dark */
