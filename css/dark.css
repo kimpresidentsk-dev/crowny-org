@@ -1,4 +1,4 @@
-/* ===== DARK MODE (Brand-compliant: chocolate brown base) ===== */
+/* ===== DARK MODE (Brand: chocolate brown base) ===== */
 [data-theme="dark"] {
     --primary: #1A120B;
     --primary-light: #2A1F14;
@@ -6,24 +6,26 @@
     --gold-dark: #8B6914;
     --cream: #2A1F14;
     --bg: #1A120B;
+    --bg-card: #2A1F14;
+    --bg-card-alt: #1A120B;
     --text: #E8D5C4;
+    --text-secondary: #B8A090;
     --text-light: #B8A090;
+    --text-muted: #B8A090;
     --border: #3D2B1F;
     --accent: #6B5744;
     --white: #2A1F14;
     --card-bg: #2A1F14;
-    --bg-card: #2A1F14;
-    --bg-card-alt: #1A120B;
 }
 [data-theme="dark"] body { background: var(--bg) !important; color: var(--text) !important; }
 
-/* Sidebar stays dark brown */
+/* Sidebar */
 [data-theme="dark"] .sidebar { background: #1A120B !important; border-color: var(--border) !important; }
 [data-theme="dark"] .sidebar .nav-item { color: #E8D5C4; }
 [data-theme="dark"] .sidebar .nav-item:hover { background: #2A1F14 !important; color: #C9A84C !important; }
 [data-theme="dark"] .sidebar .nav-item.active { background: rgba(139,105,20,0.15) !important; border-left: 3px solid #8B6914 !important; color: #C9A84C !important; }
 
-/* Content area */
+/* Content */
 [data-theme="dark"] .content { background: var(--bg) !important; }
 
 /* Cards */

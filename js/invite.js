@@ -212,16 +212,16 @@
             </div>
 
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;margin-bottom:1.2rem;">
-                <button onclick="INVITE.copyLink()" style="padding:0.8rem;border:none;border-radius:10px;background:#3D2B1F;color:'#FFF8F0';font-weight:700;cursor:pointer;font-size:0.85rem;">
+                <button onclick="INVITE.copyLink()" style="padding:0.8rem;border:none;border-radius:10px;background:#3D2B1F;color:#FFF8F0;font-weight:700;cursor:pointer;font-size:0.85rem;">
                     <i data-lucide="copy"></i> ${t('invite.copy_link', '링크 복사')}
                 </button>
-                <button onclick="INVITE.shareSMS()" style="padding:0.8rem;border:none;border-radius:10px;background:#25D366;color:'#FFF8F0';font-weight:700;cursor:pointer;font-size:0.85rem;">
+                <button onclick="INVITE.shareSMS()" style="padding:0.8rem;border:none;border-radius:10px;background:#25D366;color:#FFF8F0;font-weight:700;cursor:pointer;font-size:0.85rem;">
                     <i data-lucide="message-circle" style="width:16px;height:16px;margin-right:6px;"></i>${t('invite.sms_share', 'SMS/공유')}
                 </button>
                 <button onclick="INVITE.shareKakao()" style="padding:0.8rem;border:none;border-radius:10px;background:#FEE500;color:#3C1E1E;font-weight:700;cursor:pointer;font-size:0.85rem;">
                     <i data-lucide="heart" style="color:#FFB800;"></i> ${t('invite.kakao', '카카오톡')}
                 </button>
-                <button onclick="INVITE.shareFacebook()" style="padding:0.8rem;border:none;border-radius:10px;background:#1877F2;color:'#FFF8F0';font-weight:700;cursor:pointer;font-size:0.85rem;">
+                <button onclick="INVITE.shareFacebook()" style="padding:0.8rem;border:none;border-radius:10px;background:#1877F2;color:#FFF8F0;font-weight:700;cursor:pointer;font-size:0.85rem;">
                     <i data-lucide="facebook"></i> ${t('invite.facebook', '페이스북')}
                 </button>
             </div>
@@ -295,7 +295,7 @@
             <h2 style="margin:0 0 0.5rem 0;">${t('invite.landing_title', '크라우니에 초대되었습니다!')}</h2>
             ${inviterName ? `<p style="color:#6B5744;margin-bottom:1rem;">${t('invite.invited_by', '소개자')}: <strong>${inviterName}</strong></p>` : ''}
             <p style="font-size:0.85rem;color:#6B5744;margin-bottom:1.5rem;">${t('invite.landing_desc', '가입하고 CRTD 리워드를 받으세요!')}</p>
-            <button onclick="document.getElementById('invite-landing').remove();document.getElementById('show-signup-form')?.click();" style="width:100%;padding:1rem;background:#3D2B1F;color:'#FFF8F0';border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;">
+            <button onclick="document.getElementById('invite-landing').remove();document.getElementById('show-signup-form')?.click();" style="width:100%;padding:1rem;background:#3D2B1F;color:#FFF8F0;border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;">
                 <i data-lucide="rocket"></i> ${t('invite.signup_btn', '가입하기')}
             </button>
             <button onclick="document.getElementById('invite-landing').remove()" style="width:100%;padding:0.7rem;background:transparent;border:none;color:#6B5744;cursor:pointer;margin-top:0.5rem;font-size:0.85rem;">
