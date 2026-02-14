@@ -301,8 +301,13 @@ auth.onAuthStateChanged(async (user) => {
         document.getElementById('user-email').textContent = user.email;
         document.getElementById('user-info').style.display = 'block';
         
-        // 관리자 레벨 로드
-        await loadUserLevel();
+        // 관리자 레벨 로드 (실패해도 로그인 계속 진행)
+        try {
+            await loadUserLevel();
+        } catch (e) {
+            console.error('[Config] 관리자 레벨 로드 실패 - 계속 진행:', e);
+            window.currentUserLevel = -1;
+        }
         
         // 권한별 메뉴 가시성 적용
         if (typeof applyMenuVisibility === 'function') applyMenuVisibility(currentUserLevel);

@@ -102,12 +102,24 @@ async function loadUserLevel() {
     }
     
     try {
+        console.log('[Admin] 사용자 레벨 로딩 시작:', currentUser.email);
+        if (!window.db) {
+            console.error('[Admin] Firestore DB가 초기화되지 않음');
+            currentUserLevel = -1;
+            return;
+        }
+        
         const userDoc = await db.collection('users').doc(currentUser.uid).get();
         if (userDoc.exists) {
             currentUserLevel = userDoc.data().adminLevel ?? -1;
+            console.log('[Admin] 사용자 레벨 로드 성공:', currentUserLevel);
+        } else {
+            console.log('[Admin] 사용자 문서 없음, 기본 레벨 적용');
+            currentUserLevel = -1;
         }
     } catch (e) {
-        console.error('레벨 로드 실패:', e);
+        console.error('[Admin] 레벨 로드 실패 - 기본값으로 복원:', e);
+        currentUserLevel = -1;
         currentUserLevel = -1;
     }
 }
