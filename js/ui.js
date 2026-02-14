@@ -6,6 +6,7 @@ function updateLandingState(user) {
     
     if (user) {
         landing.classList.add('hidden');
+        document.body.style.overflow = '';
         const authModal = document.getElementById('auth-modal');
         if (authModal) authModal.style.display = 'none';
         // 모든 모달 오버레이 정리 (로그인 후 회색 화면 방지)
@@ -17,6 +18,7 @@ function updateLandingState(user) {
         if (authModal && authModal.style.display === 'flex') return;
         
         landing.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
         document.getElementById('sidebar').classList.remove('active');
     }
 }

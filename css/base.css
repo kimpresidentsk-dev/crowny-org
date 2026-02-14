@@ -69,14 +69,18 @@
 /* Landing Specific Styles */
 #landing-page {
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100vh;
-    background: linear-gradient(135deg, #FFF8F0 0%, #F7F3ED 100%);
-    z-index: 9999; /* 최상단 노출 */
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100%; height: 100%;
+    background: #FFF8F0;
+    z-index: 9999;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
+    overflow: hidden;
+    -webkit-overflow-scrolling: none;
+    touch-action: none;
 }
 .hidden { display: none !important; }
 
