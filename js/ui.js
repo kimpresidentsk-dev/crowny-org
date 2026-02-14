@@ -157,7 +157,7 @@ function showPromptModal(title, message, defaultValue, isPassword) {
         overlay.innerHTML = `
             <div style="background:#3D2B1F;padding:1.5rem;border-radius:12px;max-width:400px;width:100%;">
                 <h3 style="margin-bottom:0.8rem;">${title}</h3>
-                <p style="color:#666;margin-bottom:1rem;white-space:pre-line;font-size:0.9rem;">${message}</p>
+                <p style="color:#6B5744;margin-bottom:1rem;white-space:pre-line;font-size:0.9rem;">${message}</p>
                 <input type="${inputType}" id="prompt-modal-input" value="${defaultValue || ''}" style="width:100%;padding:0.7rem;border:1px solid #ddd;border-radius:8px;font-size:1rem;box-sizing:border-box;margin-bottom:1rem;">
                 <div style="display:flex;gap:0.5rem;">
                     <button id="prompt-cancel" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#3D2B1F;">${t('common.cancel', '취소')}</button>

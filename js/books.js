@@ -120,13 +120,13 @@ function _renderBookCard(b) {
 
     return `<div onclick="viewBookDetailV2('${b.id}')" style="min-width:130px;max-width:150px;background:#FFF8F0;border-radius:10px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.08);flex-shrink:0;position:relative;">
         ${isSoldOut ? '<div style="position:absolute;top:8px;right:8px;background:red;color:#FFF8F0;font-size:0.6rem;padding:2px 6px;border-radius:4px;font-weight:700;z-index:1;">SOLD OUT</div>' : ''}
-        ${b.edition === 'limited' ? '<div style="position:absolute;top:8px;left:8px;background:gold;color:#333;font-size:0.6rem;padding:2px 6px;border-radius:4px;font-weight:700;z-index:1;">한정판</div>' : ''}
+        ${b.edition === 'limited' ? '<div style="position:absolute;top:8px;left:8px;background:gold;color:#3D2B1F;font-size:0.6rem;padding:2px 6px;border-radius:4px;font-weight:700;z-index:1;">한정판</div>' : ''}
         <div style="height:180px;overflow:hidden;">${coverBg}</div>
         <div style="padding:0.5rem;">
             <div style="font-weight:600;font-size:0.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${b.title}</div>
             <div style="font-size:0.7rem;color:var(--accent);">${b.author || '저자 미상'}</div>
             <div style="font-weight:700;color:#3D2B1F;font-size:0.85rem;margin-top:0.2rem;">${price > 0 ? price + ' CRGC' : '무료'}</div>
-            ${b.edition === 'limited' && supply > 0 ? `<div style="font-size:0.65rem;color:#888;">${sold}/${supply}</div>` : ''}
+            ${b.edition === 'limited' && supply > 0 ? `<div style="font-size:0.65rem;color:#6B5744;">${sold}/${supply}</div>` : ''}
         </div>
     </div>`;
 }
@@ -196,14 +196,14 @@ async function viewBookDetailV2(id) {
     modal.innerHTML = `<div style="background:#FFF8F0;border-radius:16px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;">
         <div style="height:280px;background:#f5f0e8;display:flex;align-items:center;justify-content:center;position:relative;">
             ${b.coverImage || b.imageData ? `<img src="${b.coverImage || b.imageData}" loading="lazy" style="max-width:100%;max-height:100%;object-fit:contain;">` : `<span style="font-size:5rem;">${(BOOK_GENRES[b.genre] || '📚').charAt(0)}</span>`}
-            ${b.edition === 'limited' ? `<div style="position:absolute;top:12px;left:12px;background:gold;color:#333;padding:4px 10px;border-radius:6px;font-weight:700;font-size:0.8rem;">🏆 한정판 ${sold}/${supply}</div>` : ''}
+            ${b.edition === 'limited' ? `<div style="position:absolute;top:12px;left:12px;background:gold;color:#3D2B1F;padding:4px 10px;border-radius:6px;font-weight:700;font-size:0.8rem;">🏆 한정판 ${sold}/${supply}</div>` : ''}
             ${isSoldOut ? `<div style="position:absolute;top:12px;right:12px;background:red;color:#FFF8F0;padding:4px 10px;border-radius:6px;font-weight:700;font-size:0.8rem;">SOLD OUT</div>` : ''}
         </div>
         <div style="padding:1.5rem;">
             <h2 style="margin:0 0 0.3rem;">${b.title}</h2>
             <p style="color:var(--accent);font-size:0.9rem;margin:0 0 0.5rem;">${b.author || '저자 미상'} · ${BOOK_GENRES[b.genre] || ''} · ${chapterCount}챕터</p>
             <p style="font-size:1.2rem;font-weight:700;color:#3D2B1F;margin:0.5rem 0;">${price > 0 ? price + ' CRGC' : '무료'}</p>
-            ${editionNumber ? `<p style="font-size:0.8rem;color:#888;margin:0;">📖 내 에디션: #${editionNumber} of ${supply || '∞'}</p>` : ''}
+            ${editionNumber ? `<p style="font-size:0.8rem;color:#6B5744;margin:0;">📖 내 에디션: #${editionNumber} of ${supply || '∞'}</p>` : ''}
             ${b.description ? `<p style="font-size:0.9rem;margin:0.8rem 0;line-height:1.6;color:#555;">${b.description}</p>` : ''}
             
             ${translations.length > 1 ? `<div style="margin:0.5rem 0;font-size:0.8rem;">🌍 번역: ${translations.map(l => _langLabel(l)).join(', ')}</div>` : ''}
@@ -217,7 +217,7 @@ async function viewBookDetailV2(id) {
             <div style="display:flex;gap:0.5rem;margin-top:1rem;">
                 ${userOwns || isOwner || price <= 0 ? `<button onclick="openBookReader('${id}');document.getElementById('book-detail-modal-v2')?.remove();" style="flex:1;background:#4CAF50;color:#FFF8F0;border:none;padding:0.8rem;border-radius:8px;cursor:pointer;font-weight:700;">📖 읽기</button>` : ''}
                 ${!userOwns && !isOwner && price > 0 && !isSoldOut ? `<button onclick="buyBookV2('${id}');document.getElementById('book-detail-modal-v2')?.remove();" style="flex:1;background:#3D2B1F;color:#FFF8F0;border:none;padding:0.8rem;border-radius:8px;cursor:pointer;font-weight:700;">🛒 구매 (${price} CRGC)</button>` : ''}
-                ${isSoldOut && !userOwns ? '<button disabled style="flex:1;background:#ccc;color:#666;border:none;padding:0.8rem;border-radius:8px;font-weight:700;">매진</button>' : ''}
+                ${isSoldOut && !userOwns ? '<button disabled style="flex:1;background:#ccc;color:#6B5744;border:none;padding:0.8rem;border-radius:8px;font-weight:700;">매진</button>' : ''}
                 <button onclick="addToReadingList('${id}')" style="background:#ff9800;color:#FFF8F0;border:none;padding:0.8rem;border-radius:8px;cursor:pointer;font-weight:700;">📚</button>
             </div>
             ${!userOwns && !isOwner && price > 0 ? `<button onclick="requestTranslation('${id}')" style="background:none;border:1px solid var(--border);padding:0.5rem;border-radius:8px;cursor:pointer;width:100%;margin-top:0.5rem;font-size:0.85rem;">🌍 번역 요청</button>` : ''}
@@ -360,7 +360,7 @@ function _renderBookCreator() {
 
     const steps = ['기본 정보', '챕터/씬', '미리보기', '발행'];
     const stepBar = `<div style="display:flex;gap:0;border-bottom:2px solid #eee;">
-        ${steps.map((s, i) => `<div style="flex:1;text-align:center;padding:0.8rem 0.3rem;font-size:0.8rem;font-weight:${d.step === i + 1 ? '700' : '400'};color:${d.step === i + 1 ? '#3D2B1F' : '#aaa'};border-bottom:${d.step === i + 1 ? '2px solid #3D2B1F' : 'none'};cursor:pointer;" onclick="_bookCreatorData.step=${i + 1};_renderBookCreator();">${i + 1}. ${s}</div>`).join('')}
+        ${steps.map((s, i) => `<div style="flex:1;text-align:center;padding:0.8rem 0.3rem;font-size:0.8rem;font-weight:${d.step === i + 1 ? '700' : '400'};color:${d.step === i + 1 ? '#3D2B1F' : '#6B5744'};border-bottom:${d.step === i + 1 ? '2px solid #3D2B1F' : 'none'};cursor:pointer;" onclick="_bookCreatorData.step=${i + 1};_renderBookCreator();">${i + 1}. ${s}</div>`).join('')}
     </div>`;
 
     let content = '';
@@ -478,11 +478,11 @@ function _renderCreatorStep2() {
             </div>`;
         });
 
-        html += `<button onclick="_addScene(${ci})" style="width:100%;padding:0.4rem;border:1px dashed #ccc;background:none;border-radius:6px;cursor:pointer;font-size:0.8rem;color:#888;">+ 씬 추가</button>
+        html += `<button onclick="_addScene(${ci})" style="width:100%;padding:0.4rem;border:1px dashed #ccc;background:none;border-radius:6px;cursor:pointer;font-size:0.8rem;color:#6B5744;">+ 씬 추가</button>
         </div>`;
     });
 
-    html += `<button onclick="_addChapter()" style="width:100%;padding:0.7rem;border:2px dashed #ccc;background:none;border-radius:10px;cursor:pointer;font-size:0.9rem;color:#888;">+ 챕터 추가</button>`;
+    html += `<button onclick="_addChapter()" style="width:100%;padding:0.7rem;border:2px dashed #ccc;background:none;border-radius:10px;cursor:pointer;font-size:0.9rem;color:#6B5744;">+ 챕터 추가</button>`;
 
     html += `<div style="display:flex;justify-content:space-between;margin-top:1rem;">
         <button onclick="_bookCreatorData.step=1;_renderBookCreator();" style="padding:0.7rem 1.5rem;border:1px solid var(--border);background:#FFF8F0;border-radius:8px;cursor:pointer;">← 이전</button>
@@ -615,7 +615,7 @@ function _previewScene(dir) {
     const infoEl = document.getElementById('preview-scene-info');
 
     if (contentEl) {
-        contentEl.innerHTML = `<div style="font-size:0.8rem;color:#888;margin-bottom:1rem;">${sc.chapterTitle}</div>
+        contentEl.innerHTML = `<div style="font-size:0.8rem;color:#6B5744;margin-bottom:1rem;">${sc.chapterTitle}</div>
             ${sc.imageUrl ? `<img src="${sc.imageUrl}" loading="lazy" style="max-width:100%;border-radius:8px;margin-bottom:1rem;">` : ''}
             <div style="white-space:pre-wrap;">${sc.content || '(내용 없음)'}</div>`;
     }
@@ -766,19 +766,19 @@ function _renderBookReader() {
     modal.innerHTML = `
         <div style="background:rgba(0,0,0,0.3);padding:0.5rem 1rem;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
             <button onclick="_closeReader()" style="background:none;border:none;color:#FFF8F0;font-size:1.2rem;cursor:pointer;">✕</button>
-            <span style="color:#aaa;font-size:0.8rem;">${s.book.title}</span>
+            <span style="color:#6B5744;font-size:0.8rem;">${s.book.title}</span>
             <button onclick="_toggleReaderSettings()" style="background:none;border:none;color:#FFF8F0;font-size:1.2rem;cursor:pointer;">⚙️</button>
         </div>
-        <div style="height:2px;background:#333;flex-shrink:0;"><div style="height:100%;background:#4CAF50;width:${progress}%;transition:width 0.3s;"></div></div>
+        <div style="height:2px;background:#3D2B1F;flex-shrink:0;"><div style="height:100%;background:#4CAF50;width:${progress}%;transition:width 0.3s;"></div></div>
         
         <div id="reader-settings-panel" style="display:none;background:rgba(0,0,0,0.5);padding:0.8rem 1rem;flex-shrink:0;">
             <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
-                <button onclick="_adjustFontSize(-0.1)" style="background:#333;color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">A-</button>
-                <button onclick="_adjustFontSize(0.1)" style="background:#333;color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">A+</button>
+                <button onclick="_adjustFontSize(-0.1)" style="background:#3D2B1F;color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">A-</button>
+                <button onclick="_adjustFontSize(0.1)" style="background:#3D2B1F;color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">A+</button>
                 <button onclick="_toggleEffects()" id="btn-effects-toggle" style="background:${s.effectsEnabled ? '#4CAF50' : '#555'};color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">✨</button>
                 <button onclick="_toggleSound()" id="btn-sound-toggle" style="background:${s.soundEnabled ? '#4CAF50' : '#555'};color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">🔊</button>
                 ${s.book.featureCodes?.ttsEnabled ? `<button onclick="_toggleTTS()" id="btn-tts-toggle" style="background:${s.ttsActive ? '#ff9800' : '#555'};color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">🗣️ TTS</button>
-                <select onchange="_bookReaderState.ttsRate=parseFloat(this.value)" style="background:#333;color:#FFF8F0;border:none;padding:0.3rem;border-radius:4px;">
+                <select onchange="_bookReaderState.ttsRate=parseFloat(this.value)" style="background:#3D2B1F;color:#FFF8F0;border:none;padding:0.3rem;border-radius:4px;">
                     <option value="0.7">0.7x</option><option value="1" selected>1x</option><option value="1.3">1.3x</option><option value="1.5">1.5x</option><option value="2">2x</option>
                 </select>` : ''}
             </div>
@@ -787,7 +787,7 @@ function _renderBookReader() {
         <div id="reader-scene-container" style="flex:1;overflow-y:auto;position:relative;">
             <div id="reader-effects-layer" style="position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;overflow:hidden;z-index:1;"></div>
             <div id="reader-content" style="position:relative;z-index:2;padding:1.5rem;color:#e0e0e0;font-size:${s.fontSize}rem;line-height:1.8;max-width:700px;margin:0 auto;" onclick="_handleReaderClick(event)">
-                <div style="font-size:0.75rem;color:#666;margin-bottom:1rem;">${sc.chapterTitle || ''}</div>
+                <div style="font-size:0.75rem;color:#6B5744;margin-bottom:1rem;">${sc.chapterTitle || ''}</div>
                 ${sc.imageUrl ? `<img src="${sc.imageUrl}" loading="lazy" style="max-width:100%;border-radius:8px;margin-bottom:1rem;">` : ''}
                 <div id="reader-text">${_renderSceneText(sc)}</div>
             </div>
@@ -795,7 +795,7 @@ function _renderBookReader() {
         
         <div style="background:rgba(0,0,0,0.3);padding:0.8rem 1rem;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
             <button onclick="_navigateScene(-1)" style="background:${s.currentScene > 0 ? '#333' : '#222'};color:${s.currentScene > 0 ? 'white' : '#555'};border:none;padding:0.5rem 1.5rem;border-radius:8px;cursor:pointer;" ${s.currentScene <= 0 ? 'disabled' : ''}>← 이전</button>
-            <span style="color:#888;font-size:0.8rem;">${s.currentScene + 1} / ${s.allScenes.length}</span>
+            <span style="color:#6B5744;font-size:0.8rem;">${s.currentScene + 1} / ${s.allScenes.length}</span>
             <button onclick="_navigateScene(1)" style="background:${s.currentScene < s.allScenes.length - 1 ? '#3D2B1F' : '#222'};color:${s.currentScene < s.allScenes.length - 1 ? 'white' : '#555'};border:none;padding:0.5rem 1.5rem;border-radius:8px;cursor:pointer;" ${s.currentScene >= s.allScenes.length - 1 ? 'disabled' : ''}>다음 →</button>
         </div>
     `;
@@ -1182,7 +1182,7 @@ async function _loadLibraryPurchased() {
                 <div style="flex-shrink:0;width:50px;height:65px;background:#e0e0e0;border-radius:6px;display:flex;align-items:center;justify-content:center;">📖</div>
                 <div style="flex:1;min-width:0;">
                     <div style="font-weight:600;font-size:0.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.bookTitle}</div>
-                    ${p.editionNumber ? `<div style="font-size:0.75rem;color:#888;">#${p.editionNumber}</div>` : ''}
+                    ${p.editionNumber ? `<div style="font-size:0.75rem;color:#6B5744;">#${p.editionNumber}</div>` : ''}
                     <div style="height:4px;background:#e0e0e0;border-radius:2px;margin-top:0.3rem;">
                         <div style="height:100%;background:#4CAF50;border-radius:2px;width:${progress}%;"></div>
                     </div>

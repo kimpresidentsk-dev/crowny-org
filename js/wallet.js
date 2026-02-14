@@ -628,7 +628,7 @@ function showMaticDeposit() {
     overlay.innerHTML = `
         <div style="background:#3D2B1F;padding:1.5rem;border-radius:16px;max-width:420px;width:100%;text-align:center;">
             <h3 style="margin-bottom:1rem;">${t('wallet.matic_deposit_title', '📥 MATIC 입금')}</h3>
-            <p style="font-size:0.85rem;color:#666;margin-bottom:1rem;">${t('wallet.matic_deposit_desc', '아래 Polygon 주소로 MATIC을 보내주세요')}</p>
+            <p style="font-size:0.85rem;color:#6B5744;margin-bottom:1rem;">${t('wallet.matic_deposit_desc', '아래 Polygon 주소로 MATIC을 보내주세요')}</p>
             <div style="background:#f5f5f5;padding:1rem;border-radius:10px;margin-bottom:1rem;word-break:break-all;font-family:monospace;font-size:0.82rem;font-weight:600;color:#3D2B1F;cursor:pointer;" onclick="navigator.clipboard&&navigator.clipboard.writeText('${addr}').then(()=>showToast(t('wallet.address_copied','주소 복사됨'),'success'))">
                 ${addr}
             </div>

@@ -181,10 +181,10 @@ async function openGroupChat(chatId) {
                 let content = '';
                 // Reply quote
                 if (msg.replyTo) {
-                    content += `<div style="border-left:3px solid #3D2B1F;padding:0.2rem 0.5rem;margin-bottom:0.3rem;background:rgba(0,102,204,0.05);border-radius:0 6px 6px 0;font-size:0.75rem;color:#666;">
+                    content += `<div style="border-left:3px solid #3D2B1F;padding:0.2rem 0.5rem;margin-bottom:0.3rem;background:rgba(0,102,204,0.05);border-radius:0 6px 6px 0;font-size:0.75rem;color:#6B5744;">
                         <div style="font-weight:600;color:#3D2B1F;font-size:0.7rem;">답장</div>${(msg.replyTo.text || '').substring(0, 60)}</div>`;
                 }
-                if (msg.forwarded) content += `<div style="font-size:0.7rem;color:#999;margin-bottom:0.2rem;font-style:italic;">↗️ 전달된 메시지</div>`;
+                if (msg.forwarded) content += `<div style="font-size:0.7rem;color:#6B5744;margin-bottom:0.2rem;font-style:italic;">↗️ 전달된 메시지</div>`;
                 const msgType = msg.type || 'text';
                 if (msgType === 'image' || msg.imageUrl) {
                     const imgUrl = msg.mediaUrl || msg.imageUrl;
@@ -192,7 +192,7 @@ async function openGroupChat(chatId) {
                 }
                 if (msgType === 'video') content += `<video src="${msg.mediaUrl}" controls style="max-width:240px;border-radius:8px;display:block;margin-bottom:0.3rem;" preload="metadata"></video>`;
                 if (msgType === 'file') content += `<a href="${msg.mediaUrl}" target="_blank" download="${msg.fileName||'file'}" style="display:flex;align-items:center;gap:0.4rem;padding:0.4rem 0.6rem;background:rgba(0,0,0,0.05);border-radius:8px;text-decoration:none;color:inherit;"><span>📄</span>${msg.fileName||'파일'}</a>`;
-                if (msgType === 'voice') content += `<div style="display:flex;align-items:center;gap:0.5rem;"><button onclick="toggleVoicePlay(this,'${msg.mediaUrl}')" style="background:none;border:none;cursor:pointer;font-size:1.2rem;">▶️</button><div style="flex:1;height:4px;background:#ddd;border-radius:2px;"><div class="voice-progress" style="width:0%;height:100%;background:#3D2B1F;border-radius:2px;"></div></div><span style="font-size:0.7rem;color:#999;">${msg.duration||''}s</span></div>`;
+                if (msgType === 'voice') content += `<div style="display:flex;align-items:center;gap:0.5rem;"><button onclick="toggleVoicePlay(this,'${msg.mediaUrl}')" style="background:none;border:none;cursor:pointer;font-size:1.2rem;">▶️</button><div style="flex:1;height:4px;background:#ddd;border-radius:2px;"><div class="voice-progress" style="width:0%;height:100%;background:#3D2B1F;border-radius:2px;"></div></div><span style="font-size:0.7rem;color:#6B5744;">${msg.duration||''}s</span></div>`;
                 if (msgType === 'sticker') content += `<span style="font-size:3rem;">${msg.text}</span>`;
                 else if (msgType === 'gif') content += `<img src="${msg.mediaUrl}" style="max-width:200px;border-radius:8px;" loading="lazy">`;
                 else if (msgType === 'share_card' && msg.shareCard) {
@@ -200,7 +200,7 @@ async function openGroupChat(chatId) {
                     content += `<div style="border:1px solid #eee;border-radius:10px;overflow:hidden;cursor:pointer;max-width:220px;">${sc.imageUrl ? `<img src="${sc.imageUrl}" style="width:100%;height:100px;object-fit:cover;">` : ''}<div style="padding:0.4rem 0.6rem;"><div style="font-size:0.8rem;font-weight:600;">${sc.name}</div>${sc.price ? `<div style="font-size:0.75rem;color:#e65100;">${sc.price}</div>` : ''}</div></div>`;
                 }
                 if (msg.tokenAmount) {
-                    content += `<div style="background:linear-gradient(135deg,#8B6914,#FFA000);color:#333;padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
+                    content += `<div style="background:linear-gradient(135deg,#8B6914,#FFA000);color:#3D2B1F;padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
                 }
                 if (msg.text && msgType !== 'sticker' && msgType !== 'gif') content += `<span>${msg.text}</span>`;
 

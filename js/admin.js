@@ -276,29 +276,29 @@ async function showAdminEditModal(userId, userData) {
     overlay.innerHTML = `
         <div style="background:#FFF8F0;padding:1.5rem;border-radius:16px;max-width:540px;width:100%;max-height:90vh;overflow-y:auto;">
             <h3 style="margin-bottom:0.3rem;">${t('admin.settings','🔑 관리자 설정')}</h3>
-            <p style="font-size:0.85rem;color:#666;margin-bottom:1rem;">${userData.nickname || t('admin.unnamed','이름없음')} · ${userData.email}</p>
+            <p style="font-size:0.85rem;color:#6B5744;margin-bottom:1rem;">${userData.nickname || t('admin.unnamed','이름없음')} · ${userData.email}</p>
             
             <div style="margin-bottom:1rem;">
-                <label style="font-size:0.8rem;color:#666;display:block;margin-bottom:0.3rem;">${t('admin.admin_level','관리자 레벨')}</label>
+                <label style="font-size:0.8rem;color:#6B5744;display:block;margin-bottom:0.3rem;">${t('admin.admin_level','관리자 레벨')}</label>
                 <select id="edit-admin-level" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;">${levelOptions}</select>
             </div>
             
             <div style="margin-bottom:1rem;">
-                <label style="font-size:0.8rem;color:#666;display:block;margin-bottom:0.4rem;">🌍 담당 국가 <span style="font-size:0.7rem;color:#999;">(다중 선택)</span></label>
+                <label style="font-size:0.8rem;color:#6B5744;display:block;margin-bottom:0.4rem;">🌍 담당 국가 <span style="font-size:0.7rem;color:#6B5744;">(다중 선택)</span></label>
                 <div id="edit-admin-country-grid" style="display:flex;flex-wrap:wrap;gap:0.3rem;">
                     ${buildCheckboxGrid('adminCountry', countries, curCountry)}
                 </div>
             </div>
             
             <div style="margin-bottom:1rem;">
-                <label style="font-size:0.8rem;color:#666;display:block;margin-bottom:0.4rem;">💼 담당 사업 <span style="font-size:0.7rem;color:#999;">(다중 선택)</span></label>
+                <label style="font-size:0.8rem;color:#6B5744;display:block;margin-bottom:0.4rem;">💼 담당 사업 <span style="font-size:0.7rem;color:#6B5744;">(다중 선택)</span></label>
                 <div id="edit-admin-business-grid" style="display:flex;flex-wrap:wrap;gap:0.3rem;">
                     ${buildCheckboxGrid('adminBusiness', businesses, curBusiness)}
                 </div>
             </div>
             
             <div style="margin-bottom:1rem;">
-                <label style="font-size:0.8rem;color:#666;display:block;margin-bottom:0.4rem;">🔧 담당 서비스 <span style="font-size:0.7rem;color:#999;">(다중 선택)</span></label>
+                <label style="font-size:0.8rem;color:#6B5744;display:block;margin-bottom:0.4rem;">🔧 담당 서비스 <span style="font-size:0.7rem;color:#6B5744;">(다중 선택)</span></label>
                 <div id="edit-admin-service-grid" style="display:flex;flex-wrap:wrap;gap:0.3rem;">
                     ${buildCheckboxGrid('adminService', services, curService)}
                 </div>
@@ -306,11 +306,11 @@ async function showAdminEditModal(userId, userData) {
             
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:1rem;">
                 <div>
-                    <label style="font-size:0.8rem;color:#666;display:block;margin-bottom:0.3rem;">📅 시작일</label>
+                    <label style="font-size:0.8rem;color:#6B5744;display:block;margin-bottom:0.3rem;">📅 시작일</label>
                     <input type="date" id="edit-admin-start" value="${startStr}" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;">
                 </div>
                 <div>
-                    <label style="font-size:0.8rem;color:#666;display:block;margin-bottom:0.3rem;">📅 종료일 (비우면 무기한)</label>
+                    <label style="font-size:0.8rem;color:#6B5744;display:block;margin-bottom:0.3rem;">📅 종료일 (비우면 무기한)</label>
                     <input type="date" id="edit-admin-end" value="${endStr}" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;">
                 </div>
             </div>
@@ -928,7 +928,7 @@ function initAdminPage() {
     availableTabs.forEach((tab, idx) => {
         const btn = document.createElement('button');
         btn.textContent = `${tab.icon} ${tab.label}`;
-        btn.style.cssText = 'padding:0.5rem 0.8rem; border:none; border-radius:8px; cursor:pointer; font-size:0.8rem; font-weight:600; white-space:nowrap; background:transparent; color:#666; transition:all 0.2s;';
+        btn.style.cssText = 'padding:0.5rem 0.8rem; border:none; border-radius:8px; cursor:pointer; font-size:0.8rem; font-weight:600; white-space:nowrap; background:transparent; color:#6B5744; transition:all 0.2s;';
         btn.onclick = () => switchAdminTab(tab.id);
         btn.id = `admin-tab-btn-${tab.id}`;
         tabBar.appendChild(btn);
@@ -959,7 +959,7 @@ function switchAdminTab(tabId) {
     // 모든 탭 버튼 비활성화
     document.querySelectorAll('#admin-tab-bar button').forEach(btn => {
         btn.style.background = 'transparent';
-        btn.style.color = '#666';
+        btn.style.color = '#6B5744';
     });
     
     // 선택 탭 활성화
@@ -1200,7 +1200,7 @@ async function createCustomToken() {
     const name = (document.getElementById('new-token-name').value || '').trim().toUpperCase();
     const fullName = (document.getElementById('new-token-fullname').value || '').trim();
     const icon = (document.getElementById('new-token-icon').value || '').trim() || '🪙';
-    const color = document.getElementById('new-token-color').value || '#888888';
+    const color = document.getElementById('new-token-color').value || '#6B5744';
     
     if (!key || !name) { showToast('토큰 KEY와 이름은 필수입니다', 'info'); return; }
     if (key.length < 2 || key.length > 10) { showToast('KEY는 2~10자 영문 소문자', 'info'); return; }
@@ -1403,7 +1403,7 @@ async function adminLoadOffchainTxLog() {
             const tx = doc.data();
             const time = tx.timestamp?.toDate ? tx.timestamp.toDate().toLocaleString('ko-KR') : '--';
             const label = typeLabels[tx.type] || tx.type;
-            const color = typeColors[tx.type] || '#666';
+            const color = typeColors[tx.type] || '#6B5744';
             const fromLabel = tx.fromEmail === 'ADMIN' ? '🔐 관리자' : (tx.fromEmail || '--');
             const toLabel = tx.toEmail === 'ADMIN' ? '🔐 관리자' : (tx.toEmail || '--');
             const amountSign = (tx.amount >= 0) ? '+' : '';
@@ -1414,8 +1414,8 @@ async function adminLoadOffchainTxLog() {
                     <span style="color:var(--accent);">${time}</span>
                 </div>
                 <div>${tx.token?.toUpperCase()||'--'} <strong>${amountSign}${(tx.amount||0).toLocaleString()}</strong></div>
-                <div style="color:#999; font-size:0.72rem;">${fromLabel} → ${toLabel}</div>
-                ${tx.reason ? `<div style="color:#888; font-size:0.7rem; font-style:italic;">"${tx.reason}"</div>` : ''}
+                <div style="color:#6B5744; font-size:0.72rem;">${fromLabel} → ${toLabel}</div>
+                ${tx.reason ? `<div style="color:#6B5744; font-size:0.7rem; font-style:italic;">"${tx.reason}"</div>` : ''}
             </div>`;
         });
         
@@ -1463,7 +1463,7 @@ async function adminLoadGivingPool() {
             html += `<div style="padding:0.4rem; border-bottom:1px solid #eee; font-size:0.78rem;">
                 <span style="color:#00897b; font-weight:600;">+${(log.givingAmount||0).toLocaleString()}</span>
                 <span style="color:var(--accent);"> from ${log.email||'--'}</span>
-                <span style="color:#999; float:right;">${time}</span>
+                <span style="color:#6B5744; float:right;">${time}</span>
             </div>`;
         });
         logEl.innerHTML = html;
@@ -1642,7 +1642,7 @@ async function loadAdminUserList() {
                 const isExpired = end < new Date();
                 periodText = isExpired 
                     ? `<span style="font-size:0.6rem;color:#c62828;font-weight:700;">⏰ 만료됨</span>`
-                    : `<span style="font-size:0.6rem;color:#666;">~${end.toLocaleDateString('ko-KR')}</span>`;
+                    : `<span style="font-size:0.6rem;color:#6B5744;">~${end.toLocaleDateString('ko-KR')}</span>`;
             }
             
             userHTML += `
@@ -1945,8 +1945,8 @@ async function adminLoadDeletedWallets() {
                     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.3rem;">
                         <div>
                             <strong style="font-size:0.85rem;">${w.name || '지갑'}</strong>
-                            <span style="font-size:0.7rem;color:#999;margin-left:0.3rem;">${userData.email || userDoc.id}</span>
-                            <div style="font-size:0.72rem;color:#666;font-family:monospace;">${w.walletAddress || '--'}</div>
+                            <span style="font-size:0.7rem;color:#6B5744;margin-left:0.3rem;">${userData.email || userDoc.id}</span>
+                            <div style="font-size:0.72rem;color:#6B5744;font-family:monospace;">${w.walletAddress || '--'}</div>
                             <div style="font-size:0.68rem;color:#c62828;">삭제: ${deletedAt}</div>
                         </div>
                         ${hasLevel(4) ? `<button onclick="adminRestoreWallet('${userDoc.id}','${wDoc.id}')" style="background:#4CAF50;color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;font-size:0.7rem;">♻️ 복구</button>` : ''}
@@ -1955,7 +1955,7 @@ async function adminLoadDeletedWallets() {
             }
         }
         
-        container.innerHTML = html || '<p style="font-size:0.85rem;color:#999;">삭제된 지갑이 없습니다.</p>';
+        container.innerHTML = html || '<p style="font-size:0.85rem;color:#6B5744;">삭제된 지갑이 없습니다.</p>';
         container.insertAdjacentHTML('beforebegin', `<div style="font-size:0.8rem;color:var(--accent);margin-bottom:0.3rem;">총 ${count}개 삭제된 지갑</div>`);
     } catch (e) {
         container.innerHTML = `<p style="color:red;">조회 실패: ${e.message}</p>`;
@@ -2382,7 +2382,7 @@ async function loadAdminLog() {
                     break;
                 default:
                     actionText = log.action;
-                    actionColor = '#666';
+                    actionColor = '#6B5744';
             }
             
             html += `
@@ -2883,7 +2883,7 @@ async function loadExchangeRate() {
                                 <div><span style="background:#e3f2fd; color:#1565c0; padding:0.1rem 0.4rem; border-radius:4px; font-size:0.7rem; font-weight:700;">${tokenLabel}</span> <strong>${h.oldRate} → ${h.newRate}</strong></div>
                                 <span style="color:var(--accent); font-size:0.7rem;">${date}</span>
                             </div>
-                            <div style="color:#666; font-size:0.75rem; margin-top:0.2rem;">📝 ${h.reason || '-'}</div>
+                            <div style="color:#6B5744; font-size:0.75rem; margin-top:0.2rem;">📝 ${h.reason || '-'}</div>
                             <div style="color:var(--accent); font-size:0.7rem;">${h.adminEmail}</div>
                         </div>`;
                     }).join('');
@@ -3029,7 +3029,7 @@ async function loadCouponList() {
 
     try {
         const snap = await db.collection('coupons').orderBy('createdAt', 'desc').get();
-        if (snap.empty) { listEl.innerHTML = '<p style="color:#999;">생성된 쿠폰이 없습니다</p>'; return; }
+        if (snap.empty) { listEl.innerHTML = '<p style="color:#6B5744;">생성된 쿠폰이 없습니다</p>'; return; }
 
         const tokenNames = { crtd: 'CRTD', crac: 'CRAC', crgc: 'CRGC', creb: 'CREB' };
         let html = '<table style="width:100%; border-collapse:collapse; font-size:0.8rem;"><tr style="background:#f5f5f5;"><th style="padding:0.5rem; text-align:left;">쿠폰</th><th>토큰</th><th>수량</th><th>사용</th><th>상태</th><th>관리</th></tr>';
@@ -3044,7 +3044,7 @@ async function loadCouponList() {
             html += `<tr style="border-bottom:1px solid #eee;">
                 <td style="padding:0.5rem;">
                     <div style="font-weight:700;">${couponName}</div>
-                    <div style="font-size:0.7rem; color:#888; font-family:monospace;">코드: ${c.code}</div>
+                    <div style="font-size:0.7rem; color:#6B5744; font-family:monospace;">코드: ${c.code}</div>
                 </td>
                 <td style="text-align:center;">${tokenNames[c.tokenKey] || c.tokenKey}</td>
                 <td style="text-align:center;">${c.amount.toLocaleString()}</td>
@@ -3059,7 +3059,7 @@ async function loadCouponList() {
                 </td>
             </tr>`;
             if (c.description) {
-                html += `<tr><td colspan="6" style="padding:0.2rem 0.5rem; font-size:0.7rem; color:#999;">📝 ${c.description} | 만료: ${expiry}</td></tr>`;
+                html += `<tr><td colspan="6" style="padding:0.2rem 0.5rem; font-size:0.7rem; color:#6B5744;">📝 ${c.description} | 만료: ${expiry}</td></tr>`;
             }
         });
         html += '</table>';
@@ -3111,7 +3111,7 @@ async function viewCouponLog(couponId, code) {
         if (snap.empty) {
             // fallback: coupons/{id}/usage 서브컬렉션
             const snap2 = await db.collection('coupons').doc(couponId).collection('usage').orderBy('usedAt', 'desc').limit(100).get();
-            if (snap2.empty) { listEl.innerHTML = `<p style="color:#999;">📜 "${code}" 사용 내역이 없습니다.</p>`; return; }
+            if (snap2.empty) { listEl.innerHTML = `<p style="color:#6B5744;">📜 "${code}" 사용 내역이 없습니다.</p>`; return; }
             renderCouponLog(snap2, listEl, code);
             return;
         }
@@ -3120,7 +3120,7 @@ async function viewCouponLog(couponId, code) {
         // index 없을 수 있으므로 orderBy 없이 재시도
         try {
             const snap = await db.collection('coupon_logs').where('couponId', '==', couponId).limit(100).get();
-            if (snap.empty) { listEl.innerHTML = `<p style="color:#999;">📜 "${code}" 사용 내역이 없습니다.</p>`; return; }
+            if (snap.empty) { listEl.innerHTML = `<p style="color:#6B5744;">📜 "${code}" 사용 내역이 없습니다.</p>`; return; }
             renderCouponLog(snap, listEl, code);
         } catch (e2) {
             listEl.innerHTML = `<p style="color:red;">로그 조회 실패: ${e2.message}</p>`;
@@ -3183,10 +3183,10 @@ async function loadSuperAdminWallets() {
         
         // Format balances
         function formatBal(walletData) {
-            if (!walletData) return '<span style="color:#999;">미생성</span>';
+            if (!walletData) return '<span style="color:#6B5744;">미생성</span>';
             const bal = walletData.offchainBalances || walletData.balances || {};
             const entries = Object.entries(bal).filter(([,v]) => v > 0);
-            if (entries.length === 0) return '<span style="color:#999;">잔액 없음</span>';
+            if (entries.length === 0) return '<span style="color:#6B5744;">잔액 없음</span>';
             return entries.map(([k, v]) => `<span style="font-size:0.8rem;">${k.toUpperCase()}: <strong>${v.toLocaleString()}</strong></span>`).join(' · ');
         }
         
@@ -3200,7 +3200,7 @@ async function loadSuperAdminWallets() {
                         <span style="font-size:1.5rem;">${icon}</span>
                         <div>
                             <div style="font-weight:700;font-size:0.95rem;">${label}</div>
-                            <div style="font-size:0.7rem;color:#999;">${type === 'original' ? '원본 자산 보관 (안전 금고)' : type === 'operating' ? '일상 운영/거래용' : '기존 기본 지갑'}</div>
+                            <div style="font-size:0.7rem;color:#6B5744;">${type === 'original' ? '원본 자산 보관 (안전 금고)' : type === 'operating' ? '일상 운영/거래용' : '기존 기본 지갑'}</div>
                         </div>
                     </div>
                     <div style="margin-bottom:0.8rem;">${formatBal(data)}</div>
@@ -3215,7 +3215,7 @@ async function loadSuperAdminWallets() {
         container.innerHTML = `
             <div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;margin-bottom:1rem;">
                 <h3 style="margin-bottom:0.3rem;">🏦 슈퍼관리자 계좌 관리</h3>
-                <p style="font-size:0.78rem;color:#666;margin-bottom:1.2rem;">오리지널 계좌(금고)와 운영 계좌를 분리 관리합니다. 오리지널 계좌 출금 시 2단계 확인이 필요합니다.</p>
+                <p style="font-size:0.78rem;color:#6B5744;margin-bottom:1.2rem;">오리지널 계좌(금고)와 운영 계좌를 분리 관리합니다. 오리지널 계좌 출금 시 2단계 확인이 필요합니다.</p>
                 
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;">
                     ${walletCard('original', '오리지널 계좌', '🔐', '#FF6D00', wallets.original)}
@@ -3226,7 +3226,7 @@ async function loadSuperAdminWallets() {
             
             <div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;">
                 <h4 style="margin-bottom:0.8rem;">📜 내부 이체 로그</h4>
-                <div id="super-wallet-log" style="max-height:300px;overflow-y:auto;"><p style="color:#999;font-size:0.8rem;">로그 로딩 중...</p></div>
+                <div id="super-wallet-log" style="max-height:300px;overflow-y:auto;"><p style="color:#6B5744;font-size:0.8rem;">로그 로딩 중...</p></div>
             </div>`;
         
         // Load transfer logs
@@ -3279,20 +3279,20 @@ async function showInternalTransfer(fromType) {
     overlay.innerHTML = `
         <div style="background:#FFF8F0;padding:1.5rem;border-radius:16px;max-width:400px;width:100%;">
             <h3 style="margin-bottom:0.5rem;">↔️ 내부 이체</h3>
-            <p style="font-size:0.8rem;color:#666;margin-bottom:1rem;">보내는 계좌: <strong>${labels[fromType]}</strong></p>
+            <p style="font-size:0.8rem;color:#6B5744;margin-bottom:1rem;">보내는 계좌: <strong>${labels[fromType]}</strong></p>
             
             <div style="margin-bottom:0.8rem;">
-                <label style="font-size:0.8rem;color:#666;">받는 계좌</label>
+                <label style="font-size:0.8rem;color:#6B5744;">받는 계좌</label>
                 <select id="transfer-to" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;">
                     ${targets.map(t => `<option value="${t}">${labels[t]}</option>`).join('')}
                 </select>
             </div>
             <div style="margin-bottom:0.8rem;">
-                <label style="font-size:0.8rem;color:#666;">토큰</label>
+                <label style="font-size:0.8rem;color:#6B5744;">토큰</label>
                 <input type="text" id="transfer-token" placeholder="예: crtd" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;">
             </div>
             <div style="margin-bottom:1rem;">
-                <label style="font-size:0.8rem;color:#666;">수량</label>
+                <label style="font-size:0.8rem;color:#6B5744;">수량</label>
                 <input type="number" id="transfer-amount" min="1" placeholder="0" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;">
             </div>
             
@@ -3378,7 +3378,7 @@ async function loadSuperWalletLog() {
             .where('action', '==', 'super_internal_transfer')
             .orderBy('timestamp', 'desc').limit(20).get();
         
-        if (logs.empty) { container.innerHTML = '<p style="font-size:0.8rem;color:#999;">이체 내역 없음</p>'; return; }
+        if (logs.empty) { container.innerHTML = '<p style="font-size:0.8rem;color:#6B5744;">이체 내역 없음</p>'; return; }
         
         const labels = { original: '🔐 오리지널', operating: '⚡ 운영', default: '💼 기본' };
         let html = '';
@@ -3388,7 +3388,7 @@ async function loadSuperWalletLog() {
             html += `<div style="padding:0.5rem;border-bottom:1px solid #eee;font-size:0.8rem;">
                 <div style="display:flex;justify-content:space-between;">
                     <span><strong>${d.amount?.toLocaleString()} ${(d.token||'').toUpperCase()}</strong> ${labels[d.fromWallet]||d.fromWallet} → ${labels[d.toWallet]||d.toWallet}</span>
-                    <span style="color:#999;font-size:0.72rem;">${time}</span>
+                    <span style="color:#6B5744;font-size:0.72rem;">${time}</span>
                 </div>
             </div>`;
         });
@@ -3596,7 +3596,7 @@ function renderDashboardStats(stats) {
     const tokenEl = el('dash-tx-by-token');
     if (tokenEl) {
         tokenEl.innerHTML = Object.entries(txByToken).map(([tk, vol]) => {
-            const info = typeof getTokenInfo === 'function' ? getTokenInfo(tk.toLowerCase()) : { icon: '🪙', color: '#888' };
+            const info = typeof getTokenInfo === 'function' ? getTokenInfo(tk.toLowerCase()) : { icon: '🪙', color: '#6B5744' };
             return `<div style="background:${info.color}11; border:1px solid ${info.color}33; padding:0.5rem; border-radius:8px; text-align:center;">
                 <div style="font-size:0.7rem; color:${info.color};">${info.icon || '🪙'} ${tk}</div>
                 <div style="font-size:1rem; font-weight:700;">${vol.toLocaleString()}</div>
@@ -3614,7 +3614,7 @@ function renderDashboardStats(stats) {
             return `<div style="background:#FFF8F0; border:1px solid ${color}33; border-left:4px solid ${color}; padding:1rem; border-radius:10px;">
                 <div style="font-weight:700; margin-bottom:0.5rem;">${sec.icon} ${sec.label}</div>
                 ${(sec.items || []).map(item => `<div style="display:flex; justify-content:space-between; font-size:0.82rem; padding:0.2rem 0;">
-                    <span style="color:#666;">${item.label}</span>
+                    <span style="color:#6B5744;">${item.label}</span>
                     <strong>${item.value}</strong>
                 </div>`).join('')}
             </div>`;
@@ -3633,7 +3633,7 @@ function renderDashboardStats(stats) {
             return `<div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
                 <span style="font-size:0.7rem; font-weight:700; color:#1565c0;">${count}</span>
                 <div style="width:100%; background:linear-gradient(180deg,#42a5f5,#1565c0); border-radius:4px 4px 0 0; height:${pct}%; min-height:4px; transition:height 0.3s;"></div>
-                <span style="font-size:0.65rem; color:#999;">${dayLabel}</span>
+                <span style="font-size:0.65rem; color:#6B5744;">${dayLabel}</span>
             </div>`;
         }).join('');
     }
@@ -3643,7 +3643,7 @@ function renderDashboardStats(stats) {
     if (chartTokenEl) {
         const entries = Object.entries(txByToken);
         if (entries.length === 0) {
-            chartTokenEl.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;color:#999;font-size:0.85rem;">거래 데이터 없음</div>';
+            chartTokenEl.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;color:#6B5744;font-size:0.85rem;">거래 데이터 없음</div>';
         } else {
             const maxVol = Math.max(...entries.map(([,v]) => v), 1);
             const tokenColors = { CRTD: '#FF6D00', CRAC: '#E91E63', CRGC: '#00BFA5', CREB: '#2E7D32' };
@@ -3653,7 +3653,7 @@ function renderDashboardStats(stats) {
                 return `<div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
                     <span style="font-size:0.68rem; font-weight:700; color:${color};">${vol.toLocaleString()}</span>
                     <div style="width:100%; background:linear-gradient(180deg,${color}cc,${color}); border-radius:4px 4px 0 0; height:${pct}%; min-height:4px; transition:height 0.3s;"></div>
-                    <span style="font-size:0.7rem; color:#666; font-weight:600;">${tk}</span>
+                    <span style="font-size:0.7rem; color:#6B5744; font-weight:600;">${tk}</span>
                 </div>`;
             }).join('');
         }
@@ -3757,7 +3757,7 @@ async function loadAdminReports() {
                 ${r.detail ? `<div style="font-size:0.8rem;color:#555;">상세: ${r.detail}</div>` : ''}
                 <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
                     <button onclick="handleReport('${d.id}','confirmed')" style="flex:1;background:#f44336;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-size:0.8rem;">🗑️ 삭제조치</button>
-                    <button onclick="handleReport('${d.id}','dismissed')" style="flex:1;background:#999;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-size:0.8rem;">무시</button>
+                    <button onclick="handleReport('${d.id}','dismissed')" style="flex:1;background:#6B5744;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-size:0.8rem;">무시</button>
                 </div>
             </div>`;
         });
@@ -3823,7 +3823,7 @@ async function loadRewardSettingsTab() {
         </div>
     `).join('');
 
-    const logsHTML = logs.length === 0 ? `<p style="color:#888;font-size:0.85rem;">${t('admin.rw_no_logs','지급 내역 없음')}</p>` :
+    const logsHTML = logs.length === 0 ? `<p style="color:#6B5744;font-size:0.85rem;">${t('admin.rw_no_logs','지급 내역 없음')}</p>` :
         `<div style="max-height:300px;overflow-y:auto;">
         <table style="width:100%;font-size:0.8rem;border-collapse:collapse;">
             <tr style="background:#f0f0f0;"><th style="padding:0.4rem;text-align:left;">UID</th><th>유형</th><th>금액</th><th>날짜</th></tr>
@@ -3848,7 +3848,7 @@ async function loadRewardSettingsTab() {
                     <span class="toggle-slider"></span>
                 </label>
             </div>
-            <p style="font-size:0.75rem;color:#888;margin-bottom:0.5rem;">${t('admin.rw_signup_desc','가입 순번에 따라 CRTD를 지급합니다.')}</p>
+            <p style="font-size:0.75rem;color:#6B5744;margin-bottom:0.5rem;">${t('admin.rw_signup_desc','가입 순번에 따라 CRTD를 지급합니다.')}</p>
             <div id="rw-tiers-container">${tiersHTML}</div>
             <button onclick="addRewardTier()" style="background:#eee;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.8rem;margin-top:0.3rem;">+ ${t('admin.rw_add_tier','구간 추가')}</button>
         </div>

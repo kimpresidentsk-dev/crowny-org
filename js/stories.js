@@ -15,7 +15,7 @@ async function openStoryUpload() {
     overlay.innerHTML = `
     <div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:20px;max-width:400px;width:100%;">
         <h3 style="margin-bottom:1rem;text-align:center;">📸 스토리 만들기</h3>
-        <div id="story-preview-area" style="width:100%;aspect-ratio:9/16;max-height:50vh;background:#111;border-radius:12px;margin-bottom:1rem;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+        <div id="story-preview-area" style="width:100%;aspect-ratio:9/16;max-height:50vh;background:#3D2B1F;border-radius:12px;margin-bottom:1rem;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;">
             <span style="color:var(--text-muted,#6B5744);font-size:0.9rem;">사진 또는 영상을 선택하세요</span>
         </div>
         <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">

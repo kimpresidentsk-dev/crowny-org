@@ -150,7 +150,7 @@
                     <span style="color:#888; font-size:0.85rem;" data-i18n="common.or">또는</span>
                     <hr style="flex:1; border:none; border-top:1px solid #ddd;">
                 </div>
-                <button onclick="loginWithGoogle()" class="btn-google" style="background:#FFF8F0; color:#333; border:1px solid #ddd; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-size:0.95rem; display:flex; align-items:center; justify-content:center; gap:0.5rem;">
+                <button onclick="loginWithGoogle()" class="btn-google" style="background:#FFF8F0; color:#3D2B1F; border:1px solid #ddd; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-size:0.95rem; display:flex; align-items:center; justify-content:center; gap:0.5rem;">
                     <img loading="lazy" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width:18px; height:18px;" data-i18n="auth.google_login"> Google로 로그인
                 </button>
                 <p style="margin-top:1rem;" data-i18n-html="auth.no_account_link">계정이 없으신가요? <a href="#" onclick="showSignup()">회원가입</a></p>
@@ -168,7 +168,7 @@
                     <span style="color:#888; font-size:0.85rem;">또는</span>
                     <hr style="flex:1; border:none; border-top:1px solid #ddd;">
                 </div>
-                <button onclick="loginWithGoogle()" class="btn-google" style="background:#FFF8F0; color:#333; border:1px solid #ddd; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-size:0.95rem; display:flex; align-items:center; justify-content:center; gap:0.5rem;">
+                <button onclick="loginWithGoogle()" class="btn-google" style="background:#FFF8F0; color:#3D2B1F; border:1px solid #ddd; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-size:0.95rem; display:flex; align-items:center; justify-content:center; gap:0.5rem;">
                     <img loading="lazy" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width:18px; height:18px;" data-i18n="auth.google_signup"> Google로 가입
                 </button>
                 <p style="margin-top:1rem;" data-i18n-html="auth.has_account_link">이미 계정이 있으신가요? <a href="#" onclick="showLogin()">로그인</a></p>
@@ -1440,28 +1440,28 @@
                     
                     <!-- 탭 설정 + 타임존 -->
                     <div style="display:flex; flex-wrap:wrap; gap:4px; padding:6px 10px; background:#F7F3ED; border-radius:8px; margin-bottom:4px; align-items:center;">
-                        <select id="tab-symbol" onchange="updateTabSetting('symbol')" style="background:#6B5744; color:#00ff88; border:1px solid #333; border-radius:4px; padding:3px 6px; font-size:0.75rem; font-weight:700;">
+                        <select id="tab-symbol" onchange="updateTabSetting('symbol')" style="background:#6B5744; color:#00ff88; border:1px solid #3D2B1F; border-radius:4px; padding:3px 6px; font-size:0.75rem; font-weight:700;">
                             <option value="NQ">NQ ×$20</option>
                             <option value="MNQ" selected>MNQ ×$2</option>
                         </select>
-                        <select id="tab-chart-type" onchange="updateTabSetting('chartType')" style="background:#6B5744; color:#ccc; border:1px solid #333; border-radius:4px; padding:3px 6px; font-size:0.75rem;">
+                        <select id="tab-chart-type" onchange="updateTabSetting('chartType')" style="background:#6B5744; color:#ccc; border:1px solid #3D2B1F; border-radius:4px; padding:3px 6px; font-size:0.75rem;">
                             <option value="time">⏱ 타임</option>
                             <option value="tick">틱</option>
                         </select>
-                        <select id="tab-interval" onchange="updateTabSetting('interval')" style="background:#6B5744; color:#ccc; border:1px solid #333; border-radius:4px; padding:3px 6px; font-size:0.75rem;">
+                        <select id="tab-interval" onchange="updateTabSetting('interval')" style="background:#6B5744; color:#ccc; border:1px solid #3D2B1F; border-radius:4px; padding:3px 6px; font-size:0.75rem;">
                             <option value="60">1분</option>
                             <option value="180">3분</option>
                             <option value="300">5분</option>
                             <option value="900">15분</option>
                         </select>
-                        <select id="tab-tick-count" onchange="updateTabSetting('tickCount')" style="display:none; background:#6B5744; color:#ccc; border:1px solid #333; border-radius:4px; padding:3px 6px; font-size:0.75rem;">
+                        <select id="tab-tick-count" onchange="updateTabSetting('tickCount')" style="display:none; background:#6B5744; color:#ccc; border:1px solid #3D2B1F; border-radius:4px; padding:3px 6px; font-size:0.75rem;">
                             <option value="50">50틱</option>
                             <option value="100">100틱</option>
                             <option value="200">200틱</option>
                             <option value="500">500틱</option>
                         </select>
                         <div style="flex:1;"></div>
-                        <select id="tz-selector" onchange="changeTimezone(this.value)" style="background:#6B5744; color:#ccc; border:1px solid #333; border-radius:4px; padding:2px 6px; font-size:0.7rem;">
+                        <select id="tz-selector" onchange="changeTimezone(this.value)" style="background:#6B5744; color:#ccc; border:1px solid #3D2B1F; border-radius:4px; padding:2px 6px; font-size:0.7rem;">
                             <option value="KR" data-i18n="trading.timezone.seoul">🇰🇷 서울</option>
                             <option value="US" data-i18n="trading.timezone.newyork">🇺🇸 뉴욕</option>
                             <option value="JP" data-i18n="trading.timezone.tokyo">🇯🇵 도쿄</option>
@@ -1469,8 +1469,8 @@
                             <option value="UTC">🌐 UTC</option>
                         </select>
                         <div style="display:flex; gap:4px; margin-left:auto;">
-                            <button onclick="scrollToLatest()" style="background:#6B5744; color:#00ff88; border:1px solid #333; border-radius:4px; padding:2px 8px; font-size:0.7rem; cursor:pointer;">▶ 정렬</button>
-                            <button onclick="toggleMASettings()" style="background:#6B5744; color:#ffab40; border:1px solid #333; border-radius:4px; padding:2px 8px; font-size:0.7rem; cursor:pointer;">📈 MA</button>
+                            <button onclick="scrollToLatest()" style="background:#6B5744; color:#00ff88; border:1px solid #3D2B1F; border-radius:4px; padding:2px 8px; font-size:0.7rem; cursor:pointer;">▶ 정렬</button>
+                            <button onclick="toggleMASettings()" style="background:#6B5744; color:#ffab40; border:1px solid #3D2B1F; border-radius:4px; padding:2px 8px; font-size:0.7rem; cursor:pointer;">📈 MA</button>
                         </div>
                     </div>
                     
@@ -1480,18 +1480,18 @@
                         <label style="float:right; font-size:0.65rem; color:#888; cursor:pointer;"><input type="checkbox" id="nq-ma-label-show" onchange="applyMASettings()" style="margin:0 2px 0 0; vertical-align:middle;"> 이름표시</label>
                         <div style="display:flex; flex-wrap:wrap; gap:4px; align-items:center; margin-top:4px;">
                             <input type="checkbox" id="nq-ma1-show" checked onchange="applyMASettings()" style="margin:0;">
-                            <select id="nq-ma1-type" onchange="applyMASettings()" style="background:#6B5744; color:#aaa; border:1px solid #333; border-radius:3px; padding:1px 2px; font-size:0.65rem;"><option value="SMA">SMA</option><option value="EMA">EMA</option></select>
-                            <input type="number" id="nq-ma1-period" value="5" style="width:32px; background:#6B5744; color:#FFF8F0; border:1px solid #333; border-radius:3px; padding:1px 3px; font-size:0.7rem; text-align:center;">
+                            <select id="nq-ma1-type" onchange="applyMASettings()" style="background:#6B5744; color:#aaa; border:1px solid #3D2B1F; border-radius:3px; padding:1px 2px; font-size:0.65rem;"><option value="SMA">SMA</option><option value="EMA">EMA</option></select>
+                            <input type="number" id="nq-ma1-period" value="5" style="width:32px; background:#6B5744; color:#FFF8F0; border:1px solid #3D2B1F; border-radius:3px; padding:1px 3px; font-size:0.7rem; text-align:center;">
                             <input type="color" id="nq-ma1-color" value="#ffeb3b" onchange="applyMASettings()" style="width:20px; height:20px; border:none; cursor:pointer; padding:0;">
                             <span style="margin-left:2px;"></span>
                             <input type="checkbox" id="nq-ma2-show" checked onchange="applyMASettings()" style="margin:0;">
-                            <select id="nq-ma2-type" onchange="applyMASettings()" style="background:#6B5744; color:#aaa; border:1px solid #333; border-radius:3px; padding:1px 2px; font-size:0.65rem;"><option value="SMA">SMA</option><option value="EMA">EMA</option></select>
-                            <input type="number" id="nq-ma2-period" value="20" style="width:32px; background:#6B5744; color:#FFF8F0; border:1px solid #333; border-radius:3px; padding:1px 3px; font-size:0.7rem; text-align:center;">
+                            <select id="nq-ma2-type" onchange="applyMASettings()" style="background:#6B5744; color:#aaa; border:1px solid #3D2B1F; border-radius:3px; padding:1px 2px; font-size:0.65rem;"><option value="SMA">SMA</option><option value="EMA">EMA</option></select>
+                            <input type="number" id="nq-ma2-period" value="20" style="width:32px; background:#6B5744; color:#FFF8F0; border:1px solid #3D2B1F; border-radius:3px; padding:1px 3px; font-size:0.7rem; text-align:center;">
                             <input type="color" id="nq-ma2-color" value="#FFA500" onchange="applyMASettings()" style="width:20px; height:20px; border:none; cursor:pointer; padding:0;">
                             <span style="margin-left:2px;"></span>
                             <input type="checkbox" id="nq-ma3-show" checked onchange="applyMASettings()" style="margin:0;">
-                            <select id="nq-ma3-type" onchange="applyMASettings()" style="background:#6B5744; color:#aaa; border:1px solid #333; border-radius:3px; padding:1px 2px; font-size:0.65rem;"><option value="SMA">SMA</option><option value="EMA">EMA</option></select>
-                            <input type="number" id="nq-ma3-period" value="60" style="width:32px; background:#6B5744; color:#FFF8F0; border:1px solid #333; border-radius:3px; padding:1px 3px; font-size:0.7rem; text-align:center;">
+                            <select id="nq-ma3-type" onchange="applyMASettings()" style="background:#6B5744; color:#aaa; border:1px solid #3D2B1F; border-radius:3px; padding:1px 2px; font-size:0.65rem;"><option value="SMA">SMA</option><option value="EMA">EMA</option></select>
+                            <input type="number" id="nq-ma3-period" value="60" style="width:32px; background:#6B5744; color:#FFF8F0; border:1px solid #3D2B1F; border-radius:3px; padding:1px 3px; font-size:0.7rem; text-align:center;">
                             <input type="color" id="nq-ma3-color" value="#FF3333" onchange="applyMASettings()" style="width:20px; height:20px; border:none; cursor:pointer; padding:0;">
                         </div>
                         <button onclick="applyMASettings(); this.textContent='✅ 저장됨!'; setTimeout(()=>this.textContent='✅ 적용',1500);" style="background:#6B5744; color:#ccc; border:none; border-radius:4px; padding:8px 12px; font-size:0.8rem; cursor:pointer; margin-top:6px; width:100%; touch-action:manipulation; -webkit-tap-highlight-color:transparent;">✅ 적용</button>
@@ -1532,11 +1532,11 @@
                     <!-- ★ 퀵 SL/TP 설정 바 -->
                     <div style="display:flex; align-items:center; gap:8px; padding:6px 8px; background:#3D2B1F; border-radius:6px; margin-top:4px; font-size:0.75rem;">
                         <span style="color:#ff4444; font-weight:600;">SL</span>
-                        <input type="number" id="stop-loss-points" value="50" step="5" min="1" style="width:50px; background:#0f0f23; color:#ff4444; border:1px solid #333; border-radius:3px; padding:3px 5px; text-align:center; font-size:0.8rem;">
+                        <input type="number" id="stop-loss-points" value="50" step="5" min="1" style="width:50px; background:#0f0f23; color:#ff4444; border:1px solid #3D2B1F; border-radius:3px; padding:3px 5px; text-align:center; font-size:0.8rem;">
                         <span style="color:#888;">pt</span>
                         <span style="color:#555;">|</span>
                         <span style="color:#00cc00; font-weight:600;">TP</span>
-                        <input type="number" id="take-profit-points" value="100" step="5" min="1" style="width:50px; background:#0f0f23; color:#00cc00; border:1px solid #333; border-radius:3px; padding:3px 5px; text-align:center; font-size:0.8rem;">
+                        <input type="number" id="take-profit-points" value="100" step="5" min="1" style="width:50px; background:#0f0f23; color:#00cc00; border:1px solid #3D2B1F; border-radius:3px; padding:3px 5px; text-align:center; font-size:0.8rem;">
                         <span style="color:#888;">pt</span>
                         <span style="color:#555;">|</span>
                         <label style="display:flex; align-items:center; gap:3px; cursor:pointer;">
@@ -2086,7 +2086,7 @@
     <div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(61,43,31,0.5); z-index:99998; align-items:center; justify-content:center;">
         <div style="background:#FFF8F0; padding:2rem; border-radius:12px; text-align:center;">
             <div style="width:40px; height:40px; border:4px solid #ddd; border-top:4px solid #3D2B1F; border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 1rem;"></div>
-            <p id="loading-text" style="color:#333;" data-i18n="common.processing">처리 중...</p>
+            <p id="loading-text" style="color:#3D2B1F;" data-i18n="common.processing">처리 중...</p>
         </div>
     </div>
     

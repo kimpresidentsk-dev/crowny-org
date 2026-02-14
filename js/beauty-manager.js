@@ -414,7 +414,7 @@ JSON만 출력하세요.`;
                     <div>
                         <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:0.2rem;">
                             <span>${metricsKo[key] || key}</span>
-                            <span style="font-weight:700;color:${colors[key] || '#666'};">${val}점</span>
+                            <span style="font-weight:700;color:${colors[key] || '#6B5744'};">${val}점</span>
                         </div>
                         <div style="background:#f0f0f0;border-radius:10px;height:8px;overflow:hidden;">
                             <div style="background:${colors[key] || '#E91E63'};height:100%;width:${val}%;border-radius:10px;transition:width 0.5s;"></div>
@@ -479,7 +479,7 @@ JSON만 출력하세요.`;
                         const prev = i > 0 ? (entries[i - 1].scores?.overall || 0) : overall;
                         const diff = overall - prev;
                         const diffText = i === 0 ? '기준' : (diff > 0 ? `+${diff} ↑` : diff < 0 ? `${diff} ↓` : '변동 없음');
-                        const diffColor = diff > 0 ? '#4CAF50' : diff < 0 ? '#F44336' : '#888';
+                        const diffColor = diff > 0 ? '#4CAF50' : diff < 0 ? '#F44336' : '#6B5744';
                         return `
                             <div style="display:flex;align-items:center;gap:0.8rem;">
                                 <div style="width:50px;text-align:center;font-size:0.7rem;color:var(--accent);">${date}</div>
@@ -520,7 +520,7 @@ JSON만 출력하세요.`;
                 .orderBy('createdAt', 'desc').limit(20).get();
 
             if (snap.empty) {
-                container.innerHTML = '<p style="text-align:center;color:#888;padding:1rem;">대기 중인 분석 요청이 없습니다.</p>';
+                container.innerHTML = '<p style="text-align:center;color:#6B5744;padding:1rem;">대기 중인 분석 요청이 없습니다.</p>';
                 return;
             }
 
@@ -531,7 +531,7 @@ JSON만 출력하세요.`;
                     <div style="border:1px solid #ddd;border-radius:8px;padding:0.8rem;margin-bottom:0.5rem;">
                         <div style="display:flex;justify-content:space-between;align-items:center;">
                             <strong>${d.userNickname || d.userId}</strong>
-                            <span style="font-size:0.75rem;color:#888;">${date} · 📸 ${d.photoCount}장</span>
+                            <span style="font-size:0.75rem;color:#6B5744;">${date} · 📸 ${d.photoCount}장</span>
                         </div>
                         <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
                             <button onclick="BEAUTY.adminAnalyze('${doc.id}','${d.userId}')" 

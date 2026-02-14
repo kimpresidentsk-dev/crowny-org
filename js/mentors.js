@@ -566,7 +566,7 @@ function renderMentorPanel() {
     const signalConfig = {
         buy: { label: '매수', color: '#00cc66', bg: 'rgba(0,204,102,0.15)', emoji: '🟢' },
         sell: { label: '매도', color: '#ff4444', bg: 'rgba(255,68,68,0.15)', emoji: '🔴' },
-        hold: { label: '유지', color: '#888888', bg: 'rgba(136,136,136,0.1)', emoji: '⚪' },
+        hold: { label: '유지', color: '#6B5744', bg: 'rgba(136,136,136,0.1)', emoji: '⚪' },
         wait: { label: '관망', color: '#ffaa00', bg: 'rgba(255,170,0,0.15)', emoji: '🟡' },
     };
 
@@ -590,7 +590,7 @@ function renderMentorPanel() {
                      style="position:absolute; top:-4px; right:-4px; font-size:12px; cursor:pointer; 
                             background:${isEnabled ? 'rgba(0,200,0,0.15)' : 'rgba(150,150,150,0.2)'}; 
                             border-radius:50%; width:22px; height:22px; display:flex; align-items:center; 
-                            justify-content:center; border:1px solid ${isEnabled ? '#00cc66' : '#999'};"
+                            justify-content:center; border:1px solid ${isEnabled ? '#00cc66' : '#6B5744'};"
                      title="${mentor.name} 알림 ${isEnabled ? 'ON' : 'OFF'}">${bellIcon}</div>
             </div>`;
     }
@@ -608,7 +608,7 @@ function renderMentorPanel() {
         const mentorEnabled = isMentorEnabled(activeMentorId);
         const filterBadge = mentorEnabled 
             ? '<span style="font-size:0.7rem; color:#00cc66;">🔔 알림 ON</span>'
-            : '<span style="font-size:0.7rem; color:#999;">🔕 알림 OFF</span>';
+            : '<span style="font-size:0.7rem; color:#6B5744;">🔕 알림 OFF</span>';
         html += `
             <div class="mentor-detail-card" style="border-left:4px solid ${mentor.color}; background:${sc.bg}; ${mentorEnabled ? '' : 'opacity:0.7;'}">
                 <div class="mentor-detail-header">

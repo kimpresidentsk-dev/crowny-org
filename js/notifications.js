@@ -176,7 +176,7 @@ function initNotifBell() {
                 <strong style="font-size:0.9rem;">🔔 알림</strong>
                 <div style="display:flex; gap:0.5rem;">
                     <button onclick="markAllRead()" style="background:none; border:none; color:#3D2B1F; font-size:0.75rem; cursor:pointer; font-weight:600;">모두 읽음</button>
-                    <button onclick="openNotifSettings()" style="background:none; border:none; color:#888; font-size:0.85rem; cursor:pointer;">⚙️</button>
+                    <button onclick="openNotifSettings()" style="background:none; border:none; color:#6B5744; font-size:0.85rem; cursor:pointer;">⚙️</button>
                 </div>
             </div>
             <div id="notif-list"></div>

@@ -191,7 +191,7 @@ const MOVEMENT = (() => {
                 <h4 style="margin:0 0 0.5rem 0;font-size:0.9rem;">📋 ${stage.name} 운동 목록</h4>
                 ${stage.exercises.map((ex, i) => `
                     <div style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0;border-bottom:1px solid #f0f0f0;${i === exerciseIndex ? 'background:#fff3e0;margin:0 -0.5rem;padding:0.5rem;border-radius:6px;' : ''}">
-                        <span style="font-size:0.8rem;width:20px;text-align:center;color:${i === exerciseIndex ? '#E91E63' : '#888'};">${i === exerciseIndex ? '▶' : (i + 1)}</span>
+                        <span style="font-size:0.8rem;width:20px;text-align:center;color:${i === exerciseIndex ? '#E91E63' : '#6B5744'};">${i === exerciseIndex ? '▶' : (i + 1)}</span>
                         <div style="flex:1;">
                             <div style="font-size:0.8rem;font-weight:${i === exerciseIndex ? '700' : '400'};">${ex.name}</div>
                             <div style="font-size:0.7rem;color:var(--accent);">${ex.duration}</div>

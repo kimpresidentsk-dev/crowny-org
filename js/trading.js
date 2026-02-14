@@ -160,8 +160,8 @@ function applyTradingPermissions() {
     if (badge) {
         const mnqText = tier.MNQ > 0 ? `MNQ ×${tier.MNQ}` : 'MNQ 🔒';
         const nqText = tier.NQ > 0 ? `NQ ×${tier.NQ}` : 'NQ 🔒';
-        const mnqColor = tier.MNQ > 0 ? '#00cc00' : '#666';
-        const nqColor = tier.NQ > 0 ? '#00cc00' : '#666';
+        const mnqColor = tier.MNQ > 0 ? '#00cc00' : '#6B5744';
+        const nqColor = tier.NQ > 0 ? '#00cc00' : '#6B5744';
         const copyAccounts = getCopyAccounts();
         const copyBadge = copyAccounts > 1 ? `<span style="margin-left:8px; color:#ff9800; font-weight:600;">📋 ${t('trading.copy','카피')}: ${copyAccounts}${t('trading.accounts','계정')}</span>` : '';
         badge.style.display = 'block';
@@ -170,7 +170,7 @@ function applyTradingPermissions() {
             <span style="color:${mnqColor}; font-weight:600;">${mnqText}</span> · 
             <span style="color:${nqColor}; font-weight:600;">${nqText}</span>
             ${copyBadge}
-            <span style="margin-left:8px; color:#888;">| 🪙 CRTD: ${(userWallet?.offchainBalances?.crtd || 0).toLocaleString()}</span>
+            <span style="margin-left:8px; color:#6B5744;">| 🪙 CRTD: ${(userWallet?.offchainBalances?.crtd || 0).toLocaleString()}</span>
         `;
     }
     
@@ -337,7 +337,7 @@ function updateCRTDDisplay() {
     // 수익 게이지: 0(threshold) ~ 100%(threshold + max)
     const profitAboveThreshold = Math.max(0, pnl - cfg.profitThreshold);
     const profitPct = pnl > 0 ? Math.min(100, Math.round((pnl / cfg.profitThreshold) * 100)) : 0;
-    const profitColor = pnl >= cfg.profitThreshold ? '#00cc00' : pnl > 0 ? '#4488ff' : '#888';
+    const profitColor = pnl >= cfg.profitThreshold ? '#00cc00' : pnl > 0 ? '#4488ff' : '#6B5744';
     
     const pnlSign = pnl >= 0 ? '+' : '';
     const pnlColor = pnl >= 0 ? '#00cc00' : '#ff4444';
@@ -348,7 +348,7 @@ function updateCRTDDisplay() {
                 <span>💎 ${cfg.tier}${t('trading.tier_label','등급')} · ${cfg.deposit} CRTD</span>
                 <strong style="color:${pnlColor}; font-size:1.05rem;">${pnlSign}$${pnl.toFixed(0)}</strong>
             </div>
-            <div style="font-size:0.7rem; color:#aaa; margin-bottom:0.3rem;">🪙 CRTD ${t('trading.crtd_balance','잔고')}: <strong style="color:#FF6D00;">${(userWallet?.offchainBalances?.crtd || 0).toLocaleString()} pt</strong></div>
+            <div style="font-size:0.7rem; color:#6B5744; margin-bottom:0.3rem;">🪙 CRTD ${t('trading.crtd_balance','잔고')}: <strong style="color:#FF6D00;">${(userWallet?.offchainBalances?.crtd || 0).toLocaleString()} pt</strong></div>
         </div>
         
         <!-- 생존 게이지 -->
@@ -375,7 +375,7 @@ function updateCRTDDisplay() {
         
         <!-- 인출 정보 -->
         <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.72rem; padding-top:0.3rem; border-top:1px solid rgba(255,255,255,0.1);">
-            <span><i data-lucide="wallet" style="width:16px;height:16px;margin-right:6px;"></i>${t('trading.withdrawable','인출 가능')}: <strong style="color:${withdrawable > 0 ? '#00ff88' : '#888'};">${withdrawable} CRTD</strong> (${cfg.withdrawUnit}단위)</span>
+            <span><i data-lucide="wallet" style="width:16px;height:16px;margin-right:6px;"></i>${t('trading.withdrawable','인출 가능')}: <strong style="color:${withdrawable > 0 ? '#00ff88' : '#6B5744'};">${withdrawable} CRTD</strong> (${cfg.withdrawUnit}단위)</span>
             <span>${t('trading.withdrawn','기인출')}: ${totalWithdrawn}</span>
         </div>
         ${withdrawable >= cfg.withdrawUnit ? `
@@ -573,7 +573,7 @@ function renderChartTabs() {
         btn.style.cssText = `background:${active?'#3D2B1F':'#E8E0D8'}; color:${active?'#FFF8F0':'#6B5744'}; border:1px solid ${active?'#3D2B1F':'#E8E0D8'}; border-radius:4px; padding:5px 10px; font-size:0.72rem; cursor:pointer; white-space:nowrap; font-weight:${active?'700':'400'};`;
         const icon = tab.chartType === 'tick' ? '📊' : '⏱';
         const label = tab.chartType === 'tick' ? `${tab.tickCount}T` : `${(tab.interval||60)/60}분`;
-        btn.innerHTML = `${tab.symbol} ${icon}${label}${chartTabs.length > 1 ? ` <span class="tab-close" style="margin-left:4px;color:${active?'#ffaaaa':'#666'};font-size:0.65rem;cursor:pointer;">✕</span>` : ''}`;
+        btn.innerHTML = `${tab.symbol} ${icon}${label}${chartTabs.length > 1 ? ` <span class="tab-close" style="margin-left:4px;color:${active?'#ffaaaa':'#6B5744'};font-size:0.65rem;cursor:pointer;">✕</span>` : ''}`;
         btn.onclick = (e) => { if (e.target.classList.contains('tab-close')) return; switchChartTab(tab.id); };
         const closeBtn = btn.querySelector('.tab-close');
         if (closeBtn) closeBtn.onclick = async (e) => { e.stopPropagation(); if (await showConfirmModal(t('trading.delete_tab','탭 삭제'), `"${tab.symbol} ${label}" 삭제?`)) removeChartTab(tab.id); };
@@ -821,7 +821,7 @@ function updateLiveClockDisplay() {
         weekday: 'short'
     });
     
-    clockEl.innerHTML = `<span style="color:#00ff88; font-weight:700;">${timeStr}</span> <span style="color:#888; font-size:0.65rem;">${dateStr} ${tz.label}</span>`;
+    clockEl.innerHTML = `<span style="color:#00ff88; font-weight:700;">${timeStr}</span> <span style="color:#6B5744; font-size:0.65rem;">${dateStr} ${tz.label}</span>`;
 }
 
 // 차트 자동 정렬 (최신 캔들로 스크롤)
@@ -1069,8 +1069,8 @@ function updateLiveCandleChart() {
             const range = c.high - c.low;
             if (range > 0 && body / range < 0.2) {
                 // body가 전체 범위의 20% 미만 → 회색 (도지/팽이)
-                c.color = '#666666';
-                c.borderColor = '#888888';
+                c.color = '#6B5744';
+                c.borderColor = '#6B5744';
                 c.wickColor = '#444444';
             }
         }
@@ -1298,7 +1298,7 @@ function updateLivePnL() {
     }
     
     pnlEl.textContent = `${totalPnL >= 0 ? '+' : ''}$${totalPnL.toFixed(2)}`;
-    pnlEl.style.color = totalPnL > 0 ? '#00ff88' : totalPnL < 0 ? '#ff4444' : '#888';
+    pnlEl.style.color = totalPnL > 0 ? '#00ff88' : totalPnL < 0 ? '#ff4444' : '#6B5744';
     
     // ★ CRTD 프랍 — 실시간 상태
     const cfg = getCRTDConfig();
@@ -1812,7 +1812,7 @@ function updateOpenPositions() {
         // SL/TP 인라인 수정 UI
         const ts = trade.trailingStop;
         const trailBadge = (ts && ts.enabled) 
-            ? `<span style="display:inline-block; background:${ts.activated ? '#ff9800' : '#666'}; color:#FFF8F0; font-size:0.6rem; padding:1px 4px; border-radius:3px; margin-left:4px;">${ts.activated ? '🔄 TRAIL' : '⏳ 대기'}</span>` 
+            ? `<span style="display:inline-block; background:${ts.activated ? '#ff9800' : '#6B5744'}; color:#FFF8F0; font-size:0.6rem; padding:1px 4px; border-radius:3px; margin-left:4px;">${ts.activated ? '🔄 TRAIL' : '⏳ 대기'}</span>` 
             : '';
         
         let slTPHTML = `
@@ -1820,11 +1820,11 @@ function updateOpenPositions() {
                 <span style="color:#ff4444;">SL:</span>
                 <button onclick="adjustSLTP(${actualIndex},'sl',-0.25)" style="background:#6B5744; color:#FFF8F0; border:none; border-radius:3px; padding:1px 6px; cursor:pointer; font-size:0.75rem;">−</button>
                 <span id="sl-val-${actualIndex}" style="color:#ff4444; font-weight:700; min-width:60px; text-align:center; cursor:pointer;" onclick="editSLTP(${actualIndex},'sl')">${trade.stopLoss ? trade.stopLoss.toFixed(2) : '없음'}</span>
-                <button onclick="adjustSLTP(${actualIndex},'sl',+0.25)" style="background:#333; color:#ff4444; border:none; border-radius:3px; padding:1px 6px; cursor:pointer; font-size:0.75rem;">+</button>
+                <button onclick="adjustSLTP(${actualIndex},'sl',+0.25)" style="background:#3D2B1F; color:#ff4444; border:none; border-radius:3px; padding:1px 6px; cursor:pointer; font-size:0.75rem;">+</button>
                 <span style="margin-left:6px; color:#00cc00;">TP:</span>
-                <button onclick="adjustSLTP(${actualIndex},'tp',-0.25)" style="background:#333; color:#00cc00; border:none; border-radius:3px; padding:1px 6px; cursor:pointer; font-size:0.75rem;">−</button>
+                <button onclick="adjustSLTP(${actualIndex},'tp',-0.25)" style="background:#3D2B1F; color:#00cc00; border:none; border-radius:3px; padding:1px 6px; cursor:pointer; font-size:0.75rem;">−</button>
                 <span id="tp-val-${actualIndex}" style="color:#00cc00; font-weight:700; min-width:60px; text-align:center; cursor:pointer;" onclick="editSLTP(${actualIndex},'tp')">${trade.takeProfit ? trade.takeProfit.toFixed(2) : '없음'}</span>
-                <button onclick="adjustSLTP(${actualIndex},'tp',+0.25)" style="background:#333; color:#00cc00; border:none; border-radius:3px; padding:1px 6px; cursor:pointer; font-size:0.75rem;">+</button>
+                <button onclick="adjustSLTP(${actualIndex},'tp',+0.25)" style="background:#3D2B1F; color:#00cc00; border:none; border-radius:3px; padding:1px 6px; cursor:pointer; font-size:0.75rem;">+</button>
                 ${trailBadge}
             </div>
         `;
@@ -1858,7 +1858,7 @@ function updateOpenPositions() {
                         <span style="font-size:0.8rem; color:var(--accent); margin-left:0.5rem;">
                             (${((pnl / trade.margin) * 100).toFixed(2)}%)
                         </span>
-                        <span style="font-size:0.7rem; color:#888; margin-left:0.5rem;">
+                        <span style="font-size:0.7rem; color:#6B5744; margin-left:0.5rem;">
                             수수료: $${tradeFee.toFixed(2)}
                         </span>
                     </div>
@@ -1869,11 +1869,11 @@ function updateOpenPositions() {
                     </button>
                     ${partialCloseBtn}
                     ${(ts && ts.enabled) ? `
-                        <button onclick="toggleTrailingForTrade(${actualIndex})" style="background:${ts.activated ? '#ff9800' : '#666'}; color:#FFF8F0; border:none; padding:0.3rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.6rem;">
+                        <button onclick="toggleTrailingForTrade(${actualIndex})" style="background:${ts.activated ? '#ff9800' : '#6B5744'}; color:#FFF8F0; border:none; padding:0.3rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.6rem;">
                             ${ts.activated ? '🔄 ON' : '⏸ OFF'}
                         </button>
                     ` : `
-                        <button onclick="enableTrailingForTrade(${actualIndex})" style="background:#444; color:#aaa; border:none; padding:0.3rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.6rem;">
+                        <button onclick="enableTrailingForTrade(${actualIndex})" style="background:#444; color:#6B5744; border:none; padding:0.3rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.6rem;">
                             +트레일
                         </button>
                     `}

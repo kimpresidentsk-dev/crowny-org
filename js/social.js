@@ -1257,7 +1257,7 @@ function showStickerGifPanel() {
     panel.style.cssText = 'position:fixed;bottom:60px;left:50%;transform:translateX(-50%);width:340px;max-width:90vw;background:var(--bg-card,#3D2B1F);border:1px solid var(--border,#E8E0D8);border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:9999;overflow:hidden;';
     panel.innerHTML = `
         <div style="display:flex;border-bottom:1px solid var(--border,#E8E0D8);">
-            <button onclick="showStickerTab()" class="sticker-tab-btn active" style="flex:1;padding:0.6rem;border:none;background:var(--bg-card,#3D2B1F);cursor:pointer;font-weight:600;border-bottom:2px solid #333;">😊 스티커</button>
+            <button onclick="showStickerTab()" class="sticker-tab-btn active" style="flex:1;padding:0.6rem;border:none;background:var(--bg-card,#3D2B1F);cursor:pointer;font-weight:600;border-bottom:2px solid #3D2B1F;">😊 스티커</button>
             <button onclick="showGifTab()" class="sticker-tab-btn" style="flex:1;padding:0.6rem;border:none;background:var(--bg-card,#3D2B1F);cursor:pointer;font-weight:600;border-bottom:2px solid transparent;">GIF</button>
         </div>
         <div id="sticker-gif-content" style="height:250px;overflow-y:auto;padding:0.5rem;"></div>
@@ -1289,7 +1289,7 @@ function showGifTab() {
     content.innerHTML = `
         <div style="display:flex;gap:0.3rem;margin-bottom:0.5rem;">
             <input type="text" id="gif-search-input" placeholder="GIF 검색..." style="flex:1;padding:0.5rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;font-size:0.85rem;" onkeypress="if(event.key==='Enter')searchGifs()">
-            <button onclick="searchGifs()" style="padding:0.5rem 0.8rem;border:none;border-radius:8px;background:#333;color:#FFF8F0;cursor:pointer;">검색</button>
+            <button onclick="searchGifs()" style="padding:0.5rem 0.8rem;border:none;border-radius:8px;background:#3D2B1F;color:#FFF8F0;cursor:pointer;">검색</button>
         </div>
         <div id="gif-results" style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.3rem;"></div>
     `;
@@ -2397,7 +2397,7 @@ function setSocialFilter(filter) {
     // Legacy support
     document.querySelectorAll('.social-filter-tab').forEach(b => {
         b.classList.remove('active');
-        b.style.color = '#999';
+        b.style.color = '#6B5744';
         b.style.borderBottomColor = 'transparent';
     });
     const legacyBtn = document.querySelector(`.social-filter-tab[data-filter="${filter}"]`);
@@ -2599,7 +2599,7 @@ async function showSocialNotifications() {
     // Update tab
     document.querySelectorAll('.social-filter-tab').forEach(b => {
         b.classList.remove('active');
-        b.style.color = '#999';
+        b.style.color = '#6B5744';
         b.style.borderBottomColor = 'transparent';
     });
     const btn = document.querySelector('.social-filter-tab[data-filter="notifications"]');
@@ -2719,7 +2719,7 @@ async function showFullProfile(uid) {
     // Update tab
     document.querySelectorAll('.social-filter-tab').forEach(b => {
         b.classList.remove('active');
-        b.style.color = '#999';
+        b.style.color = '#6B5744';
         b.style.borderBottomColor = 'transparent';
     });
     const btn = document.querySelector('.social-filter-tab[data-filter="profile"]');

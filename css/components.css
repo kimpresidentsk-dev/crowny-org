@@ -364,7 +364,7 @@ a:not(.nav-item) {
     padding: 4px 12px;
     border: none;
     background: none;
-    color: var(--text-muted, #888);
+    color: var(--text-muted, ‌#6B5744);
     font-size: 0.6rem;
     font-weight: 600;
     transition: color 0.15s;
@@ -432,7 +432,7 @@ a:not(.nav-item) {
 
 /* Empty state unified */
 .empty-state, .art-empty-state, .chat-empty-state {
-    color: var(--text-muted, #888) !important;
+    color: var(--text-muted, ‌#6B5744) !important;
 }
 .empty-state .icon, .art-empty-state .icon {
     opacity: 0.6;
@@ -654,7 +654,7 @@ input:focus, textarea:focus, select:focus {
 /* Date separator dark */
 .date-separator span {
     background: var(--bg-card, #3D2B1F) !important;
-    color: var(--text-muted, #888) !important;
+    color: var(--text-muted, ‌#6B5744) !important;
 }
 
 /* Message highlight dark */

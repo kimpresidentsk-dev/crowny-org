@@ -206,9 +206,9 @@
             </div>
 
             <div style="background:#f8f8f8;border-radius:10px;padding:1rem;margin-bottom:1rem;text-align:center;">
-                <p style="font-size:0.8rem;color:#888;margin-bottom:0.3rem;">${t('invite.my_code', '내 초대 코드')}</p>
+                <p style="font-size:0.8rem;color:#6B5744;margin-bottom:0.3rem;">${t('invite.my_code', '내 초대 코드')}</p>
                 <p style="font-size:1.4rem;font-weight:800;color:#3D2B1F;letter-spacing:2px;">${userReferralCode || '—'}</p>
-                <p style="font-size:0.7rem;color:#aaa;margin-top:0.3rem;word-break:break-all;">${link}</p>
+                <p style="font-size:0.7rem;color:#6B5744;margin-top:0.3rem;word-break:break-all;">${link}</p>
             </div>
 
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;margin-bottom:1.2rem;">
@@ -231,14 +231,14 @@
                 <div style="display:flex;justify-content:space-around;text-align:center;">
                     <div>
                         <p style="font-size:1.5rem;font-weight:800;color:#3D2B1F;">${completedCount}</p>
-                        <p style="font-size:0.75rem;color:#888;">${t('invite.successful', '초대 성공')}</p>
+                        <p style="font-size:0.75rem;color:#6B5744;">${t('invite.successful', '초대 성공')}</p>
                     </div>
                     <div>
                         <p style="font-size:1.5rem;font-weight:800;color:#8B6914;">${earnedCRTD.toFixed(1)}</p>
-                        <p style="font-size:0.75rem;color:#888;">${t('invite.earned_crtd', '획득 CRTD')}</p>
+                        <p style="font-size:0.75rem;color:#6B5744;">${t('invite.earned_crtd', '획득 CRTD')}</p>
                     </div>
                 </div>
-                <p style="font-size:0.7rem;color:#aaa;margin-top:0.5rem;text-align:center;">
+                <p style="font-size:0.7rem;color:#6B5744;margin-top:0.5rem;text-align:center;">
                     ${t('invite.reward_info', '친구가 가입하면 0.5 CRTD를 받아요! (최대 100 CRTD)')}
                 </p>
             </div>
@@ -293,12 +293,12 @@
         <div style="background:#FFF8F0;border-radius:16px;max-width:400px;width:100%;padding:2rem;text-align:center;">
             <div style="font-size:3rem;margin-bottom:0.5rem;">🎉</div>
             <h2 style="margin:0 0 0.5rem 0;">${t('invite.landing_title', '크라우니에 초대되었습니다!')}</h2>
-            ${inviterName ? `<p style="color:#888;margin-bottom:1rem;">${t('invite.invited_by', '소개자')}: <strong>${inviterName}</strong></p>` : ''}
-            <p style="font-size:0.85rem;color:#666;margin-bottom:1.5rem;">${t('invite.landing_desc', '가입하고 CRTD 리워드를 받으세요!')}</p>
+            ${inviterName ? `<p style="color:#6B5744;margin-bottom:1rem;">${t('invite.invited_by', '소개자')}: <strong>${inviterName}</strong></p>` : ''}
+            <p style="font-size:0.85rem;color:#6B5744;margin-bottom:1.5rem;">${t('invite.landing_desc', '가입하고 CRTD 리워드를 받으세요!')}</p>
             <button onclick="document.getElementById('invite-landing').remove();document.getElementById('show-signup-form')?.click();" style="width:100%;padding:1rem;background:#3D2B1F;color:'#FFF8F0';border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;">
                 🚀 ${t('invite.signup_btn', '가입하기')}
             </button>
-            <button onclick="document.getElementById('invite-landing').remove()" style="width:100%;padding:0.7rem;background:transparent;border:none;color:#888;cursor:pointer;margin-top:0.5rem;font-size:0.85rem;">
+            <button onclick="document.getElementById('invite-landing').remove()" style="width:100%;padding:0.7rem;background:transparent;border:none;color:#6B5744;cursor:pointer;margin-top:0.5rem;font-size:0.85rem;">
                 ${t('common.close', '닫기')}
             </button>
         </div>`;

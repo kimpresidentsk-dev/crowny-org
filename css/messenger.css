@@ -497,7 +497,7 @@
     color: #2196F3;
 }
 .msg-read-receipt.sent {
-    color: #999;
+    color: #6B5744;
 }
 
 /* Unread badge */
@@ -531,7 +531,7 @@
 /* Message time */
 .msg-time {
     font-size: 0.65rem;
-    color: #999;
+    color: #6B5744;
     margin-top: 0.15rem;
     display: flex;
     align-items: center;
@@ -620,7 +620,7 @@
 /* Deleted message */
 .msg-deleted {
     font-style: italic;
-    color: #999;
+    color: #6B5744;
     font-size: 0.82rem;
 }
 
@@ -732,7 +732,7 @@
 
 /* System message */
 .system-message {
-    text-align: center; color: #999; font-size: 0.75rem;
+    text-align: center; color: #6B5744; font-size: 0.75rem;
     padding: 0.5rem 1rem; margin: 0.5rem 0;
     background: rgba(0,0,0,0.03); border-radius: 12px;
     max-width: 80%; margin-left: auto; margin-right: auto;

@@ -456,13 +456,13 @@ async function loadMyProducts() {
         c.innerHTML='';
         o.forEach(d => {
             const x = d.data();
-            const statusBadge = x.status === 'active' ? '<span style="color:#4CAF50; font-size:0.75rem;">● 판매중</span>' : x.status === 'pending' ? '<span style="color:#ff9800; font-size:0.75rem;">● 승인대기</span>' : x.status === 'rejected' ? '<span style="color:#f44336; font-size:0.75rem;">● 거부됨</span>' : '<span style="color:#999; font-size:0.75rem;">● 비활성</span>';
+            const statusBadge = x.status === 'active' ? '<span style="color:#4CAF50; font-size:0.75rem;">● 판매중</span>' : x.status === 'pending' ? '<span style="color:#ff9800; font-size:0.75rem;">● 승인대기</span>' : x.status === 'rejected' ? '<span style="color:#f44336; font-size:0.75rem;">● 거부됨</span>' : '<span style="color:#6B5744; font-size:0.75rem;">● 비활성</span>';
             c.innerHTML += `<div style="padding:0.6rem; background:var(--bg); border-radius:6px; margin-bottom:0.4rem; font-size:0.85rem;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.3rem;">
                     <div><strong>${x.title}</strong> — ${x.price} CRGC · 판매: ${x.sold||0}/${x.stock} ${statusBadge}</div>
                     <div style="display:flex; gap:0.3rem;">
                         <button onclick="editProduct('${d.id}')" style="background:#2196f3; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.edit_btn','✏️ 수정')}</button>
-                        <button onclick="toggleProduct('${d.id}','${x.status}')" style="background:${x.status==='active'?'#999':'#4CAF50'}; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${x.status==='active'?t('mall.deactivate','⏸ 비활성'):t('mall.activate','▶ 활성')}</button>
+                        <button onclick="toggleProduct('${d.id}','${x.status}')" style="background:${x.status==='active'?'#6B5744':'#4CAF50'}; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${x.status==='active'?t('mall.deactivate','⏸ 비활성'):t('mall.activate','▶ 활성')}</button>
                         <button onclick="deleteProduct('${d.id}')" style="background:#cc0000; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">🗑️</button>
                     </div>
                 </div>
@@ -718,7 +718,7 @@ function filterCrebCategory(cat) {
     document.querySelectorAll('.creb-tab').forEach(b => {
         b.classList.toggle('active', b.dataset.cat === cat);
         if (b.dataset.cat === cat) { b.style.background = cat === 'all' ? '#333' : (CREB_CATEGORIES[cat]?.color || '#333'); b.style.color = 'white'; }
-        else { b.style.background = 'white'; b.style.color = b.dataset.cat === 'all' ? '#666' : (CREB_CATEGORIES[b.dataset.cat]?.color || '#666'); }
+        else { b.style.background = 'white'; b.style.color = b.dataset.cat === 'all' ? '#6B5744' : (CREB_CATEGORIES[b.dataset.cat]?.color || '#6B5744'); }
     });
     loadEnergyProjects();
 }
@@ -848,7 +848,7 @@ async function openProjectDetail(projectId) {
                 <div style="display:flex; gap:0.5rem; margin-bottom:0.8rem;">
                     <span style="padding:0.2rem 0.6rem; border-radius:10px; font-size:0.75rem; background:${catInfo.color}15; color:${catInfo.color}; font-weight:600;">${catInfo.label}</span>
                     ${renderInvestBadge(x)}
-                    <span style="padding:0.2rem 0.6rem; border-radius:10px; font-size:0.75rem; background:#f0f0f0; color:#666;">${catInfo.sdg}</span>
+                    <span style="padding:0.2rem 0.6rem; border-radius:10px; font-size:0.75rem; background:#f0f0f0; color:#6B5744;">${catInfo.sdg}</span>
                 </div>
                 <p style="color:var(--accent);">${x.description || x.location || ''}</p>
                 <div style="background:#e0e0e0; height:8px; border-radius:4px; margin:0.8rem 0;"><div style="background:${catInfo.color}; height:100%; border-radius:4px; width:${pct}%;"></div></div>
@@ -1179,7 +1179,7 @@ async function loadMyInsuranceClaims() {
         c.innerHTML = '';
         docs.forEach(d => {
             const r = d.data();
-            c.innerHTML += `<div style="padding:0.6rem; background:var(--bg); border-radius:6px; margin-bottom:0.4rem; border-left:3px solid ${STATUS_COLOR[r.status] || '#999'};">
+            c.innerHTML += `<div style="padding:0.6rem; background:var(--bg); border-radius:6px; margin-bottom:0.4rem; border-left:3px solid ${STATUS_COLOR[r.status] || '#6B5744'};">
                 <div style="display:flex; justify-content:space-between; font-size:0.85rem;">
                     <span><strong>${r.amount} CRNY</strong> — ${r.reason?.slice(0, 40)}</span>
                     <span style="color:${STATUS_COLOR[r.status]}; font-weight:600;">${STATUS[r.status] || r.status}</span>
@@ -1796,7 +1796,7 @@ async function loadGyeList() {
                 ${!isMember && g.currentMembers < g.maxMembers ? `<button onclick="joinGye('${d.id}')" style="background:#FF9800; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.5rem; font-size:0.85rem;">🤝 참여하기</button>` : ''}
                 ${isMember ? '<div style="text-align:center; font-size:0.8rem; color:#FF9800; margin-top:0.5rem;">✅ 참여 중</div>' : ''}
                 ${g.organizerId === currentUser?.uid && g.status === 'active' && g.currentRound < (g.members?.length || 0) ? `<button onclick="executeGyeRound('${d.id}')" style="background:#E91E63; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.3rem; font-size:0.8rem;">🔄 Round ${g.currentRound + 1} 실행</button>` : ''}
-                ${g.status === 'recruiting' && g.currentMembers >= g.maxMembers ? '<div style="text-align:center; font-size:0.8rem; color:#999; margin-top:0.5rem;">모집 완료</div>' : ''}
+                ${g.status === 'recruiting' && g.currentMembers >= g.maxMembers ? '<div style="text-align:center; font-size:0.8rem; color:#6B5744; margin-top:0.5rem;">모집 완료</div>' : ''}
             </div>`;
         });
     } catch (e) { c.innerHTML = e.message; }
@@ -2490,13 +2490,13 @@ async function loadMyShopDashboard() {
         prodDocs.forEach(d => {
             const p = d.data();
             const remaining = p.stock - (p.sold || 0);
-            const statusBadge = p.status === 'active' ? '<span style="color:#4CAF50; font-size:0.7rem;">● 판매중</span>' : '<span style="color:#999; font-size:0.7rem;">● 비활성</span>';
+            const statusBadge = p.status === 'active' ? '<span style="color:#4CAF50; font-size:0.7rem;">● 판매중</span>' : '<span style="color:#6B5744; font-size:0.7rem;">● 비활성</span>';
             productsHtml += `<div style="padding:0.6rem; background:var(--bg); border-radius:8px; margin-bottom:0.4rem;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.3rem;">
                     <div><strong>${p.title}</strong> — ${p.price} CRGC · 판매 ${p.sold||0}/${p.stock} · 재고 ${remaining} ${statusBadge}</div>
                     <div style="display:flex; gap:0.3rem;">
                         <button onclick="editProductModal('${d.id}')" style="background:#2196f3; color:#FFF8F0; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">✏️ 수정</button>
-                        <button onclick="toggleProduct('${d.id}','${p.status}')" style="background:${p.status==='active'?'#999':'#4CAF50'}; color:#FFF8F0; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${p.status==='active'?'⏸':'▶'}</button>
+                        <button onclick="toggleProduct('${d.id}','${p.status}')" style="background:${p.status==='active'?'#6B5744':'#4CAF50'}; color:#FFF8F0; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${p.status==='active'?'⏸':'▶'}</button>
                         <button onclick="deleteProduct('${d.id}')" style="background:#cc0000; color:#FFF8F0; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">🗑️</button>
                     </div>
                 </div>
@@ -2815,8 +2815,8 @@ async function showOrderDetail(orderId) {
             const dateStr = ts ? new Date(ts).toLocaleString('ko-KR', {month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
             timelineHtml += `<div style="text-align:center;flex:1;z-index:1;">
                 <div style="width:28px;height:28px;border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:0.8rem;
-                    background:${done ? '#4CAF50' : '#e0e0e0'};color:${done ? 'white' : '#999'};">${done ? '✓' : i+1}</div>
-                <div style="font-size:0.7rem;font-weight:600;margin-top:0.3rem;color:${done ? '#333' : '#999'};">${stepLabels[step]}</div>
+                    background:${done ? '#4CAF50' : '#e0e0e0'};color:${done ? 'white' : '#6B5744'};">${done ? '✓' : i+1}</div>
+                <div style="font-size:0.7rem;font-weight:600;margin-top:0.3rem;color:${done ? '#333' : '#6B5744'};">${stepLabels[step]}</div>
                 <div style="font-size:0.6rem;color:var(--accent);">${dateStr}</div>
             </div>`;
         });
@@ -3284,7 +3284,7 @@ function showMallRecentSearches() {
     ac.innerHTML = '<div style="padding:0.4rem 0.8rem;font-size:0.75rem;color:var(--accent);font-weight:600;">최근 검색어</div>' +
         recent.map(s => `<div onclick="selectMallAutocomplete('${s.replace(/'/g,"\\'")}')" style="padding:0.5rem 0.8rem;cursor:pointer;font-size:0.85rem;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;" onmouseenter="this.style.background='#f5f5f5'" onmouseleave="this.style.background='white'">
             <span>🕐 ${s}</span>
-            <span onclick="event.stopPropagation();removeMallRecentSearch('${s.replace(/'/g,"\\'")}')" style="color:#999;font-size:0.75rem;">✕</span>
+            <span onclick="event.stopPropagation();removeMallRecentSearch('${s.replace(/'/g,"\\'")}')" style="color:#6B5744;font-size:0.75rem;">✕</span>
         </div>`).join('');
 }
 

@@ -603,12 +603,12 @@ const E2ECrypto = (() => {
                 const otherData = otherDoc.data();
                 if (myStored?.encPublicKey) {
                     const myFP = await getKeyFingerprint(myStored.encPublicKey);
-                    fingerprintHTML += `<div style="font-size:0.75rem;color:#666;margin-top:0.3rem;">내 키: <code style="background:#f0f0f0;padding:0.1rem 0.3rem;border-radius:3px;">${myFP}</code></div>`;
+                    fingerprintHTML += `<div style="font-size:0.75rem;color:#6B5744;margin-top:0.3rem;">내 키: <code style="background:#f0f0f0;padding:0.1rem 0.3rem;border-radius:3px;">${myFP}</code></div>`;
                 }
                 if (otherData?.publicKey) {
                     const otherFP = await getKeyFingerprint(otherData.publicKey);
                     const otherInfo = await getUserDisplayInfo(otherId);
-                    fingerprintHTML += `<div style="font-size:0.75rem;color:#666;margin-top:0.2rem;">${otherInfo.nickname}: <code style="background:#f0f0f0;padding:0.1rem 0.3rem;border-radius:3px;">${otherFP}</code></div>`;
+                    fingerprintHTML += `<div style="font-size:0.75rem;color:#6B5744;margin-top:0.2rem;">${otherInfo.nickname}: <code style="background:#f0f0f0;padding:0.1rem 0.3rem;border-radius:3px;">${otherFP}</code></div>`;
                 }
             } catch (e) { /* ignore */ }
         }
@@ -626,7 +626,7 @@ const E2ECrypto = (() => {
             <div style="display:flex;justify-content:space-between;align-items:center;padding:0.8rem 0;border-bottom:1px solid #eee;">
                 <div>
                     <div style="font-weight:600;font-size:0.9rem;">🔒 E2E 암호화</div>
-                    <div style="font-size:0.75rem;color:#999;">메시지를 종단간 암호화합니다</div>
+                    <div style="font-size:0.75rem;color:#6B5744;">메시지를 종단간 암호화합니다</div>
                 </div>
                 <label class="toggle-switch">
                     <input type="checkbox" id="e2e-toggle" ${e2eEnabled ? 'checked' : ''} ${isSecret ? 'disabled' : ''} onchange="E2ECrypto.updateChatSetting('${chatId}','e2eEnabled',this.checked)">
@@ -643,7 +643,7 @@ const E2ECrypto = (() => {
 
             ${fingerprintHTML ? `<div style="padding:0.8rem 0;border-bottom:1px solid #eee;">
                 <div style="font-weight:600;font-size:0.9rem;margin-bottom:0.3rem;">🔑 키 지문</div>
-                <div style="font-size:0.75rem;color:#999;margin-bottom:0.3rem;">상대방과 동일한지 확인하세요</div>
+                <div style="font-size:0.75rem;color:#6B5744;margin-bottom:0.3rem;">상대방과 동일한지 확인하세요</div>
                 ${fingerprintHTML}
             </div>` : ''}
 
@@ -684,13 +684,13 @@ const E2ECrypto = (() => {
             listHTML += `<div style="display:flex;align-items:center;gap:0.8rem;padding:0.7rem;border-bottom:1px solid #eee;cursor:pointer;" onclick="E2ECrypto.startSecretChatWith('${doc.id}');this.closest('[style*=position]').remove();">
                 ${avatarHTML(info.photoURL, info.nickname, 40)}
                 <div style="flex:1;"><strong>${info.nickname}</strong></div>
-                <span style="font-size:0.8rem;color:#999;">🔒</span>
+                <span style="font-size:0.8rem;color:#6B5744;">🔒</span>
             </div>`;
         }
 
         overlay.innerHTML = `<div style="background:#FFF8F0;padding:1.5rem;border-radius:16px;max-width:420px;width:100%;max-height:60vh;overflow-y:auto;">
             <h3 style="margin-bottom:1rem;">🔒 비밀 채팅 시작</h3>
-            <p style="font-size:0.8rem;color:#999;margin-bottom:1rem;">E2E 암호화 + 자동삭제(24시간) + 전달 불가</p>
+            <p style="font-size:0.8rem;color:#6B5744;margin-bottom:1rem;">E2E 암호화 + 자동삭제(24시간) + 전달 불가</p>
             ${listHTML}
             <button onclick="this.closest('[style*=position]').remove()" style="width:100%;margin-top:1rem;padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;">취소</button>
         </div>`;

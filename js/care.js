@@ -103,7 +103,7 @@ window.CARE = (function() {
             <div style="text-align:center; padding:3rem 1rem;">
                 <div style="font-size:4rem; margin-bottom:1rem;">💝</div>
                 <h2 style="font-size:1.8rem; margin-bottom:1rem;">${t('care.welcome','크라우니케어에 오신 것을 환영합니다')}</h2>
-                <p style="font-size:1.2rem; color:#666; margin-bottom:2rem;">${t('care.no_group','가족 그룹을 만들거나 초대를 받아 시작하세요')}</p>
+                <p style="font-size:1.2rem; color:#6B5744; margin-bottom:2rem;">${t('care.no_group','가족 그룹을 만들거나 초대를 받아 시작하세요')}</p>
                 <button onclick="CARE.showCreateGroup()" class="care-btn care-btn-primary" style="font-size:1.2rem; padding:1rem 2rem;">
                     👨‍👩‍👧‍👦 ${t('care.create_group','가족 그룹 만들기')}
                 </button>
@@ -313,7 +313,7 @@ window.CARE = (function() {
                 .collection('messages').orderBy('createdAt', 'desc').limit(3).get();
 
             if (snap.empty) {
-                el.innerHTML = `<p style="color:#999; font-size:1.1rem; text-align:center;">${t('care.no_messages','아직 메시지가 없습니다')}</p>`;
+                el.innerHTML = `<p style="color:#6B5744; font-size:1.1rem; text-align:center;">${t('care.no_messages','아직 메시지가 없습니다')}</p>`;
                 return;
             }
 
@@ -323,7 +323,7 @@ window.CARE = (function() {
                 return `<div class="care-message-card">
                     <div style="font-weight:700; font-size:1.1rem;">${msg.senderName || '가족'}</div>
                     <div style="font-size:1.3rem; margin:0.5rem 0;">${msg.text}</div>
-                    <div style="color:#999; font-size:0.9rem;">${time}</div>
+                    <div style="color:#6B5744; font-size:0.9rem;">${time}</div>
                 </div>`;
             }).join('');
         } catch(e) {
@@ -399,7 +399,7 @@ window.CARE = (function() {
                 .collection('schedules').orderBy('time', 'asc').get();
 
             if (snap.empty) {
-                el.innerHTML = `<p style="color:#999; font-size:1.1rem; text-align:center;">${t('care.no_schedule','등록된 일정이 없습니다')}</p>`;
+                el.innerHTML = `<p style="color:#6B5744; font-size:1.1rem; text-align:center;">${t('care.no_schedule','등록된 일정이 없습니다')}</p>`;
                 return;
             }
 
@@ -462,7 +462,7 @@ window.CARE = (function() {
                 .collection('medications').orderBy('time', 'asc').get();
 
             if (snap.empty) {
-                el.innerHTML = `<p style="color:#999; font-size:1.1rem; text-align:center;">${t('care.no_meds','등록된 약이 없습니다')}</p>`;
+                el.innerHTML = `<p style="color:#6B5744; font-size:1.1rem; text-align:center;">${t('care.no_meds','등록된 약이 없습니다')}</p>`;
                 return;
             }
 
@@ -474,7 +474,7 @@ window.CARE = (function() {
                 return `<div class="care-med-item ${taken ? 'taken' : ''}">
                     <div>
                         <div style="font-weight:700; font-size:1.2rem;">💊 ${med.name}</div>
-                        <div style="color:#666; font-size:1rem;">⏰ ${med.time} · ${med.repeat || '매일'}</div>
+                        <div style="color:#6B5744; font-size:1rem;">⏰ ${med.time} · ${med.repeat || '매일'}</div>
                     </div>
                     ${taken
                         ? `<span class="care-med-done">✅ ${t('care.taken','복용완료')}</span>`
@@ -550,7 +550,7 @@ window.CARE = (function() {
                 .collection('health_logs').orderBy('createdAt', 'desc').limit(5).get();
 
             if (snap.empty) {
-                el.innerHTML = `<p style="color:#999; font-size:1.1rem; text-align:center;">${t('care.no_health','기록이 없습니다')}</p>`;
+                el.innerHTML = `<p style="color:#6B5744; font-size:1.1rem; text-align:center;">${t('care.no_health','기록이 없습니다')}</p>`;
                 return;
             }
 
@@ -969,14 +969,14 @@ window.CARE = (function() {
                 <div class="sos-ec-card">
                     <div>
                         <strong>🏥 ${ec.hospitalName || ec.name || t('care.hospital','병원')}</strong>
-                        ${ec.doctorName ? `<div style="font-size:0.9rem; color:#666;">👨‍⚕️ ${ec.doctorName}</div>` : ''}
-                        ${ec.address ? `<div style="font-size:0.85rem; color:#999;">📍 ${ec.address}</div>` : ''}
+                        ${ec.doctorName ? `<div style="font-size:0.9rem; color:#6B5744;">👨‍⚕️ ${ec.doctorName}</div>` : ''}
+                        ${ec.address ? `<div style="font-size:0.85rem; color:#6B5744;">📍 ${ec.address}</div>` : ''}
                     </div>
                     <a href="tel:${ec.phone}" class="sos-call-btn">📞 ${ec.phone}</a>
                 </div>
             `).join('');
         } else {
-            ecHtml = `<p style="color:#999; font-size:0.95rem;">${t('care.no_emergency_contacts','등록된 응급연락처가 없습니다')}</p>`;
+            ecHtml = `<p style="color:#6B5744; font-size:0.95rem;">${t('care.no_emergency_contacts','등록된 응급연락처가 없습니다')}</p>`;
         }
 
         panel.style.display = 'block';
@@ -1095,12 +1095,12 @@ window.CARE = (function() {
             <div style="display:flex; justify-content:space-between; align-items:center; padding:0.8rem; background:#f9f9f9; border-radius:10px; margin-bottom:0.5rem;">
                 <div>
                     <strong>🏥 ${c.hospitalName || ''}</strong>
-                    ${c.doctorName ? `<span style="color:#666;"> · 👨‍⚕️ ${c.doctorName}</span>` : ''}
-                    <div style="font-size:0.85rem; color:#999;">${c.phone || ''} · ${c.address || ''}</div>
+                    ${c.doctorName ? `<span style="color:#6B5744;"> · 👨‍⚕️ ${c.doctorName}</span>` : ''}
+                    <div style="font-size:0.85rem; color:#6B5744;">${c.phone || ''} · ${c.address || ''}</div>
                 </div>
                 <button onclick="CARE.deleteEmergencyContact('${c.id}')" style="background:none;border:none;cursor:pointer;font-size:1.2rem;">🗑️</button>
             </div>
-        `).join('') : `<p style="color:#999;">${t('care.no_emergency_contacts','등록된 연락처가 없습니다')}</p>`;
+        `).join('') : `<p style="color:#6B5744;">${t('care.no_emergency_contacts','등록된 연락처가 없습니다')}</p>`;
 
         // Use prompt-style modal (simple approach)
         const hospitalName = await showPromptModal(
@@ -1216,18 +1216,18 @@ window.CARE = (function() {
         const el = document.getElementById('care-slideshow');
         if (!el) return;
         if (slideshowPhotos.length === 0) {
-            el.innerHTML = `<p style="color:#999; text-align:center; padding:2rem;">${t('care.no_photos','아직 사진이 없습니다 📸')}</p>`;
+            el.innerHTML = `<p style="color:#6B5744; text-align:center; padding:2rem;">${t('care.no_photos','아직 사진이 없습니다 📸')}</p>`;
             return;
         }
         const photo = slideshowPhotos[slideshowIndex % slideshowPhotos.length];
         el.innerHTML = `
             <div class="care-photo-frame">
                 <img src="${photo.url}" alt="${photo.caption || ''}" style="width:100%; max-height:400px; object-fit:cover; border-radius:12px;">
-                ${photo.caption ? `<p style="text-align:center; margin-top:0.5rem; font-size:1.1rem; color:#666;">${photo.caption}</p>` : ''}
+                ${photo.caption ? `<p style="text-align:center; margin-top:0.5rem; font-size:1.1rem; color:#6B5744;">${photo.caption}</p>` : ''}
             </div>
             ${slideshowPhotos.length > 1 ? `<div style="text-align:center; margin-top:0.5rem;">
                 <button onclick="CARE.prevPhoto()" class="care-btn care-btn-small">◀</button>
-                <span style="margin:0 1rem; color:#999;">${(slideshowIndex % slideshowPhotos.length) + 1} / ${slideshowPhotos.length}</span>
+                <span style="margin:0 1rem; color:#6B5744;">${(slideshowIndex % slideshowPhotos.length) + 1} / ${slideshowPhotos.length}</span>
                 <button onclick="CARE.nextPhoto()" class="care-btn care-btn-small">▶</button>
             </div>` : ''}`;
     }

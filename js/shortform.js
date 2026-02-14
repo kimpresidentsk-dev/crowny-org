@@ -108,7 +108,7 @@
                 <div style="background:var(--border,#eee);border-radius:8px;height:6px;overflow:hidden;">
                     <div id="sf-progress-bar" style="height:100%;background:#8B6914;width:0%;transition:width 0.3s;"></div>
                 </div>
-                <div id="sf-progress-text" style="font-size:0.75rem;color:#888;margin-top:0.2rem;text-align:center;">0%</div>
+                <div id="sf-progress-text" style="font-size:0.75rem;color:#6B5744;margin-top:0.2rem;text-align:center;">0%</div>
             </div>
 
             <!-- actions -->
@@ -193,7 +193,7 @@
         _selectedServiceType = type;
         document.querySelectorAll('.sf-svc-btn').forEach(b => {
             b.style.background = b.dataset.type === type ? CTA_MAP[type].color : 'transparent';
-            b.style.color = b.dataset.type === type ? '#E8D5C4' : CTA_MAP[type]?.color || '#666';
+            b.style.color = b.dataset.type === type ? '#E8D5C4' : CTA_MAP[type]?.color || '#6B5744';
         });
         document.getElementById('sf-service-search').style.display = 'block';
         document.getElementById('sf-svc-query').value = '';
@@ -233,7 +233,7 @@
     function _clearService() {
         _serviceLink = null;
         document.getElementById('sf-svc-selected').style.display = 'none';
-        document.querySelectorAll('.sf-svc-btn').forEach(b => { b.style.background = 'transparent'; b.style.color = CTA_MAP[b.dataset.type]?.color || '#666'; });
+        document.querySelectorAll('.sf-svc-btn').forEach(b => { b.style.background = 'transparent'; b.style.color = CTA_MAP[b.dataset.type]?.color || '#6B5744'; });
     }
 
     // ====== THUMBNAIL GENERATION ======

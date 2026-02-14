@@ -693,7 +693,7 @@ async function viewArtwork(artId) {
 
         if ((art.saleType === 'fixed' || art.basePrice > 0) && !isOwner && art.status === 'active') {
             if (isSoldOut) {
-                actionHtml = `<button disabled style="background:#999;color:#E8D5C4;border:none;padding:.8rem 2rem;border-radius:8px;width:100%;font-weight:700;cursor:not-allowed">🚫 SOLD OUT</button>`;
+                actionHtml = `<button disabled style="background:#6B5744;color:#E8D5C4;border:none;padding:.8rem 2rem;border-radius:8px;width:100%;font-weight:700;cursor:not-allowed">🚫 SOLD OUT</button>`;
             } else {
                 actionHtml = `
                     <div style="display:flex;gap:.5rem">

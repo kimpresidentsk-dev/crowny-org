@@ -41,7 +41,7 @@ async function loadTokenRegistry() {
 }
 
 function getTokenInfo(tokenKey) {
-    return OFFCHAIN_TOKEN_REGISTRY[tokenKey] || { name: tokenKey.toUpperCase(), fullName: '', icon: '🪙', color: '#888' };
+    return OFFCHAIN_TOKEN_REGISTRY[tokenKey] || { name: tokenKey.toUpperCase(), fullName: '', icon: '🪙', color: '#6B5744' };
 }
 
 function isOffchainToken(tokenKey) {

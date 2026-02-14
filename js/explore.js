@@ -293,13 +293,13 @@ function showExploreTab(show) {
     // Update tab styles
     document.querySelectorAll('.social-filter-tab').forEach(b => {
         if (b.dataset.filter === 'explore') {
-            b.style.color = _exploreVisible ? 'var(--text)' : '#999';
+            b.style.color = _exploreVisible ? 'var(--text)' : '#6B5744';
             b.style.borderBottomColor = _exploreVisible ? 'var(--text)' : 'transparent';
             if (_exploreVisible) b.classList.add('active');
             else b.classList.remove('active');
         } else if (_exploreVisible) {
             b.classList.remove('active');
-            b.style.color = '#999';
+            b.style.color = '#6B5744';
             b.style.borderBottomColor = 'transparent';
         }
     });

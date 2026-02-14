@@ -320,7 +320,7 @@ function renderMentorPerformanceUI(mentorId) {
     const history = getMentorHistory(mentorId);
 
     if (stats.totalSignals === 0) {
-        return `<div style="color:#666; font-size:0.72rem; margin-top:6px;">📊 아직 평가된 시그널이 없습니다. 시그널이 쌓이면 성과가 표시됩니다.</div>`;
+        return `<div style="color:#6B5744; font-size:0.72rem; margin-top:6px;">📊 아직 평가된 시그널이 없습니다. 시그널이 쌓이면 성과가 표시됩니다.</div>`;
     }
 
     const winPct = Math.round(stats.winRate * 100);
@@ -352,7 +352,7 @@ function renderMentorPerformanceUI(mentorId) {
         <div style="margin-top:8px; padding:8px; background:rgba(255,255,255,0.03); border-radius:6px; font-size:0.72rem;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
                 <span style="color:${winColor}; font-weight:700;">승률 ${winPct}%</span>
-                <span style="color:#888;">(${stats.correctSignals}/${stats.totalSignals})</span>
+                <span style="color:#6B5744;">(${stats.correctSignals}/${stats.totalSignals})</span>
                 <span style="color:${avgPnlColor};">평균 ${stats.avgPnl >= 0 ? '+' : ''}${avgPnl}pt</span>
             </div>
             <div style="background:rgba(255,255,255,0.1); height:4px; border-radius:2px; margin-bottom:4px;">
@@ -380,9 +380,9 @@ function renderMentorDashboard() {
 
         html += `<div style="display:flex; gap:6px; align-items:center; margin-bottom:3px;">
             <span>${icons[mid]} ${names[mid]}</span>
-            <span style="color:${typeof winPct === 'number' && winPct >= 60 ? '#00cc66' : '#888'};">승률: ${winPct}%</span>
-            <span style="color:#888;">(${stats.correctSignals}/${stats.totalSignals})</span>
-            <span style="color:#888;">평균: ${avgPnl}</span>
+            <span style="color:${typeof winPct === 'number' && winPct >= 60 ? '#00cc66' : '#6B5744'};">승률: ${winPct}%</span>
+            <span style="color:#6B5744;">(${stats.correctSignals}/${stats.totalSignals})</span>
+            <span style="color:#6B5744;">평균: ${avgPnl}</span>
             <span>${dots || '—'}</span>
         </div>`;
     }
