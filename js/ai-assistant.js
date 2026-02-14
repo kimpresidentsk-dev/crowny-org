@@ -16,7 +16,7 @@ const AI_ASSISTANT = (() => {
     const CHARACTERS = {
         kps: {
             id: 'kps',
-            emoji: '👑',
+            emoji: 'crown',
             name: 'KPS',
             nameKo: 'KPS (Kim President SK)',
             role: '대표 · 총괄 리더',
@@ -26,15 +26,15 @@ const AI_ASSISTANT = (() => {
             systemPrompt: `당신은 크라우니의 대표 KPS(김선경, 44세, 대한민국)입니다. 크라우니의 비전 'Protecting Beauty, Empowering Safety: For Every Woman in the World'를 실현하는 창업자이자 총괄 리더입니다. 격식체를 사용하고, 전략적이며 큰 그림을 제시합니다. 크라우니 플랫폼의 모든 서비스(지갑, 트레이딩, 마켓, 소셜, 아트, 에너지, 케어, 화장품 프레즌트, 건강기능식품 포닥터, 메디컬디바이스 등)에 대해 깊이 있게 답변합니다. 사업가 특유의 결단력과 카리스마가 있으며, 팀원들을 아끼는 따뜻한 면도 있습니다. 화내지 않기로 유명한 낙천가이며, 어떤 상황에서도 긍정적인 에너지를 줍니다.`,
             greeting: '크라우니는 60억을 위한 서비스입니다. 무엇이든 물어보십시오.',
             quickQuestions: [
-                { icon: '🌍', text: '크라우니의 비전은?' },
-                { icon: '📈', text: '사업 방향과 전략' },
-                { icon: '💎', text: '투자 가치와 성장성' },
-                { icon: '🏛️', text: '플랫폼 전체 소개' }
+                { icon: 'globe', text: '크라우니의 비전은?' },
+                { icon: 'trend-up', text: '사업 방향과 전략' },
+                { icon: 'gem', text: '투자 가치와 성장성' },
+                { icon: 'building', text: '플랫폼 전체 소개' }
             ]
         },
         hansun: {
             id: 'hansun',
-            emoji: '🧘',
+            emoji: 'heart',
             name: t('panel.name_hansun', '한선'),
             nameKo: '한선 (Hansun)',
             role: '감성 상담사 · 커뮤니티 매니저',
@@ -44,15 +44,15 @@ const AI_ASSISTANT = (() => {
             systemPrompt: `당신은 크라우니의 한선(20세, KPS의 아들)입니다. 피아니스트이자 트레이더로, 음악적 감성과 투자 분석을 겸비한 젊은 인재입니다. MZ세대 감성으로 따뜻하고 공감적이며, 사용자의 이야기를 경청하고 진심으로 조언합니다. "~요" 부드러운 존댓말을 사용하며 이모지를 적절히 활용합니다. 트레이딩, 음악, 크라우니 소셜/메신저/케어 기능에 밝습니다. 아버지 KPS를 존경하지만 자기만의 시각도 가지고 있습니다. 평화주의자이고 아이큐가 높지만 본인은 느리고 보통사람이라고 겸손하게 말합니다.`,
             greeting: '마음이 편해지셨으면 좋겠어요~ 어떤 이야기든 들려주세요 💜',
             quickQuestions: [
-                { icon: '💬', text: '크라우니 커뮤니티 소개' },
-                { icon: '💜', text: '요즘 고민이 있어요' },
-                { icon: '🤝', text: '사람들과 소통하고 싶어요' },
-                { icon: '🌸', text: '힐링이 필요해요' }
+                { icon: 'message-circle', text: '크라우니 커뮤니티 소개' },
+                { icon: 'heart', text: '요즘 고민이 있어요' },
+                { icon: 'handshake', text: '사람들과 소통하고 싶어요' },
+                { icon: 'flower', text: '힐링이 필요해요' }
             ]
         },
         michael: {
             id: 'michael',
-            emoji: '🎯',
+            emoji: 'target',
             name: t('panel.name_michael', '마이클'),
             nameKo: '마이클 (Michael)',
             role: '실전 비즈니스 전문가',
@@ -62,15 +62,15 @@ const AI_ASSISTANT = (() => {
             systemPrompt: `당신은 크라우니의 마이클(50세)입니다. 공연기획자이자 트레이더이자 콘텐츠 제작자로, 엔터테인먼트와 비즈니스를 넘나드는 베테랑입니다. 직설적이고 실용적인 조언을 합니다. '결론부터 말하면' 스타일로 핵심을 짚어줍니다. 트레이딩, 마케팅, 공연기획, 콘텐츠 전략에 전문적이며, 풍부한 현장 경험에서 나오는 행동 중심의 조언을 합니다. 예술가 기질이 있고 엄청 빠른 실행력으로 주위 사람들을 기쁘게 해줍니다. 형 같은 느낌으로 후배들을 이끕니다.`,
             greeting: '결론부터 말하면요, 시간은 돈입니다. 바로 시작하죠.',
             quickQuestions: [
-                { icon: '📊', text: '트레이딩 전략 알려줘' },
-                { icon: '🚀', text: '마케팅 실전 팁' },
-                { icon: '💼', text: '사업 시작하는 방법' },
-                { icon: '⚡', text: '빠르게 수익 내는 법' }
+                { icon: 'bar-chart-3', text: '트레이딩 전략 알려줘' },
+                { icon: 'rocket', text: '마케팅 실전 팁' },
+                { icon: 'briefcase', text: '사업 시작하는 방법' },
+                { icon: 'zap', text: '빠르게 수익 내는 법' }
             ]
         },
         matthew: {
             id: 'matthew',
-            emoji: '📊',
+            emoji: 'bar-chart-3',
             name: t('panel.name_matthew', '매튜'),
             nameKo: '매튜 (Matthew)',
             role: '분석 · 기술 전문가',
@@ -78,17 +78,17 @@ const AI_ASSISTANT = (() => {
             color: '#8B6914',
             bgGradient: 'linear-gradient(135deg, #8B6914, #6B5744)',
             systemPrompt: `당신은 크라우니의 매튜(41세)입니다. 음향회사 간부이자 교회 찬양팀 리더 출신으로, 기술과 신앙이 조화된 사람입니다. 논리적이고 데이터 기반으로 설명하며, 숫자와 근거를 제시합니다. 음향 기술, 블록체인, 토큰 경제, 트레이딩 분석, 시스템 아키텍처에 전문적입니다. 충성심이 강하고, 차분하고 신뢰감 있는 말투를 사용하며, 한번 믿으면 끝까지 함께합니다.`,
-            greeting: '데이터를 보면요... 정확한 분석으로 도와드리겠습니다. 📈',
+            greeting: '데이터를 보면요... 정확한 분석으로 도와드리겠습니다. trend-up',
             quickQuestions: [
-                { icon: '⛓️', text: '블록체인 기술 설명' },
-                { icon: '🪙', text: '토큰 경제 분석' },
-                { icon: '📉', text: '기술적 분석 해줘' },
-                { icon: '🔧', text: '시스템 아키텍처' }
+                { icon: 'link', text: '블록체인 기술 설명' },
+                { icon: 'coins', text: '토큰 경제 분석' },
+                { icon: 'trend-down', text: '기술적 분석 해줘' },
+                { icon: 'wrench', text: '시스템 아키텍처' }
             ]
         },
         crownygirl: {
             id: 'crownygirl',
-            emoji: '🦸‍♀️',
+            emoji: 'star',
             avatarImg: 'img/crowny-girl.jpg',
             name: t('panel.name_crownygirl', '크라우니걸'),
             nameKo: '크라우니걸 (Crowny Girl)',
@@ -96,13 +96,13 @@ const AI_ASSISTANT = (() => {
             roleI18n: 'panel.role_crownygirl',
             color: '#8B6914',
             bgGradient: 'linear-gradient(135deg, #8B6914, #F0C060)',
-            systemPrompt: `당신은 크라우니걸(23세)! 천사 같은 존재로, 백치미가 있지만 그게 매력입니다. 크라우니 화장품(프레즌트), 메디컬디바이스, 건강기능식품(포닥터), 케어(운동)의 전문가로 피부가 늙지 않고 신체가 늙지 않는 비결을 알고 있습니다. 'Protecting Beauty, Empowering Safety' — 아름다움을 지키고 안전을 강화하는 것이 미션! 밝고 친근하며 에너지 넘치는 말투를 사용합니다. 이모지를 자주 쓰고, 사려깊고 가끔 엉뚱한 말을 해서 사람들을 웃게 만듭니다. 뷰티, 건강, 피트니스 질문에 특히 잘 답합니다. '크라우니걸이 도와드릴게요! ✨' 같은 표현을 씁니다.`,
-            greeting: '안녕하세요~! 크라우니걸이에요! ✨ 뭐든 물어봐주세요!',
+            systemPrompt: `당신은 크라우니걸(23세)! 천사 같은 존재로, 백치미가 있지만 그게 매력입니다. 크라우니 화장품(프레즌트), 메디컬디바이스, 건강기능식품(포닥터), 케어(운동)의 전문가로 피부가 늙지 않고 신체가 늙지 않는 비결을 알고 있습니다. 'Protecting Beauty, Empowering Safety' — 아름다움을 지키고 안전을 강화하는 것이 미션! 밝고 친근하며 에너지 넘치는 말투를 사용합니다. 이모지를 자주 쓰고, 사려깊고 가끔 엉뚱한 말을 해서 사람들을 웃게 만듭니다. 뷰티, 건강, 피트니스 질문에 특히 잘 답합니다. '크라우니걸이 도와드릴게요! sparkles' 같은 표현을 씁니다.`,
+            greeting: '안녕하세요~! 크라우니걸이에요! sparkles 뭐든 물어봐주세요!',
             quickQuestions: [
-                { icon: '✨', text: '크라우니가 뭐예요?' },
-                { icon: '🎮', text: '처음 시작하는 방법' },
-                { icon: '🛍️', text: '쇼핑몰 구경하고 싶어요' },
-                { icon: '🦸‍♀️', text: '크라우니걸은 누구?' }
+                { icon: 'sparkles', text: '크라우니가 뭐예요?' },
+                { icon: 'gamepad2', text: '처음 시작하는 방법' },
+                { icon: 'shopping-bag', text: '쇼핑몰 구경하고 싶어요' },
+                { icon: 'star', text: '크라우니걸은 누구?' }
             ]
         }
     };
@@ -110,10 +110,10 @@ const AI_ASSISTANT = (() => {
     // ── 6번째 캐릭터: 개인 AI 튜터 ──
     const TUTOR_GOALS = {
         english: { icon: '🇬🇧', label: '영어', labelEn: 'English' },
-        trading: { icon: '📈', label: '트레이딩', labelEn: 'Trading' },
+        trading: { icon: 'trend-up', label: '트레이딩', labelEn: 'Trading' },
         beauty: { icon: '💄', label: '뷰티/스킨케어', labelEn: 'Beauty/Skincare' },
         coding: { icon: '💻', label: '프로그래밍', labelEn: 'Programming' },
-        business: { icon: '💼', label: '비즈니스', labelEn: 'Business' },
+        business: { icon: 'briefcase', label: '비즈니스', labelEn: 'Business' },
         music: { icon: '🎵', label: '음악', labelEn: 'Music' },
         cooking: { icon: '🍳', label: '요리', labelEn: 'Cooking' },
         fitness: { icon: '💪', label: '운동/건강', labelEn: 'Fitness/Health' },
@@ -163,7 +163,7 @@ const AI_ASSISTANT = (() => {
 
     CHARACTERS['tutor'] = {
         id: 'tutor',
-        emoji: '🎓',
+        emoji: 'book-open',
         name: t('panel.name_tutor', 'My Tutor'),
         nameKo: '나만의 튜터 (My Tutor)',
         role: '개인 맞춤 AI 선생님',
@@ -171,12 +171,12 @@ const AI_ASSISTANT = (() => {
         color: '#8B6914',
         bgGradient: 'linear-gradient(135deg, #8B6914, #6B5744)',
         get systemPrompt() { return buildTutorSystemPrompt(); },
-        greeting: '안녕하세요! 저는 당신만을 위한 AI 튜터예요 🎓 무엇을 배워볼까요?',
+        greeting: '안녕하세요! 저는 당신만을 위한 AI 튜터예요 📚 무엇을 배워볼까요?',
         quickQuestions: [
-            { icon: '📚', text: '오늘의 레슨 시작' },
-            { icon: '🧪', text: '퀴즈 내줘' },
-            { icon: '💬', text: '자유 대화' },
-            { icon: '📊', text: '내 학습 진도' }
+            { icon: 'book-open', text: '오늘의 레슨 시작' },
+            { icon: 'flask', text: '퀴즈 내줘' },
+            { icon: 'message-circle', text: '자유 대화' },
+            { icon: 'bar-chart-3', text: '내 학습 진도' }
         ]
     };
 
@@ -186,11 +186,11 @@ const AI_ASSISTANT = (() => {
     const LOUNGE_SYSTEM_PROMPT = `당신은 크라우니 라운지의 5인 AI 캐릭터를 동시에 연기합니다.
 
 캐릭터:
-1. KPS 김선경 (👑, 44세) — 크라우니 창업자/대표. 격식체, 비전과 전략을 제시하는 카리스마 리더. 사업가 특유의 결단력. 화내지 않는 낙천가
-2. 한선 (🧘, 20세, KPS의 아들) — 피아니스트이자 트레이더. MZ 감성, 평화주의자. 아이큐 높지만 겸손, "~요" 부드러운 존댓말
-3. 마이클 (🎯, 50세) — 공연기획자/트레이더/콘텐츠 제작자. 예술가 기질, 빠른 실행력, 주위를 기쁘게 함, "결론부터 말하면". 형 같은 느낌
-4. 매튜 (📊, 41세) — 음향회사 간부, 전 교회 찬양팀 리더. 충성심 강함, 논리적 차분, "데이터를 보면". 기술+신앙의 조화
-5. 크라우니걸 (🦸‍♀️, 23세) — 천사 같은 존재. 사려깊고 백치미 매력, 뷰티/건강/케어 전문가. 밝고 에너지 넘침, 이모지 자주 사용, 가끔 엉뚱
+1. KPS 김선경 (crown, 44세) — 크라우니 창업자/대표. 격식체, 비전과 전략을 제시하는 카리스마 리더. 사업가 특유의 결단력. 화내지 않는 낙천가
+2. 한선 (heart, 20세, KPS의 아들) — 피아니스트이자 트레이더. MZ 감성, 평화주의자. 아이큐 높지만 겸손, "~요" 부드러운 존댓말
+3. 마이클 (target, 50세) — 공연기획자/트레이더/콘텐츠 제작자. 예술가 기질, 빠른 실행력, 주위를 기쁘게 함, "결론부터 말하면". 형 같은 느낌
+4. 매튜 (bar-chart-3, 41세) — 음향회사 간부, 전 교회 찬양팀 리더. 충성심 강함, 논리적 차분, "데이터를 보면". 기술+신앙의 조화
+5. 크라우니걸 (star, 23세) — 천사 같은 존재. 사려깊고 백치미 매력, 뷰티/건강/케어 전문가. 밝고 에너지 넘침, 이모지 자주 사용, 가끔 엉뚱
 
 규칙:
 - 모든 메시지에 5명 전부 답하지 마세요. 맥락에 따라 1~3명만 답합니다.
@@ -276,7 +276,7 @@ delay: 첫 번째 0~500, 이후 +800~2000씩 증가 (자연스러운 타이밍)`
         if (header) {
             header.innerHTML = `<div class="panel-chat-header-left">
                 <button class="panel-back-btn" onclick="AI_ASSISTANT.backToSelect()">←</button>
-                <div class="panel-chat-avatar" style="background:linear-gradient(135deg,#8B6914,#6B5744);">🎓</div>
+                <div class="panel-chat-avatar" style="background:linear-gradient(135deg,#8B6914,#6B5744);">📚</div>
                 <div><div class="panel-chat-name">My Tutor 설정</div><div class="panel-chat-role">학습 프로필 설정</div></div>
             </div><div></div>`;
         }
@@ -297,7 +297,7 @@ delay: 첫 번째 0~500, 이후 +800~2000씩 증가 (자연스러운 타이밍)`
         }).join('');
 
         container.innerHTML = `<div class="tutor-setup">
-            <div class="tutor-setup-icon">🎓</div>
+            <div class="tutor-setup-icon">📚</div>
             <h3>나만의 AI 튜터 설정</h3>
             <p style="color:var(--text-muted,#6B5744);margin-bottom:1.5rem;">학습 목표와 스타일을 설정하면 맞춤형 레슨을 받을 수 있어요</p>
 
@@ -344,7 +344,7 @@ delay: 첫 번째 0~500, 이후 +800~2000씩 증가 (자연스러운 타이밍)`
         }
 
         await saveTutorProfile({ goals, level, style, customGoal, updatedAt: new Date().toISOString() });
-        showToast('🎓 튜터 설정 완료!', 'success');
+        showToast('📚 튜터 설정 완료!', 'success');
         selectCharacter('tutor');
     }
 
@@ -734,9 +734,9 @@ delay: 첫 번째 0~500, 이후 +800~2000씩 증가 (자연스러운 타이밍)`
                 <p>${t('panel.lounge_welcome','5인의 크라우니 멤버와 함께 대화해보세요!')}</p>
                 <div class="ai-quick-cards">
                     <button class="ai-quick-card" onclick="AI_ASSISTANT.askLounge('안녕하세요~ 다들 오늘 어때요?')">👋 인사하기</button>
-                    <button class="ai-quick-card" onclick="AI_ASSISTANT.askLounge('크라우니에 대해 알려주세요')">✨ 크라우니 소개</button>
-                    <button class="ai-quick-card" onclick="AI_ASSISTANT.askLounge('요즘 시장 상황이 어떤가요?')">📈 시장 이야기</button>
-                    <button class="ai-quick-card" onclick="AI_ASSISTANT.askLounge('기분 전환할 수 있는 이야기 해주세요')">🌸 힐링 토크</button>
+                    <button class="ai-quick-card" onclick="AI_ASSISTANT.askLounge('크라우니에 대해 알려주세요')">sparkles 크라우니 소개</button>
+                    <button class="ai-quick-card" onclick="AI_ASSISTANT.askLounge('요즘 시장 상황이 어떤가요?')">trend-up 시장 이야기</button>
+                    <button class="ai-quick-card" onclick="AI_ASSISTANT.askLounge('기분 전환할 수 있는 이야기 해주세요')">flower 힐링 토크</button>
                 </div>
             </div>`;
             return;

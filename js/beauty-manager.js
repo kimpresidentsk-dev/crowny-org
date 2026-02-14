@@ -2,12 +2,12 @@
 
 const BEAUTY = (() => {
     const ZONES = [
-        { id: 'forehead', name: '이마', emoji: '🔲', guide: '이마 전체가 보이게 촬영' },
-        { id: 'lcheek', name: '왼쪽 볼', emoji: '◀️', guide: '왼쪽 볼을 정면에서 촬영' },
-        { id: 'rcheek', name: '오른쪽 볼', emoji: '▶️', guide: '오른쪽 볼을 정면에서 촬영' },
-        { id: 'nose', name: '코', emoji: '👃', guide: '코 부분을 가까이 촬영' },
-        { id: 'chin', name: '턱', emoji: '⬇️', guide: '턱 아래에서 위로 촬영' },
-        { id: 'eyes', name: '눈가', emoji: '👁️', guide: '눈가 주름이 보이게 촬영' }
+        { id: 'forehead', name: '이마', emoji: 'square', guide: '이마 전체가 보이게 촬영' },
+        { id: 'lcheek', name: '왼쪽 볼', emoji: 'arrow-left', guide: '왼쪽 볼을 정면에서 촬영' },
+        { id: 'rcheek', name: '오른쪽 볼', emoji: 'arrow-right', guide: '오른쪽 볼을 정면에서 촬영' },
+        { id: 'nose', name: '코', emoji: 'smile', guide: '코 부분을 가까이 촬영' },
+        { id: 'chin', name: '턱', emoji: 'arrow-down', guide: '턱 아래에서 위로 촬영' },
+        { id: 'eyes', name: '눈가', emoji: 'eye', guide: '눈가 주름이 보이게 촬영' }
     ];
 
     const SKIN_TYPES = ['건성', '지성', '복합성', '민감성', '중성'];
@@ -43,7 +43,7 @@ const BEAUTY = (() => {
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:1.5rem;">
                 <div style="background:linear-gradient(135deg,#8B6914,#6B5744);padding:1rem;border-radius:12px;color:#FFF8F0;text-align:center;">
                     <div style="font-size:2rem;font-weight:800;">${photoCount}</div>
-                    <div style="font-size:0.8rem;opacity:0.9;">📸 촬영 기록</div>
+                    <div style="font-size:0.8rem;opacity:0.9;">camera 촬영 기록</div>
                 </div>
                 <div style="background:linear-gradient(135deg,#8B6914,#F0C060);padding:1rem;border-radius:12px;color:#FFF8F0;text-align:center;">
                     <div style="font-size:2rem;font-weight:800;">${latestAnalysis ? '📊' : '—'}</div>
@@ -53,7 +53,7 @@ const BEAUTY = (() => {
 
             <!-- 부위별 촬영 -->
             <div style="background:var(--card-bg,#F7F3ED);border-radius:12px;padding:1.2rem;margin-bottom:1.2rem;">
-                <h3 style="margin:0 0 1rem 0;font-size:1rem;">📸 부위별 피부 촬영</h3>
+                <h3 style="margin:0 0 1rem 0;font-size:1rem;">camera 부위별 피부 촬영</h3>
                 <p style="font-size:0.8rem;color:var(--accent);margin-bottom:1rem;">각 부위를 가까이에서 촬영해주세요. 자연광에서 촬영하면 더 정확합니다.</p>
                 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;">
                     ${ZONES.map(z => `
@@ -70,7 +70,7 @@ const BEAUTY = (() => {
             <div style="background:var(--card-bg,#F7F3ED);border-radius:12px;padding:1.2rem;margin-bottom:1.2rem;">
                 <button onclick="BEAUTY.captureZone('full')" 
                     style="width:100%;padding:1rem;border:2px dashed var(--primary,#B54534);border-radius:10px;background:transparent;cursor:pointer;font-size:0.9rem;font-weight:600;color:var(--primary,#B54534);">
-                    🤳 전체 얼굴 촬영
+                    smartphone 전체 얼굴 촬영
                 </button>
             </div>
 
@@ -110,15 +110,15 @@ const BEAUTY = (() => {
                 <h3 style="margin:0 0 0.8rem 0;font-size:1rem;">🎁 크라우니 뷰티 추천</h3>
                 <div style="display:grid;gap:0.5rem;">
                     <div onclick="showPage('mall')" style="display:flex;align-items:center;gap:0.8rem;padding:0.8rem;background:linear-gradient(135deg,#FFF8F0,#F7F3ED);border-radius:10px;cursor:pointer;">
-                        <span style="font-size:1.5rem;">🎭</span>
+                        <span style="font-size:1.5rem;">mask</span>
                         <div><div style="font-weight:600;font-size:0.9rem;">프레즌트 마스크팩</div><div style="font-size:0.75rem;color:var(--accent);">피부 타입별 맞춤 추천 · crowny.kr</div></div>
                     </div>
                     <div onclick="showPage('care')" style="display:flex;align-items:center;gap:0.8rem;padding:0.8rem;background:linear-gradient(135deg,#FFF8F0,#F7F3ED);border-radius:10px;cursor:pointer;">
-                        <span style="font-size:1.5rem;">💊</span>
+                        <span style="font-size:1.5rem;">pill</span>
                         <div><div style="font-weight:600;font-size:0.9rem;">포닥터 건강기능식품</div><div style="font-size:0.75rem;color:var(--accent);">내면부터 빛나는 피부 관리</div></div>
                     </div>
                     <div onclick="showPage('movement')" style="display:flex;align-items:center;gap:0.8rem;padding:0.8rem;background:linear-gradient(135deg,#FFF8F0,#F7F3ED);border-radius:10px;cursor:pointer;">
-                        <span style="font-size:1.5rem;">💪</span>
+                        <span style="font-size:1.5rem;">dumbbell</span>
                         <div><div style="font-weight:600;font-size:0.9rem;">크라우니 무브먼트</div><div style="font-size:0.75rem;color:var(--accent);">신체 아름다움의 완성 · 500회 프로세스</div></div>
                     </div>
                 </div>
@@ -149,13 +149,13 @@ const BEAUTY = (() => {
         modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.95);z-index:10001;display:flex;flex-direction:column;align-items:center;justify-content:center;';
         modal.innerHTML = `
             <div style="color:#FFF8F0;text-align:center;margin-bottom:1rem;">
-                <h3>${zone.emoji || '🤳'} ${zone.name}</h3>
+                <h3>${zone.emoji || 'smartphone'} ${zone.name}</h3>
                 <p style="font-size:0.85rem;opacity:0.8;">${zone.guide}</p>
             </div>
             <video id="beauty-video" autoplay playsinline style="max-width:90%;max-height:50vh;border-radius:12px;transform:scaleX(-1);"></video>
             <canvas id="beauty-canvas" style="display:none;"></canvas>
             <div style="display:flex;gap:1rem;margin-top:1.5rem;">
-                <button onclick="BEAUTY.takePhoto()" style="width:70px;height:70px;border-radius:50%;border:4px solid white;background:var(--primary,#B54534);cursor:pointer;font-size:1.5rem;">📸</button>
+                <button onclick="BEAUTY.takePhoto()" style="width:70px;height:70px;border-radius:50%;border:4px solid white;background:var(--primary,#B54534);cursor:pointer;font-size:1.5rem;">camera</button>
             </div>
             <button onclick="BEAUTY.closeCapture()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:#FFF8F0;font-size:1.5rem;cursor:pointer;">✕</button>
             <div style="margin-top:1rem;">
@@ -209,7 +209,7 @@ const BEAUTY = (() => {
 
     async function savePhoto(dataUrl) {
         if (!currentUser || !currentZone) return;
-        showLoading('📸 저장 중...');
+        showLoading('camera 저장 중...');
 
         try {
             // Firebase Storage에 업로드
@@ -235,7 +235,7 @@ const BEAUTY = (() => {
                 });
 
             hideLoading();
-            showToast('📸 촬영 완료! 분석을 요청해보세요.', 'success');
+            showToast('camera 촬영 완료! 분석을 요청해보세요.', 'success');
             init(); // 새로고침
         } catch (e) {
             hideLoading();
@@ -399,7 +399,7 @@ JSON만 출력하세요.`;
     function renderAnalysis(analysis) {
         const scores = analysis.scores || {};
         const metricsKo = { moisture: '수분', oil: '유분', pore: '모공', wrinkle: '주름', pigment: '색소', elasticity: '탄력', overall: '전체' };
-        const colors = { moisture: '#4FC3F7', oil: '#FFB74D', pore: '#BA68C8', wrinkle: '#F06292', pigment: '#A1887F', elasticity: '#81C784', overall: '#B54534' };
+        const colors = { moisture: '#4FC3F7', oil: '#FFB74D', pore: '#BA68C8', wrinkle: '#B54534', pigment: '#A1887F', elasticity: '#6B8F3C', overall: '#B54534' };
 
         const date = analysis.createdAt?.toDate ? analysis.createdAt.toDate().toLocaleDateString('ko-KR') : new Date().toLocaleDateString('ko-KR');
         const typeLabel = analysis.type === 'ai' ? '✨ 크라우니걸 AI' : '👩‍⚕️ 전문가';
@@ -531,7 +531,7 @@ JSON만 출력하세요.`;
                     <div style="border:1px solid #E8E0D8;border-radius:8px;padding:0.8rem;margin-bottom:0.5rem;">
                         <div style="display:flex;justify-content:space-between;align-items:center;">
                             <strong>${d.userNickname || d.userId}</strong>
-                            <span style="font-size:0.75rem;color:#6B5744;">${date} · 📸 ${d.photoCount}장</span>
+                            <span style="font-size:0.75rem;color:#6B5744;">${date} · camera ${d.photoCount}장</span>
                         </div>
                         <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
                             <button onclick="BEAUTY.adminAnalyze('${doc.id}','${d.userId}')" 

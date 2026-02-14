@@ -30,12 +30,12 @@ window.CARE = (function() {
     let sosLocationInterval = null;
 
     const QUICK_REPLIES = [
-        { emoji: '😊', text: '좋아요' },
-        { emoji: '🙏', text: '고마워' },
-        { emoji: '❤️', text: '사랑해' },
-        { emoji: '👍', text: '알겠어' },
-        { emoji: '🍚', text: '밥먹었어' },
-        { emoji: '💊', text: '약먹었어' }
+        { emoji: 'smile', text: '좋아요' },
+        { emoji: 'hands-pressed', text: '고마워' },
+        { emoji: 'heart', text: '사랑해' },
+        { emoji: 'thumbs-up', text: '알겠어' },
+        { emoji: 'utensils', text: '밥먹었어' },
+        { emoji: 'pill', text: '약먹었어' }
     ];
 
     // ========== INIT ==========
@@ -101,11 +101,11 @@ window.CARE = (function() {
         if (!c) return;
         c.innerHTML = `
             <div style="text-align:center; padding:3rem 1rem;">
-                <div style="font-size:4rem; margin-bottom:1rem;">💝</div>
+                <div style="font-size:4rem; margin-bottom:1rem;">❤️</div>
                 <h2 style="font-size:1.8rem; margin-bottom:1rem;">${t('care.welcome','크라우니케어에 오신 것을 환영합니다')}</h2>
                 <p style="font-size:1.2rem; color:#6B5744; margin-bottom:2rem;">${t('care.no_group','가족 그룹을 만들거나 초대를 받아 시작하세요')}</p>
                 <button onclick="CARE.showCreateGroup()" class="care-btn care-btn-primary" style="font-size:1.2rem; padding:1rem 2rem;">
-                    👨‍👩‍👧‍👦 ${t('care.create_group','가족 그룹 만들기')}
+                    👪 ${t('care.create_group','가족 그룹 만들기')}
                 </button>
             </div>`;
     }
@@ -189,12 +189,12 @@ window.CARE = (function() {
             await db.collection('notifications').add({
                 userId: invitedUser.id,
                 type: 'care_invite',
-                message: `💝 ${careGroup.name} 가족 그룹에 초대되었습니다`,
+                message: `❤️ ${careGroup.name} 가족 그룹에 초대되었습니다`,
                 read: false,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
 
-            showToast(t('care.invited','초대가 완료되었습니다! 💝'));
+            showToast(t('care.invited','초대가 완료되었습니다! ❤️'));
             loadCareGroup();
         } catch(e) {
             console.error(e);
@@ -208,7 +208,7 @@ window.CARE = (function() {
         if (!c) return;
 
         const membersHtml = (careGroup.members || []).map(m =>
-            `<span class="care-member-tag ${m.role === 'guardian' ? 'guardian' : 'member-tag'}">${m.role === 'guardian' ? '🛡️' : '💛'} ${m.nickname}</span>`
+            `<span class="care-member-tag ${m.role === 'guardian' ? 'guardian' : 'member-tag'}">${m.role === 'guardian' ? 'shield' : 'heart'} ${m.nickname}</span>`
         ).join('');
 
         c.innerHTML = `
@@ -221,11 +221,11 @@ window.CARE = (function() {
             <!-- Group Info -->
             <div class="care-card">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
-                    <h3 style="margin:0; font-size:1.4rem;">👨‍👩‍👧‍👦 ${careGroup.name}</h3>
+                    <h3 style="margin:0; font-size:1.4rem;">👪 ${careGroup.name}</h3>
                     <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-                        ${careRole === 'guardian' ? `<button onclick="CARE.inviteMember()" class="care-btn care-btn-small">➕ ${t('care.invite_short','초대')}</button>` : ''}
-                        ${careRole === 'guardian' ? `<button onclick="CARE.showEmergencyContacts()" class="care-btn care-btn-small">🏥 ${t('care.emergency_contacts','응급연락처')}</button>` : ''}
-                        ${careRole === 'guardian' ? `<button onclick="CARE.showNeighborSettings()" class="care-btn care-btn-small">🏘️ ${t('care.neighbors','이웃 돌봄')}</button>` : ''}
+                        ${careRole === 'guardian' ? `<button onclick="CARE.inviteMember()" class="care-btn care-btn-small">plus ${t('care.invite_short','초대')}</button>` : ''}
+                        ${careRole === 'guardian' ? `<button onclick="CARE.showEmergencyContacts()" class="care-btn care-btn-small">hospital ${t('care.emergency_contacts','응급연락처')}</button>` : ''}
+                        ${careRole === 'guardian' ? `<button onclick="CARE.showNeighborSettings()" class="care-btn care-btn-small">home ${t('care.neighbors','이웃 돌봄')}</button>` : ''}
                     </div>
                 </div>
                 <div style="margin-top:0.8rem; display:flex; flex-wrap:wrap; gap:0.5rem;">${membersHtml}</div>
@@ -234,7 +234,7 @@ window.CARE = (function() {
             <!-- SOS Button -->
             <div style="text-align:center; margin:1.5rem 0;">
                 <button onclick="CARE.triggerSOS()" class="care-sos-btn" id="care-sos-main-btn">
-                    🆘 SOS
+                    sos SOS
                     <span style="display:block; font-size:1rem; margin-top:0.3rem;">${t('care.sos_label','긴급 호출')}</span>
                 </button>
             </div>
@@ -245,7 +245,7 @@ window.CARE = (function() {
             <!-- Messages -->
             <div class="care-card">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <h3 style="margin:0; font-size:1.3rem;">💬 ${t('care.messages','가족 메시지')}</h3>
+                    <h3 style="margin:0; font-size:1.3rem;">message-circle ${t('care.messages','가족 메시지')}</h3>
                     <button onclick="CARE.showSendMessage()" class="care-btn care-btn-small">✏️ ${t('care.write','쓰기')}</button>
                 </div>
                 <div id="care-messages" style="margin-top:1rem;"></div>
@@ -257,8 +257,8 @@ window.CARE = (function() {
             <!-- Today Schedule -->
             <div class="care-card">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <h3 style="margin:0; font-size:1.3rem;">📅 ${t('care.schedule','오늘의 일정')}</h3>
-                    ${careRole === 'guardian' ? `<button onclick="CARE.showAddSchedule()" class="care-btn care-btn-small">➕</button>` : ''}
+                    <h3 style="margin:0; font-size:1.3rem;">calendar ${t('care.schedule','오늘의 일정')}</h3>
+                    ${careRole === 'guardian' ? `<button onclick="CARE.showAddSchedule()" class="care-btn care-btn-small">plus</button>` : ''}
                 </div>
                 <div id="care-schedules" style="margin-top:1rem;"></div>
             </div>
@@ -266,8 +266,8 @@ window.CARE = (function() {
             <!-- Medications -->
             <div class="care-card">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <h3 style="margin:0; font-size:1.3rem;">💊 ${t('care.medications','약 복용')}</h3>
-                    ${careRole === 'guardian' ? `<button onclick="CARE.showAddMedication()" class="care-btn care-btn-small">➕</button>` : ''}
+                    <h3 style="margin:0; font-size:1.3rem;">pill ${t('care.medications','약 복용')}</h3>
+                    ${careRole === 'guardian' ? `<button onclick="CARE.showAddMedication()" class="care-btn care-btn-small">plus</button>` : ''}
                 </div>
                 <div id="care-medications" style="margin-top:1rem;"></div>
             </div>
@@ -275,8 +275,8 @@ window.CARE = (function() {
             <!-- Health Log -->
             <div class="care-card">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <h3 style="margin:0; font-size:1.3rem;">❤️‍🩹 ${t('care.health','건강 기록')}</h3>
-                    <button onclick="CARE.showAddHealthLog()" class="care-btn care-btn-small">➕ ${t('care.record','기록')}</button>
+                    <h3 style="margin:0; font-size:1.3rem;">heart ${t('care.health','건강 기록')}</h3>
+                    <button onclick="CARE.showAddHealthLog()" class="care-btn care-btn-small">plus ${t('care.record','기록')}</button>
                 </div>
                 <div id="care-health-logs" style="margin-top:1rem;"></div>
             </div>
@@ -284,7 +284,7 @@ window.CARE = (function() {
             <!-- Photo Slideshow -->
             <div class="care-card">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <h3 style="margin:0; font-size:1.3rem;">📸 ${t('care.photos','가족 사진')}</h3>
+                    <h3 style="margin:0; font-size:1.3rem;">camera ${t('care.photos','가족 사진')}</h3>
                     <button onclick="CARE.uploadPhoto()" class="care-btn care-btn-small">📷 ${t('care.upload','업로드')}</button>
                 </div>
                 <div id="care-slideshow" class="care-slideshow"></div>
@@ -355,14 +355,14 @@ window.CARE = (function() {
                     await db.collection('notifications').add({
                         userId: m.uid,
                         type: 'care_message',
-                        message: `💝 ${nickname}: ${text}`,
+                        message: `❤️ ${nickname}: ${text}`,
                         read: false,
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 }
             }
 
-            showToast(t('care.message_sent','메시지를 보냈습니다 💝'));
+            showToast(t('care.message_sent','메시지를 보냈습니다 ❤️'));
             loadMessages();
         } catch(e) {
             console.error(e);
@@ -381,7 +381,7 @@ window.CARE = (function() {
                 senderName: nickname,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
-            showToast(`${text} 전송! 💝`);
+            showToast(`${text} 전송! ❤️`);
             loadMessages();
         } catch(e) {
             console.error(e);
@@ -434,7 +434,7 @@ window.CARE = (function() {
                 createdBy: currentUser.uid,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
-            showToast(t('care.schedule_added','일정이 추가되었습니다 📅'));
+            showToast(t('care.schedule_added','일정이 추가되었습니다 calendar'));
             loadSchedules();
         } catch(e) {
             console.error(e);
@@ -473,12 +473,12 @@ window.CARE = (function() {
                 const taken = med.takenDates && med.takenDates.includes(today);
                 return `<div class="care-med-item ${taken ? 'taken' : ''}">
                     <div>
-                        <div style="font-weight:700; font-size:1.2rem;">💊 ${med.name}</div>
+                        <div style="font-weight:700; font-size:1.2rem;">pill ${med.name}</div>
                         <div style="color:#6B5744; font-size:1rem;">⏰ ${med.time} · ${med.repeat || '매일'}</div>
                     </div>
                     ${taken
                         ? `<span class="care-med-done">✅ ${t('care.taken','복용완료')}</span>`
-                        : `<button onclick="CARE.confirmMedication('${d.id}')" class="care-btn care-btn-med">💊 ${t('care.take','복용확인')}</button>`
+                        : `<button onclick="CARE.confirmMedication('${d.id}')" class="care-btn care-btn-med">pill ${t('care.take','복용확인')}</button>`
                     }
                 </div>`;
             }).join('');
@@ -502,7 +502,7 @@ window.CARE = (function() {
                 createdBy: currentUser.uid,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
-            showToast(t('care.med_added','약이 등록되었습니다 💊'));
+            showToast(t('care.med_added','약이 등록되었습니다 pill'));
             loadMedications();
         } catch(e) {
             console.error(e);
@@ -525,14 +525,14 @@ window.CARE = (function() {
                     await db.collection('notifications').add({
                         userId: m.uid,
                         type: 'care_medication',
-                        message: `💊 ${nickname}님이 약을 복용했습니다`,
+                        message: `pill ${nickname}님이 약을 복용했습니다`,
                         read: false,
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 }
             }
 
-            showToast(t('care.med_confirmed','복용 확인! 💊✅'));
+            showToast(t('care.med_confirmed','복용 확인! pill✅'));
             loadMedications();
         } catch(e) {
             console.error(e);
@@ -596,7 +596,7 @@ window.CARE = (function() {
                 recorderName: nickname,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
-            showToast(t('care.health_saved','건강 기록이 저장되었습니다 ❤️‍🩹'));
+            showToast(t('care.health_saved','건강 기록이 저장되었습니다 heart'));
             loadHealthLogs();
         } catch(e) {
             console.error(e);
@@ -622,7 +622,7 @@ window.CARE = (function() {
         overlay.className = 'sos-countdown-overlay';
         overlay.innerHTML = `
             <div class="sos-countdown-content">
-                <div class="sos-countdown-icon">🆘</div>
+                <div class="sos-countdown-icon">sos</div>
                 <div class="sos-countdown-title">${t('care.sos_countdown_title','SOS 긴급 호출')}</div>
                 <div class="sos-countdown-number" id="sos-countdown-num">${count}</div>
                 <div class="sos-countdown-desc">${t('care.sos_countdown_desc','초 후 발송됩니다')}</div>
@@ -715,7 +715,7 @@ window.CARE = (function() {
                     await db.collection('notifications').add({
                         userId: m.uid,
                         type: 'care_sos',
-                        message: `🆘 긴급! ${nickname}님이 SOS를 호출했습니다! (위치: ${locationStr})`,
+                        message: `sos 긴급! ${nickname}님이 SOS를 호출했습니다! (위치: ${locationStr})`,
                         read: false,
                         priority: 'urgent',
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -727,9 +727,9 @@ window.CARE = (function() {
         // Auto-message via messenger
         try {
             await db.collection('care_groups').doc(careGroupId).collection('messages').add({
-                text: `🆘 ${nickname}${t('care.sos_auto_msg','님이 긴급 호출을 보냈습니다!')} ${t('care.sos_location','위치')}: ${locationStr}`,
+                text: `sos ${nickname}${t('care.sos_auto_msg','님이 긴급 호출을 보냈습니다!')} ${t('care.sos_location','위치')}: ${locationStr}`,
                 senderId: currentUser.uid,
-                senderName: '🆘 SOS',
+                senderName: 'sos SOS',
                 type: 'sos',
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
@@ -940,7 +940,7 @@ window.CARE = (function() {
                         await db.collection('notifications').add({
                             userId: neighbor.uid,
                             type: 'care_sos_neighbor',
-                            message: `🆘 이웃 ${senderName}님이 긴급 호출을 보냈습니다! (${dist.toFixed(1)}km)`,
+                            message: `sos 이웃 ${senderName}님이 긴급 호출을 보냈습니다! (${dist.toFixed(1)}km)`,
                             read: false,
                             priority: 'urgent',
                             createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -968,7 +968,7 @@ window.CARE = (function() {
             ecHtml = emergencyContacts.map(ec => `
                 <div class="sos-ec-card">
                     <div>
-                        <strong>🏥 ${ec.hospitalName || ec.name || t('care.hospital','병원')}</strong>
+                        <strong>hospital ${ec.hospitalName || ec.name || t('care.hospital','병원')}</strong>
                         ${ec.doctorName ? `<div style="font-size:0.9rem; color:#6B5744;">👨‍⚕️ ${ec.doctorName}</div>` : ''}
                         ${ec.address ? `<div style="font-size:0.85rem; color:#6B5744;">📍 ${ec.address}</div>` : ''}
                     </div>
@@ -983,7 +983,7 @@ window.CARE = (function() {
         panel.innerHTML = `
             <div class="sos-active-card">
                 <div class="sos-active-header">
-                    <div class="sos-active-icon">🆘</div>
+                    <div class="sos-active-icon">sos</div>
                     <div>
                         <div class="sos-active-title">${t('care.sos_complete_title','SOS 긴급 호출 완료')}</div>
                         <div class="sos-active-time">${timeStr} ${t('care.sos_sent_at','발송됨')}</div>
@@ -1013,7 +1013,7 @@ window.CARE = (function() {
 
                 <!-- Emergency Contacts -->
                 <div class="sos-section">
-                    <h4 style="margin:0 0 0.5rem;">🏥 ${t('care.emergency_contacts','담당 병원/의사')}</h4>
+                    <h4 style="margin:0 0 0.5rem;">hospital ${t('care.emergency_contacts','담당 병원/의사')}</h4>
                     ${ecHtml}
                 </div>
 
@@ -1094,7 +1094,7 @@ window.CARE = (function() {
         let listHtml = contacts.length ? contacts.map(c => `
             <div style="display:flex; justify-content:space-between; align-items:center; padding:0.8rem; background:#f9f9f9; border-radius:10px; margin-bottom:0.5rem;">
                 <div>
-                    <strong>🏥 ${c.hospitalName || ''}</strong>
+                    <strong>hospital ${c.hospitalName || ''}</strong>
                     ${c.doctorName ? `<span style="color:#6B5744;"> · 👨‍⚕️ ${c.doctorName}</span>` : ''}
                     <div style="font-size:0.85rem; color:#6B5744;">${c.phone || ''} · ${c.address || ''}</div>
                 </div>
@@ -1104,7 +1104,7 @@ window.CARE = (function() {
 
         // Use prompt-style modal (simple approach)
         const hospitalName = await showPromptModal(
-            `🏥 ${t('care.emergency_contacts','응급 연락처 관리')}`,
+            `hospital ${t('care.emergency_contacts','응급 연락처 관리')}`,
             `${t('care.add_hospital','새 병원/의사 추가 — 병원명 입력 (빈칸이면 목록만 표시)')}\n\n현재 등록: ${contacts.length}건`,
             ''
         );
@@ -1122,7 +1122,7 @@ window.CARE = (function() {
                 createdBy: currentUser.uid,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
-            showToast(t('care.ec_added','응급 연락처가 추가되었습니다 🏥'));
+            showToast(t('care.ec_added','응급 연락처가 추가되었습니다 hospital'));
         } catch(e) {
             console.error(e);
             showToast(t('common.error','오류'), 'error');
@@ -1142,7 +1142,7 @@ window.CARE = (function() {
         if (!careGroupId) return;
 
         const email = await showPromptModal(
-            `🏘️ ${t('care.neighbors','이웃 돌봄 네트워크')}`,
+            `home ${t('care.neighbors','이웃 돌봄 네트워크')}`,
             t('care.neighbor_email_prompt','이웃의 이메일을 입력하세요 (빈칸이면 취소)'),
             ''
         );
@@ -1170,7 +1170,7 @@ window.CARE = (function() {
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
 
-            showToast(t('care.neighbor_added','이웃이 등록되었습니다 🏘️'));
+            showToast(t('care.neighbor_added','이웃이 등록되었습니다 home'));
         } catch(e) {
             console.error(e);
             showToast(t('common.error','오류'), 'error');
@@ -1216,7 +1216,7 @@ window.CARE = (function() {
         const el = document.getElementById('care-slideshow');
         if (!el) return;
         if (slideshowPhotos.length === 0) {
-            el.innerHTML = `<p style="color:#6B5744; text-align:center; padding:2rem;">${t('care.no_photos','아직 사진이 없습니다 📸')}</p>`;
+            el.innerHTML = `<p style="color:#6B5744; text-align:center; padding:2rem;">${t('care.no_photos','아직 사진이 없습니다 camera')}</p>`;
             return;
         }
         const photo = slideshowPhotos[slideshowIndex % slideshowPhotos.length];
@@ -1247,7 +1247,7 @@ window.CARE = (function() {
             reader.onload = async (ev) => {
                 try {
                     const resized = await resizeImage(ev.target.result, 1200);
-                    const caption = await showPromptModal('📸 사진 설명', '사진에 대한 설명을 입력하세요 (선택)', '');
+                    const caption = await showPromptModal('camera 사진 설명', '사진에 대한 설명을 입력하세요 (선택)', '');
 
                     await db.collection('care_groups').doc(careGroupId).collection('photos').add({
                         url: resized,
@@ -1255,7 +1255,7 @@ window.CARE = (function() {
                         uploaderId: currentUser.uid,
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
-                    showToast(t('care.photo_uploaded','사진이 업로드되었습니다 📸'));
+                    showToast(t('care.photo_uploaded','사진이 업로드되었습니다 camera'));
                     loadPhotos();
                 } catch(e) {
                     console.error(e);
@@ -1300,7 +1300,7 @@ window.CARE = (function() {
                     <div id="care-board-messages" class="care-board-messages"></div>
                     <div id="care-board-schedule" class="care-board-schedule"></div>
                     <button onclick="CARE.triggerSOS()" class="care-sos-btn" style="margin-top:2rem;">
-                        🆘 SOS
+                        sos SOS
                     </button>
                 </div>
             </div>`;
