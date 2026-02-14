@@ -89,7 +89,7 @@
 
             <!-- service link -->
             <div style="margin-bottom:0.8rem;">
-                <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:0.3rem;">🔗 ${t('shortform.service_link','서비스 링크 태그')}</label>
+                <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:0.3rem;"><i data-lucide="link" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>${t('shortform.service_link','서비스 링크 태그')}</label>
                 <div style="display:flex;gap:0.4rem;flex-wrap:wrap;" id="sf-service-btns">
                     ${Object.entries(CTA_MAP).map(([k,v]) => `<button type="button" class="sf-svc-btn" data-type="${k}" onclick="SHORTFORM._selectService('${k}')" style="padding:0.3rem 0.6rem;border:1px solid ${v.color};border-radius:16px;background:transparent;color:${v.color};font-size:0.75rem;cursor:pointer;">${v.label}</button>`).join('')}
                 </div>
@@ -350,7 +350,7 @@
             };
 
             await db.collection(COLLECTION).add(videoDoc);
-            showToast(t('shortform.upload_success','🎬 숏폼 영상 업로드 완료!'), 'success');
+            showToast(t('shortform.upload_success','<i data-lucide="video" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> 숏폼 영상 업로드 완료!'), 'success');
             document.getElementById('shortform-upload-modal').remove();
             _selectedFile = null;
             _serviceLink = null;
@@ -379,7 +379,7 @@
             if (lastDoc) q = q.startAfter(lastDoc);
             const snap = await q.get();
             if (snap.empty && reelsData.length === 0) {
-                document.getElementById('reels-container').innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:80vh;color:var(--text-muted,#6B5744);"><div style="font-size:3rem;margin-bottom:1rem;">🎬</div><p>${t('shortform.no_videos','아직 영상이 없습니다')}</p><button onclick="SHORTFORM.openUpload()" style="margin-top:1rem;padding:0.6rem 1.2rem;border:none;border-radius:8px;background:#3D2B1F;color:#FFF8F0;cursor:pointer;font-weight:600;">${t('shortform.first_upload','첫 영상 올리기')}</button></div>`;
+                document.getElementById('reels-container').innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:80vh;color:var(--text-muted,#6B5744);"><div style="font-size:3rem;margin-bottom:1rem;"><i data-lucide="video" style="width:48px;height:48px;display:block;"></i></div><p>${t('shortform.no_videos','아직 영상이 없습니다')}</p><button onclick="SHORTFORM.openUpload()" style="margin-top:1rem;padding:0.6rem 1.2rem;border:none;border-radius:8px;background:#3D2B1F;color:#FFF8F0;cursor:pointer;font-weight:600;">${t('shortform.first_upload','첫 영상 올리기')}</button></div>`;
                 loading = false; return;
             }
             const newItems = [];
@@ -431,15 +431,15 @@
                 <div class="reel-side-actions">
                     ${reel.authorPhoto ? `<button class="reel-action-btn"><img class="reel-profile-pic" src="${reel.authorPhoto}"></button>` : ''}
                     <button class="reel-action-btn" onclick="SHORTFORM._toggleLike('${reel.id}')">
-                        <span class="action-icon">${isLiked ? '❤️' : '🤍'}</span>
+                        <span class="action-icon">${isLiked ? '<i data-lucide="heart" style="width:20px;height:20px;display:inline-block;vertical-align:middle;fill:currentColor;"></i>' : '<i data-lucide="heart" style="width:20px;height:20px;display:inline-block;vertical-align:middle;"></i>'}</span>
                         <span class="action-count">${reel.likes || 0}</span>
                     </button>
                     <button class="reel-action-btn" onclick="SHORTFORM._openComments('${reel.id}')">
-                        <span class="action-icon">💬</span>
+                        <span class="action-icon"><i data-lucide="message-circle" style="width:20px;height:20px;display:inline-block;vertical-align:middle;"></i></span>
                         <span class="action-count">${reel.commentCount || 0}</span>
                     </button>
                     <button class="reel-action-btn" onclick="SHORTFORM._shareReel('${reel.id}')">
-                        <span class="action-icon">↗️</span>
+                        <span class="action-icon"><i data-lucide="share-2" style="width:20px;height:20px;display:inline-block;vertical-align:middle;"></i></span>
                     </button>
                 </div>
             `;
@@ -515,15 +515,15 @@
             <!-- Side actions -->
             <div style="position:absolute;right:12px;bottom:100px;display:flex;flex-direction:column;gap:1.2rem;align-items:center;z-index:5;">
                 <button onclick="SHORTFORM._toggleLike('${reel.id}')" style="background:none;border:none;cursor:pointer;color:#FFF8F0;text-align:center;">
-                    <div style="font-size:1.6rem;">${isLiked ? '❤️' : '🤍'}</div>
+                    <div style="font-size:1.6rem;"><i data-lucide="heart" style="width:24px;height:24px;display:block;${isLiked ? 'fill:currentColor;' : ''}" ></i></div>
                     <div style="font-size:0.75rem;">${reel.likes || 0}</div>
                 </button>
                 <button onclick="SHORTFORM._openComments('${reel.id}')" style="background:none;border:none;cursor:pointer;color:#FFF8F0;text-align:center;">
-                    <div style="font-size:1.6rem;">💬</div>
+                    <div style="font-size:1.6rem;"><i data-lucide="message-circle" style="width:24px;height:24px;display:block;"></i></div>
                     <div style="font-size:0.75rem;">${reel.commentCount || 0}</div>
                 </button>
                 <button onclick="SHORTFORM._shareReel('${reel.id}')" style="background:none;border:none;cursor:pointer;color:#FFF8F0;text-align:center;">
-                    <div style="font-size:1.6rem;">📤</div>
+                    <div style="font-size:1.6rem;"><i data-lucide="share-2" style="width:24px;height:24px;display:block;"></i></div>
                 </button>
             </div>
 
@@ -605,7 +605,7 @@
         overlay.innerHTML = `
             <div id="reel-comments-sheet" style="width:100%;max-width:500px;max-height:70vh;background:var(--dark-card,#F7F3ED);border-radius:16px 16px 0 0;display:flex;flex-direction:column;overflow:hidden;">
                 <div style="padding:12px 16px;border-bottom:1px solid var(--dark-border,#2a2a4a);display:flex;align-items:center;justify-content:space-between;">
-                    <h4 style="margin:0;font-size:1rem;">💬 ${t('shortform.comments','댓글')}</h4>
+                    <h4 style="margin:0;font-size:1rem;"><i data-lucide="message-circle" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:6px;"></i>${t('shortform.comments','댓글')}</h4>
                     <button onclick="document.getElementById('reel-comments-overlay').remove()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--text);">✕</button>
                 </div>
                 <div id="reel-comment-list" style="flex:1;overflow-y:auto;padding:12px 16px;min-height:100px;">
@@ -721,10 +721,10 @@
                 await navigator.share({ title: 'Crowny Reels', text: t('shortform.share_text','크라우니에서 공유된 숏폼 영상'), url });
             } else {
                 await navigator.clipboard.writeText(url);
-                showToast('📋 ' + t('shortform.link_copied','링크가 복사되었습니다'), 'success');
+                showToast('<i data-lucide="clipboard" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> ' + t('shortform.link_copied','링크가 복사되었습니다'), 'success');
             }
         } catch(e) {
-            try { await navigator.clipboard.writeText(url); showToast('📋 ' + t('shortform.link_copied','링크가 복사되었습니다'), 'success'); } catch(_){}
+            try { await navigator.clipboard.writeText(url); showToast('<i data-lucide="clipboard" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> ' + t('shortform.link_copied','링크가 복사되었습니다'), 'success'); } catch(_){}
         }
     }
 

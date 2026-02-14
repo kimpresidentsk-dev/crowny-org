@@ -94,11 +94,11 @@ async function showProfileEdit() {
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     overlay.innerHTML = `
     <div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:420px;width:100%;">
-        <h3 style="margin-bottom:1rem;">${t('social.edit_profile','✏️ 프로필 편집')}</h3>
+        <h3 style="margin-bottom:1rem;"><i data-lucide="pencil" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:6px;"></i>${t('social.edit_profile','✏️ 프로필 편집')}</h3>
         <div style="text-align:center; margin-bottom:1rem;">
             <div id="profile-preview-avatar" style="display:inline-block;">${avatarHTML(data.photoURL, data.nickname, 80)}</div>
             <div style="margin-top:0.5rem;">
-                <label for="profile-photo-input" style="color:#3D2B1F; cursor:pointer; font-size:0.85rem; font-weight:600;">${t('social.change_photo','📷 사진 변경')}</label>
+                <label for="profile-photo-input" style="color:#3D2B1F; cursor:pointer; font-size:0.85rem; font-weight:600;"><i data-lucide="camera" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>${t('social.change_photo','📷 사진 변경')}</label>
                 <input type="file" id="profile-photo-input" accept="image/*" style="display:none;" onchange="previewProfilePhoto(this)">
             </div>
         </div>
@@ -113,16 +113,16 @@ async function showProfileEdit() {
             </div>
             <p style="font-size:0.75rem; color:var(--text-muted,#6B5744);">${t('auth.email','이메일')}: ${data.email}</p>
             <div style="margin-top:0.8rem; padding-top:0.8rem; border-top:1px solid #E8E0D8; display:grid; gap:0.5rem;">
-                <p style="font-size:0.8rem; font-weight:600; color:var(--text,#3D2B1F); margin-bottom:0.2rem;">${t('social.login_method','🔐 로그인 방법')}</p>
+                <p style="font-size:0.8rem; font-weight:600; color:var(--text,#3D2B1F); margin-bottom:0.2rem;"><i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>${t('social.login_method','🔐 로그인 방법')}</p>
                 ${currentUser && currentUser.providerData.some(p => p.providerId === 'google.com') ? `
-                <p style="font-size:0.75rem; color:#6B8F3C;">${t('social.google_linked','✅ Google 계정 연동됨')}</p>` : `
+                <p style="font-size:0.75rem; color:#6B8F3C;"><i data-lucide="check-circle" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>${t('social.google_linked','✅ Google 계정 연동됨')}</p>` : `
                 <button onclick="linkGoogleAccount(); document.getElementById('profile-edit-modal').remove();" style="width:100%;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:0.5rem;">
                     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width:16px;height:16px;"> ${t('social.link_google','Google 계정 연동')}
                 </button>`}
                 ${currentUser && currentUser.providerData.some(p => p.providerId === 'password') ? `
-                <p style="font-size:0.75rem; color:#6B8F3C;">${t('social.pw_login_set','✅ 이메일/비밀번호 로그인 설정됨')}</p>
-                <button onclick="changePasswordFromProfile()" style="width:100%;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">${t('auth.change_pw','🔑 비밀번호 변경')}</button>` : `
-                <button onclick="setupPasswordFromProfile()" style="width:100%;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">${t('social.setup_pw','🔑 비밀번호 설정 (이메일 로그인 추가)')}</button>`}
+                <p style="font-size:0.75rem; color:#6B8F3C;"><i data-lucide="check-circle" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>${t('social.pw_login_set','✅ 이메일/비밀번호 로그인 설정됨')}</p>
+                <button onclick="changePasswordFromProfile()" style="width:100%;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;"><i data-lucide="key" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>${t('auth.change_pw','🔑 비밀번호 변경')}</button>` : `
+                <button onclick="setupPasswordFromProfile()" style="width:100%;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;"><i data-lucide="key" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>${t('social.setup_pw','🔑 비밀번호 설정 (이메일 로그인 추가)')}</button>`}
             </div>
         </div>
         <div style="display:flex;gap:0.5rem;margin-top:1rem;">
@@ -161,7 +161,7 @@ async function saveProfile() {
 
         await db.collection('users').doc(currentUser.uid).update(updates);
         hideLoading();
-        showToast(t('social.profile_saved','✅ 프로필 저장 완료!'), 'success');
+        showToast(t('social.profile_saved','<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> 프로필 저장 완료!'), 'success');
         document.getElementById('profile-edit-modal')?.remove();
 
         const userInfoEl = document.getElementById('user-email');
@@ -262,7 +262,7 @@ async function editReferralNickname() {
     if (!newNick || !newNick.trim()) return;
     try {
         await db.collection('users').doc(currentUser.uid).update({ referralNickname: newNick.trim() });
-        showToast(t('social.nick_changed', '✅ 소개 닉네임 변경 완료'), 'success');
+        showToast(t('social.nick_changed', '<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> 소개 닉네임 변경 완료'), 'success');
         loadReferralInfo();
     } catch (e) {
         showToast(t('social.nick_change_fail', '변경 실패: ') + e.message, 'error');
@@ -275,7 +275,7 @@ async function copyReferralCode() {
     if (!code || code === t('social.not_generated','미생성')) { showToast(t('social.generate_first','먼저 소개 코드를 생성하세요'), 'warning'); return; }
     try {
         await navigator.clipboard.writeText(code);
-        showToast(`📋 ${t('social.code_copied','소개 코드 복사됨')}: ${code}`, 'success');
+        showToast(`<i data-lucide="clipboard" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> ${t('social.code_copied','소개 코드 복사됨')}: ${code}`, 'success');
     } catch (e) {
         await showPromptModal(t('auth.referral_title','소개 코드'), t('social.copy_code','소개 코드를 복사하세요'), code);
     }
@@ -323,7 +323,7 @@ async function showAddContactModal() {
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     overlay.innerHTML = `
     <div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:420px;width:100%;">
-        <h3 style="margin-bottom:1rem;">${t('social.add_contact','➕ 연락처 추가')}</h3>
+        <h3 style="margin-bottom:1rem;"><i data-lucide="plus" style="width:18px;height:18px;display:inline-block;vertical-align:middle;margin-right:6px;"></i>${t('social.add_contact','➕ 연락처 추가')}</h3>
         <div style="display:flex;gap:0.5rem;margin-bottom:0.8rem;">
             <input type="text" id="contact-search-input" placeholder="${t('social.search_email_nick','이메일 또는 닉네임 검색')}" style="flex:1;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;font-size:0.9rem;">
             <button onclick="searchContactUsers()" style="padding:0.7rem 1rem;border:none;border-radius:8px;background:var(--gold,#8B6914);color:#3D2B1F;font-weight:600;cursor:pointer;">${t('social.search','검색')}</button>
@@ -392,7 +392,7 @@ async function addContactFromSearch(uid, email, name) {
     try {
         await db.collection('users').doc(currentUser.uid)
             .collection('contacts').doc(uid).set({ email, name, addedAt: new Date() });
-        showToast(t('social.contact_added','✅ 연락처에 추가되었습니다'), 'success');
+        showToast(t('social.contact_added','<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> 연락처에 추가되었습니다'), 'success');
         document.getElementById('add-contact-modal')?.remove();
         loadContacts();
     } catch (e) {
@@ -409,9 +409,9 @@ async function loadContacts() {
     if (contacts.empty) {
         contactList.innerHTML = `
             <div style="text-align:center; padding:2rem; color:var(--accent);">
-                <p style="font-size:2.5rem; margin-bottom:0.8rem;">👥</p>
+                <div style="font-size:2.5rem; margin-bottom:0.8rem;"><i data-lucide="users" style="width:40px;height:40px;display:block;"></i></div>
                 <p style="font-size:0.95rem; margin-bottom:0.5rem;">${t('social.no_contacts','연락처가 없습니다')}</p>
-                <button onclick="showAddContactModal()" class="btn-primary" style="padding:0.5rem 1rem; font-size:0.85rem;">${t('social.add_contact_btn','➕ 연락처 추가')}</button>
+                <button onclick="showAddContactModal()" class="btn-primary" style="padding:0.5rem 1rem; font-size:0.85rem;"><i data-lucide="plus" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>${t('social.add_contact_btn','➕ 연락처 추가')}</button>
             </div>`;
         return;
     }
@@ -432,7 +432,7 @@ async function loadContacts() {
             </div>
             <div style="display:flex; gap:0.3rem; flex-direction:column;">
                 <button onclick='startChatWithContact("${contact.email}")' class="btn-chat" style="font-size:0.8rem; padding:0.4rem 0.6rem;">${t('social.chat','채팅')}</button>
-                <button onclick='deleteContact("${doc.id}", "${info.nickname}")' style="background:none; border:1px solid #fcc; border-radius:4px; padding:0.2rem 0.5rem; font-size:0.7rem; cursor:pointer; color:#c00;">🗑️</button>
+                <button onclick='deleteContact("${doc.id}", "${info.nickname}")' style="background:none; border:1px solid #fcc; border-radius:4px; padding:0.2rem 0.5rem; font-size:0.7rem; cursor:pointer; color:#c00;"><i data-lucide="trash-2" style="width:12px;height:12px;display:inline-block;vertical-align:middle;"></i></button>
             </div>`;
         contactList.appendChild(contactItem);
     }
@@ -550,9 +550,9 @@ async function loadMessages() {
         chatItem.dataset.chatId = doc.id;
         chatItem.onclick = () => openChat(doc.id, otherId);
         const secIndicators = [];
-        if (chat.secret) secIndicators.push('🔒');
-        else if (chat.e2eEnabled === true) secIndicators.push('🔒');
-        if (chat.autoDeleteAfter > 0) secIndicators.push('⏱️');
+        if (chat.secret) secIndicators.push('<i data-lucide="lock" style="width:10px;height:10px;display:inline-block;vertical-align:middle;"></i>');
+        else if (chat.e2eEnabled === true) secIndicators.push('<i data-lucide="lock" style="width:10px;height:10px;display:inline-block;vertical-align:middle;"></i>');
+        if (chat.autoDeleteAfter > 0) secIndicators.push('<i data-lucide="hourglass" style="width:10px;height:10px;display:inline-block;vertical-align:middle;"></i>');
 
         chatItem.innerHTML = `
             <div style="position:relative;">
@@ -646,14 +646,14 @@ async function openChat(chatId, otherId) {
 
     // Update header with security indicators
     const secIcons = [];
-    if (_chatSettings.e2eEnabled === true) secIcons.push('🔒');
-    if (_chatSettings.autoDeleteAfter > 0) secIcons.push('⏱️');
+    if (_chatSettings.e2eEnabled === true) secIcons.push('<i data-lucide="lock" style="width:12px;height:12px;display:inline-block;vertical-align:middle;"></i>');
+    if (_chatSettings.autoDeleteAfter > 0) secIcons.push('<i data-lucide="hourglass" style="width:12px;height:12px;display:inline-block;vertical-align:middle;"></i>');
     if (_chatSettings.secret) secIcons.push('🤫');
     if (secIcons.length > 0) {
         const headerEl = document.getElementById('chat-username');
         const secBadge = document.createElement('span');
         secBadge.style.cssText = 'font-size:0.7rem;margin-left:0.3rem;opacity:0.7;';
-        secBadge.textContent = secIcons.join(' ');
+        secBadge.innerHTML = secIcons.join(' ');
         headerEl.querySelector('strong')?.appendChild(secBadge);
     }
 
@@ -698,7 +698,7 @@ async function openChat(chatId, otherId) {
                     try {
                         msg._decryptedText = await E2ECrypto.decryptMessage(msg, currentUser.uid);
                     } catch (e) {
-                        msg._decryptedText = '🔒 암호화된 메시지 (복호화 불가)';
+                        msg._decryptedText = '<i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 암호화된 메시지 (복호화 불가)';
                     }
                 }
 
@@ -725,7 +725,7 @@ async function openChat(chatId, otherId) {
                 // Build content
                 let content = '';
                 if (msg.deleted) {
-                    content = `<span class="msg-deleted">🚫 ${t('social.msg_deleted','이 메시지는 삭제되었습니다')}</span>`;
+                    content = `<span class="msg-deleted"><i data-lucide="ban" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>${t('social.msg_deleted','이 메시지는 삭제되었습니다')}</span>`;
                 } else {
                     // Reply quote
                     if (msg.replyTo) {
@@ -735,7 +735,7 @@ async function openChat(chatId, otherId) {
                     }
                     // Forwarded label
                     if (msg.forwarded) {
-                        content += `<div style="font-size:0.7rem;color:var(--text-muted,#6B5744);margin-bottom:0.2rem;font-style:italic;">↗️ 전달된 메시지</div>`;
+                        content += `<div style="font-size:0.7rem;color:var(--text-muted,#6B5744);margin-bottom:0.2rem;font-style:italic;"><i data-lucide="arrow-up-right" style="width:10px;height:10px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> 전달된 메시지</div>`;
                     }
                     // Media types
                     const msgType = msg.type || 'text';
@@ -767,12 +767,12 @@ async function openChat(chatId, otherId) {
                         const pageMap = { product: 'mall', artist: 'artist', campaign: 'fundraise', art: 'art' };
                         content += `<div onclick="showPage('${pageMap[sc.itemType]||sc.itemType}')" style="border:1px solid var(--border,#E8E0D8);border-radius:10px;overflow:hidden;cursor:pointer;margin-bottom:0.3rem;max-width:220px;">
                             ${sc.imageUrl ? `<img src="${sc.imageUrl}" style="width:100%;height:100px;object-fit:cover;">` : ''}
-                            <div style="padding:0.4rem 0.6rem;"><div style="font-size:0.8rem;font-weight:600;">${sc.name}</div>${sc.price ? `<div style="font-size:0.75rem;color:#C4841D;">${sc.price}</div>` : ''}<div style="font-size:0.7rem;color:#3D2B1F;margin-top:0.2rem;">🛒 보기</div></div></div>`;
+                            <div style="padding:0.4rem 0.6rem;"><div style="font-size:0.8rem;font-weight:600;">${sc.name}</div>${sc.price ? `<div style="font-size:0.75rem;color:#C4841D;">${sc.price}</div>` : ''}<div style="font-size:0.7rem;color:#3D2B1F;margin-top:0.2rem;"><i data-lucide="shopping-cart" style="width:10px;height:10px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> 보기</div></div></div>`;
                     } else if (msgType === 'transfer') {
-                        content += `<div style="background:linear-gradient(135deg,#8B6914,#F0C060);color:#FFF8F0;padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
+                        content += `<div style="background:linear-gradient(135deg,#8B6914,#F0C060);color:#FFF8F0;padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;"><i data-lucide="dollar-sign" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>${msg.tokenAmount} ${msg.tokenType}</div>`;
                     }
                     if (msg.tokenAmount && msg.type !== 'transfer') {
-                        content += `<div style="background:linear-gradient(135deg,#8B6914,#F0C060);color:#FFF8F0;padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
+                        content += `<div style="background:linear-gradient(135deg,#8B6914,#F0C060);color:#FFF8F0;padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;"><i data-lucide="dollar-sign" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>${msg.tokenAmount} ${msg.tokenType}</div>`;
                     }
                     // Text (skip for sticker/gif)
                     const displayText = msg._decryptedText || msg.text;
@@ -820,7 +820,7 @@ async function openChat(chatId, otherId) {
                 let expiryHTML = '';
                 if (msg.expiresAt && typeof E2ECrypto !== 'undefined') {
                     const remaining = E2ECrypto.getRemainingTime(msg);
-                    if (remaining) expiryHTML = `<span style="font-size:0.65rem;color:#C4841D;margin-left:0.3rem;">⏱️${remaining}</span>`;
+                    if (remaining) expiryHTML = `<span style="font-size:0.65rem;color:#C4841D;margin-left:0.3rem;"><i data-lucide="hourglass" style="width:10px;height:10px;display:inline-block;vertical-align:middle;margin-right:2px;"></i>${remaining}</span>`;
                 }
 
                 // Action buttons (reaction + reply + forward + pin + delete)
@@ -830,13 +830,13 @@ async function openChat(chatId, otherId) {
                     const sName = senderInfo.nickname.replace(/'/g, "\\'");
                     const mText = (msg._decryptedText || msg.text || '').replace(/'/g, "\\'").substring(0, 80);
                     actionsHTML = `<div class="msg-actions-bar ${side}" id="actions-${msgId}">`;
-                    actionsHTML += `<button class="msg-action-btn" onclick="showReactionPicker('${msgId}')">😊</button>`;
-                    actionsHTML += `<button class="msg-action-btn" onclick="setReplyTo('${msgId}','${mText}','${msg.senderId}','${sName}')">↩️</button>`;
+                    actionsHTML += `<button class="msg-action-btn" onclick="showReactionPicker('${msgId}')"><i data-lucide="smile" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></button>`;
+                    actionsHTML += `<button class="msg-action-btn" onclick="setReplyTo('${msgId}','${mText}','${msg.senderId}','${sName}')"><i data-lucide="reply-all" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></button>`;
                     if (!_chatSettings.noForward && !_chatSettings.secret) {
-                        actionsHTML += `<button class="msg-action-btn" onclick="forwardMessage('${msgId}')">↗️</button>`;
+                        actionsHTML += `<button class="msg-action-btn" onclick="forwardMessage('${msgId}')"><i data-lucide="arrow-up-right" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></button>`;
                     }
-                    actionsHTML += `<button class="msg-action-btn" onclick="pinMessage('${msgId}','${mText}')">📌</button>`;
-                    if (isMine) actionsHTML += `<button class="msg-action-btn" onclick="deleteMessage('${msgId}')">🗑️</button>`;
+                    actionsHTML += `<button class="msg-action-btn" onclick="pinMessage('${msgId}','${mText}')"><i data-lucide="pin" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></button>`;
+                    if (isMine) actionsHTML += `<button class="msg-action-btn" onclick="deleteMessage('${msgId}')"><i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></button>`;
                     actionsHTML += '</div>';
                 }
 
@@ -848,7 +848,7 @@ async function openChat(chatId, otherId) {
                         ${actionsHTML}
                         <div style="background:${isMine ? 'var(--text)' : '#F7F3ED'};color:${isMine ? 'white' : 'var(--text)'};padding:0.6rem 0.8rem;border-radius:${isMine ? '12px 12px 0 12px' : '12px 12px 12px 0'};word-break:break-word;font-size:0.9rem;line-height:1.4;">${content}</div>
                         ${reactionsHTML}
-                        <div class="msg-time" style="${isMine ? 'justify-content:flex-end;' : ''}">${msg.encrypted ? '🔒 ' : ''}${formatMsgTime(timestamp)}${expiryHTML}${readReceipt}</div>
+                        <div class="msg-time" style="${isMine ? 'justify-content:flex-end;' : ''}">${msg.encrypted ? '<i data-lucide="lock" style="width:10px;height:10px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>' : ''}${formatMsgTime(timestamp)}${expiryHTML}${readReceipt}</div>
                     </div>`;
                 messagesDiv.appendChild(msgEl);
             }
@@ -986,7 +986,7 @@ async function sendMessage() {
                     msgData.iv = encrypted.iv;
                     msgData.encrypted = true;
                     msgData.signature = encrypted.signature;
-                    msgData.text = '🔒 암호화된 메시지';
+                    msgData.text = '<i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>암호화된 메시지';
                 }
             }
             // Auto-delete
@@ -1011,7 +1011,7 @@ async function sendMessage() {
             try {
                 const myInfo = await getUserDisplayInfo(currentUser.uid);
                 await db.collection('users').doc(currentChatOtherId).collection('notifications').add({
-                    type: 'messenger', message: `💬 ${myInfo.nickname}: ${text.substring(0, 50)}`,
+                    type: 'messenger', message: `<i data-lucide="message-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> ${myInfo.nickname}: ${text.substring(0, 50)}`,
                     data: { chatId: currentChat, otherId: currentUser.uid }, read: false, createdAt: new Date()
                 });
             } catch (e) { /* best-effort */ }
@@ -1033,12 +1033,12 @@ function showAttachMenu() {
     menu.className = 'attach-menu-popup';
     menu.style.cssText = 'position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--bg-card,#3D2B1F);border:1px solid var(--border,#E8E0D8);border-radius:12px;padding:0.5rem;box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:9999;display:flex;gap:0.3rem;';
     const items = [
-        { icon: '📷', label: '사진', fn: () => sendMediaFile('image') },
-        { icon: '🎬', label: '영상', fn: () => sendMediaFile('video') },
-        { icon: '📄', label: '파일', fn: () => sendMediaFile('file') },
-        { icon: '🎤', label: '음성', fn: () => startVoiceRecord(), mobile: true },
-        { icon: '💰', label: '토큰', fn: () => sendTokenWithMessage(), mobile: true },
-        { icon: '😊', label: '스티커', fn: () => showStickerGifPanel(), mobile: true },
+        { icon: '<i data-lucide="camera" style="width:20px;height:20px;"></i>', label: '사진', fn: () => sendMediaFile('image') },
+        { icon: '<i data-lucide="video" style="width:20px;height:20px;"></i>', label: '영상', fn: () => sendMediaFile('video') },
+        { icon: '<i data-lucide="file" style="width:20px;height:20px;"></i>', label: '파일', fn: () => sendMediaFile('file') },
+        { icon: '<i data-lucide="mic" style="width:20px;height:20px;"></i>', label: '음성', fn: () => startVoiceRecord(), mobile: true },
+        { icon: '<i data-lucide="dollar-sign" style="width:20px;height:20px;"></i>', label: '토큰', fn: () => sendTokenWithMessage(), mobile: true },
+        { icon: '<i data-lucide="smile" style="width:20px;height:20px;"></i>', label: '스티커', fn: () => showStickerGifPanel(), mobile: true },
     ];
     items.forEach(item => {
         const btn = document.createElement('button');
@@ -1068,19 +1068,19 @@ async function sendMediaFile(mediaType) {
         if (!input.files[0]) return;
         const file = input.files[0];
         try {
-            showLoading(`${mediaType === 'image' ? '📷' : mediaType === 'video' ? '🎬' : '📄'} 전송 중...`);
+            showLoading(`${mediaType === 'image' ? '<i data-lucide="camera" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>' : mediaType === 'video' ? '<i data-lucide="video" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>' : '<i data-lucide="file" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>'} 전송 중...`);
 
             if (mediaType === 'image') {
                 // base64 resize inline
                 const dataUrl = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file); });
                 const resized = await resizeImage(dataUrl, 800);
-                await sendMediaMessage({ type: 'image', mediaUrl: resized, text: '' }, '📷 사진');
+                await sendMediaMessage({ type: 'image', mediaUrl: resized, text: '' }, '<i data-lucide="camera" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> 사진');
             } else if (mediaType === 'video') {
                 const url = await uploadToStorage(`media/${currentChat}/${Date.now()}_${file.name}`, file);
-                await sendMediaMessage({ type: 'video', mediaUrl: url, text: '', fileName: file.name, fileSize: file.size }, '🎬 영상');
+                await sendMediaMessage({ type: 'video', mediaUrl: url, text: '', fileName: file.name, fileSize: file.size }, '<i data-lucide="video" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> 영상');
             } else {
                 const url = await uploadToStorage(`files/${currentChat}/${Date.now()}_${file.name}`, file);
-                await sendMediaMessage({ type: 'file', mediaUrl: url, text: '', fileName: file.name, fileSize: file.size }, `📄 ${file.name}`);
+                await sendMediaMessage({ type: 'file', mediaUrl: url, text: '', fileName: file.name, fileSize: file.size }, `<i data-lucide="file" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> ${file.name}`);
             }
             hideLoading();
         } catch (e) {
