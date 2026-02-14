@@ -84,7 +84,7 @@ async function loadBooksGallery() {
         }
         html += _renderBookRow('🆕 신간', recent);
         if (popular.length > 1) {
-            html += _renderBookRow('🔥 인기', popular);
+            html += _renderBookRow('<i data-lucide="flame" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 인기', popular);
         }
 
         // Search & filter
@@ -222,7 +222,7 @@ async function viewBookDetailV2(id) {
             </div>
             
             <div style="display:flex;gap:0.5rem;margin-top:1rem;">
-                ${userOwns || isOwner || price <= 0 ? `<button onclick="openBookReader('${id}');document.getElementById('book-detail-modal-v2')?.remove();" style="flex:1;background:#6B8F3C;color:#FFF8F0;border:none;padding:0.8rem;border-radius:8px;cursor:pointer;font-weight:700;">📖 읽기</button>` : ''}
+                ${userOwns || isOwner || price <= 0 ? `<button onclick="openBookReader('${id}');document.getElementById('book-detail-modal-v2')?.remove();" style="flex:1;background:#3D2B1F;color:#FFF8F0;border:none;padding:0.8rem;border-radius:8px;cursor:pointer;font-weight:700;">📖 읽기</button>` : ''}
                 ${!userOwns && !isOwner && price > 0 && !isSoldOut ? `<button onclick="buyBookV2('${id}');document.getElementById('book-detail-modal-v2')?.remove();" style="flex:1;background:#3D2B1F;color:#FFF8F0;border:none;padding:0.8rem;border-radius:8px;cursor:pointer;font-weight:700;">🛒 구매 (${price} CRGC)</button>` : ''}
                 ${isSoldOut && !userOwns ? '<button disabled style="flex:1;background:#E8E0D8;color:#6B5744;border:none;padding:0.8rem;border-radius:8px;font-weight:700;">매진</button>' : ''}
                 <button onclick="addToReadingList('${id}')" style="background:#C4841D;color:#FFF8F0;border:none;padding:0.8rem;border-radius:8px;cursor:pointer;font-weight:700;">📚</button>
@@ -542,7 +542,7 @@ function _renderCreatorStep4() {
             <button onclick="_bookCreatorData.step=3;_renderBookCreator();" style="padding:0.7rem 1.5rem;border:1px solid var(--border);background:#FFF8F0;border-radius:8px;cursor:pointer;">← 이전</button>
             <div style="display:flex;gap:0.5rem;">
                 <button onclick="_saveBookDraft()" style="padding:0.7rem 1.5rem;border:1px solid var(--border);background:#FFF8F0;border-radius:8px;cursor:pointer;">💾 임시저장</button>
-                <button onclick="_publishBook()" style="padding:0.7rem 1.5rem;background:#6B8F3C;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:700;">📚 발행하기</button>
+                <button onclick="_publishBook()" style="padding:0.7rem 1.5rem;background:#3D2B1F;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:700;">📚 발행하기</button>
             </div>
         </div>
     </div>`;
@@ -776,14 +776,14 @@ function _renderBookReader() {
             <span style="color:#6B5744;font-size:0.8rem;">${s.book.title}</span>
             <button onclick="_toggleReaderSettings()" style="background:none;border:none;color:#FFF8F0;font-size:1.2rem;cursor:pointer;">⚙️</button>
         </div>
-        <div style="height:2px;background:#3D2B1F;flex-shrink:0;"><div style="height:100%;background:#6B8F3C;width:${progress}%;transition:width 0.3s;"></div></div>
+        <div style="height:2px;background:#3D2B1F;flex-shrink:0;"><div style="height:100%;background:#8B6914;width:${progress}%;transition:width 0.3s;"></div></div>
         
         <div id="reader-settings-panel" style="display:none;background:rgba(61,43,31,0.5);padding:0.8rem 1rem;flex-shrink:0;">
             <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
                 <button onclick="_adjustFontSize(-0.1)" style="background:#3D2B1F;color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">A-</button>
                 <button onclick="_adjustFontSize(0.1)" style="background:#3D2B1F;color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">A+</button>
-                <button onclick="_toggleEffects()" id="btn-effects-toggle" style="background:${s.effectsEnabled ? '#6B8F3C' : '#6B5744'};color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">✨</button>
-                <button onclick="_toggleSound()" id="btn-sound-toggle" style="background:${s.soundEnabled ? '#6B8F3C' : '#6B5744'};color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">🔊</button>
+                <button onclick="_toggleEffects()" id="btn-effects-toggle" style="background:${s.effectsEnabled ? '#8B6914' : '#6B5744'};color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">✨</button>
+                <button onclick="_toggleSound()" id="btn-sound-toggle" style="background:${s.soundEnabled ? '#8B6914' : '#6B5744'};color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">🔊</button>
                 ${s.book.featureCodes?.ttsEnabled ? `<button onclick="_toggleTTS()" id="btn-tts-toggle" style="background:${s.ttsActive ? '#C4841D' : '#6B5744'};color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">🗣️ TTS</button>
                 <select onchange="_bookReaderState.ttsRate=parseFloat(this.value)" style="background:#3D2B1F;color:#FFF8F0;border:none;padding:0.3rem;border-radius:4px;">
                     <option value="0.7">0.7x</option><option value="1" selected>1x</option><option value="1.3">1.3x</option><option value="1.5">1.5x</option><option value="2">2x</option>
@@ -957,7 +957,7 @@ function _toggleEffects() {
     if (!_bookReaderState) return;
     _bookReaderState.effectsEnabled = !_bookReaderState.effectsEnabled;
     const btn = document.getElementById('btn-effects-toggle');
-    if (btn) btn.style.background = _bookReaderState.effectsEnabled ? '#6B8F3C' : '#6B5744';
+    if (btn) btn.style.background = _bookReaderState.effectsEnabled ? '#8B6914' : '#6B5744';
     const layer = document.getElementById('reader-effects-layer');
     if (layer) {
         if (_bookReaderState.effectsEnabled) {
@@ -972,7 +972,7 @@ function _toggleSound() {
     if (!_bookReaderState) return;
     _bookReaderState.soundEnabled = !_bookReaderState.soundEnabled;
     const btn = document.getElementById('btn-sound-toggle');
-    if (btn) btn.style.background = _bookReaderState.soundEnabled ? '#6B8F3C' : '#6B5744';
+    if (btn) btn.style.background = _bookReaderState.soundEnabled ? '#8B6914' : '#6B5744';
     if (!_bookReaderState.soundEnabled) _stopSound();
     else _playSound(_bookReaderState.allScenes[_bookReaderState.currentScene]?.sound);
 }
@@ -1191,7 +1191,7 @@ async function _loadLibraryPurchased() {
                     <div style="font-weight:600;font-size:0.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.bookTitle}</div>
                     ${p.editionNumber ? `<div style="font-size:0.75rem;color:#6B5744;">#${p.editionNumber}</div>` : ''}
                     <div style="height:4px;background:#e0e0e0;border-radius:2px;margin-top:0.3rem;">
-                        <div style="height:100%;background:#6B8F3C;border-radius:2px;width:${progress}%;"></div>
+                        <div style="height:100%;background:#8B6914;border-radius:2px;width:${progress}%;"></div>
                     </div>
                     <div style="font-size:0.7rem;color:var(--accent);margin-top:0.1rem;">${progress}% 읽음</div>
                 </div>
