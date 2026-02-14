@@ -161,15 +161,17 @@ async function loadDashboard() {
             ${positionSummary}
             
             <!-- Invite Friends Card -->
-            <div class="dash-card" style="background:linear-gradient(135deg,#1a1a2e,#16213e);color:white;">
-                <h4 style="color:#D4AF37;">🎉 ${t('invite.title', '친구 초대')}</h4>
+            <div class="dash-card" style="background:#3D2B1F;color:#FFF8F0;">
+                <h4 style="color:#8B6914;">🎉 ${t('invite.title', '친구 초대')}</h4>
                 <p style="font-size:0.85rem;opacity:0.9;margin-bottom:0.8rem;">${t('invite.card_desc', '친구를 초대하고 CRTD 리워드를 받으세요!')}</p>
-                <button onclick="if(typeof INVITE!=='undefined')INVITE.showInviteModal()" style="width:100%;padding:0.7rem;background:#D4AF37;color:#1a1a2e;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:0.9rem;">
+                <button onclick="if(typeof INVITE!=='undefined')INVITE.showInviteModal()" style="width:100%;padding:0.7rem;background:#8B6914;color:#FFF8F0;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:0.9rem;">
                     📨 ${t('invite.invite_friends', '친구 초대하기')}
                 </button>
             </div>
         </div>
     `;
+    // Lucide 아이콘 렌더링
+    if (window.lucide) lucide.createIcons();
     } catch(e) {
         console.error('Dashboard load error:', e);
         container.innerHTML = `<div style="text-align:center;padding:2rem;">
