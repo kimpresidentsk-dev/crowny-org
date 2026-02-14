@@ -192,7 +192,7 @@
 .friend-icon-item:hover { opacity: 0.8; }
 
 .friend-icon-name {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: var(--text);
     text-align: center;
     overflow: hidden;
@@ -600,7 +600,7 @@
 }
 .post .post-time {
     padding: 0 14px 12px;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: var(--dark-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -761,7 +761,7 @@
     filter: drop-shadow(0 1px 3px rgba(61,43,31,0.5));
 }
 .reel-action-btn .action-count {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     font-weight: 600;
 }
 .reel-action-btn .reel-profile-pic {
