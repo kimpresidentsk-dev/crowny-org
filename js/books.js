@@ -498,7 +498,7 @@ function _renderCreatorStep3() {
     const d = _bookCreatorData;
     return `<div>
         <p style="text-align:center;color:var(--accent);margin-bottom:1rem;">리더 뷰로 미리보기 (효과/사운드 테스트)</p>
-        <div id="book-preview-container" style="background:#1a1a2e;border-radius:12px;overflow:hidden;height:60vh;position:relative;">
+        <div id="book-preview-container" style="background:#3D2B1F;border-radius:12px;overflow:hidden;height:60vh;position:relative;">
             <div id="book-preview-content" style="padding:2rem;color:#e0e0e0;font-size:1rem;line-height:1.8;height:100%;overflow-y:auto;"></div>
             <div id="book-preview-effects" style="position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;overflow:hidden;"></div>
         </div>
@@ -758,7 +758,7 @@ function _renderBookReader() {
 
     const modal = document.createElement('div');
     modal.id = 'book-reader-modal';
-    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:#1a1a2e;z-index:10002;display:flex;flex-direction:column;';
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:#3D2B1F;z-index:10002;display:flex;flex-direction:column;';
 
     const progress = ((s.currentScene + 1) / s.allScenes.length * 100).toFixed(0);
     const sc = s.allScenes[s.currentScene];

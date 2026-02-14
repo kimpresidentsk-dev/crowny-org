@@ -25,7 +25,7 @@
             snap.forEach(doc => {
                 const d = doc.data();
                 const card = document.createElement('div');
-                card.style.cssText = 'background:var(--bg-card,#1a1a2e);border:1px solid var(--border,#2a2a3e);border-radius:12px;padding:1.2rem;cursor:pointer;transition:transform 0.2s;';
+                card.style.cssText = 'background:var(--bg-card,#3D2B1F);border:1px solid var(--border,#2a2a3e);border-radius:12px;padding:1.2rem;cursor:pointer;transition:transform 0.2s;';
                 card.onmouseenter = () => card.style.transform = 'translateY(-2px)';
                 card.onmouseleave = () => card.style.transform = '';
                 card.innerHTML = `
@@ -86,12 +86,12 @@
 
                 const progress = d.goal ? Math.min(100, Math.round((d.raised || 0) / d.goal * 100)) : 0;
                 const card = document.createElement('div');
-                card.style.cssText = 'background:var(--bg-card,#1a1a2e);border:1px solid var(--border,#2a2a3e);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s;';
+                card.style.cssText = 'background:var(--bg-card,#3D2B1F);border:1px solid var(--border,#2a2a3e);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s;';
                 card.onmouseenter = () => card.style.transform = 'translateY(-2px)';
                 card.onmouseleave = () => card.style.transform = '';
                 card.onclick = () => showCampaignDetail(doc.id, d);
                 card.innerHTML = `
-                    ${d.imageURL ? `<img src="${d.imageURL}" style="width:100%;height:180px;object-fit:cover;">` : `<div style="height:120px;background:linear-gradient(135deg,#0f0c29,#302b63);display:flex;align-items:center;justify-content:center;font-size:3rem;">${d.emoji || '💝'}</div>`}
+                    ${d.imageURL ? `<img src="${d.imageURL}" style="width:100%;height:180px;object-fit:cover;">` : `<div style="height:120px;background:linear-gradient(135deg,#3D2B1F,#302b63);display:flex;align-items:center;justify-content:center;font-size:3rem;">${d.emoji || '💝'}</div>`}
                     <div style="padding:1rem;">
                         <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;">
                             ${d.category ? `<span style="font-size:0.65rem;padding:0.15rem 0.5rem;background:var(--bg);border-radius:10px;">${d.category}</span>` : ''}

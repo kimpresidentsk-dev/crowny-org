@@ -200,7 +200,7 @@ async function openGroupChat(chatId) {
                     content += `<div style="border:1px solid #eee;border-radius:10px;overflow:hidden;cursor:pointer;max-width:220px;">${sc.imageUrl ? `<img src="${sc.imageUrl}" style="width:100%;height:100px;object-fit:cover;">` : ''}<div style="padding:0.4rem 0.6rem;"><div style="font-size:0.8rem;font-weight:600;">${sc.name}</div>${sc.price ? `<div style="font-size:0.75rem;color:#e65100;">${sc.price}</div>` : ''}</div></div>`;
                 }
                 if (msg.tokenAmount) {
-                    content += `<div style="background:linear-gradient(135deg,#FFD700,#FFA000);color:#333;padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
+                    content += `<div style="background:linear-gradient(135deg,#8B6914,#FFA000);color:#333;padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
                 }
                 if (msg.text && msgType !== 'sticker' && msgType !== 'gif') content += `<span>${msg.text}</span>`;
 

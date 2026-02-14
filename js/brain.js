@@ -154,7 +154,7 @@ const BRAIN = (() => {
 
             <!-- 3단계 카드 -->
             <div style="display:grid;gap:0.8rem;margin-bottom:1.5rem;">
-                <div onclick="BRAIN.startStage(1)" style="background:linear-gradient(135deg,#667eea,#764ba2);padding:1.2rem;border-radius:12px;color:white;cursor:pointer;">
+                <div onclick="BRAIN.startStage(1)" style="background:linear-gradient(135deg,#8B6914,#6B5744);padding:1.2rem;border-radius:12px;color:'#FFF8F0';cursor:pointer;">
                     <div style="display:flex;justify-content:space-between;align-items:center;">
                         <div>
                             <div style="font-size:0.7rem;opacity:0.8;">STAGE 1</div>
@@ -165,7 +165,7 @@ const BRAIN = (() => {
                     </div>
                 </div>
 
-                <div onclick="BRAIN.startStage(2)" style="background:linear-gradient(135deg,#f093fb,#f5576c);padding:1.2rem;border-radius:12px;color:white;cursor:pointer;">
+                <div onclick="BRAIN.startStage(2)" style="background:linear-gradient(135deg,#f093fb,#f5576c);padding:1.2rem;border-radius:12px;color:'#FFF8F0';cursor:pointer;">
                     <div style="display:flex;justify-content:space-between;align-items:center;">
                         <div>
                             <div style="font-size:0.7rem;opacity:0.8;">STAGE 2</div>
@@ -176,7 +176,7 @@ const BRAIN = (() => {
                     </div>
                 </div>
 
-                <div onclick="BRAIN.startStage(3)" style="background:linear-gradient(135deg,#4facfe,#00f2fe);padding:1.2rem;border-radius:12px;color:white;cursor:pointer;">
+                <div onclick="BRAIN.startStage(3)" style="background:linear-gradient(135deg,#4facfe,#00f2fe);padding:1.2rem;border-radius:12px;color:'#FFF8F0';cursor:pointer;">
                     <div style="display:flex;justify-content:space-between;align-items:center;">
                         <div>
                             <div style="font-size:0.7rem;opacity:0.8;">STAGE 3</div>
@@ -243,7 +243,7 @@ const BRAIN = (() => {
                     <span>${currentQuestion + 1} / ${STAGE1_QUESTIONS.length}</span>
                 </div>
                 <div style="background:#e0e0e0;border-radius:10px;height:6px;">
-                    <div style="background:linear-gradient(90deg,#667eea,#764ba2);height:100%;width:${progress}%;border-radius:10px;transition:width 0.3s;"></div>
+                    <div style="background:linear-gradient(90deg,#8B6914,#6B5744);height:100%;width:${progress}%;border-radius:10px;transition:width 0.3s;"></div>
                 </div>
             </div>
             <div style="background:var(--card-bg,white);border-radius:12px;padding:1.5rem;margin-bottom:1rem;">
@@ -252,7 +252,7 @@ const BRAIN = (() => {
                     ${q.a.map((a, i) => `
                         <button onclick="BRAIN.answer('${a.t}')" 
                             style="padding:0.9rem;border:2px solid var(--border,#e0e0e0);border-radius:10px;background:var(--card-bg,white);cursor:pointer;text-align:left;font-size:0.9rem;transition:all 0.2s;"
-                            onmouseenter="this.style.borderColor='#667eea';this.style.background='#f0f0ff'"
+                            onmouseenter="this.style.borderColor='#8B6914';this.style.background='#f0f0ff'"
                             onmouseleave="this.style.borderColor='';this.style.background=''">
                             ${a.text}
                         </button>
@@ -302,7 +302,7 @@ const BRAIN = (() => {
                 <p style="font-size:0.85rem;color:var(--accent);margin-top:0.5rem;">${temp.desc}</p>
             </div>
 
-            <div style="background:${temp.gradient};border-radius:12px;padding:1.2rem;color:white;margin-bottom:1rem;">
+            <div style="background:${temp.gradient};border-radius:12px;padding:1.2rem;color:'#FFF8F0';margin-bottom:1rem;">
                 <div style="font-size:0.8rem;opacity:0.8;margin-bottom:0.5rem;">기질 분포</div>
                 ${sorted.map(([key, val]) => `
                     <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;">
@@ -327,7 +327,7 @@ const BRAIN = (() => {
             </div>
 
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-                <button onclick="BRAIN.startStage(2)" style="padding:0.8rem;border:none;border-radius:10px;background:linear-gradient(135deg,#f093fb,#f5576c);color:white;font-weight:700;cursor:pointer;">🔮 2단계 진행</button>
+                <button onclick="BRAIN.startStage(2)" style="padding:0.8rem;border:none;border-radius:10px;background:linear-gradient(135deg,#f093fb,#f5576c);color:'#FFF8F0';font-weight:700;cursor:pointer;">🔮 2단계 진행</button>
                 <button onclick="BRAIN.init()" style="padding:0.8rem;border:none;border-radius:10px;background:var(--card-bg,white);border:1px solid #ddd;cursor:pointer;font-weight:600;">← 돌아가기</button>
             </div>
         `;
@@ -343,7 +343,7 @@ const BRAIN = (() => {
                 <p style="font-size:0.85rem;color:var(--accent);margin:1rem 0;">크라우니걸이 대화를 통해 당신의 애니어그램 유형을 진단합니다.</p>
                 <p style="font-size:0.8rem;color:var(--accent);">9가지 유형 × 3가지 본능 × 9가지 건강 상태 = <strong>243가지</strong></p>
                 <button onclick="BRAIN.startAIEnneagram()" 
-                    style="margin-top:1.5rem;padding:1rem 2rem;border:none;border-radius:12px;background:linear-gradient(135deg,#f093fb,#f5576c);color:white;font-weight:700;cursor:pointer;font-size:1rem;">
+                    style="margin-top:1.5rem;padding:1rem 2rem;border:none;border-radius:12px;background:linear-gradient(135deg,#f093fb,#f5576c);color:'#FFF8F0';font-weight:700;cursor:pointer;font-size:1rem;">
                     ✨ 크라우니걸과 대화 시작
                 </button>
                 <br>
@@ -368,7 +368,7 @@ const BRAIN = (() => {
                 <input type="text" id="brain-input" placeholder="답변을 입력하세요..." 
                     style="flex:1;padding:0.8rem;border:2px solid var(--border,#e0e0e0);border-radius:10px;font-size:16px;"
                     onkeydown="if(event.key==='Enter')BRAIN.sendChat()">
-                <button onclick="BRAIN.sendChat()" style="padding:0.8rem 1.2rem;border:none;border-radius:10px;background:linear-gradient(135deg,#f093fb,#f5576c);color:white;font-weight:700;cursor:pointer;">➤</button>
+                <button onclick="BRAIN.sendChat()" style="padding:0.8rem 1.2rem;border:none;border-radius:10px;background:linear-gradient(135deg,#f093fb,#f5576c);color:'#FFF8F0';font-weight:700;cursor:pointer;">➤</button>
             </div>
         `;
         // AI 첫 질문

@@ -93,7 +93,7 @@ async function showProfileEdit() {
     overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     overlay.innerHTML = `
-    <div style="background:var(--bg-card,#1a1a2e);padding:1.5rem;border-radius:16px;max-width:420px;width:100%;">
+    <div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:420px;width:100%;">
         <h3 style="margin-bottom:1rem;">${t('social.edit_profile','✏️ 프로필 편집')}</h3>
         <div style="text-align:center; margin-bottom:1rem;">
             <div id="profile-preview-avatar" style="display:inline-block;">${avatarHTML(data.photoURL, data.nickname, 80)}</div>
@@ -116,17 +116,17 @@ async function showProfileEdit() {
                 <p style="font-size:0.8rem; font-weight:600; color:var(--text,#f0f0f0); margin-bottom:0.2rem;">${t('social.login_method','🔐 로그인 방법')}</p>
                 ${currentUser && currentUser.providerData.some(p => p.providerId === 'google.com') ? `
                 <p style="font-size:0.75rem; color:#4CAF50;">${t('social.google_linked','✅ Google 계정 연동됨')}</p>` : `
-                <button onclick="linkGoogleAccount(); document.getElementById('profile-edit-modal').remove();" style="width:100%;padding:0.7rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#1a1a2e);font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:0.5rem;">
+                <button onclick="linkGoogleAccount(); document.getElementById('profile-edit-modal').remove();" style="width:100%;padding:0.7rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:0.5rem;">
                     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width:16px;height:16px;"> ${t('social.link_google','Google 계정 연동')}
                 </button>`}
                 ${currentUser && currentUser.providerData.some(p => p.providerId === 'password') ? `
                 <p style="font-size:0.75rem; color:#4CAF50;">${t('social.pw_login_set','✅ 이메일/비밀번호 로그인 설정됨')}</p>
-                <button onclick="changePasswordFromProfile()" style="width:100%;padding:0.7rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#1a1a2e);font-size:0.85rem;">${t('auth.change_pw','🔑 비밀번호 변경')}</button>` : `
-                <button onclick="setupPasswordFromProfile()" style="width:100%;padding:0.7rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#1a1a2e);font-size:0.85rem;">${t('social.setup_pw','🔑 비밀번호 설정 (이메일 로그인 추가)')}</button>`}
+                <button onclick="changePasswordFromProfile()" style="width:100%;padding:0.7rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">${t('auth.change_pw','🔑 비밀번호 변경')}</button>` : `
+                <button onclick="setupPasswordFromProfile()" style="width:100%;padding:0.7rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">${t('social.setup_pw','🔑 비밀번호 설정 (이메일 로그인 추가)')}</button>`}
             </div>
         </div>
         <div style="display:flex;gap:0.5rem;margin-top:1rem;">
-            <button onclick="document.getElementById('profile-edit-modal').remove()" style="flex:1;padding:0.7rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#1a1a2e);">${t('common.cancel','취소')}</button>
+            <button onclick="document.getElementById('profile-edit-modal').remove()" style="flex:1;padding:0.7rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">${t('common.cancel','취소')}</button>
             <button onclick="saveProfile()" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:var(--gold,#D4AF37);color:#000;font-weight:700;">${t('common.save','저장')}</button>
         </div>
     </div>`;
@@ -322,7 +322,7 @@ async function showAddContactModal() {
     overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     overlay.innerHTML = `
-    <div style="background:var(--bg-card,#1a1a2e);padding:1.5rem;border-radius:16px;max-width:420px;width:100%;">
+    <div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:420px;width:100%;">
         <h3 style="margin-bottom:1rem;">${t('social.add_contact','➕ 연락처 추가')}</h3>
         <div style="display:flex;gap:0.5rem;margin-bottom:0.8rem;">
             <input type="text" id="contact-search-input" placeholder="${t('social.search_email_nick','이메일 또는 닉네임 검색')}" style="flex:1;padding:0.7rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;font-size:0.9rem;">
@@ -330,7 +330,7 @@ async function showAddContactModal() {
         </div>
         <div id="contact-search-results" style="max-height:300px;overflow-y:auto;"></div>
         <div style="margin-top:1rem;text-align:right;">
-            <button onclick="document.getElementById('add-contact-modal').remove()" style="padding:0.5rem 1rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#1a1a2e);">${t('common.cancel','취소')}</button>
+            <button onclick="document.getElementById('add-contact-modal').remove()" style="padding:0.5rem 1rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">${t('common.cancel','취소')}</button>
         </div>
     </div>`;
     document.body.appendChild(overlay);
@@ -767,10 +767,10 @@ async function openChat(chatId, otherId) {
                             ${sc.imageUrl ? `<img src="${sc.imageUrl}" style="width:100%;height:100px;object-fit:cover;">` : ''}
                             <div style="padding:0.4rem 0.6rem;"><div style="font-size:0.8rem;font-weight:600;">${sc.name}</div>${sc.price ? `<div style="font-size:0.75rem;color:#e65100;">${sc.price}</div>` : ''}<div style="font-size:0.7rem;color:#0066cc;margin-top:0.2rem;">🛒 보기</div></div></div>`;
                     } else if (msgType === 'transfer') {
-                        content += `<div style="background:linear-gradient(135deg,#FFD700,#FFA000);color:var(--text,#f0f0f0);padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
+                        content += `<div style="background:linear-gradient(135deg,#8B6914,#FFA000);color:var(--text,#f0f0f0);padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
                     }
                     if (msg.tokenAmount && msg.type !== 'transfer') {
-                        content += `<div style="background:linear-gradient(135deg,#FFD700,#FFA000);color:var(--text,#f0f0f0);padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
+                        content += `<div style="background:linear-gradient(135deg,#8B6914,#FFA000);color:var(--text,#f0f0f0);padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
                     }
                     // Text (skip for sticker/gif)
                     const displayText = msg._decryptedText || msg.text;
@@ -1029,7 +1029,7 @@ function showAttachMenu() {
     document.querySelectorAll('.attach-menu-popup').forEach(el => el.remove());
     const menu = document.createElement('div');
     menu.className = 'attach-menu-popup';
-    menu.style.cssText = 'position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--bg-card,#1a1a2e);border:1px solid var(--border,#2a2a3e);border-radius:12px;padding:0.5rem;box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:9999;display:flex;gap:0.3rem;';
+    menu.style.cssText = 'position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--bg-card,#3D2B1F);border:1px solid var(--border,#2a2a3e);border-radius:12px;padding:0.5rem;box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:9999;display:flex;gap:0.3rem;';
     const items = [
         { icon: '📷', label: '사진', fn: () => sendMediaFile('image') },
         { icon: '🎬', label: '영상', fn: () => sendMediaFile('video') },
@@ -1197,10 +1197,10 @@ async function forwardMessage(msgId) {
         if (!name) continue;
         listHTML += `<div style="padding:0.6rem;border-bottom:1px solid var(--border,#2a2a3e);cursor:pointer;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background=''" onclick="executeForward('${doc.id}',${JSON.stringify(JSON.stringify(msg.text||''))},${JSON.stringify(JSON.stringify(msg.senderId||''))});this.closest('[style*=position]').remove();">${name}</div>`;
     }
-    overlay.innerHTML = `<div style="background:var(--bg-card,#1a1a2e);padding:1.5rem;border-radius:16px;max-width:400px;width:100%;max-height:60vh;overflow-y:auto;">
+    overlay.innerHTML = `<div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:400px;width:100%;max-height:60vh;overflow-y:auto;">
         <h3 style="margin-bottom:1rem;">↗️ 전달할 채팅방 선택</h3>
         ${listHTML || '<p style="color:var(--text-muted,#888);text-align:center;">전달 가능한 채팅방이 없습니다</p>'}
-        <button onclick="this.closest('[style*=position]').remove()" style="width:100%;margin-top:1rem;padding:0.5rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#1a1a2e);">취소</button>
+        <button onclick="this.closest('[style*=position]').remove()" style="width:100%;margin-top:1rem;padding:0.5rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">취소</button>
     </div>`;
     document.body.appendChild(overlay);
 }
@@ -1252,11 +1252,11 @@ function showStickerGifPanel() {
     document.querySelectorAll('.sticker-gif-panel').forEach(el => el.remove());
     const panel = document.createElement('div');
     panel.className = 'sticker-gif-panel';
-    panel.style.cssText = 'position:fixed;bottom:60px;left:50%;transform:translateX(-50%);width:340px;max-width:90vw;background:var(--bg-card,#1a1a2e);border:1px solid var(--border,#2a2a3e);border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:9999;overflow:hidden;';
+    panel.style.cssText = 'position:fixed;bottom:60px;left:50%;transform:translateX(-50%);width:340px;max-width:90vw;background:var(--bg-card,#3D2B1F);border:1px solid var(--border,#2a2a3e);border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:9999;overflow:hidden;';
     panel.innerHTML = `
         <div style="display:flex;border-bottom:1px solid var(--border,#2a2a3e);">
-            <button onclick="showStickerTab()" class="sticker-tab-btn active" style="flex:1;padding:0.6rem;border:none;background:var(--bg-card,#1a1a2e);cursor:pointer;font-weight:600;border-bottom:2px solid #333;">😊 스티커</button>
-            <button onclick="showGifTab()" class="sticker-tab-btn" style="flex:1;padding:0.6rem;border:none;background:var(--bg-card,#1a1a2e);cursor:pointer;font-weight:600;border-bottom:2px solid transparent;">GIF</button>
+            <button onclick="showStickerTab()" class="sticker-tab-btn active" style="flex:1;padding:0.6rem;border:none;background:var(--bg-card,#3D2B1F);cursor:pointer;font-weight:600;border-bottom:2px solid #333;">😊 스티커</button>
+            <button onclick="showGifTab()" class="sticker-tab-btn" style="flex:1;padding:0.6rem;border:none;background:var(--bg-card,#3D2B1F);cursor:pointer;font-weight:600;border-bottom:2px solid transparent;">GIF</button>
         </div>
         <div id="sticker-gif-content" style="height:250px;overflow-y:auto;padding:0.5rem;"></div>
     `;
@@ -1340,15 +1340,15 @@ async function showShareItemModal() {
     overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     overlay.innerHTML = `
-    <div style="background:var(--bg-card,#1a1a2e);padding:1.5rem;border-radius:16px;max-width:420px;width:100%;">
+    <div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:420px;width:100%;">
         <h3 style="margin-bottom:1rem;">🔗 공유하기</h3>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-            <button onclick="this.closest('[style*=position]').remove();shareServiceItem('product')" style="padding:0.8rem;border:2px solid var(--border,#2a2a3e);border-radius:12px;cursor:pointer;background:var(--bg-card,#1a1a2e);font-size:0.85rem;">🛒 상품</button>
-            <button onclick="this.closest('[style*=position]').remove();shareServiceItem('artist')" style="padding:0.8rem;border:2px solid var(--border,#2a2a3e);border-radius:12px;cursor:pointer;background:var(--bg-card,#1a1a2e);font-size:0.85rem;">💖 아티스트</button>
-            <button onclick="this.closest('[style*=position]').remove();shareServiceItem('campaign')" style="padding:0.8rem;border:2px solid var(--border,#2a2a3e);border-radius:12px;cursor:pointer;background:var(--bg-card,#1a1a2e);font-size:0.85rem;">💝 캠페인</button>
-            <button onclick="this.closest('[style*=position]').remove();shareServiceItem('art')" style="padding:0.8rem;border:2px solid var(--border,#2a2a3e);border-radius:12px;cursor:pointer;background:var(--bg-card,#1a1a2e);font-size:0.85rem;">🎨 작품</button>
+            <button onclick="this.closest('[style*=position]').remove();shareServiceItem('product')" style="padding:0.8rem;border:2px solid var(--border,#2a2a3e);border-radius:12px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">🛒 상품</button>
+            <button onclick="this.closest('[style*=position]').remove();shareServiceItem('artist')" style="padding:0.8rem;border:2px solid var(--border,#2a2a3e);border-radius:12px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">💖 아티스트</button>
+            <button onclick="this.closest('[style*=position]').remove();shareServiceItem('campaign')" style="padding:0.8rem;border:2px solid var(--border,#2a2a3e);border-radius:12px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">💝 캠페인</button>
+            <button onclick="this.closest('[style*=position]').remove();shareServiceItem('art')" style="padding:0.8rem;border:2px solid var(--border,#2a2a3e);border-radius:12px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">🎨 작품</button>
         </div>
-        <button onclick="this.closest('[style*=position]').remove()" style="width:100%;margin-top:1rem;padding:0.5rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#1a1a2e);">취소</button>
+        <button onclick="this.closest('[style*=position]').remove()" style="width:100%;margin-top:1rem;padding:0.5rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">취소</button>
     </div>`;
     document.body.appendChild(overlay);
 }
@@ -1374,9 +1374,9 @@ async function shareServiceItem(type) {
                 <div style="flex:1;min-width:0;"><div style="font-size:0.85rem;font-weight:600;">${name}</div><div style="font-size:0.75rem;color:var(--text-muted,#888);">${price}</div></div>
             </div>`;
         });
-        overlay.innerHTML = `<div style="background:var(--bg-card,#1a1a2e);padding:1.5rem;border-radius:16px;max-width:420px;width:100%;max-height:60vh;overflow-y:auto;">
+        overlay.innerHTML = `<div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:420px;width:100%;max-height:60vh;overflow-y:auto;">
             <h3 style="margin-bottom:1rem;">선택하세요</h3>${listHTML}
-            <button onclick="this.closest('[style*=position]').remove()" style="width:100%;margin-top:1rem;padding:0.5rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#1a1a2e);">취소</button>
+            <button onclick="this.closest('[style*=position]').remove()" style="width:100%;margin-top:1rem;padding:0.5rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">취소</button>
         </div>`;
         document.body.appendChild(overlay);
     } catch (e) { showToast('로드 실패', 'error'); }
@@ -1482,7 +1482,7 @@ function showReactionPicker(msgId) {
     const emojis = ['👍','❤️','😂','😮','😢','🔥'];
     const picker = document.createElement('div');
     picker.className = 'reaction-picker-popup';
-    picker.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--bg-card,#1a1a2e);border:1px solid var(--border,#2a2a3e);border-radius:24px;padding:6px 10px;box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:9999;display:flex;gap:4px;';
+    picker.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--bg-card,#3D2B1F);border:1px solid var(--border,#2a2a3e);border-radius:24px;padding:6px 10px;box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:9999;display:flex;gap:4px;';
     emojis.forEach(emoji => {
         const btn = document.createElement('button');
         btn.textContent = emoji;
@@ -1901,12 +1901,12 @@ async function showServiceLinkModal() {
     overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     overlay.innerHTML = `
-    <div style="background:var(--bg-card,#1a1a2e);padding:1.5rem;border-radius:16px;max-width:480px;width:100%;max-height:80vh;overflow-y:auto;">
+    <div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:480px;width:100%;max-height:80vh;overflow-y:auto;">
         <h3 style="margin-bottom:1rem;">🔗 서비스 연결</h3>
         <p style="font-size:0.85rem;color:var(--text-muted,#888);margin-bottom:1rem;">게시물에 연결할 서비스를 선택하세요</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1rem;">
             ${Object.entries(SERVICE_LINK_CONFIG).map(([type, cfg]) => `
-                <button onclick="selectServiceType('${type}')" style="padding:0.8rem;border:2px solid var(--border,#2a2a3e);border-radius:12px;cursor:pointer;background:var(--bg-card,#1a1a2e);font-size:0.85rem;font-weight:600;text-align:center;transition:all 0.2s;" onmouseover="this.style.borderColor='${cfg.color}';this.style.background='${cfg.color}11'" onmouseout="this.style.borderColor='#eee';this.style.background='white'">
+                <button onclick="selectServiceType('${type}')" style="padding:0.8rem;border:2px solid var(--border,#2a2a3e);border-radius:12px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;font-weight:600;text-align:center;transition:all 0.2s;" onmouseover="this.style.borderColor='${cfg.color}';this.style.background='${cfg.color}11'" onmouseout="this.style.borderColor='#eee';this.style.background='white'">
                     ${cfg.action}
                 </button>
             `).join('')}
@@ -1919,7 +1919,7 @@ async function showServiceLinkModal() {
             <div id="service-link-results" style="max-height:250px;overflow-y:auto;"></div>
         </div>
         <div style="margin-top:1rem;text-align:right;">
-            <button onclick="document.getElementById('service-link-modal').remove()" style="padding:0.5rem 1rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#1a1a2e);">취소</button>
+            <button onclick="document.getElementById('service-link-modal').remove()" style="padding:0.5rem 1rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">취소</button>
         </div>
     </div>`;
     document.body.appendChild(overlay);
@@ -1998,7 +1998,7 @@ function openVideoEditor() {
             <video id="editor-video" src="${url}" style="width:100%;border-radius:12px;max-height:50vh;" playsinline></video>
             <div id="editor-text-overlay" style="position:absolute;left:0;right:0;text-align:center;font-size:1.2rem;font-weight:700;text-shadow:0 2px 4px rgba(0,0,0,0.8);pointer-events:none;"></div>
         </div>
-        <div style="background:var(--bg-card,#1a1a2e);border-radius:12px;padding:1rem;">
+        <div style="background:var(--bg-card,#3D2B1F);border-radius:12px;padding:1rem;">
             <h4 style="margin:0 0 0.8rem;">✂️ 영상 편집</h4>
             <!-- Trim -->
             <div style="margin-bottom:0.8rem;">
@@ -2018,10 +2018,10 @@ function openVideoEditor() {
             <div style="margin-bottom:0.8rem;">
                 <label style="font-size:0.8rem;color:var(--text-muted,#888);">필터</label>
                 <div style="display:flex;gap:0.5rem;margin-top:0.3rem;">
-                    <button onclick="setVideoFilter('none')" class="vfilter-btn active" style="padding:0.3rem 0.6rem;border:2px solid #1a1a2e;border-radius:8px;font-size:0.75rem;cursor:pointer;background:var(--bg-card,#1a1a2e);">원본</button>
-                    <button onclick="setVideoFilter('grayscale(100%)')" class="vfilter-btn" style="padding:0.3rem 0.6rem;border:2px solid #ddd;border-radius:8px;font-size:0.75rem;cursor:pointer;background:var(--bg-card,#1a1a2e);">흑백</button>
-                    <button onclick="setVideoFilter('sepia(40%) saturate(1.4)')" class="vfilter-btn" style="padding:0.3rem 0.6rem;border:2px solid #ddd;border-radius:8px;font-size:0.75rem;cursor:pointer;background:var(--bg-card,#1a1a2e);">따뜻한</button>
-                    <button onclick="setVideoFilter('saturate(0.8) hue-rotate(20deg)')" class="vfilter-btn" style="padding:0.3rem 0.6rem;border:2px solid #ddd;border-radius:8px;font-size:0.75rem;cursor:pointer;background:var(--bg-card,#1a1a2e);">시원한</button>
+                    <button onclick="setVideoFilter('none')" class="vfilter-btn active" style="padding:0.3rem 0.6rem;border:2px solid #1a1a2e;border-radius:8px;font-size:0.75rem;cursor:pointer;background:var(--bg-card,#3D2B1F);">원본</button>
+                    <button onclick="setVideoFilter('grayscale(100%)')" class="vfilter-btn" style="padding:0.3rem 0.6rem;border:2px solid #ddd;border-radius:8px;font-size:0.75rem;cursor:pointer;background:var(--bg-card,#3D2B1F);">흑백</button>
+                    <button onclick="setVideoFilter('sepia(40%) saturate(1.4)')" class="vfilter-btn" style="padding:0.3rem 0.6rem;border:2px solid #ddd;border-radius:8px;font-size:0.75rem;cursor:pointer;background:var(--bg-card,#3D2B1F);">따뜻한</button>
+                    <button onclick="setVideoFilter('saturate(0.8) hue-rotate(20deg)')" class="vfilter-btn" style="padding:0.3rem 0.6rem;border:2px solid #ddd;border-radius:8px;font-size:0.75rem;cursor:pointer;background:var(--bg-card,#3D2B1F);">시원한</button>
                 </div>
             </div>
             <!-- Text overlay -->
@@ -2036,7 +2036,7 @@ function openVideoEditor() {
                 </div>
             </div>
             <div style="display:flex;gap:0.5rem;">
-                <button onclick="document.getElementById('video-editor-modal').remove()" style="flex:1;padding:0.6rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#1a1a2e);">취소</button>
+                <button onclick="document.getElementById('video-editor-modal').remove()" style="flex:1;padding:0.6rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">취소</button>
                 <button onclick="applyVideoEdits()" style="flex:1;padding:0.6rem;border:none;border-radius:8px;cursor:pointer;background:var(--gold,#D4AF37);color:#000;font-weight:700;">✅ 적용</button>
             </div>
         </div>
@@ -2526,7 +2526,7 @@ async function openChannel(channelId) {
             <div style="width:32px;height:32px;border-radius:50%;background:#e3f2fd;display:flex;align-items:center;justify-content:center;">📢</div>
             <div><strong>${ch.name}</strong><div style="font-size:0.7rem;color:var(--accent);">${ch.subscribers?.length || 0} 구독자</div></div>
             ${!isSub ? `<button onclick="subscribeChannel('${channelId}')" style="margin-left:0.5rem;padding:0.3rem 0.6rem;border:none;border-radius:6px;background:#0066cc;color:white;font-size:0.75rem;cursor:pointer;">구독</button>` :
-                `<button onclick="unsubscribeChannel('${channelId}')" style="margin-left:0.5rem;padding:0.3rem 0.6rem;border:1px solid var(--border,#2a2a3e);border-radius:6px;background:var(--bg-card,#1a1a2e);font-size:0.75rem;cursor:pointer;">구독취소</button>`}
+                `<button onclick="unsubscribeChannel('${channelId}')" style="margin-left:0.5rem;padding:0.3rem 0.6rem;border:1px solid var(--border,#2a2a3e);border-radius:6px;background:var(--bg-card,#3D2B1F);font-size:0.75rem;cursor:pointer;">구독취소</button>`}
         </div>`;
     document.getElementById('chat-header-actions').style.display = 'flex';
     document.getElementById('chat-input-area').style.display = isOwner ? 'flex' : 'none';
@@ -2850,10 +2850,10 @@ async function showFollowList(uid, type) {
         const modal = document.createElement('div');
         modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
         modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
-        modal.innerHTML = `<div style="background:var(--bg-card,#1a1a2e);padding:1.2rem;border-radius:16px;max-width:380px;width:100%;max-height:70vh;overflow-y:auto;">
+        modal.innerHTML = `<div style="background:var(--bg-card,#3D2B1F);padding:1.2rem;border-radius:16px;max-width:380px;width:100%;max-height:70vh;overflow-y:auto;">
             <h4 style="margin-bottom:0.8rem;">${type === 'followers' ? '팔로워' : '팔로잉'} ${snap.size}명</h4>
             ${html}
-            <button onclick="this.parentElement.parentElement.remove()" style="width:100%;margin-top:0.8rem;padding:0.6rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;background:var(--bg-card,#1a1a2e);cursor:pointer;">닫기</button>
+            <button onclick="this.parentElement.parentElement.remove()" style="width:100%;margin-top:0.8rem;padding:0.6rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;background:var(--bg-card,#3D2B1F);cursor:pointer;">닫기</button>
         </div>`;
         document.body.appendChild(modal);
     } catch (e) { showToast('목록 로드 실패', 'error'); }

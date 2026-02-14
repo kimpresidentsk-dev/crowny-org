@@ -24,7 +24,7 @@
             snap.forEach(doc => {
                 const d = doc.data();
                 const card = document.createElement('div');
-                card.style.cssText = 'background:var(--bg-card,#1a1a2e);border:1px solid var(--border,#2a2a3e);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s;';
+                card.style.cssText = 'background:var(--bg-card,#3D2B1F);border:1px solid var(--border,#2a2a3e);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s;';
                 card.onmouseenter = () => card.style.transform = 'translateY(-4px)';
                 card.onmouseleave = () => card.style.transform = '';
                 card.onclick = () => showArtistDetail(doc.id, d);
@@ -51,7 +51,7 @@
         overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.onclick = e => { if (e.target === overlay) overlay.remove(); };
         overlay.innerHTML = `
-            <div style="background:var(--bg-card,#1a1a2e);border-radius:16px;max-width:500px;width:100%;max-height:85vh;overflow-y:auto;padding:1.5rem;">
+            <div style="background:var(--bg-card,#3D2B1F);border-radius:16px;max-width:500px;width:100%;max-height:85vh;overflow-y:auto;padding:1.5rem;">
                 <div style="text-align:center;margin-bottom:1rem;">
                     ${data.photoURL ? `<img src="${data.photoURL}" style="width:100px;height:100px;border-radius:50%;object-fit:cover;margin-bottom:0.8rem;">` : `<div style="font-size:4rem;margin-bottom:0.5rem;">${data.emoji || '🎵'}</div>`}
                     <h3>${data.name || '아티스트'}</h3>

@@ -626,7 +626,7 @@ function showMaticDeposit() {
     const overlay = document.createElement('div');
     overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
     overlay.innerHTML = `
-        <div style="background:white;padding:1.5rem;border-radius:16px;max-width:420px;width:100%;text-align:center;">
+        <div style="background:#3D2B1F;padding:1.5rem;border-radius:16px;max-width:420px;width:100%;text-align:center;">
             <h3 style="margin-bottom:1rem;">${t('wallet.matic_deposit_title', '📥 MATIC 입금')}</h3>
             <p style="font-size:0.85rem;color:#666;margin-bottom:1rem;">${t('wallet.matic_deposit_desc', '아래 Polygon 주소로 MATIC을 보내주세요')}</p>
             <div style="background:#f5f5f5;padding:1rem;border-radius:10px;margin-bottom:1rem;word-break:break-all;font-family:monospace;font-size:0.82rem;font-weight:600;color:#3D2B1F;cursor:pointer;" onclick="navigator.clipboard&&navigator.clipboard.writeText('${addr}').then(()=>showToast(t('wallet.address_copied','주소 복사됨'),'success'))">
@@ -635,7 +635,7 @@ function showMaticDeposit() {
             <p style="font-size:0.75rem;color:#c62828;margin-bottom:1rem;">${t('wallet.matic_deposit_warning', '⚠️ 반드시 <strong>Polygon 네트워크</strong>로 전송하세요!<br>다른 네트워크(ETH 등)로 보내면 복구 불가합니다.')}</p>
             <div style="display:flex;gap:0.5rem;">
                 <button onclick="navigator.clipboard&&navigator.clipboard.writeText('${addr}').then(()=>showToast(t('wallet.address_copied','주소 복사됨'),'success'))" style="flex:1;padding:0.7rem;background:#3D2B1F;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:700;display:flex;align-items:center;justify-content:center;gap:0.3rem;"><i data-lucide="copy" style="width:16px;height:16px;"></i>주소 복사</button>
-                <button onclick="this.closest('div[style*=fixed]').remove()" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">${t('common.close', '닫기')}</button>
+                <button onclick="this.closest('div[style*=fixed]').remove()" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#3D2B1F;">${t('common.close', '닫기')}</button>
             </div>
         </div>`;
     overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
