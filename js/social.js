@@ -590,9 +590,11 @@ async function openChat(chatId, otherId) {
     const messengerPage = document.getElementById('messenger');
     if (messengerPage) messengerPage.classList.add('chat-active');
     
-    // Hide bottom tab bar on mobile when chat is active
+    // Hide bottom tab bar and hamburger on mobile when chat is active
     const bottomTab = document.querySelector('.bottom-tab-bar');
     if (bottomTab) bottomTab.style.display = 'none';
+    const menuToggle = document.querySelector('.menu-toggle');
+    if (menuToggle) menuToggle.style.display = 'none';
 
     const info = await getUserDisplayInfo(otherId);
     document.getElementById('chat-username').innerHTML = `
@@ -874,9 +876,11 @@ function closeChatMobile() {
     const messengerPage = document.getElementById('messenger');
     if (messengerPage) messengerPage.classList.remove('chat-active');
     
-    // Restore bottom tab bar visibility when closing chat
+    // Restore bottom tab bar and hamburger visibility when closing chat
     const bottomTab = document.querySelector('.bottom-tab-bar');
     if (bottomTab) bottomTab.style.display = '';
+    const menuToggle = document.querySelector('.menu-toggle');
+    if (menuToggle) menuToggle.style.display = '';
     
     if (chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
     if (chatDocUnsubscribe) { chatDocUnsubscribe(); chatDocUnsubscribe = null; }

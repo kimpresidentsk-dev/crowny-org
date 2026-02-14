@@ -709,6 +709,10 @@
     #chat-header-back {
         display: block !important;
     }
+    #messenger.chat-active ~ .menu-toggle,
+    .chat-open ~ .menu-toggle {
+        display: none !important;
+    }
     
     /* Ensure sent message text is always visible */
     .chat-messages [style*="background:#3D2B1F"] * {
