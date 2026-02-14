@@ -850,7 +850,7 @@ async function openChat(chatId, otherId) {
                         ontouchstart="msgTouchStart('${msgId}')" ontouchend="msgTouchEnd()" ontouchmove="msgTouchEnd()">
                         ${!isMine ? `<div style="font-size:0.7rem;color:var(--accent);margin-bottom:0.15rem;">${senderInfo.nickname}</div>` : ''}
                         ${actionsHTML}
-                        <div style="background:${isMine ? 'var(--text)' : '#F7F3ED'};color:${isMine ? 'white' : 'var(--text)'};padding:0.6rem 0.8rem;border-radius:${isMine ? '12px 12px 0 12px' : '12px 12px 12px 0'};word-break:break-word;font-size:0.9rem;line-height:1.4;">${content}</div>
+                        <div style="background:${isMine ? '#3D2B1F' : '#F7F3ED'};color:${isMine ? '#FFF8F0' : '#3D2B1F'};padding:0.6rem 0.8rem;border-radius:${isMine ? '12px 12px 0 12px' : '12px 12px 12px 0'};word-break:break-word;font-size:0.9rem;line-height:1.4;">${content}</div>
                         ${reactionsHTML}
                         <div class="msg-time" style="${isMine ? 'justify-content:flex-end;' : ''}">${msg.encrypted ? '<i data-lucide="lock" style="width:10px;height:10px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>' : ''}${formatMsgTime(timestamp)}${expiryHTML}${readReceipt}</div>
                     </div>`;
