@@ -552,9 +552,11 @@ function _renderCreatorStep4() {
 async function _handleCoverUpload(input) {
     if (!input.files[0]) return;
     try {
-        const resized = typeof resizeImage === 'function'
-            ? await resizeImage(input.files[0], 600)
-            : await _fileToBase64(input.files[0]);
+        const file = input.files[0];
+        const storagePath = `books/covers/${Date.now()}_${file.name}`;
+        const resized = (typeof resizeAndUploadImage === 'function')
+            ? await resizeAndUploadImage(file, 600, storagePath)
+            : await _fileToBase64(file);
         _bookCreatorData.coverImage = resized;
         _renderBookCreator();
     } catch (e) { showToast('이미지 처리 실패', 'error'); }
@@ -563,9 +565,11 @@ async function _handleCoverUpload(input) {
 async function _handleSceneImage(input, ci, si) {
     if (!input.files[0]) return;
     try {
-        const resized = typeof resizeImage === 'function'
-            ? await resizeImage(input.files[0], 400)
-            : await _fileToBase64(input.files[0]);
+        const file = input.files[0];
+        const storagePath = `books/scenes/${Date.now()}_${file.name}`;
+        const resized = (typeof resizeAndUploadImage === 'function')
+            ? await resizeAndUploadImage(file, 400, storagePath)
+            : await _fileToBase64(file);
         _bookCreatorData.chapters[ci].scenes[si].imageUrl = resized;
         _renderBookCreator();
     } catch (e) { showToast('이미지 처리 실패', 'error'); }

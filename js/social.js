@@ -155,8 +155,8 @@ async function saveProfile() {
 
         if (photoInput.files[0]) {
             const file = photoInput.files[0];
-            const dataUrl = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file); });
-            updates.photoURL = await resizeImage(dataUrl, 200);
+            const storagePath = `profile/${currentUser.uid}/${Date.now()}_${file.name}`;
+            updates.photoURL = await resizeAndUploadImage(file, 200, storagePath);
         }
 
         await db.collection('users').doc(currentUser.uid).update(updates);
@@ -1071,10 +1071,9 @@ async function sendMediaFile(mediaType) {
             showLoading(`${mediaType === 'image' ? '<i data-lucide="camera" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>' : mediaType === 'video' ? '<i data-lucide="video" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>' : '<i data-lucide="file" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>'} 전송 중...`);
 
             if (mediaType === 'image') {
-                // base64 resize inline
-                const dataUrl = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file); });
-                const resized = await resizeImage(dataUrl, 800);
-                await sendMediaMessage({ type: 'image', mediaUrl: resized, text: '' }, '<i data-lucide="camera" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> 사진');
+                // Firebase Storage로 업로드 (base64 대신 성능 개선)
+                const url = await uploadToStorage(`media/${currentChat}/${Date.now()}_${file.name}`, file);
+                await sendMediaMessage({ type: 'image', mediaUrl: url, text: '' }, '<i data-lucide="camera" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> 사진');
             } else if (mediaType === 'video') {
                 const url = await uploadToStorage(`media/${currentChat}/${Date.now()}_${file.name}`, file);
                 await sendMediaMessage({ type: 'video', mediaUrl: url, text: '', fileName: file.name, fileSize: file.size }, '<i data-lucide="video" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> 영상');
@@ -2140,8 +2139,9 @@ async function createPost() {
         let duration = 0;
 
         if (hasImage) {
-            const dataUrl = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(fileInput.files[0]); });
-            imageUrl = await resizeImage(dataUrl, 1080);
+            const file = fileInput.files[0];
+            const storagePath = `posts/${currentUser.uid}/${Date.now()}_${file.name}`;
+            imageUrl = await resizeAndUploadImage(file, 1080, storagePath);
         }
 
         if (hasVideo) {

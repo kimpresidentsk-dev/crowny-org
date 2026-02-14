@@ -215,6 +215,41 @@ function resizeImage(dataUrl, maxSize) {
     });
 }
 
+// ===== Firebase Storage 이미지 업로드 헬퍼 =====
+async function resizeAndUploadImage(file, maxSize, storagePath) {
+    try {
+        // 파일을 data URL로 변환
+        const dataUrl = await new Promise((res, rej) => {
+            const r = new FileReader(); 
+            r.onload = () => res(r.result); 
+            r.onerror = rej; 
+            r.readAsDataURL(file); 
+        });
+        
+        // 이미지 리사이즈
+        const resizedDataUrl = await resizeImage(dataUrl, maxSize);
+        
+        // data URL을 Blob으로 변환
+        const response = await fetch(resizedDataUrl);
+        const blob = await response.blob();
+        
+        // Firebase Storage에 업로드
+        if (typeof uploadToStorage === 'function') {
+            return await uploadToStorage(storagePath, blob);
+        } else {
+            console.warn('[Firebase Storage] uploadToStorage 함수 없음, base64 반환');
+            return resizedDataUrl;
+        }
+    } catch (error) {
+        console.error('[Firebase Storage] 업로드 실패:', error);
+        // 실패 시 원본 파일로 fallback
+        if (typeof uploadToStorage === 'function') {
+            return await uploadToStorage(storagePath, file);
+        }
+        throw error;
+    }
+}
+
 // ===== Registration Modal Helpers =====
 function openRegisterModal(section) {
     const modal = document.getElementById('modal-' + section);
