@@ -383,6 +383,7 @@ function updateCRTDDisplay() {
             💎 ${withdrawable} CRTD ${t('trading.withdraw_btn','인출')}
         </button>` : ''}
     `;
+    if (window.lucide) lucide.createIcons();
 }
 
 async function loadTradingDashboard() {
