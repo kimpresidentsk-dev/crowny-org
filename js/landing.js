@@ -84,7 +84,7 @@
                         <span style="font-size:0.6rem;opacity:0.6;">PRESENT</span>
                     </div>
                     <div class="landing-phone-grid">
-                        <div class="lp-icon">💰</div><div class="lp-icon">💬</div><div class="lp-icon">📸</div>
+                        <div class="lp-icon"><i data-lucide="coins"></i></div><div class="lp-icon"><i data-lucide="message-circle"></i></div><div class="lp-icon"><i data-lucide="camera"></i></div>
                         <div class="lp-icon">🎨</div><div class="lp-icon">🛒</div><div class="lp-icon">📈</div>
                     </div>
                 </div>
@@ -122,7 +122,7 @@
                 <p>${txt('에코 & 바이오 기술', 'Eco & bio technology')}</p>
             </div>
             <div class="landing-feature-card">
-                <div class="landing-feat-icon">💝</div>
+                <div class="landing-feat-icon"><i data-lucide="heart"></i></div>
                 <h3>Care</h3>
                 <p>${txt('여성 안전 & 케어', 'Women safety & care')}</p>
             </div>
@@ -138,7 +138,7 @@
     <!-- CTA -->
     <section class="landing-cta">
         <button id="landing-cta-btn" class="landing-cta-btn">
-            🎁 ${txt('가입하고 100 CRTD 받기', 'Sign up & get 100 CRTD free')}
+            <i data-lucide="gift" style="width:16px;height:16px;display:inline;"></i> ${txt('가입하고 100 CRTD 받기', 'Sign up & get 100 CRTD free')}
         </button>
         <p class="landing-cta-sub">${txt('무료 가입 · 30초면 완료', 'Free signup · takes 30 seconds')}</p>
     </section>

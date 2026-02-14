@@ -15,7 +15,7 @@ const BOOK_EFFECTS = [
     { value: 'snow', label: '❄️ 눈' },
     { value: 'rain', label: '🌧️ 비' },
     { value: 'cherry_blossom', label: '🌸 벚꽃' },
-    { value: 'firefly', label: '✨ 반딧불' },
+    { value: 'firefly', label: '반딧불' },
     { value: 'stars', label: '⭐ 별' }
 ];
 
@@ -25,7 +25,7 @@ const BOOK_SOUND_OPTIONS = [
     { value: 'ocean', label: '🌊 바다' },
     { value: 'forest', label: '🌲 숲' },
     { value: 'piano', label: '🎹 피아노' },
-    { value: 'fire_crackling', label: '🔥 모닥불' }
+    { value: 'fire_crackling', label: '모닥불' }
 ];
 
 const BOOK_GENRES = {
@@ -782,7 +782,7 @@ function _renderBookReader() {
             <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
                 <button onclick="_adjustFontSize(-0.1)" style="background:#3D2B1F;color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">A-</button>
                 <button onclick="_adjustFontSize(0.1)" style="background:#3D2B1F;color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">A+</button>
-                <button onclick="_toggleEffects()" id="btn-effects-toggle" style="background:${s.effectsEnabled ? '#8B6914' : '#6B5744'};color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">✨</button>
+                <button onclick="_toggleEffects()" id="btn-effects-toggle" style="background:${s.effectsEnabled ? '#8B6914' : '#6B5744'};color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">⚡</button>
                 <button onclick="_toggleSound()" id="btn-sound-toggle" style="background:${s.soundEnabled ? '#8B6914' : '#6B5744'};color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">🔊</button>
                 ${s.book.featureCodes?.ttsEnabled ? `<button onclick="_toggleTTS()" id="btn-tts-toggle" style="background:${s.ttsActive ? '#C4841D' : '#6B5744'};color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">🗣️ TTS</button>
                 <select onchange="_bookReaderState.ttsRate=parseFloat(this.value)" style="background:#3D2B1F;color:#FFF8F0;border:none;padding:0.3rem;border-radius:4px;">

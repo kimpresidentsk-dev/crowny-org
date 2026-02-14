@@ -1347,7 +1347,7 @@ async function showShareItemModal() {
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
             <button onclick="this.closest('[style*=position]').remove();shareServiceItem('product')" style="padding:0.8rem;border:2px solid var(--border,#E8E0D8);border-radius:12px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">🛒 상품</button>
             <button onclick="this.closest('[style*=position]').remove();shareServiceItem('artist')" style="padding:0.8rem;border:2px solid var(--border,#E8E0D8);border-radius:12px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">💖 아티스트</button>
-            <button onclick="this.closest('[style*=position]').remove();shareServiceItem('campaign')" style="padding:0.8rem;border:2px solid var(--border,#E8E0D8);border-radius:12px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">💝 캠페인</button>
+            <button onclick="this.closest('[style*=position]').remove();shareServiceItem('campaign')" style="padding:0.8rem;border:2px solid var(--border,#E8E0D8);border-radius:12px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;"><i data-lucide="heart" style="width:14px;height:14px;display:inline;"></i> 캠페인</button>
             <button onclick="this.closest('[style*=position]').remove();shareServiceItem('art')" style="padding:0.8rem;border:2px solid var(--border,#E8E0D8);border-radius:12px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">🎨 작품</button>
         </div>
         <button onclick="this.closest('[style*=position]').remove()" style="width:100%;margin-top:1rem;padding:0.5rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">취소</button>
@@ -1889,8 +1889,8 @@ let _pendingServiceLink = null;
 // ========== SERVICE LINK CONFIG ==========
 const SERVICE_LINK_CONFIG = {
     artist:   { action: '💖 후원하기', color: '#B54534', collection: 'artists', nameField: 'name', nav: (id) => { showPage('artist'); viewArtistDetail(id); } },
-    campaign: { action: '💝 모금하기', color: '#6B8F3C', collection: 'campaigns', nameField: 'title', nav: (id) => { showPage('fundraise'); showCampaignDetail(id); } },
-    business: { action: '💰 투자하기', color: '#3D2B1F', collection: 'businesses', nameField: 'name', nav: (id) => { showPage('business'); viewBusinessDetail(id); } },
+    campaign: { action: '<i data-lucide="heart" style="width:14px;height:14px;display:inline;"></i> 모금하기', color: '#6B8F3C', collection: 'campaigns', nameField: 'title', nav: (id) => { showPage('fundraise'); showCampaignDetail(id); } },
+    business: { action: '<i data-lucide="coins" style="width:14px;height:14px;display:inline;"></i> 투자하기', color: '#3D2B1F', collection: 'businesses', nameField: 'name', nav: (id) => { showPage('business'); viewBusinessDetail(id); } },
     art:      { action: '🎨 작품 구매', color: '#8B6914', collection: 'artworks', nameField: 'title', nav: (id) => showPage('art') },
     book:     { action: '📚 책 구매', color: '#FF9800', collection: 'books', nameField: 'title', nav: (id) => showPage('books') },
     product:  { action: '🛒 상품 구매', color: '#5B7B8C', collection: 'products', nameField: 'name', nav: (id) => { showPage('product-detail'); renderProductDetail(id); } }

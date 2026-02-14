@@ -97,7 +97,7 @@ const MOVEMENT = (() => {
                     </div>
                     <div style="text-align:right;">
                         <div style="font-size:0.75rem;opacity:0.7;">연속</div>
-                        <div style="font-size:1.5rem;font-weight:700;">🔥 ${userProgress.streak || 0}일</div>
+                        <div style="font-size:1.5rem;font-weight:700;"><i data-lucide="flame" style="width:16px;height:16px;display:inline;"></i> ${userProgress.streak || 0}일</div>
                     </div>
                 </div>
                 <div style="background:rgba(255,255,255,0.2);border-radius:10px;height:10px;overflow:hidden;">
@@ -279,7 +279,7 @@ const MOVEMENT = (() => {
         }
 
         timerSeconds = 0;
-        showToast(`✅ ${userProgress.totalSessions}/500 세션 완료! 🔥 ${userProgress.streak}일 연속`, 'success');
+        showToast(`✅ ${userProgress.totalSessions}/500 세션 완료! <i data-lucide="flame" style="width:14px;height:14px;display:inline;"></i> ${userProgress.streak}일 연속`, 'success');
 
         // 크라우니걸 AI 격려 메시지 (10회마다)
         if (userProgress.totalSessions % 10 === 0) {

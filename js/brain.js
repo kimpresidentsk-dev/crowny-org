@@ -344,7 +344,7 @@ const BRAIN = (() => {
                 <p style="font-size:0.8rem;color:var(--accent);">9가지 유형 × 3가지 본능 × 9가지 건강 상태 = <strong>243가지</strong></p>
                 <button onclick="BRAIN.startAIEnneagram()" 
                     style="margin-top:1.5rem;padding:1rem 2rem;border:none;border-radius:12px;background:linear-gradient(135deg,#8B6914,#6B5744);color:'#FFF8F0';font-weight:700;cursor:pointer;font-size:1rem;">
-                    ✨ 크라우니걸과 대화 시작
+                    <i data-lucide="sparkles" style="width:14px;height:14px;display:inline;"></i> 크라우니걸과 대화 시작
                 </button>
                 <br>
                 <button onclick="BRAIN.init()" style="margin-top:1rem;background:none;border:none;color:var(--accent);cursor:pointer;">← 돌아가기</button>
@@ -361,7 +361,7 @@ const BRAIN = (() => {
             </div>
             <div id="brain-chat" style="background:var(--bg);border-radius:12px;padding:1rem;height:50vh;overflow-y:auto;margin-bottom:1rem;">
                 <div style="background:#F7F3ED;padding:0.8rem;border-radius:10px;margin-bottom:0.5rem;font-size:0.85rem;">
-                    ✨ 안녕하세요! 크라우니걸이에요~ 지금부터 몇 가지 질문을 할 거예요. 편하게 답해주세요! 💕
+                    <i data-lucide="sparkles" style="width:14px;height:14px;display:inline;"></i> 안녕하세요! 크라우니걸이에요~ 지금부터 몇 가지 질문을 할 거예요. 편하게 답해주세요! 💕
                 </div>
             </div>
             <div style="display:flex;gap:0.5rem;">

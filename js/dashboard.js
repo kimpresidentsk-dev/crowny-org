@@ -203,7 +203,7 @@ const ALL_PAGES = [
     { id:'artist', icon:'🌟', label:'ARTIST' },
     { id:'energy', icon:'⚡', label:'ENERGY' },
     { id:'business', icon:'🏢', label:'BUSINESS' },
-    { id:'fundraise', icon:'💝', label:'FUNDRAISE' },
+    { id:'fundraise', icon:'heart', label:'FUNDRAISE' },
     { id:'settings', icon:'⚙️', label:'SETTINGS' },
 ];
 
