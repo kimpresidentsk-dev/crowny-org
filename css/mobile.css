@@ -27,7 +27,7 @@
 }
     border-radius: 16px; margin-bottom: 1.5rem;
 }
-.dash-avatar { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid #FFD700; }
+.dash-avatar { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid #8B6914; }
 .dash-avatar-placeholder { width: 60px; height: 60px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; }
 .dash-subtitle { font-size: 0.85rem; color: var(--accent); margin-top: 0.3rem; }
 .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }

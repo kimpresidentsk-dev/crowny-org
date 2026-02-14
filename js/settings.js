@@ -1,42 +1,88 @@
 // ===== settings.js v1.0 - 설정 페이지 =====
 
 async function loadSettings() {
-    if (!currentUser) return;
-    const container = document.getElementById('settings-content');
-    if (!container) return;
+    console.log('loadSettings called', { currentUser, db: typeof db });
     
-    // Load user data
-    const userDoc = await db.collection('users').doc(currentUser.uid).get();
-    const userData = userDoc.exists ? userDoc.data() : {};
+    const container = document.getElementById('settings-content');
+    if (!container) {
+        console.warn('Settings container not found');
+        return;
+    }
+    
+    // Show loading while checking auth
+    container.innerHTML = '<div style="text-align:center;padding:2rem;"><p>설정을 불러오는 중...</p></div>';
+    
+    // Wait for auth to be ready if needed
+    if (!currentUser && typeof auth !== 'undefined') {
+        try {
+            await new Promise((resolve) => {
+                const unsubscribe = auth.onAuthStateChanged((user) => {
+                    window.currentUser = user;
+                    unsubscribe();
+                    resolve();
+                });
+            });
+        } catch(e) {
+            console.warn('Auth state check failed:', e);
+        }
+    }
+    
+    if (!currentUser) {
+        container.innerHTML = `
+            <div style="text-align:center;padding:2rem;">
+                <p>설정을 보려면 로그인이 필요합니다.</p>
+                <button onclick="showPage('auth')" style="margin-top:1rem;padding:0.5rem 1rem;background:#3D2B1F;color:#FFF8F0;border:none;border-radius:6px;">로그인</button>
+            </div>
+        `;
+        return;
+    }
+
+    let userData = {};
+    
+    // Load user data with fallback
+    try {
+        if (typeof db !== 'undefined') {
+            const userDoc = await db.collection('users').doc(currentUser.uid).get();
+            userData = userDoc.exists ? userDoc.data() : {};
+        } else {
+            console.warn('Firestore db not available');
+        }
+    } catch(e) {
+        console.warn('Failed to load user data:', e);
+    }
+    
     const notifSettings = userData.notificationSettings || { messages: true, social: true, trading: true };
     const currentLang = localStorage.getItem('crowny-lang') || 'ko';
     const currentTheme = localStorage.getItem('crowny-theme') || 'light';
+    
+    // Helper function for translations with fallback
+    const getText = (key, fallback) => (typeof t === 'function' ? t(key, fallback) : fallback);
     
     container.innerHTML = `
         <div class="settings-grid">
             <!-- Profile -->
             <div class="settings-card">
-                <h4>👤 ${t('settings.profile', '프로필 설정')}</h4>
-                <p>${t('settings.nickname', '닉네임')}: <strong>${userData.nickname || '—'}</strong></p>
-                <p>${t('settings.status', '상태 메시지')}: ${userData.statusMessage || '—'}</p>
-                <button onclick="showProfileEdit()" class="settings-btn">${t('settings.edit_profile', '✏️ 프로필 편집')}</button>
+                <h4>👤 ${getText('settings.profile', '프로필 설정')}</h4>
+                <p>${getText('settings.nickname', '닉네임')}: <strong>${userData.nickname || '—'}</strong></p>
+                <p>${getText('settings.status', '상태 메시지')}: ${userData.statusMessage || '—'}</p>
+                <button onclick="showProfileEdit()" class="settings-btn">${getText('settings.edit_profile', '✏️ 프로필 편집')}</button>
             </div>
             
             <!-- Notifications -->
             <div class="settings-card">
-                <h4>🔔 ${t('settings.notifications', '알림 설정')}</h4>
+                <h4>🔔 ${getText('settings.notifications', '알림 설정')}</h4>
                 <label class="settings-toggle">
-                    <span>${t('settings.msg_notif', '새 메시지 알림')}</span>
+                    <span>${getText('settings.msg_notif', '새 메시지 알림')}</span>
                     <input type="checkbox" id="notif-messages" ${notifSettings.messages !== false ? 'checked' : ''} onchange="saveNotifSettings()">
                     <span class="toggle-slider"></span>
                 </label>
                 <label class="settings-toggle">
-                    <span>${t('settings.social_notif', '소셜 알림')}</span>
+                    <span>${getText('settings.social_notif', '소셜 알림')}</span>
                     <input type="checkbox" id="notif-social" ${notifSettings.social !== false ? 'checked' : ''} onchange="saveNotifSettings()">
                     <span class="toggle-slider"></span>
                 </label>
                 <label class="settings-toggle">
-                    <span>${t('settings.trading_notif', '거래 알림')}</span>
+                    <span>${getText('settings.trading_notif', '거래 알림')}</span>
                     <input type="checkbox" id="notif-trading" ${notifSettings.trading !== false ? 'checked' : ''} onchange="saveNotifSettings()">
                     <span class="toggle-slider"></span>
                 </label>
@@ -47,7 +93,7 @@ async function loadSettings() {
             
             <!-- Language -->
             <div class="settings-card">
-                <h4>🌐 ${t('settings.language', '언어 설정')}</h4>
+                <h4>🌐 ${getText('settings.language', '언어 설정')}</h4>
                 <div class="settings-lang-list">
                     ${[
                         ['ko', '🇰🇷 한국어'],
@@ -66,9 +112,9 @@ async function loadSettings() {
             
             <!-- Theme -->
             <div class="settings-card">
-                <h4>🎨 ${t('settings.theme', '테마 설정')}</h4>
+                <h4>🎨 ${getText('settings.theme', '테마 설정')}</h4>
                 <label class="settings-toggle">
-                    <span>${t('settings.dark_mode', '다크 모드')}</span>
+                    <span>${getText('settings.dark_mode', '다크 모드')}</span>
                     <input type="checkbox" id="theme-toggle" ${currentTheme === 'dark' ? 'checked' : ''} onchange="toggleTheme()">
                     <span class="toggle-slider"></span>
                 </label>
@@ -76,17 +122,17 @@ async function loadSettings() {
             
             <!-- Privacy -->
             <div class="settings-card">
-                <h4>🔒 ${t('settings.privacy', '개인정보')}</h4>
-                <button onclick="exportMyData()" class="settings-btn">${t('settings.export_data', '📥 내 데이터 다운로드')}</button>
-                <button onclick="requestDeactivation()" class="settings-btn settings-btn-danger">${t('settings.deactivate', '⚠️ 계정 비활성화 요청')}</button>
+                <h4>🔒 ${getText('settings.privacy', '개인정보')}</h4>
+                <button onclick="exportMyData()" class="settings-btn">${getText('settings.export_data', '📥 내 데이터 다운로드')}</button>
+                <button onclick="requestDeactivation()" class="settings-btn settings-btn-danger">${getText('settings.deactivate', '⚠️ 계정 비활성화 요청')}</button>
             </div>
             
             <!-- Security -->
             <div class="settings-card">
-                <h4>🛡️ ${t('settings.security', '보안')}</h4>
-                <button onclick="resetPassword()" class="settings-btn">${t('settings.change_password', '🔑 비밀번호 변경')}</button>
+                <h4>🛡️ ${getText('settings.security', '보안')}</h4>
+                <button onclick="resetPassword()" class="settings-btn">${getText('settings.change_password', '🔑 비밀번호 변경')}</button>
                 <p style="font-size:0.8rem; color:var(--accent); margin-top:0.5rem;">
-                    ${t('settings.wallet_encryption', '지갑 암호화')}: 
+                    ${getText('settings.wallet_encryption', '지갑 암호화')}: 
                     <strong style="color:#2e7d32;">AES-GCM ✅</strong>
                 </p>
             </div>
@@ -95,7 +141,7 @@ async function loadSettings() {
 }
 
 async function saveNotifSettings() {
-    if (!currentUser) return;
+    if (!currentUser || typeof db === 'undefined') return;
     const settings = {
         messages: document.getElementById('notif-messages')?.checked !== false,
         social: document.getElementById('notif-social')?.checked !== false,
@@ -103,16 +149,25 @@ async function saveNotifSettings() {
     };
     try {
         await db.collection('users').doc(currentUser.uid).update({ notificationSettings: settings });
-        if (typeof showToast === 'function') showToast(t('settings.saved', '저장됨'), 'success');
+        const message = typeof t === 'function' ? t('settings.saved', '저장됨') : '저장됨';
+        if (typeof showToast === 'function') showToast(message, 'success');
     } catch(e) {
         console.error('Failed to save notification settings:', e);
+        const errorMessage = typeof t === 'function' ? t('settings.save_failed', '저장 실패') : '저장 실패';
+        if (typeof showToast === 'function') showToast(errorMessage, 'error');
     }
 }
 
 function changeLanguageSetting(lang) {
     localStorage.setItem('crowny-lang', lang);
     if (typeof setLanguage === 'function') setLanguage(lang);
-    if (typeof showToast === 'function') showToast(t('settings.lang_changed', '언어가 변경되었습니다'), 'success');
+    const message = typeof t === 'function' ? t('settings.lang_changed', '언어가 변경되었습니다') : '언어가 변경되었습니다';
+    if (typeof showToast === 'function') showToast(message, 'success');
+    
+    // Reload settings with new language
+    setTimeout(() => {
+        if (typeof loadSettings === 'function') loadSettings();
+    }, 100);
 }
 
 function toggleTheme() {

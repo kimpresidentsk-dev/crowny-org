@@ -621,10 +621,10 @@
             <div id="messenger-header" class="messenger-header-bar">
                 <h2 style="margin:0 0 0.5rem;" data-i18n="messenger.title">💬 MESSENGER</h2>
                 <div style="display:flex; gap:0.5rem; overflow-x:auto; padding-bottom:0.5rem; -webkit-overflow-scrolling:touch; scrollbar-width:none; margin-bottom:0.5rem;">
-                    <button onclick="showNewChatModal()" class="btn-primary" style="padding:0.5rem 0.8rem; border-radius:10px; font-size:0.8rem; white-space:nowrap; flex-shrink:0;" data-i18n="messenger.new_chat">✏️ 새 채팅</button>
-                    <button onclick="showNewGroupModal()" class="btn-primary" style="padding:0.5rem 0.8rem; border-radius:10px; font-size:0.8rem; white-space:nowrap; flex-shrink:0;" data-i18n="messenger.new_group">👥 새 그룹</button>
-                    <button onclick="E2ECrypto.showStartSecretChatModal()" class="btn-primary" style="padding:0.5rem 0.8rem; border-radius:10px; font-size:0.8rem; background:#e65100; white-space:nowrap; flex-shrink:0;">🔒 비밀 채팅</button>
-                    <button onclick="showAddContactModal()" class="btn-secondary" style="padding:0.5rem 0.8rem; border-radius:10px; font-size:0.8rem; white-space:nowrap; flex-shrink:0;" data-i18n="messenger.contacts">👥 연락처</button>
+                    <button onclick="showNewChatModal()" class="btn-primary" style="padding:0.5rem 0.8rem; border-radius:10px; font-size:0.8rem; white-space:nowrap; flex-shrink:0;" data-i18n="messenger.new_chat"><i data-lucide="plus" style="width:16px;height:16px;margin-right:4px;"></i> 새 채팅</button>
+                    <button onclick="showNewGroupModal()" class="btn-primary" style="padding:0.5rem 0.8rem; border-radius:10px; font-size:0.8rem; white-space:nowrap; flex-shrink:0;" data-i18n="messenger.new_group"><i data-lucide="users" style="width:16px;height:16px;margin-right:4px;"></i> 새 그룹</button>
+                    <button onclick="E2ECrypto.showStartSecretChatModal()" class="btn-primary" style="padding:0.5rem 0.8rem; border-radius:10px; font-size:0.8rem; background:#e65100; white-space:nowrap; flex-shrink:0;"><i data-lucide="lock" style="width:16px;height:16px;margin-right:4px;"></i> 비밀 채팅</button>
+                    <button onclick="showAddContactModal()" class="btn-secondary" style="padding:0.5rem 0.8rem; border-radius:10px; font-size:0.8rem; white-space:nowrap; flex-shrink:0;" data-i18n="messenger.contacts"><i data-lucide="users" style="width:16px;height:16px;margin-right:4px;"></i> 연락처</button>
                 </div>
             </div>
             
@@ -633,7 +633,7 @@
                     <div class="sidebar-tabs">
                         <button class="tab-btn active" onclick="showChats()" data-i18n="messenger.tab_chats">채팅</button>
                         <button class="tab-btn" onclick="showContacts()" data-i18n="messenger.tab_contacts">연락처</button>
-                        <button class="tab-btn" onclick="showChannels()" data-i18n="messenger.tab_channels">📢 채널</button>
+                        <button class="tab-btn" onclick="showChannels()" data-i18n="messenger.tab_channels"><i data-lucide="megaphone" style="width:16px;height:16px;margin-right:4px;"></i> 채널</button>
                     </div>
                     
                     <div id="chats-view" class="sidebar-content">
@@ -648,7 +648,7 @@
                     </div>
                     <div id="channels-view" class="sidebar-content" style="display:none;">
                         <div style="padding:0.5rem;">
-                            <button onclick="showCreateChannelModal()" class="btn-primary" style="width:100%;padding:0.5rem;border-radius:8px;font-size:0.85rem;margin-bottom:0.5rem;">📢 채널 만들기</button>
+                            <button onclick="showCreateChannelModal()" class="btn-primary" style="width:100%;padding:0.5rem;border-radius:8px;font-size:0.85rem;margin-bottom:0.5rem;"><i data-lucide="megaphone" style="width:16px;height:16px;margin-right:4px;"></i> 채널 만들기</button>
                         </div>
                         <div id="channel-list"></div>
                     </div>

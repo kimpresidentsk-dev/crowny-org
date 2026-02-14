@@ -15,7 +15,7 @@
 
 .ai-msg { display:flex; gap:0.5rem; align-items:flex-end; }
 .ai-msg-user { flex-direction:row-reverse; }
-.ai-avatar { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,#ffd700,#ff8c00); display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
+.ai-avatar { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,#8B6914,#ff8c00); display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
 .panel-avatar-img { width:40px; height:40px; border-radius:50%; object-fit:cover; }
 .ai-bubble { max-width:80%; padding:0.7rem 1rem; border-radius:16px; font-size:0.9rem; line-height:1.5; word-break:break-word; }
 .ai-bubble-user { background:#8B6914; color:#FFF8F08F0; border-bottom-right-radius:4px; }

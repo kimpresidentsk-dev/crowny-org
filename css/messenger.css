@@ -97,14 +97,14 @@
     cursor: pointer;
     font-weight: 600;
     font-size: 0.88rem;
-    color: var(--accent);
+    color: #6B5744;
     transition: all 0.2s;
     position: relative;
 }
 
 .sidebar-tabs .tab-btn.active {
-    color: var(--text);
-    background: #FFF8F0;
+    color: #FFF8F0;
+    background: #3D2B1F;
 }
 
 .sidebar-tabs .tab-btn.active::after {
@@ -128,7 +128,7 @@
     gap: 0.8rem;
     padding: 1rem;
     cursor: pointer;
-    border-bottom: 1px solid rgba(0,0,0,0.04);
+    border-bottom: 1px solid #E8E0D8;
     transition: background 0.15s;
     align-items: center;
 }
@@ -668,7 +668,7 @@
     background: rgba(255,241,118,0.2);
     border-radius: 2px;
     padding: 0 1px;
-    color: #ffd740;
+    color: #8B6914;
 }
 
 
