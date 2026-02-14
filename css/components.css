@@ -689,15 +689,20 @@ input:focus, textarea:focus, select:focus {
 
 /* Sidebar dark */
 .sidebar {
-    background: var(--bg-card) !important;
+    background: #3D2B1F !important;
+    color: #E8D5C4 !important;
+}
+.sidebar .nav-item {
+    color: #E8D5C4 !important;
 }
 .sidebar .nav-item:hover {
-    background: var(--bg-card-alt) !important;
-    color: var(--gold) !important;
+    background: rgba(232,213,196,0.1) !important;
+    color: #FFF8F0 !important;
 }
 .sidebar .nav-item.active {
-    background: rgba(212,175,55,0.1) !important;
-    border-left: 3px solid var(--gold) !important;
+    background: rgba(139,105,20,0.2) !important;
+    border-left: 3px solid #8B6914 !important;
+    color: #FFF8F0 !important;
     color: var(--gold) !important;
 }
 
