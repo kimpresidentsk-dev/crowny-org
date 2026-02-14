@@ -167,16 +167,16 @@ function initNotifBell() {
     bellContainer.id = 'notif-bell-container';
     bellContainer.style.cssText = 'padding:0.5rem 1rem; position:relative;';
     bellContainer.innerHTML = `
-        <button id="notif-bell-btn" onclick="toggleNotifPanel()" style="background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:0.5rem 0.8rem; cursor:pointer; font-size:1rem; width:100%; display:flex; align-items:center; gap:0.5rem; position:relative;">
-            🔔 <span style="font-size:0.85rem; flex:1; text-align:left;">알림</span>
+        <button id="notif-bell-btn" onclick="toggleNotifPanel()" style="background:#3D2B1F; border:1px solid #6B5744; border-radius:10px; padding:0.5rem 0.8rem; cursor:pointer; font-size:1rem; width:100%; display:flex; align-items:center; gap:0.5rem; position:relative; color:#E8D5C4;">
+            <i data-lucide="bell" style="width:16px;height:16px;"></i> <span style="font-size:0.85rem; flex:1; text-align:left;">알림</span>
             <span id="notif-badge" style="display:none; background:#B54534; color:#FFF8F0; font-size:0.65rem; font-weight:700; padding:0.1rem 0.4rem; border-radius:10px; min-width:16px; text-align:center;">0</span>
         </button>
         <div id="notif-panel" style="display:none; position:fixed; left:60px; top:auto; z-index:99999; margin-top:0.3rem; background:var(--bg-card, white); border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.3); border:1px solid var(--border); max-height:70vh; overflow-y:auto; width:320px;">
             <div id="notif-panel-header" style="padding:0.8rem 1rem; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; background:#FFF8F0; border-radius:12px 12px 0 0;">
-                <strong style="font-size:0.9rem;">🔔 알림</strong>
+                <strong style="font-size:0.9rem;"><i data-lucide="bell" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 알림</strong>
                 <div style="display:flex; gap:0.5rem;">
                     <button onclick="markAllRead()" style="background:none; border:none; color:#3D2B1F; font-size:0.75rem; cursor:pointer; font-weight:600;">모두 읽음</button>
-                    <button onclick="openNotifSettings()" style="background:none; border:none; color:#6B5744; font-size:0.85rem; cursor:pointer;">⚙️</button>
+                    <button onclick="openNotifSettings()" style="background:none; border:none; color:#6B5744; font-size:0.85rem; cursor:pointer;"><i data-lucide="settings" style="width:14px;height:14px;"></i></button>
                 </div>
             </div>
             <div id="notif-list"></div>
