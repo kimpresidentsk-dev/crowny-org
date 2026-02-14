@@ -1,6 +1,6 @@
 // ===== marketplace.js - 쇼핑몰, 모금, 에너지, 비즈니스, 아티스트, 출판, P2P크레딧 =====
 
-const ORDER_STATUS_LABELS = { paid:t('mall.status_paid','💰 결제완료'), shipping:t('mall.status_shipping','🚚 배송중'), delivered:t('mall.status_delivered','✅ 배송완료'), cancelled:t('mall.status_cancelled','❌ 취소') };
+const ORDER_STATUS_LABELS = { paid:t('mall.status_paid','<i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 결제완료'), shipping:t('mall.status_shipping','<i data-lucide="truck" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 배송중'), delivered:t('mall.status_delivered','<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 배송완료'), cancelled:t('mall.status_cancelled','<i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 취소') };
 const ORDER_STATUS_COLORS = { paid:'#C4841D', shipping:'#5B7B8C', delivered:'#6B8F3C', cancelled:'#cc0000' };
 const BRAND_SLOGANS = {
     present: '아름다움을 선물하다', doctor: '건강한 삶의 시작', medical: '신뢰할 수 있는 의료',
@@ -12,16 +12,16 @@ const BRAND_COLORS = {
     solution:'#F2F3F4', architect:'#FADBD8', mall:'#FCF3CF', designers:'#EBDEF0'
 };
 const BRAND_ICONS = {
-    present:'💄', doctor:'💊', medical:'🏥', avls:'🎬', solution:'🔐', architect:'🏗️', mall:'🛒', designers:'👗'
+    present:'<i data-lucide="sparkles" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', doctor:'<i data-lucide="pill" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', medical:'<i data-lucide="hospital" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', avls:'<i data-lucide="film" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', solution:'<i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', architect:'<i data-lucide="building-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', mall:'<i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', designers:'<i data-lucide="shirt" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>'
 };
 const RETURN_REASONS = ['불량','오배송','단순변심','기타'];
 const MAX_ORDER_AMOUNT = 10000; // 1회 최대 주문 금액 (CRGC)
 let _orderInProgress = false; // 동시 주문 방지 플래그
 
 const MALL_CATEGORIES = {
-    'present':'💄 프레즌트','doctor':'💊 포닥터','medical':'🏥 메디컬','avls':'🎬 AVLs',
-    'solution':'🔐 프라이빗','architect':'🏗️ 아키텍트','mall':'🛒 크라우니몰','designers':'👗 디자이너스',
-    '뷰티':'💄 화장품','음향':'🔊 음향','헬스':'💪 헬스','생활':'☕ 생활','전자':'🔋 전자','패션':'👗 패션','식품':'🍽️ 식품','기타':'📦 기타'
+    'present':'<i data-lucide="sparkles" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 프레즌트','doctor':'<i data-lucide="pill" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 포닥터','medical':'<i data-lucide="hospital" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 메디컬','avls':'<i data-lucide="film" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> AVLs',
+    'solution':'<i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 프라이빗','architect':'<i data-lucide="building-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 아키텍트','mall':'<i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 크라우니몰','designers':'<i data-lucide="shirt" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 디자이너스',
+    '뷰티':'<i data-lucide="sparkles" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 화장품','음향':'<i data-lucide="volume-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 음향','헬스':'<i data-lucide="zap" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 헬스','생활':'<i data-lucide="coffee" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 생활','전자':'<i data-lucide="battery" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 전자','패션':'<i data-lucide="shirt" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 패션','식품':'<i data-lucide="utensils" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 식품','기타':'<i data-lucide="package" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 기타'
 };
 
 function renderStars(rating, size='0.85rem') {
@@ -93,21 +93,21 @@ async function loadMallProducts() {
         };
         items.forEach(p => {
             const thumb = getProductThumb(p);
-            const imgCount = (p.images && p.images.length > 1) ? `<span style="position:absolute; top:6px; left:6px; background:rgba(61,43,31,0.6); color:#FFF8F0; font-size:0.6rem; padding:0.15rem 0.4rem; border-radius:4px;">📷 ${p.images.length}</span>` : '';
+            const imgCount = (p.images && p.images.length > 1) ? `<span style="position:absolute; top:6px; left:6px; background:rgba(61,43,31,0.6); color:#FFF8F0; font-size:0.6rem; padding:0.15rem 0.4rem; border-radius:4px;"><i data-lucide="camera" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${p.images.length}</span>` : '';
             const ratingHtml = p.avgRating ? `<div style="margin-top:0.2rem;">${renderStars(p.avgRating, '0.7rem')} <span style="font-size:0.65rem; color:var(--accent);">(${p.reviewCount||0})</span></div>` : '';
             const displayTitle = searchVal ? highlightText(p.title, searchVal) : p.title;
             container.innerHTML += `
                 <div onclick="viewProduct('${p.id}')" style="background:#FFF8F0; border-radius:10px; overflow:hidden; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.08); position:relative;">
-                    <button onclick="event.stopPropagation(); toggleWishlist('${p.id}')" style="position:absolute; top:6px; right:6px; background:rgba(255,255,255,0.85); border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; font-size:0.9rem; z-index:1;">🤍</button>
+                    <button onclick="event.stopPropagation(); toggleWishlist('${p.id}')" style="position:absolute; top:6px; right:6px; background:rgba(255,255,255,0.85); border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; font-size:0.9rem; z-index:1;"><i data-lucide="heart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></button>
                     ${imgCount}
-                    <div style="height:140px; overflow:hidden; background:#F7F3ED;">${thumb ? `<img src="${thumb}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:#E8E0D8;">🛒</div>`}</div>
+                    <div style="height:140px; overflow:hidden; background:#F7F3ED;">${thumb ? `<img src="${thumb}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:#E8E0D8;"><i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></div>`}</div>
                     <div style="padding:0.6rem;">
                         <div style="font-weight:600; font-size:0.85rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${displayTitle}</div>
                         <div style="font-size:0.7rem; color:var(--accent);">${MALL_CATEGORIES[p.category] || p.category || ''} · <a onclick="event.stopPropagation(); viewStore('${p.sellerId}')" style="cursor:pointer; text-decoration:underline; color:var(--accent);">${p.sellerNickname || p.sellerEmail || t('mall.seller','판매자')}</a></div>
                         <div style="font-weight:700; color:#3D2B1F; margin-top:0.3rem;">${p.price} CRGC</div>
                         <div style="font-size:0.7rem; color:var(--accent);">재고: ${p.stock - (p.sold||0)}개</div>
                         ${ratingHtml}
-                        <button onclick="event.stopPropagation(); addToCart('${p.id}')" style="width:100%; margin-top:0.4rem; background:#3D2B1F; color:#FFF8F0; border:none; padding:0.35rem; border-radius:5px; cursor:pointer; font-size:0.75rem; font-weight:600;">🛒 담기</button>
+                        <button onclick="event.stopPropagation(); addToCart('${p.id}')" style="width:100%; margin-top:0.4rem; background:#3D2B1F; color:#FFF8F0; border:none; padding:0.35rem; border-radius:5px; cursor:pointer; font-size:0.75rem; font-weight:600;"><i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 담기</button>
                     </div>
                 </div>`;
         });
@@ -160,7 +160,7 @@ async function renderProductDetail(id) {
                 }
 
                 reviewsHtml = `<div style="margin-top:1.5rem; background:#FFF8F0; padding:1.2rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-                    <h4 style="margin-bottom:0.8rem;">📝 리뷰 (${revSnap.size})</h4>
+                    <h4 style="margin-bottom:0.8rem;"><i data-lucide="file-text" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 리뷰 (${revSnap.size})</h4>
                     <div style="display:flex;gap:1.5rem;align-items:center;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid #E8E0D8;">
                         <div style="text-align:center;">
                             <div style="font-size:2rem;font-weight:800;color:#8B6914;">${avgR}</div>
@@ -171,7 +171,7 @@ async function renderProductDetail(id) {
                     </div>`;
                 revSnap.forEach(r => {
                     const rv = r.data();
-                    const verifiedBadge = rv.verified ? '<span style="background:#F7F3ED;color:#2e7d32;font-size:0.7rem;padding:0.1rem 0.4rem;border-radius:4px;margin-left:0.3rem;">✅ 구매인증</span>' : '';
+                    const verifiedBadge = rv.verified ? '<span style="background:#F7F3ED;color:#2e7d32;font-size:0.7rem;padding:0.1rem 0.4rem;border-radius:4px;margin-left:0.3rem;"><i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 구매인증</span>' : '';
                     const dateStr = rv.createdAt?.toDate ? rv.createdAt.toDate().toLocaleDateString('ko-KR') : '';
                     reviewsHtml += `<div style="background:var(--bg); padding:0.8rem; border-radius:8px; margin-bottom:0.5rem;">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -182,8 +182,8 @@ async function renderProductDetail(id) {
                         ${rv.comment ? `<p style="font-size:0.85rem; margin-top:0.3rem; color:#6B5744;">${rv.comment}</p>` : ''}
                         ${rv.imageData ? `<img src="${rv.imageData}" style="width:100px;height:100px;object-fit:cover;border-radius:8px;margin-top:0.4rem;cursor:pointer;" onclick="window.open(this.src)">` : ''}
                         <div style="margin-top:0.4rem;display:flex;gap:0.4rem;">
-                            <button onclick="helpfulReview('${r.id}')" style="background:none;border:1px solid #E8E0D8;border-radius:12px;padding:0.2rem 0.6rem;cursor:pointer;font-size:0.75rem;color:var(--accent);">👍 도움이 돼요 ${rv.helpful||0}</button>
-                            ${currentUser && rv.buyerId !== currentUser.uid ? `<button onclick="event.stopPropagation();reportReview('${r.id}')" style="background:none;border:1px solid #E8E0D8;border-radius:12px;padding:0.2rem 0.6rem;cursor:pointer;font-size:0.7rem;color:#cc0000;">🚨</button>` : ''}
+                            <button onclick="helpfulReview('${r.id}')" style="background:none;border:1px solid #E8E0D8;border-radius:12px;padding:0.2rem 0.6rem;cursor:pointer;font-size:0.75rem;color:var(--accent);"><i data-lucide="thumbs-up" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 도움이 돼요 ${rv.helpful||0}</button>
+                            ${currentUser && rv.buyerId !== currentUser.uid ? `<button onclick="event.stopPropagation();reportReview('${r.id}')" style="background:none;border:1px solid #E8E0D8;border-radius:12px;padding:0.2rem 0.6rem;cursor:pointer;font-size:0.7rem;color:#cc0000;"><i data-lucide="alert-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></button>` : ''}
                         </div>
                     </div>`;
                 });
@@ -199,7 +199,7 @@ async function renderProductDetail(id) {
                 if (!myOrders.empty) {
                     const existingReview = await db.collection('product_reviews').where('productId','==',id).where('buyerId','==',currentUser.uid).limit(1).get();
                     if (existingReview.empty) {
-                        reviewBtnHtml = `<button onclick="writeReview('${id}')" style="background:#C4841D; color:#FFF8F0; border:none; padding:0.7rem; border-radius:8px; cursor:pointer; font-weight:600; width:100%; margin-top:0.5rem;">⭐ 리뷰 작성</button>`;
+                        reviewBtnHtml = `<button onclick="writeReview('${id}')" style="background:#C4841D; color:#FFF8F0; border:none; padding:0.7rem; border-radius:8px; cursor:pointer; font-weight:600; width:100%; margin-top:0.5rem;"><i data-lucide="star" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 리뷰 작성</button>`;
                     }
                 }
             } catch(e) { console.warn("[catch]", e); }
@@ -227,7 +227,7 @@ async function renderProductDetail(id) {
             </div>`;
         } else {
             galleryHtml = `<div style="background:#F7F3ED; border-radius:12px; overflow:hidden; margin-bottom:1rem;">
-                <div style="width:100%;height:250px;display:flex;align-items:center;justify-content:center;font-size:5rem;color:#E8E0D8;">🛒</div>
+                <div style="width:100%;height:250px;display:flex;align-items:center;justify-content:center;font-size:5rem;color:#E8E0D8;"><i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></div>
             </div>`;
         }
 
@@ -240,7 +240,7 @@ async function renderProductDetail(id) {
             <div style="background:#FFF8F0; padding:1.2rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
                 <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                     <h2 style="margin:0; flex:1;">${p.title}</h2>
-                    <button onclick="toggleWishlist('${id}')" id="wish-btn-${id}" style="background:none; border:none; font-size:1.5rem; cursor:pointer; padding:0.2rem;">${isWished ? '❤️' : '🤍'}</button>
+                    <button onclick="toggleWishlist('${id}')" id="wish-btn-${id}" style="background:none; border:none; font-size:1.5rem; cursor:pointer; padding:0.2rem;">${isWished ? '<i data-lucide="heart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>' : '<i data-lucide="heart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>'}</button>
                 </div>
                 <p style="color:var(--accent); font-size:0.85rem; margin:0.5rem 0;">${[MALL_CATEGORIES[p.category], sellerLink].filter(Boolean).join(' · ')}</p>
                 ${ratingDisplay}
@@ -249,12 +249,12 @@ async function renderProductDetail(id) {
                 <div style="font-size:0.85rem; color:var(--accent); margin-bottom:1rem;">재고: ${remaining}개 · 판매: ${p.sold||0}개</div>
                 ${!isOwner && remaining > 0 ? `
                 <div style="display:flex; gap:0.5rem;">
-                    <button onclick="buyProduct('${id}', this)" style="flex:2; background:#3D2B1F; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; font-size:1rem;">🛒 바로 구매</button>
+                    <button onclick="buyProduct('${id}', this)" style="flex:2; background:#3D2B1F; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; font-size:1rem;"><i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 바로 구매</button>
                     <button onclick="addToCart('${id}')" style="flex:1; background:#FFF8F0; color:#3D2B1F; border:2px solid #3D2B1F; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">담기</button>
                 </div>` : ''}
                 ${remaining <= 0 ? '<p style="color:#cc0000; font-weight:700; text-align:center; font-size:1.1rem; margin:1rem 0;">품절</p>' : ''}
                 ${reviewBtnHtml}
-                ${!isOwner && currentUser ? `<button onclick="reportProduct('${id}')" style="background:none; color:#cc0000; border:1px solid #cc0000; padding:0.5rem; border-radius:8px; cursor:pointer; width:100%; margin-top:0.5rem; font-size:0.85rem;">🚨 신고</button>` : ''}
+                ${!isOwner && currentUser ? `<button onclick="reportProduct('${id}')" style="background:none; color:#cc0000; border:1px solid #cc0000; padding:0.5rem; border-radius:8px; cursor:pointer; width:100%; margin-top:0.5rem; font-size:0.85rem;"><i data-lucide="alert-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 신고</button>` : ''}
             </div>
             ${reviewsHtml}`;
     } catch(e) { c.innerHTML = `<p style="color:red; text-align:center;">${e.message}</p>`; }
@@ -268,7 +268,7 @@ async function writeReview(productId) {
         overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99998;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); resolve(); } };
         overlay.innerHTML = `<div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;max-width:420px;width:100%;max-height:90vh;overflow-y:auto;">
-            <h3 style="margin-bottom:1rem;">⭐ 리뷰 작성</h3>
+            <h3 style="margin-bottom:1rem;"><i data-lucide="star" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 리뷰 작성</h3>
             <div style="text-align:center; margin-bottom:1rem;">
                 <div id="review-stars" style="font-size:2rem; cursor:pointer;">
                     ${[1,2,3,4,5].map(i => `<span data-star="${i}" style="color:#8B6914;">★</span>`).join('')}
@@ -277,7 +277,7 @@ async function writeReview(productId) {
             </div>
             <textarea id="review-comment" placeholder="리뷰를 작성해주세요..." rows="3" style="width:100%;padding:0.7rem;border:1px solid var(--border);border-radius:6px;resize:vertical;box-sizing:border-box;margin-bottom:0.8rem;"></textarea>
             <div style="margin-bottom:1rem;">
-                <label style="font-size:0.85rem; color:var(--accent);">📷 사진 첨부 (선택)</label>
+                <label style="font-size:0.85rem; color:var(--accent);"><i data-lucide="camera" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 사진 첨부 (선택)</label>
                 <input type="file" id="review-photo" accept="image/*" style="width:100%;padding:0.5rem;border:1px solid var(--border);border-radius:6px;margin-top:0.3rem;">
                 <div id="review-photo-preview" style="margin-top:0.3rem;"></div>
             </div>
@@ -335,9 +335,9 @@ async function writeReview(productId) {
                 // 판매자 알림
                 const prodForReview = await db.collection('products').doc(productId).get();
                 if (prodForReview.exists && typeof createNotification === 'function') {
-                    await createNotification(prodForReview.data().sellerId, 'order_status', { message: `⭐ "${prodForReview.data().title}"에 새 리뷰가 작성되었습니다 (${selectedRating}점)`, link: `#page=product-detail&id=${productId}` });
+                    await createNotification(prodForReview.data().sellerId, 'order_status', { message: `<i data-lucide="star" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> "${prodForReview.data().title}"에 새 리뷰가 작성되었습니다 (${selectedRating}점)`, link: `#page=product-detail&id=${productId}` });
                 }
-                showToast('⭐ 리뷰 등록 완료!', 'success');
+                showToast('<i data-lucide="star" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 리뷰 등록 완료!', 'success');
                 overlay.remove();
                 viewProduct(productId);
                 resolve();
@@ -420,10 +420,10 @@ async function buyProduct(id, btn) {
         
         // 판매자 알림
         if (typeof createNotification === 'function') {
-            await createNotification(p.sellerId, 'order_status', { message: `🛒 새 주문! "${p.title}" (${price} CRGC)`, link: '#page=my-shop' });
+            await createNotification(p.sellerId, 'order_status', { message: `<i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 새 주문! "${p.title}" (${price} CRGC)`, link: '#page=my-shop' });
         }
         
-        showToast(`🎉 "${p.title}" 구매 완료!`, 'success');
+        showToast(`<i data-lucide="gift" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> "${p.title}" 구매 완료!`, 'success');
         document.getElementById('product-modal')?.remove();
         loadMallProducts(); loadUserWallet();
     } catch (e) { showToast('구매 실패: ' + e.message, 'error'); } finally { _orderInProgress = false; }
@@ -439,7 +439,7 @@ async function loadMyOrders() {
             const x = d.data();
             const statusLabel = ORDER_STATUS_LABELS[x.status] || x.status;
             const statusColor = ORDER_STATUS_COLORS[x.status] || 'var(--accent)';
-            const reviewBtn = x.status === 'delivered' ? `<button onclick="event.stopPropagation(); writeReview('${x.productId}')" style="background:#C4841D; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem; margin-left:0.5rem;">⭐ 리뷰</button>` : '';
+            const reviewBtn = x.status === 'delivered' ? `<button onclick="event.stopPropagation(); writeReview('${x.productId}')" style="background:#C4841D; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem; margin-left:0.5rem;"><i data-lucide="star" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 리뷰</button>` : '';
             c.innerHTML += `<div style="padding:0.6rem; background:var(--bg); border-radius:6px; margin-bottom:0.4rem; font-size:0.85rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
                 <div><strong>${x.productTitle}</strong> — ${x.amount} ${x.token}</div>
                 <div><span style="color:${statusColor}; font-weight:600;">${statusLabel}</span>${reviewBtn}</div>
@@ -461,9 +461,9 @@ async function loadMyProducts() {
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.3rem;">
                     <div><strong>${x.title}</strong> — ${x.price} CRGC · 판매: ${x.sold||0}/${x.stock} ${statusBadge}</div>
                     <div style="display:flex; gap:0.3rem;">
-                        <button onclick="editProduct('${d.id}')" style="background:#5B7B8C; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.edit_btn','✏️ 수정')}</button>
-                        <button onclick="toggleProduct('${d.id}','${x.status}')" style="background:${x.status==='active'?'#6B5744':'#6B8F3C'}; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${x.status==='active'?t('mall.deactivate','⏸ 비활성'):t('mall.activate','▶ 활성')}</button>
-                        <button onclick="deleteProduct('${d.id}')" style="background:#cc0000; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">🗑️</button>
+                        <button onclick="editProduct('${d.id}')" style="background:#5B7B8C; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.edit_btn','<i data-lucide="edit" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 수정')}</button>
+                        <button onclick="toggleProduct('${d.id}','${x.status}')" style="background:${x.status==='active'?'#6B5744':'#6B8F3C'}; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${x.status==='active'?t('mall.deactivate','<i data-lucide="pause" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 비활성'):t('mall.activate','▶ 활성')}</button>
+                        <button onclick="deleteProduct('${d.id}')" style="background:#cc0000; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;"><i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></button>
                     </div>
                 </div>
             </div>`;
@@ -491,7 +491,7 @@ async function editProduct(id) {
             stock: parsedStock,
             description: newDesc
         });
-        showToast(t('mall.edit_done','✏️ 상품 수정 완료'), 'success');
+        showToast(t('mall.edit_done','<i data-lucide="edit" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 상품 수정 완료'), 'success');
         loadMyProducts();
     } catch (e) { showToast('수정 실패: ' + e.message, 'error'); }
 }
@@ -511,7 +511,7 @@ async function deleteProduct(id) {
     if (!await showConfirmModal(t('mall.delete_product','상품 삭제'), t('mall.confirm_delete_product','이 상품을 삭제하시겠습니까? 복구할 수 없습니다.'))) return;
     try {
         await db.collection('products').doc(id).delete();
-        showToast(t('mall.deleted','🗑️ 상품 삭제 완료'), 'success');
+        showToast(t('mall.deleted','<i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 상품 삭제 완료'), 'success');
         loadMyProducts();
     } catch (e) { showToast('삭제 실패: ' + e.message, 'error'); }
 }
@@ -529,9 +529,9 @@ async function loadSellerOrders() {
             const statusLabel = ORDER_STATUS_LABELS[x.status] || x.status;
             const statusColor = ORDER_STATUS_COLORS[x.status] || 'var(--accent)';
             const nextActions = [];
-            if (x.status === 'paid') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','shipping')" style="background:#5B7B8C; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.process_shipping','🚚 배송처리')}</button>`);
-            if (x.status === 'shipping') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','delivered')" style="background:#6B8F3C; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.mark_delivered','✅ 배송완료')}</button>`);
-            const shipInfo = x.shippingInfo ? `<div style="font-size:0.7rem; color:#6B5744; margin-top:0.2rem;">📦 ${x.shippingInfo.name} · ${x.shippingInfo.phone} · ${x.shippingInfo.address}${x.shippingInfo.memo ? ' · '+x.shippingInfo.memo : ''}</div>` : '';
+            if (x.status === 'paid') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','shipping')" style="background:#5B7B8C; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.process_shipping','<i data-lucide="truck" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 배송처리')}</button>`);
+            if (x.status === 'shipping') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','delivered')" style="background:#6B8F3C; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.mark_delivered','<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 배송완료')}</button>`);
+            const shipInfo = x.shippingInfo ? `<div style="font-size:0.7rem; color:#6B5744; margin-top:0.2rem;"><i data-lucide="package" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${x.shippingInfo.name} · ${x.shippingInfo.phone} · ${x.shippingInfo.address}${x.shippingInfo.memo ? ' · '+x.shippingInfo.memo : ''}</div>` : '';
             c.innerHTML += `<div style="padding:0.6rem; background:var(--bg); border-radius:6px; margin-bottom:0.4rem; font-size:0.85rem;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.3rem;">
                     <div><strong>${x.productTitle}</strong> — ${x.amount} ${x.token}<br><span style="font-size:0.75rem; color:var(--accent);">구매자: ${x.buyerEmail}</span>${shipInfo}</div>
@@ -560,7 +560,7 @@ async function updateOrderStatus(orderId, newStatus) {
             const orderDoc = await db.collection('orders').doc(orderId).get();
             const o = orderDoc.data();
             if (typeof createNotification === 'function') {
-                await createNotification(o.buyerId, 'order_status', { message: `🚚 "${o.productTitle}" 주문이 배송중입니다!`, link: '#page=buyer-orders' });
+                await createNotification(o.buyerId, 'order_status', { message: `<i data-lucide="truck" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> "${o.productTitle}" 주문이 배송중입니다!`, link: '#page=buyer-orders' });
             }
             showToast(`${label} 처리 완료`, 'success');
             loadSellerOrders();
@@ -575,7 +575,7 @@ async function updateOrderStatus(orderId, newStatus) {
             const orderDoc = await db.collection('orders').doc(orderId).get();
             const o = orderDoc.data();
             if (typeof createNotification === 'function') {
-                const msg = newStatus === 'delivered' ? `✅ "${o.productTitle}" 배송이 완료되었습니다!` : `📦 "${o.productTitle}" 주문 상태가 변경되었습니다`;
+                const msg = newStatus === 'delivered' ? `<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> "${o.productTitle}" 배송이 완료되었습니다!` : `<i data-lucide="package" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> "${o.productTitle}" 주문 상태가 변경되었습니다`;
                 await createNotification(o.buyerId, 'order_status', { message: msg, link: '#page=buyer-orders' });
             }
             showToast(`${label} 처리 완료`, 'success');
@@ -611,7 +611,7 @@ async function createCampaign() {
             status: 'active', createdAt: new Date()
         });
         
-        showToast(`💝 "${title}" 캠페인 시작!`, 'success');
+        showToast(`<i data-lucide="gift" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> "${title}" 캠페인 시작!`, 'success');
         document.getElementById('fund-title').value = '';
         document.getElementById('fund-desc').value = '';
         loadCampaigns();
@@ -635,7 +635,7 @@ async function loadCampaigns() {
                     <div style="padding:1rem;">
                         <h4 style="margin-bottom:0.3rem;">${x.title}</h4>
                         <p style="font-size:0.85rem; color:var(--accent); margin-bottom:0.5rem;">${x.creatorNickname || x.creatorEmail} · ${x.backerCount || x.backers || 0}명 참여</p>
-                        <p style="font-size:0.75rem; color:#2e7d32; margin-bottom:0.5rem;">💰 수수료 ${x.platformFee||2.5}% · 수령 ${100-(x.platformFee||2.5)}%</p>
+                        <p style="font-size:0.75rem; color:#2e7d32; margin-bottom:0.5rem;"><i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 수수료 ${x.platformFee||2.5}% · 수령 ${100-(x.platformFee||2.5)}%</p>
                         <div style="background:#e0e0e0; height:8px; border-radius:4px; margin-bottom:0.5rem;">
                             <div style="background:#6B8F3C; height:100%; border-radius:4px; width:${pct}%;"></div>
                         </div>
@@ -644,7 +644,7 @@ async function loadCampaigns() {
                             <span style="color:var(--accent);">${pct}%</span>
                         </div>
                         <div style="display:flex; gap:0.5rem; margin-top:0.8rem;">
-                            <button onclick="event.stopPropagation(); donateCampaign('${d.id}')" style="background:#6B8F3C; color:#FFF8F0; border:none; padding:0.6rem; border-radius:6px; cursor:pointer; flex:1; font-weight:700;">${t('fundraise.donate_btn','💝 기부하기')}</button>
+                            <button onclick="event.stopPropagation(); donateCampaign('${d.id}')" style="background:#6B8F3C; color:#FFF8F0; border:none; padding:0.6rem; border-radius:6px; cursor:pointer; flex:1; font-weight:700;">${t('fundraise.donate_btn','<i data-lucide="gift" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 기부하기')}</button>
                             ${isCreator ? `<button onclick="event.stopPropagation(); closeCampaign('${d.id}')" style="background:#e53935; color:#FFF8F0; border:none; padding:0.6rem; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.8rem;">${t('fund.close','🔒 종료')}</button>` : ''}
                         </div>
                     </div>
@@ -684,7 +684,7 @@ async function donateCampaign(id) {
         await db.collection('transactions').add({ from:currentUser.uid, to:camp.creatorId, amount, token:camp.token, type:'donation', campaignId:id, platformFee, creatorReceive, timestamp:new Date() });
         await db.collection('campaign_donors').add({ campaignId:id, donorId:currentUser.uid, donorEmail:currentUser.email, amount, token:camp.token, timestamp:new Date() });
         await db.collection('platform_fees').add({ campaignId:id, amount:platformFee, token:camp.token, fromUser:currentUser.uid, timestamp:new Date() });
-        showToast(`💝 ${amount} ${camp.token} 기부 완료!`, 'success');
+        showToast(`<i data-lucide="gift" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${amount} ${camp.token} 기부 완료!`, 'success');
         loadCampaigns(); loadUserWallet();
     } catch (e) { showToast('실패: ' + e.message, 'error'); }
 }
@@ -692,16 +692,16 @@ async function donateCampaign(id) {
 // ========== CREB LABS - 미래기술 투자 ==========
 
 const CREB_CATEGORIES = {
-    energy: { icon: '⚡', color: '#C4841D', label: '에너지', sdg: 'SDG 7' },
-    genetics: { icon: '🧬', color: '#B54534', label: '유전공학', sdg: 'SDG 3' },
-    biotech: { icon: '🔬', color: '#6B8F3C', label: '생명공학', sdg: 'SDG 3' },
-    ai_robotics: { icon: '🤖', color: '#5B7B8C', label: 'AI·로보틱스', sdg: 'SDG 9' }
+    energy: { icon: '<i data-lucide="zap" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', color: '#C4841D', label: '에너지', sdg: 'SDG 7' },
+    genetics: { icon: '<i data-lucide="dna" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', color: '#B54534', label: '유전공학', sdg: 'SDG 3' },
+    biotech: { icon: '<i data-lucide="microscope" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', color: '#6B8F3C', label: '생명공학', sdg: 'SDG 3' },
+    ai_robotics: { icon: '<i data-lucide="bot" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', color: '#5B7B8C', label: 'AI·로보틱스', sdg: 'SDG 9' }
 };
 
 const CREB_INVEST_TYPES = {
-    return: { icon: '💰', label: '수익형', color: '#C4841D', bg: '#FFF3E0' },
-    donation: { icon: '💝', label: '기부형 · 선한 투자', color: '#6B8F3C', bg: '#E8F5E9' },
-    hybrid: { icon: '🔄', label: '하이브리드', color: '#5B7B8C', bg: '#E3F2FD' }
+    return: { icon: '<i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: '수익형', color: '#C4841D', bg: '#FFF3E0' },
+    donation: { icon: '<i data-lucide="gift" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: '기부형 · 선한 투자', color: '#6B8F3C', bg: '#E8F5E9' },
+    hybrid: { icon: '<i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: '하이브리드', color: '#5B7B8C', bg: '#E3F2FD' }
 };
 
 const CREB_IMPACT = {
@@ -771,16 +771,16 @@ async function loadEnergyProjects() {
                 </div>
                 <div style="margin-bottom:0.3rem;">${renderInvestBadge(x)}</div>
                 <p style="font-size:0.85rem; color:var(--accent); margin:0.3rem 0;">${x.location || ''} ${x.capacity ? '· ' + x.capacity + 'kW' : ''} ${rate > 0 ? '· 예상 수익률 ' + rate + '%' : ''}</p>
-                ${rate > 0 ? `<div style="font-size:0.8rem; color:#2e7d32; margin-top:0.3rem;">💰 100 CREB 투자 시 → 월 ${exMonthly} CREB (연 ${rate}%)</div>` : ''}
-                ${itype === 'donation' ? `<div style="font-size:0.8rem; color:#6B8F3C; margin-top:0.3rem;">💝 순수 기부 · 수익 없이 미래를 위한 투자</div>` : ''}
-                ${itype === 'hybrid' ? `<div style="font-size:0.8rem; color:#5B7B8C; margin-top:0.3rem;">🔄 수익 50% + 재투자 50%</div>` : ''}
+                ${rate > 0 ? `<div style="font-size:0.8rem; color:#2e7d32; margin-top:0.3rem;"><i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 100 CREB 투자 시 → 월 ${exMonthly} CREB (연 ${rate}%)</div>` : ''}
+                ${itype === 'donation' ? `<div style="font-size:0.8rem; color:#6B8F3C; margin-top:0.3rem;"><i data-lucide="gift" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 순수 기부 · 수익 없이 미래를 위한 투자</div>` : ''}
+                ${itype === 'hybrid' ? `<div style="font-size:0.8rem; color:#5B7B8C; margin-top:0.3rem;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 수익 50% + 재투자 50%</div>` : ''}
                 <div style="font-size:0.75rem; color:var(--accent);">👥 투자자 ${xInvestors}명</div>
                 <div style="background:#e0e0e0; height:6px; border-radius:3px; margin:0.5rem 0;"><div style="background:${catInfo.color}; height:100%; border-radius:3px; width:${pct}%;"></div></div>
                 <div style="display:flex; justify-content:space-between; font-size:0.85rem;"><span>${xInvested}/${xGoal} CREB</span><span>${pct}%</span></div>
                 ${renderMilestones(x.milestones)}
                 <div style="display:flex; gap:0.5rem; margin-top:0.5rem;" onclick="event.stopPropagation();">
                     <button onclick="investEnergy('${d.id}')" style="background:${catInfo.color}; color:#FFF8F0; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; flex:1;">${t('energy.invest_btn','☀️ 투자하기')}</button>
-                    ${isAdmin ? `<button onclick="distributeEnergyReturns('${d.id}')" style="background:#1976D2; color:#FFF8F0; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; flex:1; font-size:0.8rem;">${t('energy.distribute','📊 수익 배분')}</button>` : ''}
+                    ${isAdmin ? `<button onclick="distributeEnergyReturns('${d.id}')" style="background:#1976D2; color:#FFF8F0; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; flex:1; font-size:0.8rem;">${t('energy.distribute','<i data-lucide="bar-chart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 수익 배분')}</button>` : ''}
                 </div>
             </div>`; });
         if (!c.innerHTML.trim()) c.innerHTML = '<p style="color:var(--accent);">이 카테고리에 프로젝트가 없습니다.</p>';
@@ -832,7 +832,7 @@ async function openProjectDetail(projectId) {
         try {
             const invs = await db.collection('energy_investments').where('projectId','==',projectId).orderBy('timestamp','desc').limit(10).get();
             if (!invs.empty) {
-                investorsHtml = `<div style="margin-top:1rem;"><h4>💰 최근 투자자</h4>${invs.docs.map(i => {
+                investorsHtml = `<div style="margin-top:1rem;"><h4><i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 최근 투자자</h4>${invs.docs.map(i => {
                     const id = i.data();
                     return `<div style="font-size:0.8rem; padding:0.2rem 0;">익명 · ${id.amount} CREB</div>`;
                 }).join('')}</div>`;
@@ -861,7 +861,7 @@ async function openProjectDetail(projectId) {
                     </div>
                     ${commentsHtml}
                 </div>
-                <button onclick="investEnergy('${projectId}'); document.getElementById('creb-project-modal').remove();" class="btn-primary" style="width:100%; margin-top:1rem;">💰 투자하기</button>
+                <button onclick="investEnergy('${projectId}'); document.getElementById('creb-project-modal').remove();" class="btn-primary" style="width:100%; margin-top:1rem;"><i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 투자하기</button>
             </div>
         </div>`;
         document.body.insertAdjacentHTML('beforeend', modalHtml);
@@ -941,14 +941,14 @@ async function loadBusinessList() {
     try {
         const docs = await db.collection('businesses').where('status','==','active').orderBy('createdAt','desc').limit(20).get();
         if (docs.empty) { c.innerHTML = '<p style="color:var(--accent);">등록된 사업체가 없습니다</p>'; return; }
-        const BIZ_CATS = {retail:'🏪',food:'🍽️',service:'🔧',tech:'💻',education:'📖',health:'💊',logistics:'🚚',entertainment:'🎭',other:'🏢'};
+        const BIZ_CATS = {retail:'<i data-lucide="store" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',food:'<i data-lucide="utensils" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',service:'<i data-lucide="wrench" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',tech:'<i data-lucide="laptop" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',education:'<i data-lucide="book-open" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',health:'<i data-lucide="pill" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',logistics:'<i data-lucide="truck" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',entertainment:'<i data-lucide="theater" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',other:'🏢'};
         c.innerHTML = '';
         docs.forEach(d => { const x = d.data();
             c.innerHTML += `<div onclick="viewBusinessDetail('${d.id}')" style="background:#FFF8F0; padding:1rem; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.08); display:flex; gap:1rem; align-items:center; cursor:pointer;">
                 ${x.imageData ? `<img src="${x.imageData}" loading="lazy" style="width:70px; height:70px; border-radius:8px; object-fit:cover;">` : `<div style="width:70px; height:70px; background:var(--bg); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.5rem;">${BIZ_CATS[x.category]||'🏢'}</div>`}
                 <div style="flex:1;"><h4>${x.name}</h4><p style="font-size:0.8rem; color:var(--accent);">${[BIZ_CATS[x.category], x.country, x.ownerNickname || x.ownerEmail].filter(Boolean).join(' · ')}</p>
                 ${x.description ? `<p style="font-size:0.85rem; margin-top:0.3rem;">${x.description.slice(0,80)}${x.description.length>80?'...':''}</p>` : ''}
-                <div style="font-size:0.75rem; color:var(--accent); margin-top:0.3rem;">⭐ ${x.reviews > 0 ? (x.rating/x.reviews).toFixed(1) : '-'} · ${x.reviews||0}개 리뷰</div></div></div>`; });
+                <div style="font-size:0.75rem; color:var(--accent); margin-top:0.3rem;"><i data-lucide="star" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${x.reviews > 0 ? (x.rating/x.reviews).toFixed(1) : '-'} · ${x.reviews||0}개 리뷰</div></div></div>`; });
     } catch (e) { c.innerHTML = e.message; }
 }
 
@@ -968,7 +968,7 @@ async function registerArtist() {
             imageData, userId: currentUser.uid, email: currentUser.email,
             fans: 0, totalSupport: 0, status: 'active', createdAt: new Date()
         });
-        showToast(`🌟 "${name}" 등록 완료!`, 'success');
+        showToast(`<i data-lucide="star" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> "${name}" 등록 완료!`, 'success');
         document.getElementById('artist-name').value = '';
         loadArtistList();
     } catch (e) { showToast('실패: ' + e.message, 'error'); }
@@ -980,12 +980,12 @@ async function loadArtistList() {
     try {
         const docs = await db.collection('artists').where('status','==','active').orderBy('fans','desc').limit(20).get();
         if (docs.empty) { c.innerHTML = '<p style="text-align:center; color:var(--accent); grid-column:1/-1;">등록된 아티스트가 없습니다</p>'; return; }
-        const GENRES = {music:'🎵',dance:'💃',acting:'🎬',comedy:'😂',creator:'📹',model:'📷',dj:'🎧',other:'🌟'};
+        const GENRES = {music:'<i data-lucide="music" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',dance:'<i data-lucide="music" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',acting:'<i data-lucide="film" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',comedy:'<i data-lucide="smile" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',creator:'<i data-lucide="video" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',model:'<i data-lucide="camera" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',dj:'<i data-lucide="headphones" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',other:'<i data-lucide="star" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>'};
         c.innerHTML = '';
         docs.forEach(d => { const x = d.data();
             c.innerHTML += `<div onclick="viewArtistDetail('${d.id}')" style="background:#FFF8F0; border-radius:10px; overflow:hidden; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.08); cursor:pointer;">
                 <div style="height:160px; overflow:hidden; background:linear-gradient(135deg,#8B6914,#6B5744);">
-                ${x.imageData ? `<img src="${x.imageData}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : `<div style="height:100%; display:flex; align-items:center; justify-content:center; font-size:3rem; color:#FFF8F0;">${GENRES[x.genre]||'🌟'}</div>`}</div>
+                ${x.imageData ? `<img src="${x.imageData}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : `<div style="height:100%; display:flex; align-items:center; justify-content:center; font-size:3rem; color:#FFF8F0;">${GENRES[x.genre]||'<i data-lucide="star" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>'}</div>`}</div>
                 <div style="padding:0.6rem;"><div style="font-weight:700;">${x.name}</div>
                 <div style="font-size:0.75rem; color:var(--accent);">${GENRES[x.genre]||''} · 팬 ${x.fans}명</div>
                 <button onclick="event.stopPropagation(); supportArtist('${d.id}')" style="background:#B54534; color:#FFF8F0; border:none; padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; margin-top:0.4rem; font-size:0.8rem;">${t('artist.support_btn','💖 후원')}</button>
@@ -1046,7 +1046,7 @@ async function registerBook() {
             imageData, publisherId: currentUser.uid, publisherEmail: currentUser.email,
             sold: 0, rating: 0, reviews: 0, status: 'active', createdAt: new Date()
         });
-        showToast(`📚 "${title}" 등록 완료!`, 'success');
+        showToast(`<i data-lucide="books" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> "${title}" 등록 완료!`, 'success');
         document.getElementById('book-title').value = '';
         loadBooksList();
     } catch (e) { showToast('실패: ' + e.message, 'error'); }
@@ -1058,12 +1058,12 @@ async function loadBooksList() {
     try {
         const docs = await db.collection('books').where('status','==','active').orderBy('createdAt','desc').limit(20).get();
         if (docs.empty) { c.innerHTML = '<p style="text-align:center; color:var(--accent); grid-column:1/-1;">등록된 책이 없습니다</p>'; return; }
-        const GENRES = {novel:'📕',essay:'📗',selfhelp:'📘',business:'📙',tech:'💻',poetry:'🖋️',children:'🧒',comic:'📒',other:'📚'};
+        const GENRES = {novel:'<i data-lucide="book" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',essay:'<i data-lucide="book" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',selfhelp:'<i data-lucide="book" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',business:'<i data-lucide="book" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',tech:'<i data-lucide="laptop" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',poetry:'<i data-lucide="pen-tool" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',children:'<i data-lucide="users" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',comic:'<i data-lucide="book" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>',other:'<i data-lucide="books" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>'};
         c.innerHTML = '';
         docs.forEach(d => { const x = d.data();
             c.innerHTML += `<div onclick="viewBookDetail('${d.id}')" style="background:#FFF8F0; border-radius:10px; overflow:hidden; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
                 <div style="height:180px; overflow:hidden; background:#f5f0e8;">
-                ${x.imageData ? `<img src="${x.imageData}" loading="lazy" style="width:100%; height:100%; object-fit:contain;">` : `<div style="height:100%; display:flex; align-items:center; justify-content:center; font-size:3rem;">${GENRES[x.genre]||'📚'}</div>`}</div>
+                ${x.imageData ? `<img src="${x.imageData}" loading="lazy" style="width:100%; height:100%; object-fit:contain;">` : `<div style="height:100%; display:flex; align-items:center; justify-content:center; font-size:3rem;">${GENRES[x.genre]||'<i data-lucide="books" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>'}</div>`}</div>
                 <div style="padding:0.5rem;"><div style="font-weight:600; font-size:0.8rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${x.title}</div>
                 <div style="font-size:0.7rem; color:var(--accent);">${x.author||'저자 미상'}</div>
                 <div style="font-weight:700; color:#3D2B1F; font-size:0.85rem; margin-top:0.2rem;">${x.price>0 ? x.price+' CRGC' : '무료'}</div></div></div>`; });
@@ -1074,7 +1074,7 @@ async function buyBook(id) {
     const doc = await db.collection('books').doc(id).get();
     if (!doc.exists) return; const b = doc.data();
     if (b.publisherId === currentUser?.uid) { showToast('본인 책입니다', 'info'); return; }
-    if (b.price <= 0) { showToast(`📖 "${b.title}" — 무료 열람!`, 'info'); return; }
+    if (b.price <= 0) { showToast(`<i data-lucide="book-open" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> "${b.title}" — 무료 열람!`, 'info'); return; }
     const tk = 'crgc';
     if (!await showConfirmModal('책 구매', `"${b.title}"\n${b.price} CRGC로 구매하시겠습니까?`)) return;
     try {
@@ -1092,7 +1092,7 @@ async function buyBook(id) {
         await db.collection('books').doc(id).update({ sold: (b.sold||0) + 1 });
         await db.collection('transactions').add({ from:currentUser.uid, to:b.publisherId, amount:b.price, token:'CRGC', type:'book_purchase', bookId:id, timestamp:new Date() });
         if (typeof distributeReferralReward === 'function') await distributeReferralReward(currentUser.uid, b.price, 'CRGC');
-        showToast(`📖 "${b.title}" 구매 완료!`, 'success'); loadUserWallet();
+        showToast(`<i data-lucide="book-open" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> "${b.title}" 구매 완료!`, 'success'); loadUserWallet();
     } catch (e) { showToast('실패: ' + e.message, 'error'); }
 }
 
@@ -1148,8 +1148,8 @@ async function loadInsuranceAdmin() {
         c.style.display = 'block';
         const docs = await db.collection('insurance_requests').where('status', '==', 'pending').orderBy('createdAt', 'desc').limit(20).get();
         if (docs.empty) { c.innerHTML = '<p style="color:var(--accent); font-size:0.85rem;">대기 중인 보험 요청이 없습니다</p>'; return; }
-        const TYPES = { medical: '🏥 의료비', disaster: '🆘 재난', education: '📖 교육비', housing: '🏠 주거비', other: '📋 기타' };
-        c.innerHTML = '<h4 style="margin-bottom:0.5rem;">⏳ 승인 대기 보험 요청</h4>';
+        const TYPES = { medical: '<i data-lucide="hospital" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 의료비', disaster: '🆘 재난', education: '<i data-lucide="book-open" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 교육비', housing: '🏠 주거비', other: '📋 기타' };
+        c.innerHTML = '<h4 style="margin-bottom:0.5rem;"><i data-lucide="hourglass" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 승인 대기 보험 요청</h4>';
         docs.forEach(d => {
             const r = d.data();
             c.innerHTML += `<div style="background:#F7F3ED; padding:0.8rem; border-radius:8px; margin-bottom:0.5rem; border-left:4px solid #C4841D;">
@@ -1159,8 +1159,8 @@ async function loadInsuranceAdmin() {
                 </div>
                 <p style="font-size:0.85rem; color:#6B5744; margin:0.3rem 0;">${r.reason}</p>
                 <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
-                    <button onclick="approveInsurance('${d.id}')" style="flex:1; background:#6B8F3C; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; font-weight:600;">✅ 승인</button>
-                    <button onclick="rejectInsurance('${d.id}')" style="flex:1; background:#f44336; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; font-weight:600;">❌ 거절</button>
+                    <button onclick="approveInsurance('${d.id}')" style="flex:1; background:#6B8F3C; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; font-weight:600;"><i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 승인</button>
+                    <button onclick="rejectInsurance('${d.id}')" style="flex:1; background:#f44336; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; font-weight:600;"><i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 거절</button>
                 </div>
             </div>`;
         });
@@ -1174,7 +1174,7 @@ async function loadMyInsuranceClaims() {
     try {
         const docs = await db.collection('insurance_requests').where('requesterId', '==', currentUser.uid).orderBy('createdAt', 'desc').limit(10).get();
         if (docs.empty) { c.innerHTML = '<p style="color:var(--accent); font-size:0.85rem;">보험 신청 내역이 없습니다</p>'; return; }
-        const STATUS = { pending: '⏳ 대기중', approved: '✅ 승인', rejected: '❌ 거절' };
+        const STATUS = { pending: '<i data-lucide="hourglass" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 대기중', approved: '<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 승인', rejected: '<i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 거절' };
         const STATUS_COLOR = { pending: '#C4841D', approved: '#6B8F3C', rejected: '#f44336' };
         c.innerHTML = '';
         docs.forEach(d => {
@@ -1235,7 +1235,7 @@ async function executeGyeRound(gyeId) {
             recipientId: recipient.userId, amount: totalPot, token: 'CRTD',
             participants: g.members.length, timestamp: new Date()
         });
-        showToast(`🔄 Round ${g.currentRound + 1} 완료! ${recipient.nickname || recipient.email}에게 ${totalPot} CRTD 지급`, 'success');
+        showToast(`<i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> Round ${g.currentRound + 1} 완료! ${recipient.nickname || recipient.email}에게 ${totalPot} CRTD 지급`, 'success');
         loadGyeList();
     } catch (e) { showToast('실패: ' + e.message, 'error'); }
 }
@@ -1275,13 +1275,13 @@ async function loadCreditScoreBreakdown() {
                     <span>👥 추천인 수</span><span style="font-weight:700;">${referrals}명 → +${referralScore}점</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem; background:#F7F3ED; border-radius:6px;">
-                    <span>📊 거래 횟수</span><span style="font-weight:700;">${txCount}건 → +${txScore}점</span>
+                    <span><i data-lucide="bar-chart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 거래 횟수</span><span style="font-weight:700;">${txCount}건 → +${txScore}점</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem; background:#F7F3ED; border-radius:6px;">
                     <span>💯 상환율</span><span style="font-weight:700;">${repayRate}% → +${repayScore}점</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; padding:0.8rem; background:linear-gradient(135deg,#8B6914,#6B5744); border-radius:8px; color:#FFF8F0; margin-top:0.3rem;">
-                    <span style="font-size:1rem;">🏆 총 크레딧 점수</span>
+                    <span style="font-size:1rem;"><i data-lucide="trophy" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 총 크레딧 점수</span>
                     <span style="font-size:1.5rem; font-weight:800; color:${totalScore >= 700 ? '#8B6914' : totalScore >= 500 ? '#F0C060' : '#8B6914'};">${totalScore}</span>
                 </div>
             </div>`;
@@ -1297,14 +1297,14 @@ async function viewBusinessDetail(id) {
     const doc = await db.collection('businesses').doc(id).get();
     if (!doc.exists) return;
     const b = doc.data();
-    const BIZ_CATS = {retail:'🏪 소매',food:'🍽️ 요식업',service:'🔧 서비스',tech:'💻 테크',education:'📖 교육',health:'💊 헬스',logistics:'🚚 물류',entertainment:'🎭 엔터',other:'🏢 기타'};
+    const BIZ_CATS = {retail:'<i data-lucide="store" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 소매',food:'<i data-lucide="utensils" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 요식업',service:'<i data-lucide="wrench" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 서비스',tech:'<i data-lucide="laptop" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 테크',education:'<i data-lucide="book-open" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 교육',health:'<i data-lucide="pill" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 헬스',logistics:'<i data-lucide="truck" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 물류',entertainment:'<i data-lucide="theater" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 엔터',other:'🏢 기타'};
     // 투자 현황
     const investments = await db.collection('business_investments').where('businessId', '==', id).get();
     let totalInvested = 0, investorCount = 0;
     investments.forEach(d => { totalInvested += d.data().amount || 0; investorCount++; });
     // 평점
     const avgRating = b.reviews > 0 ? (b.rating / b.reviews).toFixed(1) : '없음';
-    const stars = b.reviews > 0 ? '⭐'.repeat(Math.round(b.rating / b.reviews)) : '';
+    const stars = b.reviews > 0 ? '<i data-lucide="star" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>'.repeat(Math.round(b.rating / b.reviews)) : '';
 
     const modal = document.createElement('div');
     modal.id = 'biz-detail-modal';
@@ -1331,7 +1331,7 @@ async function viewBusinessDetail(id) {
                     <div style="font-weight:700;">${avgRating} ${stars}</div>
                 </div>
             </div>
-            ${b.ownerId !== currentUser?.uid ? `<button onclick="investBusiness('${id}')" style="background:#3D2B1F; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; width:100%; margin-bottom:0.5rem;">💰 투자하기</button>` : ''}
+            ${b.ownerId !== currentUser?.uid ? `<button onclick="investBusiness('${id}')" style="background:#3D2B1F; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; width:100%; margin-bottom:0.5rem;"><i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 투자하기</button>` : ''}
             <button onclick="document.getElementById('biz-detail-modal').remove()" style="background:#E8E0D8; border:none; padding:0.6rem; border-radius:8px; cursor:pointer; width:100%;">닫기</button>
         </div></div>`;
     document.body.appendChild(modal);
@@ -1371,7 +1371,7 @@ async function investBusiness(id) {
             investorId: currentUser.uid, investorEmail: currentUser.email,
             amount, token: tkName, timestamp: new Date()
         });
-        showToast(`💰 ${biz.name}에 ${amount} ${tkName} 투자 완료!`, 'success');
+        showToast(`<i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${biz.name}에 ${amount} ${tkName} 투자 완료!`, 'success');
         document.getElementById('biz-detail-modal')?.remove();
         loadBusinessList(); loadUserWallet();
     } catch (e) { showToast('실패: ' + e.message, 'error'); }
@@ -1388,7 +1388,7 @@ async function rateBusinessAfterInvest(businessId) {
             rating: (biz.rating || 0) + rating,
             reviews: (biz.reviews || 0) + 1
         });
-        showToast(`⭐ ${rating}점 평가 완료!`, 'success');
+        showToast(`<i data-lucide="star" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${rating}점 평가 완료!`, 'success');
     } catch (e) { showToast('실패: ' + e.message, 'error'); }
 }
 
@@ -1398,7 +1398,7 @@ async function viewArtistDetail(id) {
     const doc = await db.collection('artists').doc(id).get();
     if (!doc.exists) return;
     const a = doc.data();
-    const GENRES = {music:'🎵 음악',dance:'💃 댄스',acting:'🎬 연기',comedy:'😂 코미디',creator:'📹 크리에이터',model:'📷 모델',dj:'🎧 DJ',other:'🌟 기타'};
+    const GENRES = {music:'<i data-lucide="music" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 음악',dance:'<i data-lucide="music" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 댄스',acting:'<i data-lucide="film" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 연기',comedy:'<i data-lucide="smile" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 코미디',creator:'<i data-lucide="video" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 크리에이터',model:'<i data-lucide="camera" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 모델',dj:'<i data-lucide="headphones" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> DJ',other:'<i data-lucide="star" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 기타'};
     // 후원 이력
     const supports = await db.collection('transactions').where('artistId', '==', id).where('type', '==', 'artist_support').orderBy('timestamp', 'desc').limit(10).get();
     let supportHtml = '';
@@ -1439,7 +1439,7 @@ async function viewBookDetail(id) {
     const doc = await db.collection('books').doc(id).get();
     if (!doc.exists) return;
     const b = doc.data();
-    const GENRES = {novel:'📕 소설',essay:'📗 에세이',selfhelp:'📘 자기계발',business:'📙 비즈니스',tech:'💻 기술',poetry:'🖋️ 시',children:'🧒 아동',comic:'📒 만화',other:'📚 기타'};
+    const GENRES = {novel:'<i data-lucide="book" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 소설',essay:'<i data-lucide="book" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 에세이',selfhelp:'<i data-lucide="book" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 자기계발',business:'<i data-lucide="book" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 비즈니스',tech:'<i data-lucide="laptop" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 기술',poetry:'<i data-lucide="pen-tool" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 시',children:'<i data-lucide="users" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 아동',comic:'<i data-lucide="book" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 만화',other:'<i data-lucide="books" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 기타'};
     const isOwner = currentUser?.uid === b.publisherId;
 
     const modal = document.createElement('div');
@@ -1448,7 +1448,7 @@ async function viewBookDetail(id) {
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     modal.innerHTML = `<div style="background:#FFF8F0; border-radius:12px; max-width:500px; width:100%; max-height:90vh; overflow-y:auto;">
         <div style="height:250px; background:#f5f0e8; display:flex; align-items:center; justify-content:center;">
-            ${b.imageData ? `<img src="${b.imageData}" loading="lazy" style="max-width:100%; max-height:100%; object-fit:contain;">` : `<span style="font-size:4rem;">${GENRES[b.genre]?.charAt(0) || '📚'}</span>`}
+            ${b.imageData ? `<img src="${b.imageData}" loading="lazy" style="max-width:100%; max-height:100%; object-fit:contain;">` : `<span style="font-size:4rem;">${GENRES[b.genre]?.charAt(0) || '<i data-lucide="books" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>'}</span>`}
         </div>
         <div style="padding:1.2rem;">
             <h3>${b.title}</h3>
@@ -1456,9 +1456,9 @@ async function viewBookDetail(id) {
             <p style="font-size:1.1rem; font-weight:700; color:#3D2B1F; margin:0.5rem 0;">${b.price > 0 ? b.price + ' CRGC' : '무료'}</p>
             ${b.description ? `<p style="font-size:0.9rem; margin:0.8rem 0; line-height:1.6;">${b.description}</p>` : ''}
             <div style="display:flex; gap:0.5rem; margin-top:1rem;">
-                ${!isOwner && b.price > 0 ? `<button onclick="buyBook('${id}'); document.getElementById('book-detail-modal').remove();" style="flex:1; background:#3D2B1F; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">🛒 구매하기</button>` : ''}
-                ${!isOwner && b.price <= 0 ? `<button onclick="showToast('📖 무료 열람!', 'info'); document.getElementById('book-detail-modal').remove();" style="flex:1; background:#6B8F3C; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">📖 무료 읽기</button>` : ''}
-                <button onclick="addToReadingList('${id}')" style="flex:1; background:#C4841D; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">📚 읽고 싶은 책</button>
+                ${!isOwner && b.price > 0 ? `<button onclick="buyBook('${id}'); document.getElementById('book-detail-modal').remove();" style="flex:1; background:#3D2B1F; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;"><i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 구매하기</button>` : ''}
+                ${!isOwner && b.price <= 0 ? `<button onclick="showToast('<i data-lucide="book-open" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 무료 열람!', 'info'); document.getElementById('book-detail-modal').remove();" style="flex:1; background:#6B8F3C; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;"><i data-lucide="book-open" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 무료 읽기</button>` : ''}
+                <button onclick="addToReadingList('${id}')" style="flex:1; background:#C4841D; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;"><i data-lucide="books" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 읽고 싶은 책</button>
             </div>
             <button onclick="document.getElementById('book-detail-modal').remove()" style="background:#E8E0D8; border:none; padding:0.6rem; border-radius:8px; cursor:pointer; width:100%; margin-top:0.5rem;">닫기</button>
         </div></div>`;
@@ -1478,7 +1478,7 @@ async function addToReadingList(bookId) {
             bookTitle: book.title, bookAuthor: book.author || '',
             addedAt: new Date()
         });
-        showToast(`📚 "${book.title}" 읽고 싶은 책에 추가!`, 'success');
+        showToast(`<i data-lucide="books" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> "${book.title}" 읽고 싶은 책에 추가!`, 'success');
     } catch (e) { showToast('실패: ' + e.message, 'error'); }
 }
 
@@ -1493,7 +1493,7 @@ async function loadReadingList() {
             const r = d.data();
             c.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem; background:var(--bg); border-radius:6px; margin-bottom:0.3rem;">
                 <div><strong style="font-size:0.85rem;">${r.bookTitle}</strong> <span style="font-size:0.75rem; color:var(--accent);">${r.bookAuthor}</span></div>
-                <button onclick="removeFromReadingList('${d.id}')" style="background:none; border:none; cursor:pointer; font-size:0.8rem;">🗑️</button>
+                <button onclick="removeFromReadingList('${d.id}')" style="background:none; border:none; cursor:pointer; font-size:0.8rem;"><i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></button>
             </div>`;
         });
     } catch (e) { c.innerHTML = e.message; }
@@ -1686,7 +1686,7 @@ async function quickDonate() {
         }
         
         await db.collection('donations').add(donation);
-        showToast(`💝 ${amount} ${token} 기부 완료!`, 'success'); loadUserWallet();
+        showToast(`<i data-lucide="gift" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${amount} ${token} 기부 완료!`, 'success'); loadUserWallet();
     } catch (e) { showToast('실패: ' + e.message, 'error'); }
 }
 
@@ -1766,7 +1766,7 @@ async function createGye() {
             token: 'CRTD', status: 'recruiting',
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
-        showToast(`🔄 "${name}" 계모임 생성!`, 'success');
+        showToast(`<i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> "${name}" 계모임 생성!`, 'success');
         document.getElementById('gye-name').value = '';
         loadGyeList();
     } catch (e) { showToast('실패: ' + e.message, 'error'); }
@@ -1785,7 +1785,7 @@ async function loadGyeList() {
             c.innerHTML += `<div style="background:#FFF8F0; padding:1rem; border-radius:8px; margin-bottom:0.5rem; border-left:4px solid #FF9800;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div>
-                        <strong>🔄 ${g.name}</strong>
+                        <strong><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${g.name}</strong>
                         <div style="font-size:0.8rem; color:var(--accent);">${g.organizerNickname || g.organizerEmail} · ${g.currentMembers}/${g.maxMembers}명</div>
                     </div>
                     <div style="text-align:right;">
@@ -1794,8 +1794,8 @@ async function loadGyeList() {
                     </div>
                 </div>
                 ${!isMember && g.currentMembers < g.maxMembers ? `<button onclick="joinGye('${d.id}')" style="background:#FF9800; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.5rem; font-size:0.85rem;">🤝 참여하기</button>` : ''}
-                ${isMember ? '<div style="text-align:center; font-size:0.8rem; color:#FF9800; margin-top:0.5rem;">✅ 참여 중</div>' : ''}
-                ${g.organizerId === currentUser?.uid && g.status === 'active' && g.currentRound < (g.members?.length || 0) ? `<button onclick="executeGyeRound('${d.id}')" style="background:#B54534; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.3rem; font-size:0.8rem;">🔄 Round ${g.currentRound + 1} 실행</button>` : ''}
+                ${isMember ? '<div style="text-align:center; font-size:0.8rem; color:#FF9800; margin-top:0.5rem;"><i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 참여 중</div>' : ''}
+                ${g.organizerId === currentUser?.uid && g.status === 'active' && g.currentRound < (g.members?.length || 0) ? `<button onclick="executeGyeRound('${d.id}')" style="background:#B54534; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.3rem; font-size:0.8rem;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> Round ${g.currentRound + 1} 실행</button>` : ''}
                 ${g.status === 'recruiting' && g.currentMembers >= g.maxMembers ? '<div style="text-align:center; font-size:0.8rem; color:#6B5744; margin-top:0.5rem;">모집 완료</div>' : ''}
             </div>`;
         });
@@ -1894,7 +1894,7 @@ async function loadMyEnergyInvestments() {
                     </div>
                     <div style="text-align:right;">
                         <div style="font-weight:700; color:${catInfo.color};">${inv.amount} ${inv.token || 'CREB'}</div>
-                        ${rate > 0 ? `<div style="font-size:0.75rem; color:#6B8F3C;">월 ${monthlyReturn.toFixed(2)} CREB (연 ${rate}%)</div>` : `<div style="font-size:0.75rem; color:#6B8F3C;">💝 기부</div>`}
+                        ${rate > 0 ? `<div style="font-size:0.75rem; color:#6B8F3C;">월 ${monthlyReturn.toFixed(2)} CREB (연 ${rate}%)</div>` : `<div style="font-size:0.75rem; color:#6B8F3C;"><i data-lucide="gift" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 기부</div>`}
                     </div>
                 </div>
             </div>`;
@@ -1954,7 +1954,7 @@ async function loadMyEnergyInvestments() {
             for (const [cat, amount] of Object.entries(catTotals)) {
                 if (amount > 0) sdgs.add(CREB_CATEGORIES[cat].sdg);
             }
-            sdgEl.innerHTML = [...sdgs].map(s => `<span style="display:inline-block; padding:0.2rem 0.6rem; border-radius:12px; background:#E3F2FD; color:#1565C0; font-size:0.75rem; font-weight:600;">🏅 ${s}</span>`).join('');
+            sdgEl.innerHTML = [...sdgs].map(s => `<span style="display:inline-block; padding:0.2rem 0.6rem; border-radius:12px; background:#E3F2FD; color:#1565C0; font-size:0.75rem; font-weight:600;"><i data-lucide="award" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${s}</span>`).join('');
         }
     } catch (e) { c.innerHTML = `<p style="color:red;">${e.message}</p>`; }
 }
@@ -1999,7 +1999,7 @@ async function distributeEnergyReturns(projectId) {
             }
         }
         
-        showToast(`✅ ${distributed.toFixed(2)} CREB을 ${investments.size}명에게 배분 완료!`, 'success');
+        showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${distributed.toFixed(2)} CREB을 ${investments.size}명에게 배분 완료!`, 'success');
     } catch (e) { showToast('배분 실패: ' + e.message, 'error'); }
 }
 
@@ -2029,7 +2029,7 @@ async function closeCampaign(id) {
         }
         
         await db.collection('campaigns').doc(id).update({ status: 'closed', closedAt: new Date() });
-        showToast(`✅ "${camp.title}" 캠페인 종료! ${creatorAmount.toFixed(2)} ${camp.token} 수령`, 'success');
+        showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> "${camp.title}" 캠페인 종료! ${creatorAmount.toFixed(2)} ${camp.token} 수령`, 'success');
         loadCampaigns();
         // 모달 닫기
         const modal = document.getElementById('campaign-detail-modal');
@@ -2083,9 +2083,9 @@ async function showCampaignDetail(id) {
                     <span style="font-weight:700;">${camp.raised} / ${camp.goal} ${camp.token}</span>
                     <span>${pct}% · ${camp.backerCount || camp.backers || 0}명</span>
                 </div>
-                <div style="font-size:0.8rem; color:#2e7d32; margin-top:0.5rem;">💰 수수료 ${fee}% · 창작자 수령 ${(100 - fee).toFixed(1)}%</div>
+                <div style="font-size:0.8rem; color:#2e7d32; margin-top:0.5rem;"><i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 수수료 ${fee}% · 창작자 수령 ${(100 - fee).toFixed(1)}%</div>
             </div>
-            <button onclick="donateCampaign('${id}')" style="background:#6B8F3C; color:#FFF8F0; border:none; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-weight:700; margin-bottom:0.8rem;">💝 기부하기</button>
+            <button onclick="donateCampaign('${id}')" style="background:#6B8F3C; color:#FFF8F0; border:none; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-weight:700; margin-bottom:0.8rem;"><i data-lucide="gift" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 기부하기</button>
             ${isCreator && camp.status === 'active' ? `<button onclick="closeCampaign('${id}')" style="background:#e53935; color:#FFF8F0; border:none; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-weight:700; margin-bottom:1rem;">🔒 캠페인 종료 및 수령</button>` : ''}
             <h4 style="margin-bottom:0.5rem;">👥 후원자 내역 (${donorDocs.size}명)</h4>
             ${donorList}`;
@@ -2107,7 +2107,7 @@ async function addToCart(productId) {
             // Increment quantity
             const cartDoc = existing.docs[0];
             await cartDoc.ref.update({ qty: (cartDoc.data().qty || 1) + 1 });
-            showToast('🛒 수량이 추가되었습니다', 'success');
+            showToast('<i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 수량이 추가되었습니다', 'success');
         } else {
             const pDoc = await db.collection('products').doc(productId).get();
             if (!pDoc.exists) return;
@@ -2116,7 +2116,7 @@ async function addToCart(productId) {
                 productId, title: p.title, price: p.price, token: p.token || 'CRGC',
                 imageData: p.imageData || '', qty: 1, addedAt: new Date()
             });
-            showToast(`🛒 "${p.title}" 장바구니에 담았습니다`, 'success');
+            showToast(`<i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> "${p.title}" 장바구니에 담았습니다`, 'success');
         }
         updateCartBadge();
     } catch(e) { showToast('실패: ' + e.message, 'error'); }
@@ -2155,7 +2155,7 @@ async function loadCart() {
             total += subtotal;
             c.innerHTML += `<div style="background:#FFF8F0; padding:0.8rem; border-radius:10px; margin-bottom:0.6rem; display:flex; gap:0.8rem; align-items:center; box-shadow:0 1px 4px rgba(0,0,0,0.06);">
                 <div style="width:60px; height:60px; border-radius:8px; overflow:hidden; flex-shrink:0; background:#F7F3ED; display:flex; align-items:center; justify-content:center;">
-                    ${item.imageData ? `<img src="${item.imageData}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : '<span style="font-size:1.5rem; color:#E8E0D8;">🛒</span>'}
+                    ${item.imageData ? `<img src="${item.imageData}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : '<span style="font-size:1.5rem; color:#E8E0D8;"><i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></span>'}
                 </div>
                 <div style="flex:1; min-width:0;">
                     <div style="font-weight:600; font-size:0.85rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.title}</div>
@@ -2164,7 +2164,7 @@ async function loadCart() {
                         <button onclick="updateCartQty('${d.id}', -1)" style="width:26px; height:26px; border:1px solid #E8E0D8; border-radius:4px; background:#FFF8F0; cursor:pointer; font-size:0.9rem;">−</button>
                         <span style="font-weight:600; min-width:20px; text-align:center;">${item.qty || 1}</span>
                         <button onclick="updateCartQty('${d.id}', 1)" style="width:26px; height:26px; border:1px solid #E8E0D8; border-radius:4px; background:#FFF8F0; cursor:pointer; font-size:0.9rem;">+</button>
-                        <button onclick="removeFromCart('${d.id}')" style="background:none; border:none; cursor:pointer; color:#cc0000; font-size:0.85rem; margin-left:auto;">🗑️</button>
+                        <button onclick="removeFromCart('${d.id}')" style="background:none; border:none; cursor:pointer; color:#cc0000; font-size:0.85rem; margin-left:auto;"><i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></button>
                     </div>
                 </div>
             </div>`;
@@ -2263,14 +2263,14 @@ async function checkoutCart(btn) {
             
             // 판매자 알림
             if (typeof createNotification === 'function') {
-                await createNotification(p.sellerId, 'order_status', { message: `🛒 새 주문! "${item.title}" (${subtotal} CRGC)`, link: '#page=my-shop' });
+                await createNotification(p.sellerId, 'order_status', { message: `<i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 새 주문! "${item.title}" (${subtotal} CRGC)`, link: '#page=my-shop' });
             }
             
             if (typeof autoGivingPoolContribution === 'function') await autoGivingPoolContribution(subtotal);
             if (typeof distributeReferralReward === 'function') await distributeReferralReward(currentUser.uid, subtotal, 'CRGC');
             await db.collection('users').doc(currentUser.uid).collection('cart').doc(item.cartDocId).delete();
         }
-        showToast(`🎉 ${items.length}개 상품 결제 완료!`, 'success');
+        showToast(`<i data-lucide="gift" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${items.length}개 상품 결제 완료!`, 'success');
         loadCart(); updateCartBadge(); loadUserWallet();
     } catch(e) { showToast('결제 실패: ' + e.message, 'error'); } finally { _orderInProgress = false; }
 }
@@ -2286,7 +2286,7 @@ async function toggleWishlist(productId) {
             await existing.docs[0].ref.delete();
             showToast('찜 해제됨', 'info');
             const btn = document.getElementById(`wish-btn-${productId}`);
-            if (btn) btn.textContent = '🤍';
+            if (btn) btn.textContent = '<i data-lucide="heart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>';
         } else {
             const pDoc = await db.collection('products').doc(productId).get();
             if (!pDoc.exists) return;
@@ -2295,9 +2295,9 @@ async function toggleWishlist(productId) {
                 productId, title: p.title, price: p.price, token: p.token || 'CRGC',
                 imageData: p.imageData || '', addedAt: new Date()
             });
-            showToast(`❤️ "${p.title}" 찜 완료`, 'success');
+            showToast(`<i data-lucide="heart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> "${p.title}" 찜 완료`, 'success');
             const btn = document.getElementById(`wish-btn-${productId}`);
-            if (btn) btn.textContent = '❤️';
+            if (btn) btn.textContent = '<i data-lucide="heart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>';
         }
     } catch(e) { showToast('실패: ' + e.message, 'error'); }
 }
@@ -2310,7 +2310,7 @@ async function loadWishlist() {
     try {
         const snap = await db.collection('users').doc(currentUser.uid).collection('wishlist').orderBy('addedAt','desc').get();
         if (snap.empty) {
-            c.innerHTML = '<div style="text-align:center; padding:3rem; color:var(--accent);"><div style="font-size:3rem; margin-bottom:1rem;">❤️</div><p>찜한 상품이 없습니다</p></div>';
+            c.innerHTML = '<div style="text-align:center; padding:3rem; color:var(--accent);"><div style="font-size:3rem; margin-bottom:1rem;"><i data-lucide="heart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></div><p>찜한 상품이 없습니다</p></div>';
             return;
         }
         c.innerHTML = '';
@@ -2318,15 +2318,15 @@ async function loadWishlist() {
             const item = d.data();
             c.innerHTML += `<div style="background:#FFF8F0; padding:0.8rem; border-radius:10px; margin-bottom:0.6rem; display:flex; gap:0.8rem; align-items:center; box-shadow:0 1px 4px rgba(0,0,0,0.06); cursor:pointer;" onclick="viewProduct('${item.productId}')">
                 <div style="width:60px; height:60px; border-radius:8px; overflow:hidden; flex-shrink:0; background:#F7F3ED; display:flex; align-items:center; justify-content:center;">
-                    ${item.imageData ? `<img src="${item.imageData}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : '<span style="font-size:1.5rem; color:#E8E0D8;">🛒</span>'}
+                    ${item.imageData ? `<img src="${item.imageData}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : '<span style="font-size:1.5rem; color:#E8E0D8;"><i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></span>'}
                 </div>
                 <div style="flex:1; min-width:0;">
                     <div style="font-weight:600; font-size:0.85rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.title}</div>
                     <div style="color:#3D2B1F; font-weight:700; font-size:0.85rem;">${item.price} CRGC</div>
                 </div>
                 <div style="display:flex; flex-direction:column; gap:0.3rem;">
-                    <button onclick="event.stopPropagation(); addToCart('${item.productId}')" style="background:#3D2B1F; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.75rem;">🛒 담기</button>
-                    <button onclick="event.stopPropagation(); toggleWishlist('${item.productId}'); setTimeout(loadWishlist, 500);" style="background:none; border:1px solid #e91e63; color:#e91e63; padding:0.3rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.75rem;">🗑️</button>
+                    <button onclick="event.stopPropagation(); addToCart('${item.productId}')" style="background:#3D2B1F; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.75rem;"><i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 담기</button>
+                    <button onclick="event.stopPropagation(); toggleWishlist('${item.productId}'); setTimeout(loadWishlist, 500);" style="background:none; border:1px solid #e91e63; color:#e91e63; padding:0.3rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.75rem;"><i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></button>
                 </div>
             </div>`;
         });
@@ -2375,7 +2375,7 @@ async function renderStorePage(sellerId) {
             totalSold += (p.sold || 0);
             const thumb = getProductThumb(p);
             productsHtml += `<div onclick="viewProduct('${d.id}')" style="background:#FFF8F0; border-radius:10px; overflow:hidden; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-                <div style="height:130px; overflow:hidden; background:#F7F3ED;">${thumb ? `<img src="${thumb}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:#E8E0D8;">🛒</div>`}</div>
+                <div style="height:130px; overflow:hidden; background:#F7F3ED;">${thumb ? `<img src="${thumb}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:#E8E0D8;"><i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></div>`}</div>
                 <div style="padding:0.5rem;">
                     <div style="font-weight:600; font-size:0.8rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.title}</div>
                     <div style="font-weight:700; color:#3D2B1F; font-size:0.85rem;">${p.price} CRGC</div>
@@ -2392,21 +2392,21 @@ async function renderStorePage(sellerId) {
             <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08); margin-bottom:1rem;">
                 <div style="display:flex; gap:1rem; align-items:center;">
                     <div style="width:70px; height:70px; border-radius:50%; overflow:hidden; background:#F7F3ED; flex-shrink:0; display:flex; align-items:center; justify-content:center;">
-                        ${storeImage ? `<img src="${storeImage}" style="width:100%; height:100%; object-fit:cover;">` : `<span style="font-size:2rem;">🏪</span>`}
+                        ${storeImage ? `<img src="${storeImage}" style="width:100%; height:100%; object-fit:cover;">` : `<span style="font-size:2rem;"><i data-lucide="store" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></span>`}
                     </div>
                     <div style="flex:1;">
                         <h2 style="margin:0; font-size:1.3rem;">${storeName}</h2>
                         ${storeDesc ? `<p style="color:var(--accent); font-size:0.85rem; margin-top:0.3rem;">${storeDesc}</p>` : ''}
                         <div style="display:flex; gap:1rem; margin-top:0.5rem; font-size:0.8rem; color:var(--accent);">
-                            <span>📦 상품 ${prodDocs.size}개</span>
-                            <span>🛒 총 판매 ${totalSold}건</span>
+                            <span><i data-lucide="package" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 상품 ${prodDocs.size}개</span>
+                            <span><i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 총 판매 ${totalSold}건</span>
                             <span>📋 주문 ${orderCount}건</span>
                         </div>
                     </div>
                 </div>
-                ${isOwner ? `<button onclick="showStoreSettingsModal()" style="margin-top:0.8rem; background:#C4841D; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600;">⚙️ 스토어 설정</button>` : (currentUser ? `<button onclick="reportSeller('${sellerId}')" style="margin-top:0.8rem; background:none; color:#cc0000; border:1px solid #cc0000; padding:0.4rem 0.8rem; border-radius:8px; cursor:pointer; font-size:0.8rem;">🚨 ${t('mall.report_seller','판매자 신고')}</button>` : '')}
+                ${isOwner ? `<button onclick="showStoreSettingsModal()" style="margin-top:0.8rem; background:#C4841D; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600;">⚙️ 스토어 설정</button>` : (currentUser ? `<button onclick="reportSeller('${sellerId}')" style="margin-top:0.8rem; background:none; color:#cc0000; border:1px solid #cc0000; padding:0.4rem 0.8rem; border-radius:8px; cursor:pointer; font-size:0.8rem;"><i data-lucide="alert-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${t('mall.report_seller','판매자 신고')}</button>` : '')}
             </div>
-            <h3 style="margin-bottom:0.8rem;">📦 상품 목록</h3>
+            <h3 style="margin-bottom:0.8rem;"><i data-lucide="package" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 상품 목록</h3>
             <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:0.8rem;">
                 ${productsHtml || '<p style="color:var(--accent); grid-column:1/-1; text-align:center;">등록된 상품이 없습니다</p>'}
             </div>`;
@@ -2495,9 +2495,9 @@ async function loadMyShopDashboard() {
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.3rem;">
                     <div><strong>${p.title}</strong> — ${p.price} CRGC · 판매 ${p.sold||0}/${p.stock} · 재고 ${remaining} ${statusBadge}</div>
                     <div style="display:flex; gap:0.3rem;">
-                        <button onclick="editProductModal('${d.id}')" style="background:#5B7B8C; color:#FFF8F0; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">✏️ 수정</button>
-                        <button onclick="toggleProduct('${d.id}','${p.status}')" style="background:${p.status==='active'?'#6B5744':'#6B8F3C'}; color:#FFF8F0; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${p.status==='active'?'⏸':'▶'}</button>
-                        <button onclick="deleteProduct('${d.id}')" style="background:#cc0000; color:#FFF8F0; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">🗑️</button>
+                        <button onclick="editProductModal('${d.id}')" style="background:#5B7B8C; color:#FFF8F0; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;"><i data-lucide="edit" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 수정</button>
+                        <button onclick="toggleProduct('${d.id}','${p.status}')" style="background:${p.status==='active'?'#6B5744':'#6B8F3C'}; color:#FFF8F0; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${p.status==='active'?'<i data-lucide="pause" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>':'▶'}</button>
+                        <button onclick="deleteProduct('${d.id}')" style="background:#cc0000; color:#FFF8F0; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;"><i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></button>
                     </div>
                 </div>
             </div>`;
@@ -2510,9 +2510,9 @@ async function loadMyShopDashboard() {
             const statusLabel = ORDER_STATUS_LABELS[o.status] || o.status;
             const statusColor = ORDER_STATUS_COLORS[o.status] || 'var(--accent)';
             const nextActions = [];
-            if (o.status === 'paid') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','shipping')" style="background:#5B7B8C; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.7rem;">🚚 배송</button>`);
-            if (o.status === 'shipping') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','delivered')" style="background:#6B8F3C; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.7rem;">✅ 완료</button>`);
-            const shipInfo = o.shippingInfo ? `<div style="font-size:0.65rem; color:#6B5744;">📦 ${o.shippingInfo.name} · ${o.shippingInfo.phone} · ${o.shippingInfo.address}</div>` : '';
+            if (o.status === 'paid') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','shipping')" style="background:#5B7B8C; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.7rem;"><i data-lucide="truck" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 배송</button>`);
+            if (o.status === 'shipping') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','delivered')" style="background:#6B8F3C; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.7rem;"><i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 완료</button>`);
+            const shipInfo = o.shippingInfo ? `<div style="font-size:0.65rem; color:#6B5744;"><i data-lucide="package" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${o.shippingInfo.name} · ${o.shippingInfo.phone} · ${o.shippingInfo.address}</div>` : '';
             ordersHtml += `<div style="padding:0.5rem; background:var(--bg); border-radius:6px; margin-bottom:0.3rem; font-size:0.8rem;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.2rem;">
                     <div><strong>${o.productTitle}</strong> — ${o.amount} ${o.token}<br><span style="font-size:0.7rem; color:var(--accent);">${o.buyerEmail}</span>${shipInfo}</div>
@@ -2526,7 +2526,7 @@ async function loadMyShopDashboard() {
 
         c.innerHTML = `
             <button onclick="showPage('mall')" style="background:none; border:none; font-size:1rem; cursor:pointer; margin-bottom:0.8rem; color:var(--accent);">← 쇼핑몰</button>
-            <h2 style="margin-bottom:1rem;">🏪 내 상점</h2>
+            <h2 style="margin-bottom:1rem;"><i data-lucide="store" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 내 상점</h2>
             
             <!-- 매출 통계 -->
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.8rem; margin-bottom:1.5rem;">
@@ -2545,13 +2545,13 @@ async function loadMyShopDashboard() {
             </div>
             
             <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
-                <button onclick="viewStore('${currentUser.uid}')" style="background:#3D2B1F; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem;">🏪 내 스토어 보기</button>
+                <button onclick="viewStore('${currentUser.uid}')" style="background:#3D2B1F; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem;"><i data-lucide="store" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 내 스토어 보기</button>
                 <button onclick="showStoreSettingsModal()" style="background:#C4841D; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem;">⚙️ 스토어 설정</button>
             </div>
             
             <!-- 내 상품 -->
             <div style="background:#FFF8F0; padding:1.2rem; border-radius:12px; margin-bottom:1rem;">
-                <h3 style="margin-bottom:0.8rem;">📦 내 상품 (${prodDocs.size})</h3>
+                <h3 style="margin-bottom:0.8rem;"><i data-lucide="package" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 내 상품 (${prodDocs.size})</h3>
                 ${productsHtml || '<p style="color:var(--accent); font-size:0.85rem;">등록된 상품이 없습니다</p>'}
             </div>
             
@@ -2579,7 +2579,7 @@ async function editProductModal(id) {
     const imgPreview = images.map((img, i) => `<img src="${img}" style="width:50px; height:50px; object-fit:cover; border-radius:4px; border:${i===0?'2px solid #3D2B1F':'1px solid #E8E0D8'};">`).join('');
 
     overlay.innerHTML = `<div style="background:#FFF8F0; border-radius:12px; max-width:450px; width:100%; max-height:90vh; overflow-y:auto; padding:1.5rem;">
-        <h3 style="margin-bottom:1rem;">✏️ 상품 수정</h3>
+        <h3 style="margin-bottom:1rem;"><i data-lucide="edit" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 상품 수정</h3>
         <div style="display:grid; gap:0.8rem;">
             <div>
                 <label style="font-size:0.8rem; color:var(--accent);">상품명</label>
@@ -2646,12 +2646,12 @@ async function saveEditProduct(id) {
                 wishSnap.forEach(async (wDoc) => {
                     const userId = wDoc.ref.parent.parent.id;
                     if (userId !== currentUser.uid) {
-                        await createNotification(userId, 'order_status', { message: `💰 찜한 상품 "${updateData.title}" 가격이 ${updateData.price} CRGC로 변경되었습니다`, link: `#page=product-detail&id=${id}` });
+                        await createNotification(userId, 'order_status', { message: `<i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 찜한 상품 "${updateData.title}" 가격이 ${updateData.price} CRGC로 변경되었습니다`, link: `#page=product-detail&id=${id}` });
                     }
                 });
             } catch(e) { /* collectionGroup may need index */ }
         }
-        showToast('✏️ 상품 수정 완료', 'success');
+        showToast('<i data-lucide="edit" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 상품 수정 완료', 'success');
         document.getElementById('edit-product-modal')?.remove();
         if (typeof loadMyShopDashboard === 'function') loadMyShopDashboard();
         loadMallProducts();
@@ -2675,7 +2675,7 @@ async function showShippingModal() {
         overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.innerHTML = `
             <div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;max-width:420px;width:100%;max-height:90vh;overflow-y:auto;">
-                <h3 style="margin-bottom:1rem;">📦 배송지 정보</h3>
+                <h3 style="margin-bottom:1rem;"><i data-lucide="package" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 배송지 정보</h3>
                 <div style="display:grid; gap:0.7rem;">
                     <input type="text" id="ship-name" placeholder="수령인 이름" value="${lastAddr.name||''}" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                     <input type="tel" id="ship-phone" placeholder="전화번호" value="${lastAddr.phone||''}" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
@@ -2745,7 +2745,7 @@ async function helpfulReview(reviewId) {
         await db.collection('product_reviews').doc(reviewId).update({
             helpful: firebase.firestore.FieldValue.increment(1)
         });
-        showToast('👍 감사합니다!','success');
+        showToast('<i data-lucide="thumbs-up" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 감사합니다!','success');
     } catch(e) { showToast('실패: '+e.message,'error'); }
 }
 
@@ -2771,7 +2771,7 @@ async function loadBuyerOrders() {
             const dateStr = o.createdAt?.toDate ? o.createdAt.toDate().toLocaleDateString('ko-KR') : '';
             listHtml += `<div onclick="showOrderDetail('${d.id}')" style="background:#FFF8F0;padding:0.8rem;border-radius:10px;margin-bottom:0.6rem;display:flex;gap:0.8rem;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,0.06);cursor:pointer;">
                 <div style="width:60px;height:60px;border-radius:8px;overflow:hidden;flex-shrink:0;background:#F7F3ED;display:flex;align-items:center;justify-content:center;">
-                    ${thumb ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover;">` : '<span style="font-size:1.5rem;color:#E8E0D8;">🛒</span>'}
+                    ${thumb ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover;">` : '<span style="font-size:1.5rem;color:#E8E0D8;"><i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></span>'}
                 </div>
                 <div style="flex:1;min-width:0;">
                     <div style="font-weight:600;font-size:0.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${o.productTitle}</div>
@@ -2798,7 +2798,7 @@ async function showOrderDetail(orderId) {
 
         // Timeline
         const steps = ['paid','shipping','delivered'];
-        const stepLabels = {paid:'💰 결제완료', shipping:'🚚 배송중', delivered:'✅ 배송완료'};
+        const stepLabels = {paid:'<i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 결제완료', shipping:'<i data-lucide="truck" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 배송중', delivered:'<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 배송완료'};
         const history = o.statusHistory || [{status:'paid', at: o.createdAt?.toDate ? o.createdAt.toDate().toISOString() : new Date().toISOString()}];
         const historyMap = {};
         history.forEach(h => { historyMap[h.status] = h.at; });
@@ -2823,14 +2823,14 @@ async function showOrderDetail(orderId) {
         timelineHtml += '</div>';
 
         // Tracking number
-        const trackingHtml = o.trackingNumber ? `<div style="background:#F7F3ED;padding:0.6rem;border-radius:8px;margin-bottom:1rem;font-size:0.85rem;">📦 추적번호: <strong>${o.trackingNumber}</strong></div>` : '';
+        const trackingHtml = o.trackingNumber ? `<div style="background:#F7F3ED;padding:0.6rem;border-radius:8px;margin-bottom:1rem;font-size:0.85rem;"><i data-lucide="package" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 추적번호: <strong>${o.trackingNumber}</strong></div>` : '';
 
         // Return status check
         let returnHtml = '';
         const returnSnap = await db.collection('returns').where('orderId','==',orderId).limit(1).get();
         if (!returnSnap.empty) {
             const ret = returnSnap.docs[0].data();
-            const retStatus = {requested:'⏳ 반품 요청중',approved:'✅ 반품 승인',rejected:'❌ 반품 거절',completed:'🔄 환불 완료'};
+            const retStatus = {requested:'<i data-lucide="hourglass" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 반품 요청중',approved:'<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 반품 승인',rejected:'<i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 반품 거절',completed:'<i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 환불 완료'};
             const retColor = {requested:'#C4841D',approved:'#6B8F3C',rejected:'#f44336',completed:'#5B7B8C'};
             returnHtml = `<div style="background:${retColor[ret.status]}15;border-left:4px solid ${retColor[ret.status]};padding:0.8rem;border-radius:0 8px 8px 0;margin-bottom:1rem;">
                 <div style="font-weight:700;color:${retColor[ret.status]};">${retStatus[ret.status] || ret.status}</div>
@@ -2843,7 +2843,7 @@ async function showOrderDetail(orderId) {
         if (o.status === 'delivered' && returnSnap.empty) {
             const deliveredAt = o.deliveredAt?.toDate ? o.deliveredAt.toDate() : (historyMap.delivered ? new Date(historyMap.delivered) : null);
             if (deliveredAt && (Date.now() - deliveredAt.getTime()) < 7 * 86400000) {
-                returnBtnHtml = `<button onclick="requestReturn('${orderId}')" style="background:#f44336;color:#FFF8F0;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;font-weight:600;width:100%;margin-bottom:0.5rem;">🔄 반품/환불 요청</button>`;
+                returnBtnHtml = `<button onclick="requestReturn('${orderId}')" style="background:#f44336;color:#FFF8F0;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;font-weight:600;width:100%;margin-bottom:0.5rem;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 반품/환불 요청</button>`;
             }
         }
 
@@ -2852,7 +2852,7 @@ async function showOrderDetail(orderId) {
         if (o.status === 'delivered') {
             const existingReview = await db.collection('product_reviews').where('productId','==',o.productId).where('buyerId','==',currentUser.uid).limit(1).get();
             if (existingReview.empty) {
-                reviewBtnHtml = `<button onclick="writeReview('${o.productId}')" style="background:#C4841D;color:#FFF8F0;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;font-weight:600;width:100%;margin-bottom:0.5rem;">⭐ 리뷰 작성</button>`;
+                reviewBtnHtml = `<button onclick="writeReview('${o.productId}')" style="background:#C4841D;color:#FFF8F0;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;font-weight:600;width:100%;margin-bottom:0.5rem;"><i data-lucide="star" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 리뷰 작성</button>`;
             }
         }
 
@@ -2867,7 +2867,7 @@ async function showOrderDetail(orderId) {
             </div>
             <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid #E8E0D8;">
                 <div style="width:70px;height:70px;border-radius:8px;overflow:hidden;background:#F7F3ED;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
-                    ${o.productImage ? `<img src="${o.productImage}" style="width:100%;height:100%;object-fit:cover;">` : '<span style="font-size:2rem;color:#E8E0D8;">🛒</span>'}
+                    ${o.productImage ? `<img src="${o.productImage}" style="width:100%;height:100%;object-fit:cover;">` : '<span style="font-size:2rem;color:#E8E0D8;"><i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></span>'}
                 </div>
                 <div>
                     <div style="font-weight:700;font-size:1rem;">${o.productTitle}</div>
@@ -2879,14 +2879,14 @@ async function showOrderDetail(orderId) {
             ${trackingHtml}
             ${returnHtml}
             ${o.shippingInfo ? `<div style="background:var(--bg);padding:0.8rem;border-radius:8px;margin-bottom:1rem;font-size:0.85rem;">
-                <div style="font-weight:600;margin-bottom:0.3rem;">📦 배송지</div>
+                <div style="font-weight:600;margin-bottom:0.3rem;"><i data-lucide="package" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 배송지</div>
                 <div>${o.shippingInfo.name} · ${o.shippingInfo.phone}</div>
                 <div>${o.shippingInfo.address}</div>
                 ${o.shippingInfo.memo ? `<div style="color:var(--accent);">메모: ${o.shippingInfo.memo}</div>` : ''}
             </div>` : ''}
             ${returnBtnHtml}
             ${reviewBtnHtml}
-            <button onclick="viewProduct('${o.productId}'); document.getElementById('order-detail-modal').remove();" style="background:#3D2B1F;color:#FFF8F0;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;width:100%;font-weight:600;">🛒 상품 보기</button>
+            <button onclick="viewProduct('${o.productId}'); document.getElementById('order-detail-modal').remove();" style="background:#3D2B1F;color:#FFF8F0;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;width:100%;font-weight:600;"><i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 상품 보기</button>
         </div>`;
         document.body.appendChild(overlay);
     } catch(e) { showToast('주문 상세 로드 실패: '+e.message, 'error'); }
@@ -2900,7 +2900,7 @@ async function requestReturn(orderId) {
         overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99999;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); resolve(); } };
         overlay.innerHTML = `<div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;max-width:420px;width:100%;">
-            <h3 style="margin-bottom:1rem;">🔄 반품/환불 요청</h3>
+            <h3 style="margin-bottom:1rem;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 반품/환불 요청</h3>
             <div style="display:grid;gap:0.8rem;">
                 <div>
                     <label style="font-size:0.8rem;color:var(--accent);">반품 사유</label>
@@ -2936,9 +2936,9 @@ async function requestReturn(orderId) {
                 });
                 // 판매자 알림
                 if (typeof createNotification === 'function') {
-                    await createNotification(order.sellerId, 'order_status', { message: `🔄 "${order.productTitle}" 반품 요청이 있습니다`, link: '#page=my-shop' });
+                    await createNotification(order.sellerId, 'order_status', { message: `<i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> "${order.productTitle}" 반품 요청이 있습니다`, link: '#page=my-shop' });
                 }
-                showToast('🔄 반품 요청이 접수되었습니다','success');
+                showToast('<i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 반품 요청이 접수되었습니다','success');
                 overlay.remove();
                 document.getElementById('order-detail-modal')?.remove();
                 loadBuyerOrders();
@@ -2954,7 +2954,7 @@ async function loadSellerReturns() {
     try {
         const snap = await db.collection('returns').where('sellerId','==',currentUser.uid).where('status','==','requested').orderBy('createdAt','desc').limit(20).get();
         if (snap.empty) return '';
-        let html = '<div style="margin-top:1rem;"><h4 style="color:#f44336;margin-bottom:0.5rem;">🔄 반품 요청 ('+snap.size+')</h4>';
+        let html = '<div style="margin-top:1rem;"><h4 style="color:#f44336;margin-bottom:0.5rem;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 반품 요청 ('+snap.size+')</h4>';
         snap.forEach(d => {
             const r = d.data();
             const dateStr = r.createdAt?.toDate ? r.createdAt.toDate().toLocaleDateString('ko-KR') : '';
@@ -2965,8 +2965,8 @@ async function loadSellerReturns() {
                 </div>
                 <div style="font-size:0.8rem;color:#6B5744;margin:0.3rem 0;">${r.buyerEmail} · ${r.reasonCategory}: ${r.reasonDetail||''}</div>
                 <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
-                    <button onclick="approveReturn('${d.id}')" style="flex:1;background:#6B8F3C;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.8rem;">✅ 승인 (환불)</button>
-                    <button onclick="rejectReturn('${d.id}')" style="flex:1;background:#f44336;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.8rem;">❌ 거절</button>
+                    <button onclick="approveReturn('${d.id}')" style="flex:1;background:#6B8F3C;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.8rem;"><i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 승인 (환불)</button>
+                    <button onclick="rejectReturn('${d.id}')" style="flex:1;background:#f44336;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.8rem;"><i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 거절</button>
                 </div>
             </div>`;
         });
@@ -3009,9 +3009,9 @@ async function approveReturn(returnId) {
             });
         });
         if (typeof createNotification === 'function') {
-            await createNotification(ret.buyerId, 'order_status', { message: `✅ "${ret.productTitle}" 반품이 승인되었습니다. 환불 완료!`, link: '#page=buyer-orders' });
+            await createNotification(ret.buyerId, 'order_status', { message: `<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> "${ret.productTitle}" 반품이 승인되었습니다. 환불 완료!`, link: '#page=buyer-orders' });
         }
-        showToast('✅ 반품 승인 및 환불 완료','success');
+        showToast('<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 반품 승인 및 환불 완료','success');
         loadSellerOrders();
     } catch(e) { showToast('실패: '+e.message,'error'); }
 }
@@ -3024,7 +3024,7 @@ async function rejectReturn(returnId) {
         const ret = rDoc.data();
         await db.collection('returns').doc(returnId).update({ status:'rejected', rejectReason: reason, rejectedAt: new Date() });
         if (typeof createNotification === 'function') {
-            await createNotification(ret.buyerId, 'order_status', { message: `❌ "${ret.productTitle}" 반품이 거부되었습니다. 사유: ${reason}`, link: '#page=buyer-orders' });
+            await createNotification(ret.buyerId, 'order_status', { message: `<i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> "${ret.productTitle}" 반품이 거부되었습니다. 사유: ${reason}`, link: '#page=buyer-orders' });
         }
         showToast('반품 요청이 거절되었습니다','info');
         loadSellerOrders();
@@ -3048,7 +3048,7 @@ async function renderBrandLanding(brand) {
         const brandName = MALL_CATEGORIES[brand] || brand;
         const slogan = BRAND_SLOGANS[brand] || '';
         const bgColor = BRAND_COLORS[brand] || '#F7F3ED';
-        const icon = BRAND_ICONS[brand] || '🛒';
+        const icon = BRAND_ICONS[brand] || '<i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>';
 
         // Fetch all products in this category
         const snap = await db.collection('products').where('status','==','active').where('category','==',brand).orderBy('createdAt','desc').limit(50).get();
@@ -3063,7 +3063,7 @@ async function renderBrandLanding(brand) {
         const renderCard = (p) => {
             const thumb = getProductThumb(p);
             return `<div onclick="viewProduct('${p.id}')" style="background:#FFF8F0;border-radius:10px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.08);min-width:150px;flex-shrink:0;width:160px;">
-                <div style="height:130px;overflow:hidden;background:#F7F3ED;">${thumb ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover;">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:#E8E0D8;">🛒</div>`}</div>
+                <div style="height:130px;overflow:hidden;background:#F7F3ED;">${thumb ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover;">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:#E8E0D8;"><i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></div>`}</div>
                 <div style="padding:0.5rem;">
                     <div style="font-weight:600;font-size:0.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.title}</div>
                     <div style="font-weight:700;color:#3D2B1F;font-size:0.85rem;">${p.price} CRGC</div>
@@ -3091,7 +3091,7 @@ async function renderBrandLanding(brand) {
             </div>
             <!-- Popular -->
             ${popular.length > 0 ? `<div style="margin-bottom:1.5rem;">
-                <h3 style="margin-bottom:0.8rem;">🔥 인기 상품</h3>
+                <h3 style="margin-bottom:0.8rem;"><i data-lucide="flame" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 인기 상품</h3>
                 ${horizontalScroll(popular)}
             </div>` : ''}
             <!-- New -->
@@ -3100,7 +3100,7 @@ async function renderBrandLanding(brand) {
                 ${horizontalScroll(newest)}
             </div>` : ''}
             <!-- All -->
-            <h3 style="margin-bottom:0.8rem;">📦 전체 상품</h3>
+            <h3 style="margin-bottom:0.8rem;"><i data-lucide="package" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 전체 상품</h3>
             ${gridHtml}`;
     } catch(e) { c.innerHTML = `<p style="color:red;">${e.message}</p>`; }
 }
@@ -3114,7 +3114,7 @@ async function reportProduct(productId) {
         overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99998;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); resolve(); } };
         overlay.innerHTML = `<div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;max-width:400px;width:100%;">
-            <h3 style="margin-bottom:1rem;">🚨 상품 신고</h3>
+            <h3 style="margin-bottom:1rem;"><i data-lucide="alert-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 상품 신고</h3>
             <div style="display:grid;gap:0.8rem;">
                 <select id="report-reason" style="padding:0.7rem;border:1px solid var(--border);border-radius:6px;">
                     <option value="fake">허위상품</option>
@@ -3139,7 +3139,7 @@ async function reportProduct(productId) {
                     detail: overlay.querySelector('#report-detail').value.trim(),
                     status: 'pending', createdAt: new Date()
                 });
-                showToast('🚨 신고가 접수되었습니다', 'success');
+                showToast('<i data-lucide="alert-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 신고가 접수되었습니다', 'success');
                 overlay.remove(); resolve();
             } catch(e) { showToast('신고 실패: ' + e.message, 'error'); }
         };
@@ -3166,7 +3166,7 @@ function _showReportModal(targetType, targetId, title) {
         overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99998;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); resolve(); } };
         overlay.innerHTML = `<div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;max-width:400px;width:100%;">
-            <h3 style="margin-bottom:1rem;">🚨 ${title}</h3>
+            <h3 style="margin-bottom:1rem;"><i data-lucide="alert-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${title}</h3>
             <div style="display:grid;gap:0.8rem;">
                 <select id="report-reason-gen" style="padding:0.7rem;border:1px solid var(--border);border-radius:6px;">
                     ${Object.entries(reasons).map(([k,v]) => `<option value="${k}">${v}</option>`).join('')}
@@ -3188,7 +3188,7 @@ function _showReportModal(targetType, targetId, title) {
                     detail: overlay.querySelector('#report-detail-gen').value.trim(),
                     status: 'pending', createdAt: new Date()
                 });
-                showToast(t('mall.report_submitted','🚨 신고가 접수되었습니다'), 'success');
+                showToast(t('mall.report_submitted','<i data-lucide="alert-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 신고가 접수되었습니다'), 'success');
                 overlay.remove(); resolve();
             } catch(e) { showToast(t('mall.report_failed','신고 실패') + ': ' + e.message, 'error'); }
         };
