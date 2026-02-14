@@ -1052,6 +1052,7 @@ function showAttachMenu() {
         { icon: '<i data-lucide="mic" style="width:20px;height:20px;"></i>', label: '음성', fn: () => startVoiceRecord(), mobile: true },
         { icon: '<i data-lucide="dollar-sign" style="width:20px;height:20px;"></i>', label: '토큰', fn: () => sendTokenWithMessage(), mobile: true },
         { icon: '<i data-lucide="smile" style="width:20px;height:20px;"></i>', label: '스티커', fn: () => showStickerGifPanel(), mobile: true },
+        { icon: '<i data-lucide="smile-plus" style="width:20px;height:20px;"></i>', label: '이모티콘', fn: () => showEmojiInsertPicker(), mobile: true },
     ];
     items.forEach(item => {
         const btn = document.createElement('button');
@@ -1489,6 +1490,32 @@ async function deleteMessage(msgId) {
 }
 
 // ===== Reactions =====
+function showEmojiInsertPicker() {
+    document.querySelectorAll('.emoji-insert-popup').forEach(el => el.remove());
+    const emojis = ['😀','😂','🥰','😎','😢','😡','👍','👎','❤️','🔥','🎉','✨','💪','🙏','👋','🤔','😱','🥳','💯','⭐','🌈','🍀','☕','🎵','💎','🦋','🌸','🐱','🐶','🍕'];
+    const picker = document.createElement('div');
+    picker.className = 'emoji-insert-popup';
+    picker.style.cssText = 'position:fixed;bottom:120px;left:50%;transform:translateX(-50%);background:#F7F3ED;border:1px solid #E8E0D8;border-radius:12px;padding:0.5rem;box-shadow:0 4px 20px rgba(61,43,31,0.15);z-index:9999;display:grid;grid-template-columns:repeat(6,1fr);gap:2px;max-width:280px;';
+    emojis.forEach(emoji => {
+        const btn = document.createElement('button');
+        btn.textContent = emoji;
+        btn.style.cssText = 'font-size:1.5rem;background:none;border:none;cursor:pointer;padding:6px;border-radius:8px;transition:transform 0.1s;';
+        btn.onmouseenter = () => btn.style.background = '#E8E0D8';
+        btn.onmouseleave = () => btn.style.background = 'none';
+        btn.onclick = () => {
+            const input = document.getElementById('message-input');
+            if (input) { input.value += emoji; input.focus(); }
+            picker.remove();
+        };
+        picker.appendChild(btn);
+    });
+    document.body.appendChild(picker);
+    setTimeout(() => {
+        const dismiss = (e) => { if (!picker.contains(e.target)) { picker.remove(); document.removeEventListener('click', dismiss); } };
+        document.addEventListener('click', dismiss);
+    }, 10);
+}
+
 function showReactionPicker(msgId) {
     // Remove any existing picker
     document.querySelectorAll('.reaction-picker-popup').forEach(el => el.remove());
