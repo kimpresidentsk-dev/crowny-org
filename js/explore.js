@@ -25,7 +25,7 @@ async function loadExploreTab() {
         // Category filters
         html += `<div style="display:flex;gap:0.4rem;margin-bottom:1rem;overflow-x:auto;padding-bottom:0.3rem;">
             ${['all','photo','video','service'].map(f => {
-                const labels = { all:'전체', photo:'📸 사진', video:'🎬 영상', service:'🔗 서비스' };
+                const labels = { all:'전체', photo:'<i data-lucide="camera"></i> 사진', video:'<i data-lucide="video"></i> 영상', service:'<i data-lucide="link"></i> 서비스' };
                 const active = _exploreFilter === f;
                 return `<button onclick="setExploreFilter('${f}')" style="padding:0.4rem 0.8rem;border:1px solid ${active ? '#3D2B1F' : 'var(--border)'};border-radius:20px;background:${active ? '#3D2B1F' : 'white'};color:${active ? 'white' : 'var(--text)'};font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap;">${labels[f]}</button>`;
             }).join('')}
@@ -90,7 +90,7 @@ async function loadTrendingHashtags() {
         }
 
         container.innerHTML = `
-            <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.5rem;">🔥 인기 해시태그</div>
+            <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.5rem;"><i data-lucide="flame"></i> 인기 해시태그</div>
             <div style="display:flex;flex-wrap:wrap;gap:0.4rem;">
                 ${sorted.map(([tag, count]) =>
                     `<button onclick="filterByHashtag('${tag}');setSocialFilter('all');showExploreTab(false)" style="padding:0.4rem 0.8rem;border:1px solid var(--border);border-radius:20px;background:var(--bg);font-size:0.8rem;cursor:pointer;white-space:nowrap;">#${tag} <span style="color:var(--accent);font-size:0.7rem;">${count}</span></button>`
@@ -131,7 +131,7 @@ async function loadRecommendedUsers() {
         }
 
         container.innerHTML = `
-            <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.5rem;">👤 추천 사용자</div>
+            <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.5rem;"><i data-lucide="user"></i> 추천 사용자</div>
             <div style="display:flex;gap:0.8rem;overflow-x:auto;padding-bottom:0.5rem;">
                 ${top.map(u => {
                     const nickname = u.data.nickname || u.data.email?.split('@')[0] || '사용자';
@@ -183,7 +183,7 @@ async function loadExploreGrid() {
         for (const post of posts.slice(0, 30)) {
             let thumb = '';
             if (post.videoUrl) {
-                thumb = `<div style="position:relative;"><video src="${post.videoUrl}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;" muted preload="metadata"></video><span style="position:absolute;top:6px;right:6px;color:#FFF8F0;font-size:0.8rem;text-shadow:0 1px 3px rgba(61,43,31,0.8);">🎬</span></div>`;
+                thumb = `<div style="position:relative;"><video src="${post.videoUrl}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;" muted preload="metadata"></video><span style="position:absolute;top:6px;right:6px;color:#FFF8F0;font-size:0.8rem;text-shadow:0 1px 3px rgba(61,43,31,0.8);"><i data-lucide="video"></i></span></div>`;
             } else if (post.imageUrl) {
                 thumb = `<img src="${post.imageUrl}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;" loading="lazy">`;
             } else {
@@ -194,8 +194,8 @@ async function loadExploreGrid() {
             gridHTML += `<div onclick="scrollToPostOrOpen('${post.id}')" style="cursor:pointer;position:relative;overflow:hidden;">
                 ${thumb}
                 <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(61,43,31,0.6));padding:4px 6px;display:flex;gap:0.4rem;align-items:center;">
-                    <span style="color:#FFF8F0;font-size:0.65rem;">❤️${post.likes || 0}</span>
-                    <span style="color:#FFF8F0;font-size:0.65rem;">💬${post.commentCount || 0}</span>
+                    <span style="color:#FFF8F0;font-size:0.65rem;"><i data-lucide="heart"></i>${post.likes || 0}</span>
+                    <span style="color:#FFF8F0;font-size:0.65rem;"><i data-lucide="message-circle"></i>${post.commentCount || 0}</span>
                 </div>
             </div>`;
         }
@@ -236,7 +236,7 @@ async function runExploreSearch() {
         // Search users
         const usersSnap = await db.collection('users').orderBy('nickname').startAt(query).endAt(query + '\uf8ff').limit(5).get();
         if (!usersSnap.empty) {
-            html += '<div style="font-weight:700;font-size:0.85rem;margin-bottom:0.4rem;">👤 사용자</div>';
+            html += '<div style="font-weight:700;font-size:0.85rem;margin-bottom:0.4rem;"><i data-lucide="user"></i> 사용자</div>';
             for (const doc of usersSnap.docs) {
                 const d = doc.data();
                 const nickname = d.nickname || d.email?.split('@')[0] || '사용자';
@@ -252,7 +252,7 @@ async function runExploreSearch() {
             const tag = query.replace('#', '');
             const hashPosts = await db.collection('posts').where('hashtags', 'array-contains', tag).limit(5).get();
             if (!hashPosts.empty) {
-                html += `<div style="font-weight:700;font-size:0.85rem;margin:0.6rem 0 0.4rem;">🏷 #${tag} (${hashPosts.size}개 게시물)</div>`;
+                html += `<div style="font-weight:700;font-size:0.85rem;margin:0.6rem 0 0.4rem;"><i data-lucide="hash"></i> #${tag} (${hashPosts.size}개 게시물)</div>`;
                 html += `<button onclick="filterByHashtag('${tag}');showExploreTab(false)" style="padding:0.4rem 0.8rem;border:none;border-radius:8px;background:#3D2B1F;color:#FFF8F0;font-size:0.8rem;cursor:pointer;">게시물 보기</button>`;
             }
         }
@@ -261,7 +261,7 @@ async function runExploreSearch() {
         const textPosts = await db.collection('posts').orderBy('timestamp', 'desc').limit(50).get();
         const matchedPosts = textPosts.docs.filter(d => (d.data().text || '').toLowerCase().includes(query)).slice(0, 5);
         if (matchedPosts.length > 0) {
-            html += '<div style="font-weight:700;font-size:0.85rem;margin:0.6rem 0 0.4rem;">📝 게시물</div>';
+            html += '<div style="font-weight:700;font-size:0.85rem;margin:0.6rem 0 0.4rem;"><i data-lucide="file-text"></i> 게시물</div>';
             for (const doc of matchedPosts) {
                 const p = doc.data();
                 const info = await getUserDisplayInfo(p.userId);

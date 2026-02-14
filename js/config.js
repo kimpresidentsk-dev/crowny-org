@@ -147,11 +147,11 @@ function updateTradeButtonState() {
     });
     
     if (locked && btnBuy) {
-        btnBuy.textContent = t('config.trading_stopped','⚠️ 거래 정지');
-        btnSell.textContent = t('config.trading_stopped','⚠️ 거래 정지');
+        btnBuy.innerHTML = '<i data-lucide="alert-triangle"></i> ' + t('config.trading_stopped','거래 정지');
+        btnSell.innerHTML = '<i data-lucide="alert-triangle"></i> ' + t('config.trading_stopped','거래 정지');
     } else if (btnBuy) {
-        btnBuy.textContent = '📈 BUY';
-        btnSell.textContent = '📉 SELL';
+        btnBuy.innerHTML = '<i data-lucide="trending-up"></i> BUY';
+        btnSell.innerHTML = '<i data-lucide="trending-down"></i> SELL';
     }
     
     // CLOSE/FLATTEN 버튼은 포지션이 있을 때만 활성
@@ -243,7 +243,7 @@ async function checkDailyLossLimit() {
             });
         
         updateRiskGaugeUI();
-        showToast(`🚨 ${t('config.daily_limit_reached','일일 손실 한도 도달!')} (-$${limitValue})`, 'warning');
+        showToast(`<i data-lucide="alert-octagon"></i> ${t('config.daily_limit_reached','일일 손실 한도 도달!')} (-$${limitValue})`, 'warning');
         return true; // locked
     }
     

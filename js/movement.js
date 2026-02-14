@@ -5,7 +5,7 @@ const MOVEMENT = (() => {
         {
             id: 'precision',
             name: '프레시전 무브먼트',
-            emoji: '🎯',
+            emoji: '<i data-lucide="target"></i>',
             color: '#8B6914',
             gradient: 'linear-gradient(135deg,#8B6914,#F0C060)',
             subtitle: 'Precision Movement',
@@ -25,7 +25,7 @@ const MOVEMENT = (() => {
         {
             id: 'active',
             name: '액티브 무브먼트',
-            emoji: '🔥',
+            emoji: '<i data-lucide="flame"></i>',
             color: '#8B6914',
             gradient: 'linear-gradient(135deg,#8B6914,#6B5744)',
             subtitle: 'Active Movement',
@@ -45,7 +45,7 @@ const MOVEMENT = (() => {
         {
             id: 'core',
             name: '코어 무브먼트',
-            emoji: '💎',
+            emoji: '<i data-lucide="gem"></i>',
             color: '#8B6914',
             gradient: 'linear-gradient(135deg,#8B6914,#6B5744)',
             subtitle: 'Core Movement',
@@ -104,7 +104,7 @@ const MOVEMENT = (() => {
                     <div style="background:linear-gradient(90deg,#8B6914,#F0C060,#6B5744);height:100%;width:${totalPercent}%;border-radius:10px;transition:width 0.5s;"></div>
                 </div>
                 <div style="display:flex;justify-content:space-between;font-size:0.7rem;opacity:0.7;margin-top:0.3rem;">
-                    <span>🎯 프레시전</span><span>🔥 액티브</span><span>💎 코어</span>
+                    <span><i data-lucide="target"></i> 프레시전</span><span><i data-lucide="flame"></i> 액티브</span><span><i data-lucide="gem"></i> 코어</span>
                 </div>
             </div>
 
@@ -122,7 +122,7 @@ const MOVEMENT = (() => {
             <!-- 오늘의 운동 시작 -->
             <button onclick="MOVEMENT.startSession()" 
                 style="width:100%;padding:1.2rem;border:none;border-radius:12px;background:linear-gradient(135deg,#8B6914,#6B5744);color:#FFF8F0;font-weight:700;font-size:1.1rem;cursor:pointer;margin-bottom:1.5rem;box-shadow:0 4px 15px rgba(139,105,20,0.3);">
-                ▶️ 오늘의 무브먼트 시작
+                <i data-lucide="play"></i> 오늘의 무브먼트 시작
             </button>
 
             <!-- 3단계 소개 -->
@@ -134,7 +134,7 @@ const MOVEMENT = (() => {
                     <div style="background:var(--card-bg,#F7F3ED);border-radius:12px;padding:1rem;border-left:4px solid ${s.color};opacity:${isActive || isDone ? 1 : 0.6};">
                         <div style="display:flex;justify-content:space-between;align-items:center;">
                             <div>
-                                <div style="font-size:0.7rem;color:var(--accent);">STAGE ${i + 1} ${isDone ? '✅' : isActive ? '🔄' : '🔒'}</div>
+                                <div style="font-size:0.7rem;color:var(--accent);">STAGE ${i + 1} ${isDone ? '<i data-lucide="check-circle"></i>' : isActive ? '<i data-lucide="loader"></i>' : '<i data-lucide="lock"></i>'}</div>
                                 <div style="font-weight:700;">${s.emoji} ${s.name}</div>
                                 <div style="font-size:0.8rem;color:var(--accent);margin-top:0.2rem;">${s.subtitle}</div>
                             </div>
@@ -177,11 +177,11 @@ const MOVEMENT = (() => {
                 <div style="display:flex;justify-content:center;gap:1rem;margin-top:1.5rem;">
                     <button id="movement-start-btn" onclick="MOVEMENT.toggleTimer()" 
                         style="padding:0.8rem 2rem;border:none;border-radius:10px;background:linear-gradient(135deg,#8B6914,#6B5744);color:#FFF8F0;font-weight:700;cursor:pointer;font-size:1rem;">
-                        ▶️ 시작
+                        <i data-lucide="play"></i> 시작
                     </button>
                     <button onclick="MOVEMENT.completeSession()" 
                         style="padding:0.8rem 2rem;border:none;border-radius:10px;background:linear-gradient(135deg,#8B6914,#6B5744);color:#FFF8F0;font-weight:700;cursor:pointer;font-size:1rem;">
-                        ✅ 완료
+                        <i data-lucide="check-circle"></i> 완료
                     </button>
                 </div>
             </div>
@@ -200,7 +200,7 @@ const MOVEMENT = (() => {
                 `).join('')}
             </div>
 
-            <button onclick="MOVEMENT.init()" style="width:100%;margin-top:1rem;padding:0.8rem;background:none;border:1px solid #E8E0D8;border-radius:10px;cursor:pointer;">← 돌아가기</button>
+            <button onclick="MOVEMENT.init()" style="width:100%;margin-top:1rem;padding:0.8rem;background:none;border:1px solid #E8E0D8;border-radius:10px;cursor:pointer;"><i data-lucide="arrow-left"></i> 돌아가기</button>
         `;
     }
 

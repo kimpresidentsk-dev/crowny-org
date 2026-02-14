@@ -30,7 +30,7 @@
                 card.onmouseleave = () => card.style.transform = '';
                 card.innerHTML = `
                     <div style="display:flex;gap:1rem;align-items:center;">
-                        <div style="font-size:2.5rem;flex-shrink:0;">${d.emoji || '🏢'}</div>
+                        <div style="font-size:2.5rem;flex-shrink:0;">${d.emoji || '<i data-lucide="building-2"></i>'}</div>
                         <div style="flex:1;min-width:0;">
                             <strong style="display:block;font-size:1rem;">${d.name || '사업체'}</strong>
                             <p style="font-size:0.8rem;color:var(--accent);margin:0.2rem 0;">${d.category || ''} · ${d.country || ''}</p>
@@ -73,7 +73,7 @@
             if (snap.empty) {
                 list.innerHTML = `
                     <div style="text-align:center;padding:3rem;color:var(--accent);">
-                        <div style="font-size:3rem;margin-bottom:1rem;">💝</div>
+                        <div style="font-size:3rem;margin-bottom:1rem;"><i data-lucide="heart"></i></div>
                         <p style="font-size:1rem;margin-bottom:0.5rem;">진행 중인 캠페인이 없습니다</p>
                         <p style="font-size:0.8rem;">새 캠페인을 만들어보세요!</p>
                     </div>`;
@@ -91,7 +91,7 @@
                 card.onmouseleave = () => card.style.transform = '';
                 card.onclick = () => showCampaignDetail(doc.id, d);
                 card.innerHTML = `
-                    ${d.imageURL ? `<img src="${d.imageURL}" style="width:100%;height:180px;object-fit:cover;">` : `<div style="height:120px;background:linear-gradient(135deg,#3D2B1F,#6B5744);display:flex;align-items:center;justify-content:center;font-size:3rem;">${d.emoji || '💝'}</div>`}
+                    ${d.imageURL ? `<img src="${d.imageURL}" style="width:100%;height:180px;object-fit:cover;">` : `<div style="height:120px;background:linear-gradient(135deg,#3D2B1F,#6B5744);display:flex;align-items:center;justify-content:center;font-size:3rem;">${d.emoji || '<i data-lucide="heart"></i>'}</div>`}
                     <div style="padding:1rem;">
                         <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;">
                             ${d.category ? `<span style="font-size:0.65rem;padding:0.15rem 0.5rem;background:var(--bg);border-radius:10px;">${d.category}</span>` : ''}

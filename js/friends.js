@@ -31,7 +31,7 @@ async function sendFriendRequest(targetUid) {
             userId: targetUid, type: 'friend_request', message: '', fromUid: currentUser.uid, read: false, createdAt: new Date()
         });
         const myInfo = await getUserDisplayInfo(currentUser.uid);
-        addNotification('social_like', `👥 ${myInfo.nickname}님에게 친구 요청을 보냈습니다`, {});
+        addNotification('social_like', `<i data-lucide="users"></i> ${myInfo.nickname}님에게 친구 요청을 보냈습니다`, {});
         showToast(t('friends.request_sent', '✅ 친구 요청을 보냈습니다'), 'success');
     } catch (e) {
         console.error('Friend request error:', e);
@@ -56,7 +56,7 @@ async function acceptFriendRequest(requestId, fromUid) {
         await db.collection('notifications').add({
             userId: fromUid, type: 'friend_accepted', message: '', fromUid: currentUser.uid, read: false, createdAt: new Date()
         });
-        showToast(t('friends.accepted', '✅ 친구가 되었습니다!'), 'success');
+        showToast(`<i data-lucide="check-circle"></i> ${t('friends.accepted', '친구가 되었습니다!')}`, 'success');
         loadFriendsGrid();
         loadFriendRequests();
     } catch (e) {
@@ -158,7 +158,7 @@ async function showFriendSearchModal() {
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     overlay.innerHTML = `
     <div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:420px;width:100%;max-height:80vh;overflow-y:auto;">
-        <h3 style="margin-bottom:1rem;">👥 ${t('friends.search', '친구 찾기')}</h3>
+        <h3 style="margin-bottom:1rem;"><i data-lucide="users"></i> ${t('friends.search', '친구 찾기')}</h3>
         <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
             <input type="text" id="friend-search-input" placeholder="${t('friends.search_placeholder', '닉네임 또는 이메일로 검색')}" style="flex:1;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;font-size:0.9rem;">
             <button onclick="searchFriends()" class="btn-primary" style="padding:0.7rem 1rem;border-radius:8px;font-size:0.85rem;">🔍</button>
@@ -201,7 +201,7 @@ async function searchFriends() {
                     <div style="font-weight:600;font-size:0.9rem;">${info.nickname}</div>
                     <div style="font-size:0.75rem;color:var(--text-muted,#6B5744);">${data.statusMessage || ''}</div>
                 </div>
-                ${isFriend ? `<span style="font-size:0.75rem;color:#6B8F3C;">✅ 친구</span>` :
+                ${isFriend ? `<span style="font-size:0.75rem;color:#6B8F3C;"><i data-lucide="check-circle"></i> 친구</span>` :
                 `<button onclick="sendFriendRequest('${doc.id}');this.textContent='요청됨';this.disabled=true;" class="btn-primary" style="padding:0.3rem 0.8rem;font-size:0.8rem;border-radius:6px;">친구 추가</button>`}
             </div>`;
         }
@@ -233,7 +233,7 @@ async function followUser(targetUid) {
             if (typeof createSocialNotification === 'function') {
                 createSocialNotification(targetUid, 'follow', `${myInfo.nickname}님이 팔로우했습니다`, {});
             }
-            showToast(t('friends.followed', '✅ 팔로우했습니다'), 'success');
+            showToast(`<i data-lucide="check-circle"></i> ${t('friends.followed', '팔로우했습니다')}`, 'success');
         }
     } catch (e) {
         showToast(t('friends.follow_fail', '팔로우 실패'), 'error');
@@ -299,9 +299,9 @@ async function showUserProfile(uid) {
             </div>
             ${!isMe ? `
             <div style="display:flex;gap:0.5rem;">
-                <button onclick="followUser('${uid}');document.getElementById('user-profile-modal')?.remove();" class="btn-primary" style="flex:1;padding:0.6rem;border-radius:8px;font-size:0.85rem;">${amFollowing ? '팔로잉 ✓' : '팔로우'}</button>
-                ${!amFriend ? `<button onclick="sendFriendRequest('${uid}');document.getElementById('user-profile-modal')?.remove();" style="flex:1;padding:0.6rem;border-radius:8px;font-size:0.85rem;border:1px solid var(--border,#E8E0D8);background:var(--bg-card,#3D2B1F);cursor:pointer;">친구 추가</button>` : `<span style="flex:1;display:flex;align-items:center;justify-content:center;font-size:0.85rem;color:#6B8F3C;">✅ 친구</span>`}
-                <button onclick="startChatFromProfile('${uid}');document.getElementById('user-profile-modal')?.remove();" style="flex:1;padding:0.6rem;border-radius:8px;font-size:0.85rem;border:1px solid var(--border,#E8E0D8);background:var(--bg-card,#3D2B1F);cursor:pointer;">💬 메시지</button>
+                <button onclick="followUser('${uid}');document.getElementById('user-profile-modal')?.remove();" class="btn-primary" style="flex:1;padding:0.6rem;border-radius:8px;font-size:0.85rem;">${amFollowing ? '<i data-lucide="check"></i> 팔로잉' : '팔로우'}</button>
+                ${!amFriend ? `<button onclick="sendFriendRequest('${uid}');document.getElementById('user-profile-modal')?.remove();" style="flex:1;padding:0.6rem;border-radius:8px;font-size:0.85rem;border:1px solid var(--border,#E8E0D8);background:var(--bg-card,#3D2B1F);cursor:pointer;">친구 추가</button>` : `<span style="flex:1;display:flex;align-items:center;justify-content:center;font-size:0.85rem;color:#6B8F3C;"><i data-lucide="check-circle"></i> 친구</span>`}
+                <button onclick="startChatFromProfile('${uid}');document.getElementById('user-profile-modal')?.remove();" style="flex:1;padding:0.6rem;border-radius:8px;font-size:0.85rem;border:1px solid var(--border,#E8E0D8);background:var(--bg-card,#3D2B1F);cursor:pointer;"><i data-lucide="message-circle"></i> 메시지</button>
             </div>
             ` : ''}
             <button onclick="document.getElementById('user-profile-modal')?.remove()" style="width:100%;margin-top:0.8rem;padding:0.6rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;background:var(--bg-card,#3D2B1F);cursor:pointer;">${t('common.close', '닫기')}</button>

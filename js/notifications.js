@@ -21,19 +21,19 @@ const NOTIF_TYPES = {
 };
 
 const NOTIF_STYLES = {
-    [NOTIF_TYPES.MESSENGER]: { icon: '💬', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.messenger','메신저') },
-    [NOTIF_TYPES.SOCIAL_COMMENT]: { icon: '💬', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.comment','댓글') },
-    [NOTIF_TYPES.SOCIAL_LIKE]: { icon: '❤️', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.like','좋아요') },
-    [NOTIF_TYPES.SOCIAL_FOLLOW]: { icon: '👤', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.follow','팔로우') },
-    [NOTIF_TYPES.SOCIAL_MENTION]: { icon: '📢', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.mention','멘션') },
-    [NOTIF_TYPES.TRADING_SIGNAL]: { icon: '📊', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #F0C060)', label: t('notif.signal','시그널') },
-    [NOTIF_TYPES.TRADING_ORDER]: { icon: '📈', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.order','주문') },
-    [NOTIF_TYPES.ORDER_STATUS]: { icon: '📦', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.order_status','주문상태') },
-    [NOTIF_TYPES.ART_SOLD]: { icon: '🎨', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.art_sold','작품판매') },
-    [NOTIF_TYPES.BOOK_SOLD]: { icon: '📚', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.book_sold','책판매') },
-    [NOTIF_TYPES.DONATION]: { icon: '💝', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.donation','기부') },
-    [NOTIF_TYPES.FRIEND_REQUEST]: { icon: '🤝', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.friend_request','친구요청') },
-    [NOTIF_TYPES.SYSTEM]: { icon: '🔔', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.system','시스템') },
+    [NOTIF_TYPES.MESSENGER]: { icon: 'message-circle', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.messenger','메신저') },
+    [NOTIF_TYPES.SOCIAL_COMMENT]: { icon: 'message-circle', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.comment','댓글') },
+    [NOTIF_TYPES.SOCIAL_LIKE]: { icon: 'heart', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.like','좋아요') },
+    [NOTIF_TYPES.SOCIAL_FOLLOW]: { icon: 'user', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.follow','팔로우') },
+    [NOTIF_TYPES.SOCIAL_MENTION]: { icon: 'at-sign', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.mention','멘션') },
+    [NOTIF_TYPES.TRADING_SIGNAL]: { icon: 'bar-chart-3', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #F0C060)', label: t('notif.signal','시그널') },
+    [NOTIF_TYPES.TRADING_ORDER]: { icon: 'trending-up', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.order','주문') },
+    [NOTIF_TYPES.ORDER_STATUS]: { icon: 'package', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.order_status','주문상태') },
+    [NOTIF_TYPES.ART_SOLD]: { icon: 'palette', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.art_sold','작품판매') },
+    [NOTIF_TYPES.BOOK_SOLD]: { icon: 'book', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.book_sold','책판매') },
+    [NOTIF_TYPES.DONATION]: { icon: 'heart', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.donation','기부') },
+    [NOTIF_TYPES.FRIEND_REQUEST]: { icon: 'handshake', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.friend_request','친구요청') },
+    [NOTIF_TYPES.SYSTEM]: { icon: 'bell', color: '#8B6914', bg: 'linear-gradient(135deg, #8B6914, #6B5744)', label: t('notif.system','시스템') },
 };
 
 // Client-side notification store (session only)
@@ -93,7 +93,7 @@ function showNotifToast(type, message, data) {
     const toast = document.createElement('div');
     toast.className = 'toast notif-toast';
     toast.style.cssText = `background:${style.bg}; cursor:pointer; display:flex; align-items:center; gap:0.5rem;`;
-    toast.innerHTML = `<span style="font-size:1.2rem;">${style.icon}</span><span style="flex:1; font-size:0.85rem;">${message}</span>`;
+    toast.innerHTML = `<i data-lucide="${style.icon}" style="width:20px;height:20px;flex-shrink:0;"></i><span style="flex:1; font-size:0.85rem;">${message}</span>`;
     toast.onclick = () => {
         toast.remove();
         handleNotifClick(type, data);
@@ -228,7 +228,7 @@ function renderNotifPanel() {
         const timeAgo = getNotifTimeAgo(n.createdAt);
         return `
             <div onclick="onNotifItemClick('${n.id}')" style="padding:0.7rem 1rem; border-bottom:1px solid rgba(0,0,0,0.04); cursor:pointer; display:flex; gap:0.6rem; align-items:flex-start; background:${n.read ? "white" : "rgba(33,150,243,0.04)"}; transition:background 0.15s;" onmouseenter="this.style.background='var(--bg)'" onmouseleave="this.style.background='${n.read ? "white" : "rgba(33,150,243,0.04)"}'">
-                <span style="font-size:1.2rem; flex-shrink:0; margin-top:0.1rem;">${style.icon}</span>
+                <i data-lucide="${style.icon}" style="width:20px;height:20px;flex-shrink:0;margin-top:0.1rem;"></i>
                 <div style="flex:1; min-width:0;">
                     <div style="font-size:0.82rem; line-height:1.4; color:var(--text); ${n.read ? '' : 'font-weight:600;'}">${n.message}</div>
                     <div style="font-size:0.68rem; color:var(--accent); margin-top:0.2rem;">${timeAgo}</div>

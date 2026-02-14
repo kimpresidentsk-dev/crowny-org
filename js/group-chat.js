@@ -103,7 +103,7 @@ async function createGroupChat(groupName, memberUids) {
         }
 
         hideLoading();
-        showToast(t('group.created_success', '✅ 그룹이 생성되었습니다'), 'success');
+        showToast(`<i data-lucide="check-circle"></i> ${t('group.created_success', '그룹이 생성되었습니다')}`, 'success');
         await loadMessages();
         await openGroupChat(newChat.id);
     } catch (e) {
@@ -130,7 +130,7 @@ async function openGroupChat(chatId) {
 
     document.getElementById('chat-username').innerHTML = `
         <div style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;" onclick="toggleGroupInfoPanel()">
-            <div class="group-avatar-icon">👥</div>
+            <div class="group-avatar-icon"><i data-lucide="users"></i></div>
             <div>
                 <strong>${chatData.groupName}</strong>
                 <div style="font-size:0.7rem;color:var(--accent);">${t('group.members', '멤버')} ${memberCount}${t('group.people', '명')}</div>
@@ -251,8 +251,8 @@ async function showGroupInfoPanel() {
         const isSelf = uid === currentUser.uid;
 
         let roleBadge = '';
-        if (isOwnerBadge) roleBadge = '<span class="role-badge owner">👑 ' + t('group.owner', '방장') + '</span>';
-        else if (isAdminBadge) roleBadge = '<span class="role-badge admin">⭐ ' + t('group.admin', '관리자') + '</span>';
+        if (isOwnerBadge) roleBadge = '<span class="role-badge owner"><i data-lucide="crown"></i> ' + t('group.owner', '방장') + '</span>';
+        else if (isAdminBadge) roleBadge = '<span class="role-badge admin"><i data-lucide="star"></i> ' + t('group.admin', '관리자') + '</span>';
 
         let actions = '';
         if (isOwner && !isSelf) {
@@ -294,8 +294,8 @@ async function showGroupInfoPanel() {
 
             ${isAdmin ? `
             <div class="group-info-actions">
-                <button class="btn-secondary" onclick="editGroupName()" style="font-size:0.8rem;padding:0.5rem 0.8rem;border-radius:8px;">✏️ ${t('group.edit_name', '그룹명 변경')}</button>
-                <button class="btn-secondary" onclick="inviteMembers()" style="font-size:0.8rem;padding:0.5rem 0.8rem;border-radius:8px;">➕ ${t('group.invite', '멤버 초대')}</button>
+                <button class="btn-secondary" onclick="editGroupName()" style="font-size:0.8rem;padding:0.5rem 0.8rem;border-radius:8px;"><i data-lucide="edit"></i> ${t('group.edit_name', '그룹명 변경')}</button>
+                <button class="btn-secondary" onclick="inviteMembers()" style="font-size:0.8rem;padding:0.5rem 0.8rem;border-radius:8px;"><i data-lucide="plus"></i> ${t('group.invite', '멤버 초대')}</button>
             </div>
             ` : ''}
 
@@ -305,8 +305,8 @@ async function showGroupInfoPanel() {
             </div>
 
             <div class="group-info-bottom">
-                ${isOwner ? `<button class="btn-danger" onclick="deleteGroupChat()" style="width:100%;padding:0.6rem;border-radius:8px;font-size:0.85rem;">🗑️ ${t('group.delete', '그룹 삭제')}</button>` : ''}
-                <button class="btn-secondary" onclick="leaveGroup()" style="width:100%;padding:0.6rem;border-radius:8px;font-size:0.85rem;margin-top:0.5rem;">🚪 ${t('group.leave', '나가기')}</button>
+                ${isOwner ? `<button class="btn-danger" onclick="deleteGroupChat()" style="width:100%;padding:0.6rem;border-radius:8px;font-size:0.85rem;"><i data-lucide="trash"></i> ${t('group.delete', '그룹 삭제')}</button>` : ''}
+                <button class="btn-secondary" onclick="leaveGroup()" style="width:100%;padding:0.6rem;border-radius:8px;font-size:0.85rem;margin-top:0.5rem;"><i data-lucide="log-out"></i> ${t('group.leave', '나가기')}</button>
             </div>
         </div>
     `;
@@ -597,7 +597,7 @@ async function loadMessagesWithGroups() {
             if (chat.autoDeleteAfter > 0) gSecIcons.push('⏱️');
             chatItem.onclick = () => openGroupChat(doc.id);
             chatItem.innerHTML = `
-                <div class="group-avatar-icon chat-list-group-icon">👥</div>
+                <div class="group-avatar-icon chat-list-group-icon"><i data-lucide="users"></i></div>
                 <div class="chat-preview">
                     <strong>👥 ${chat.groupName} <span class="group-member-count">(${memberCount})</span>${gSecIcons.length ? ' <span style="font-size:0.7rem;opacity:0.5;">' + gSecIcons.join('') + '</span>' : ''}</strong>
                     <p>${chat.lastMessage || t('social.no_messages', '메시지 없음')}</p>

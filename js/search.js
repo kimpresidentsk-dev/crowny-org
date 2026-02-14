@@ -22,13 +22,13 @@ async function loadSearchCache() {
     if (!currentUser) return;
     
     const collections = [
-        { key: 'products', col: 'products', fields: ['title', 'description'], icon: '🛒', page: 'mall' },
-        { key: 'artworks', col: 'artworks', fields: ['title', 'artist'], icon: '🎨', page: 'art' },
-        { key: 'artists', col: 'artists', fields: ['name', 'displayName'], icon: '🎤', page: 'artist' },
-        { key: 'books', col: 'books', fields: ['title', 'author'], icon: '📚', page: 'books' },
-        { key: 'users', col: 'users', fields: ['nickname', 'email'], icon: '👤', page: 'social' },
-        { key: 'campaigns', col: 'campaigns', fields: ['title'], icon: '💝', page: 'fundraise' },
-        { key: 'posts', col: 'posts', fields: ['text'], icon: '📝', page: 'social' },
+        { key: 'products', col: 'products', fields: ['title', 'description'], icon: 'shopping-cart', page: 'mall' },
+        { key: 'artworks', col: 'artworks', fields: ['title', 'artist'], icon: 'palette', page: 'art' },
+        { key: 'artists', col: 'artists', fields: ['name', 'displayName'], icon: 'music', page: 'artist' },
+        { key: 'books', col: 'books', fields: ['title', 'author'], icon: 'book', page: 'books' },
+        { key: 'users', col: 'users', fields: ['nickname', 'email'], icon: 'user', page: 'social' },
+        { key: 'campaigns', col: 'campaigns', fields: ['title'], icon: 'heart', page: 'fundraise' },
+        { key: 'posts', col: 'posts', fields: ['text'], icon: 'file-text', page: 'social' },
     ];
     
     const promises = collections.map(async (c) => {
@@ -75,7 +75,7 @@ function performSearch(query) {
         totalResults += matched.length;
         
         html += `<div class="search-category">
-            <h4>${meta.icon} ${key.toUpperCase()} (${matched.length})</h4>
+            <h4><i data-lucide="${meta.icon}"></i> ${key.toUpperCase()} (${matched.length})</h4>
             ${matched.slice(0, 10).map(item => {
                 const label = meta.fields.map(f => item[f]).filter(Boolean).join(' · ');
                 return `<div class="search-result-item" onclick="closeGlobalSearch(); showPage('${meta.page}');">

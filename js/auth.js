@@ -135,7 +135,7 @@ async function signup() {
             await applyReferralCode(result.user.uid, referralCode.trim());
         }
         
-        showToast(`${t('auth.signup_done','✅ 가입 완료!')} ${nickname} · 📧 ${email}`, 'success');
+        showToast(`<i data-lucide="check-circle"></i> ${t('auth.signup_done','가입 완료!')} ${nickname} · <i data-lucide="mail"></i> ${email}`, 'success');
         
     } catch (error) {
         console.error(error);
@@ -261,7 +261,7 @@ async function resetPassword() {
     
     try {
         await auth.sendPasswordResetEmail(email);
-        showToast(`📧 ${t('auth.reset_sent','비밀번호 재설정 링크를 보냈습니다.')} ${email}`, 'success');
+        showToast(`<i data-lucide="mail"></i> ${t('auth.reset_sent','비밀번호 재설정 링크를 보냈습니다.')} ${email}`, 'success');
     } catch (error) {
         const msg = {
             'auth/user-not-found': '등록되지 않은 이메일입니다',
@@ -278,7 +278,7 @@ async function checkEmailVerified() {
     
     await user.reload();
     if (user.emailVerified) {
-        showToast(t('auth.email_verified','✅ 이메일 인증 완료!'), 'success');
+        showToast(`<i data-lucide="check-circle"></i> ${t('auth.email_verified','이메일 인증 완료!')}`, 'success');
         document.getElementById('verify-email-form').style.display = 'none';
         location.reload();
     } else {
@@ -293,7 +293,7 @@ async function resendVerification() {
     
     try {
         await user.sendEmailVerification();
-        showToast(`📧 ${t('auth.resend_done','인증 메일을 다시 보냈습니다.')} ${user.email}`, 'success');
+        showToast(`<i data-lucide="mail"></i> ${t('auth.resend_done','인증 메일을 다시 보냈습니다.')} ${user.email}`, 'success');
     } catch (error) {
         showToast(t('auth.resend_fail','재발송 실패: ') + error.message, 'error');
     }
@@ -321,7 +321,7 @@ async function linkGoogleAccount() {
             photoURL: user.photoURL || ''
         });
         
-        showToast(t('auth.google_linked','✅ Google 계정 연동 완료! 이제 Google로도 로그인할 수 있습니다.'), 'success');
+        showToast(`<i data-lucide="check-circle"></i> ${t('auth.google_linked','Google 계정 연동 완료! 이제 Google로도 로그인할 수 있습니다.')}`, 'success');
     } catch (error) {
         if (error.code === 'auth/popup-closed-by-user') return;
         if (error.code === 'auth/credential-already-in-use') {
@@ -342,10 +342,10 @@ async function setupPasswordFromProfile() {
 
     if (typeof showPromptModal !== 'function') { showToast(t('auth.ui_fail','UI 모듈 로드 실패'), 'error'); return; }
 
-    const pw = await showPromptModal(t('auth.setup_pw','🔑 비밀번호 설정'), t('auth.new_pw_hint','새 비밀번호 (6자 이상)'), '', true);
+    const pw = await showPromptModal(t('auth.setup_pw','<i data-lucide="key"></i> 비밀번호 설정'), t('auth.new_pw_hint','새 비밀번호 (6자 이상)'), '', true);
     if (!pw || pw.length < 6) { if (pw !== null) showToast(t('auth.pw_min_6','비밀번호는 6자 이상이어야 합니다'), 'error'); return; }
 
-    const pw2 = await showPromptModal(t('auth.confirm_pw','🔑 비밀번호 확인'), t('auth.reenter_pw','비밀번호를 다시 입력하세요'), '', true);
+    const pw2 = await showPromptModal(t('auth.confirm_pw','<i data-lucide="key"></i> 비밀번호 확인'), t('auth.reenter_pw','비밀번호를 다시 입력하세요'), '', true);
     if (pw !== pw2) { showToast(t('auth.pw_mismatch','비밀번호가 일치하지 않습니다'), 'error'); return; }
 
     try {
@@ -354,7 +354,7 @@ async function setupPasswordFromProfile() {
         await db.collection('users').doc(user.uid).update({
             provider: user.providerData.map(p => p.providerId === 'google.com' ? 'google' : 'email').join('+')
         });
-        showToast(t('auth.pw_set_done','✅ 비밀번호 설정 완료! 이제 이메일/비밀번호로도 로그인 가능합니다.'), 'success');
+        showToast(`<i data-lucide="check-circle"></i> ${t('auth.pw_set_done','비밀번호 설정 완료! 이제 이메일/비밀번호로도 로그인 가능합니다.')}`, 'success');
         // 프로필 모달 새로고침
         const modal = document.getElementById('profile-edit-modal');
         if (modal) { modal.remove(); showProfileEdit(); }
@@ -371,15 +371,15 @@ async function changePasswordFromProfile() {
 
     if (typeof showPromptModal !== 'function') { showToast(t('auth.ui_fail','UI 모듈 로드 실패'), 'error'); return; }
 
-    const newPw = await showPromptModal(t('auth.change_pw','🔑 비밀번호 변경'), t('auth.new_pw_hint','새 비밀번호 (6자 이상)'), '', true);
+    const newPw = await showPromptModal(t('auth.change_pw','<i data-lucide="key"></i> 비밀번호 변경'), t('auth.new_pw_hint','새 비밀번호 (6자 이상)'), '', true);
     if (!newPw || newPw.length < 6) { if (newPw !== null) showToast(t('auth.pw_min_6','비밀번호는 6자 이상이어야 합니다'), 'error'); return; }
 
-    const newPw2 = await showPromptModal(t('auth.confirm_pw','🔑 비밀번호 확인'), t('auth.reenter_new_pw','새 비밀번호를 다시 입력하세요'), '', true);
+    const newPw2 = await showPromptModal(t('auth.confirm_pw','<i data-lucide="key"></i> 비밀번호 확인'), t('auth.reenter_new_pw','새 비밀번호를 다시 입력하세요'), '', true);
     if (newPw !== newPw2) { showToast(t('auth.pw_mismatch','비밀번호가 일치하지 않습니다'), 'error'); return; }
 
     try {
         await user.updatePassword(newPw);
-        showToast(t('auth.pw_changed','✅ 비밀번호 변경 완료!'), 'success');
+        showToast(`<i data-lucide="check-circle"></i> ${t('auth.pw_changed','비밀번호 변경 완료!')}`, 'success');
     } catch (e) {
         if (e.code === 'auth/requires-recent-login') {
             showToast(t('auth.relogin','보안을 위해 재로그인이 필요합니다. 로그아웃 후 다시 로그인해주세요.'), 'warning');
