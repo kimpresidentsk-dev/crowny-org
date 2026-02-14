@@ -332,7 +332,7 @@ function updateCRTDDisplay() {
     // 생명력 게이지: 0(-liquidation) ~ 100%(0)
     const lifeRaw = Math.max(0, 1 + pnl / cfg.liquidation);
     const lifePct = Math.min(100, Math.round(lifeRaw * 100));
-    const lifeColor = lifePct > 60 ? '#00cc00' : lifePct > 30 ? '#ffaa00' : '#ff0000';
+    const lifeColor = lifePct > 60 ? '#00cc00' : lifePct > 30 ? '#ffaa00' : '#B54534';
     
     // 수익 게이지: 0(threshold) ~ 100%(threshold + max)
     const profitAboveThreshold = Math.max(0, pnl - cfg.profitThreshold);
@@ -2699,7 +2699,7 @@ function updateChartRulesOverlay() {
         top: '8px',
         left: '8px',
         zIndex: '50',
-        background: 'rgba(10,10,30,0.75)',
+        background: '#3D2B1F',
         backdropFilter: 'blur(4px)',
         WebkitBackdropFilter: 'blur(4px)',
         borderRadius: '8px',
@@ -2716,7 +2716,7 @@ function updateChartRulesOverlay() {
         <div style="font-weight:700; color:#8B6914; margin-bottom:3px; font-size:0.76rem;"><i data-lucide="gem" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${cfg.tier}군 · ${cfg.deposit} CRTD</div>
         <div><i data-lucide="bar-chart-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${products.join(' + ') || '미설정'}</div>
         <div style="color:#B54534;"><i data-lucide="circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 일일 -$${p.dailyLossLimit || 500}</div>
-        <div style="color:#ff6666;"><i data-lucide="skull" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 청산 -$${cfg.liquidation.toLocaleString()}</div>
+        <div style="color:#B54534;"><i data-lucide="skull" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 청산 -$${cfg.liquidation.toLocaleString()}</div>
         <div style="color:#00cc66;"><i data-lucide="trending-up" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 수익 +$${cfg.profitThreshold.toLocaleString()}</div>
     `;
     
@@ -2756,7 +2756,7 @@ function drawPositionLinesLW() {
             const isTrailing = trade.trailingStop?.activated;
             const slLine = window.candleSeries.createPriceLine({
                 price: trade.stopLoss,
-                color: isTrailing ? '#C4841D' : '#ff0000',
+                color: isTrailing ? '#C4841D' : '#B54534',
                 lineWidth: 2,
                 lineStyle: isTrailing ? LightweightCharts.LineStyle.SparseDotted : LightweightCharts.LineStyle.Dashed,
                 axisLabelVisible: true,
@@ -2832,7 +2832,7 @@ function drawPositionLinesLW() {
         handle.dataset.type = type;
         handle.dataset.tradeIndex = tradeIdx;
         
-        const color = type === 'sl' ? '#ff0000' : '#00cc00';
+        const color = type === 'sl' ? '#B54534' : '#00cc00';
         const isTrailing = type === 'sl' && trade.trailingStop?.activated;
         const displayColor = isTrailing ? '#C4841D' : color;
         
@@ -2916,7 +2916,7 @@ function drawPositionLinesLW() {
             });
             container.appendChild(_dragLabel);
         }
-        const color = type === 'sl' ? '#ff0000' : '#00cc00';
+        const color = type === 'sl' ? '#B54534' : '#00cc00';
         _dragLabel.style.top = (y - 10) + 'px';
         _dragLabel.style.background = '#3D2B1F';
         _dragLabel.style.border = `1px solid ${color}`;
@@ -2953,7 +2953,7 @@ function drawPositionLinesLW() {
         
         handle.style.opacity = '0.95';
         handle.style.transform = 'scale(1.15)';
-        handle.style.boxShadow = '0 0 12px ' + (type === 'sl' ? '#ff0000aa' : '#00cc00aa');
+        handle.style.boxShadow = '0 0 12px ' + (type === 'sl' ? '#B54534aa' : '#00cc00aa');
     }
     
     function onDragMove(e) {
@@ -3016,7 +3016,7 @@ function drawPositionLinesLW() {
                 const isTrailing = t.trailingStop?.activated;
                 window.positionLines.push(window.candleSeries.createPriceLine({
                     price: t.stopLoss,
-                    color: isTrailing ? '#C4841D' : '#ff0000',
+                    color: isTrailing ? '#C4841D' : '#B54534',
                     lineWidth: 2,
                     lineStyle: isTrailing ? LightweightCharts.LineStyle.SparseDotted : LightweightCharts.LineStyle.Dashed,
                     axisLabelVisible: true, title: isTrailing ? '<i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> TRAIL' : 'SL',
