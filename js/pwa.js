@@ -3,16 +3,9 @@
 // ========== SERVICE WORKER ==========
 
 async function registerServiceWorker() {
-  if (!('serviceWorker' in navigator)) return;
-  try {
-    const reg = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
-    console.log('✅ SW 등록:', reg.scope);
-    // Also register FCM SW
-    await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-    return reg;
-  } catch (e) {
-    console.warn('SW 등록 실패:', e);
-  }
+  // SW 임시 비활성화 — 캐시 문제 해결 후 재활성화
+  console.log('[PWA] SW registration disabled temporarily');
+  return;
 }
 
 // ========== OFFLINE BANNER ==========
