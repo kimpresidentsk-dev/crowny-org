@@ -90,23 +90,26 @@ async function loadDashboard() {
                 <h4>💎 ${t('dashboard.portfolio', '토큰 포트폴리오')}</h4>
                 <div class="dash-tokens">
                     <div class="dash-token" onclick="showPage('wallet')">
-                        <span class="dash-token-icon">🪙</span>
+                        <span class="dash-token-icon"><i data-lucide="coins" style="width:20px;height:20px;color:#8B6914;"></i></span>
                         <div><strong>CRNY</strong><br><span class="dash-token-bal">${Number(onchain.crny || 0).toLocaleString()}</span></div>
                     </div>
                     <div class="dash-token" onclick="showPage('wallet')">
-                        <span class="dash-token-icon">🎯</span>
+                        <span class="dash-token-icon"><i data-lucide="target" style="width:20px;height:20px;color:#8B6914;"></i></span>
                         <div><strong>FNC</strong><br><span class="dash-token-bal">${Number(onchain.fnc || 0).toLocaleString()}</span></div>
                     </div>
                     <div class="dash-token" onclick="showPage('wallet')">
-                        <span class="dash-token-icon">🔗</span>
+                        <span class="dash-token-icon"><i data-lucide="link" style="width:20px;height:20px;color:#8B6914;"></i></span>
                         <div><strong>CRFN</strong><br><span class="dash-token-bal">${Number(onchain.crfn || 0).toLocaleString()}</span></div>
                     </div>
-                    ${Object.entries(window.OFFCHAIN_TOKENS || {}).map(([key, tok]) => `
+                    ${Object.entries(window.OFFCHAIN_TOKENS || {}).map(([key, tok]) => {
+                        const iconMap = { CRTD: 'trending-up', CRAC: 'palette', CRGC: 'shopping-bag', CREB: 'leaf' };
+                        const lucideIcon = iconMap[key] || 'circle';
+                        return `
                         <div class="dash-token" onclick="showPage('wallet')">
-                            <span class="dash-token-icon">${tok.icon}</span>
+                            <span class="dash-token-icon"><i data-lucide="${lucideIcon}" style="width:20px;height:20px;color:#8B6914;"></i></span>
                             <div><strong>${key}</strong><br><span class="dash-token-bal">${Number(offchain[key] || 0).toLocaleString()}</span></div>
-                        </div>
-                    `).join('')}
+                        </div>`;
+                    }).join('')}
                 </div>
             </div>
             

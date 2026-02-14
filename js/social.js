@@ -300,6 +300,7 @@ function showChats() {
     document.getElementById('contacts-view').style.display = 'none';
     const channelsView = document.getElementById('channels-view');
     if (channelsView) channelsView.style.display = 'none';
+    if (window.lucide) lucide.createIcons();
 }
 
 function showContacts() {
@@ -311,6 +312,7 @@ function showContacts() {
     const channelsView = document.getElementById('channels-view');
     if (channelsView) channelsView.style.display = 'none';
     loadContacts();
+    if (window.lucide) lucide.createIcons();
 }
 
 // ===== Contact Add Modal (email + nickname search) =====
@@ -2459,6 +2461,7 @@ function showChannels() {
     document.getElementById('contacts-view').style.display = 'none';
     document.getElementById('channels-view').style.display = 'block';
     loadChannelList();
+    if (window.lucide) lucide.createIcons();
 }
 
 async function loadChannelList() {

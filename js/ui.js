@@ -56,6 +56,8 @@ function showPage(pageId) {
     }
     if (pageId === 'messenger') {
         if (typeof loadMessages === 'function') loadMessages();
+        // Initialize Lucide icons after loading messenger content
+        if (window.lucide) lucide.createIcons();
     }
     if (pageId === 'prop-trading') {
         loadPropTrading();
