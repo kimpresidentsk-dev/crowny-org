@@ -340,22 +340,22 @@
                     <h3>REELS</h3>
                 </div>
                 <div class="service-card" onclick="showPage('dashboard')">
-                    <span class="icon">📊</span>
+                    <span class="icon"><i data-lucide="layout-dashboard" style="width:32px;height:32px;color:#3D2B1F;stroke-width:1.5;"></i></span>
                     <h3>DASHBOARD</h3>
                 </div>
                 <div class="service-card" onclick="showPage('settings')">
-                    <span class="icon">⚙️</span>
+                    <span class="icon"><i data-lucide="settings" style="width:32px;height:32px;color:#3D2B1F;stroke-width:1.5;"></i></span>
                     <h3>SETTINGS</h3>
                 </div>
             </div>
             
             <div style="background:var(--bg); padding:1.5rem; border-radius:12px; margin-top:2rem;">
-                <h3 style="margin-bottom:1rem; font-size:1.1rem;" data-i18n="today.get_started">💡 크라우니 시작하기</h3>
+                <h3 style="margin-bottom:1rem; font-size:1.1rem;" data-i18n="today.get_started"><i data-lucide="lightbulb" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> 크라우니 시작하기</h3>
                 <div style="line-height:2; font-size:0.9rem;">
-                    <p data-i18n-html="today.auto_wallet">✅ <strong>자동 생성된 지갑</strong>으로 바로 시작</p>
-                    <p data-i18n-html="today.no_gas">✅ <strong>가스비 무료</strong> (크라우니 지갑)</p>
-                    <p data-i18n-html="today.seven_tokens">✅ <strong>7가지 토큰</strong>: CRNY, FNC, CRFN + CRTD, CRAC, CRGC, CREB</p>
-                    <p data-i18n-html="today.send_token">✅ 메신저로 <strong>토큰 전송</strong> 가능</p>
+                    <p data-i18n-html="today.auto_wallet"><i data-lucide="check-circle" style="width:16px;height:16px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> <strong>자동 생성된 지갑</strong>으로 바로 시작</p>
+                    <p data-i18n-html="today.no_gas"><i data-lucide="check-circle" style="width:16px;height:16px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> <strong>가스비 무료</strong> (크라우니 지갑)</p>
+                    <p data-i18n-html="today.seven_tokens"><i data-lucide="check-circle" style="width:16px;height:16px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> <strong>7가지 토큰</strong>: CRNY, FNC, CRFN + CRTD, CRAC, CRGC, CREB</p>
+                    <p data-i18n-html="today.send_token"><i data-lucide="check-circle" style="width:16px;height:16px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> 메신저로 <strong>토큰 전송</strong> 가능</p>
                 </div>
             </div>
         </section>
@@ -1142,7 +1142,7 @@
             
             <!-- 수익 현황 -->
             <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
-                <h3 style="margin-bottom:1rem;" data-i18n="energy.my_investment">📊 내 투자 현황</h3>
+                <h3 style="margin-bottom:1rem;" data-i18n="energy.my_investment"><i data-lucide="bar-chart-3" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> 내 투자 현황</h3>
                 <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">
                     <div style="flex:1; min-width:100px; background:#FFF8E1; padding:0.8rem; border-radius:8px; text-align:center;">
                         <div style="font-size:0.75rem; color:var(--accent);" data-i18n="energy.total_invested">총 투자</div>
@@ -1268,7 +1268,7 @@
                             </div>
                         </div>
                         <input type="number" id="swap-amount" placeholder="수량" data-i18n-placeholder="placeholder.amount" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                        <p style="font-size:0.8rem; color:#4CAF50; font-weight:700;" data-i18n="credit.exchange_fee">✅ 환전 수수료: 0%</p>
+                        <p style="font-size:0.8rem; color:#4CAF50; font-weight:700;" data-i18n="credit.exchange_fee"<i data-lucide="check-circle" style="width:14px;height:14px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> 환전 수수료: 0%</p>
                         <button onclick="swapTokens()" class="btn-primary" data-i18n="credit.exchange_btn">💱 환전하기</button>
                     </div>
                 </div>
@@ -1287,7 +1287,7 @@
                         <input type="number" id="pumasi-amount" placeholder="필요 금액 (CRTD)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                         <textarea id="pumasi-reason" placeholder="사유 (공동체에 공유됩니다)" data-i18n-placeholder="placeholder.reason" rows="2" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px; resize:vertical;"></textarea>
                         <input type="number" id="pumasi-days" value="30" placeholder="상환 기간(일)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                        <p style="font-size:0.8rem; color:#4CAF50; font-weight:700;" data-i18n="credit.pumasi_no_interest">✅ 이자: 0% (형제에게 이자를 받지 않습니다)</p>
+                        <p style="font-size:0.8rem; color:#4CAF50; font-weight:700;" data-i18n="credit.pumasi_no_interest"<i data-lucide="check-circle" style="width:14px;height:14px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> 이자: 0% (형제에게 이자를 받지 않습니다)</p>
                         <button onclick="requestPumasi()" class="btn-primary" data-i18n="credit.pumasi_btn">🤝 품앗이 요청</button>
                     </div>
                 </div>
@@ -1370,7 +1370,7 @@
             
             <!-- 내 크레딧 현황 -->
             <div style="background:white; padding:1.5rem; border-radius:12px; margin-top:1rem;">
-                <h3 style="margin-bottom:1rem;" data-i18n="credit.score_title">📊 내 크레딧 현황</h3>
+                <h3 style="margin-bottom:1rem;" data-i18n="credit.score_title"><i data-lucide="bar-chart-3" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> 내 크레딧 현황</h3>
                 <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">
                     <div style="flex:1; min-width:100px; background:var(--bg); padding:0.8rem; border-radius:8px; text-align:center;">
                         <div style="font-size:0.75rem; color:var(--accent);" data-i18n="credit.score">크레딧 점수</div>
@@ -1393,7 +1393,7 @@
 
         <!-- Prop Trading Page -->
         <section id="prop-trading" class="page" data-feature="trading">
-            <h2 data-i18n="trading.title">📊 TRADING GAME</h2>
+            <h2 data-i18n="trading.title"><i data-lucide="trending-up" style="width:24px;height:24px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> TRADING GAME</h2>
             
             <!-- 초기화 버튼 -->
             <button id="trading-reload-btn" onclick="reloadTradingSystem()" style="margin-bottom:1rem; padding:0.6rem 1.2rem; background:#3D2B1F; color:#FFF8F0; border:none; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600;">
@@ -1446,7 +1446,7 @@
                         </select>
                         <select id="tab-chart-type" onchange="updateTabSetting('chartType')" style="background:#6B5744; color:#ccc; border:1px solid #333; border-radius:4px; padding:3px 6px; font-size:0.75rem;">
                             <option value="time">⏱ 타임</option>
-                            <option value="tick">📊 틱</option>
+                            <option value="tick">틱</option>
                         </select>
                         <select id="tab-interval" onchange="updateTabSetting('interval')" style="background:#6B5744; color:#ccc; border:1px solid #333; border-radius:4px; padding:3px 6px; font-size:0.75rem;">
                             <option value="60">1분</option>
@@ -1691,7 +1691,7 @@
                 
                 <!-- Open Positions -->
                 <div style="background:white; padding:1.5rem; border-radius:12px; margin-top:1rem;">
-                    <h4 style="margin-bottom:1rem;" data-i18n="trading.open_positions">📊 오픈 포지션</h4>
+                    <h4 style="margin-bottom:1rem;" data-i18n="trading.open_positions"><i data-lucide="bar-chart-3" style="width:16px;height:16px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> 오픈 포지션</h4>
                     <div id="open-positions"></div>
                 </div>
                 
@@ -1781,7 +1781,7 @@
         </section>
 
         <section id="settings" class="page">
-            <h2>⚙️ SETTINGS</h2>
+            <h2><i data-lucide="settings" style="width:24px;height:24px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> SETTINGS</h2>
             <div id="settings-content"><p style="text-align:center;padding:2rem;color:var(--accent);">Loading...</p></div>
         </section>
 
@@ -1956,7 +1956,7 @@
                     <label style="font-size:0.8rem; color:var(--accent);">플랫폼 수수료 (%)</label>
                     <input type="number" id="fund-fee" value="2.5" min="0" max="50" step="0.5" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                 </div>
-                <p style="font-size:0.75rem; color:var(--accent);">💡 수수료는 재단 운영비로 투명하게 사용됩니다</p>
+                <p style="font-size:0.75rem; color:var(--accent);"><i data-lucide="lightbulb" style="width:14px;height:14px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> 수수료는 재단 운영비로 투명하게 사용됩니다</p>
                 <button onclick="createCampaign(); closeRegisterModal('fundraise');" class="btn-primary" data-i18n="fundraise.donate_btn">💝 캠페인 시작</button>
             </div>
         </div>
