@@ -4,7 +4,7 @@
 // 기본 토큰 (Firestore 로드 실패 시 폴백)
 const DEFAULT_OFFCHAIN_TOKENS = {
     crtd: { name: 'CRTD', get fullName() { return t('offchain.token.crtd', '트레이딩 달러'); }, icon: '📈', color: '#C4841D', isDefault: true },
-    crac: { name: 'CRAC', get fullName() { return t('offchain.token.crac', '아트 크레딧'); }, icon: '🎭', color: '#9C27B0', isDefault: true },
+    crac: { name: 'CRAC', get fullName() { return t('offchain.token.crac', '아트 크레딧'); }, icon: '🎭', color: '#8B6914', isDefault: true },
     crgc: { name: 'CRGC', get fullName() { return t('offchain.token.crgc', '굿즈 & 기빙'); }, icon: '🛒', color: '#6B8F3C', isDefault: true },
     creb: { name: 'CREB', get fullName() { return t('offchain.token.creb', '에코 바이오'); }, icon: '🌱', color: '#5B7B8C', isDefault: true }
 };

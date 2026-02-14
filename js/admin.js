@@ -79,7 +79,7 @@ const ADMIN_EMAIL = SUPER_ADMIN_EMAIL; // 하위 호환
 
 const ADMIN_LEVELS = {
     6: { name: t('admin.level.super','수퍼관리자'), icon: '👑', color: '#8B6914' },
-    5: { name: t('admin.level.country','국가관리자'), icon: '🌍', color: '#9C27B0' },
+    5: { name: t('admin.level.country','국가관리자'), icon: '🌍', color: '#8B6914' },
     4: { name: t('admin.level.business','사업관리자'), icon: '💼', color: '#5B7B8C' },
     3: { name: t('admin.level.service','서비스관리자'), icon: '🔧', color: '#FF9800' },
     2: { name: t('admin.level.ops','운영관리자'), icon: '📝', color: '#6B8F3C' },
@@ -316,7 +316,7 @@ async function showAdminEditModal(userId, userData) {
             </div>
             
             <div style="display:flex;gap:0.5rem;">
-                <button id="edit-admin-save" style="flex:1;padding:0.7rem;background:#9C27B0;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:700;">${t('common.save','저장')}</button>
+                <button id="edit-admin-save" style="flex:1;padding:0.7rem;background:#8B6914;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:700;">${t('common.save','저장')}</button>
                 <button id="edit-admin-cancel" style="flex:1;padding:0.7rem;border:1px solid #E8E0D8;border-radius:8px;cursor:pointer;background:#FFF8F0;">${t('common.cancel','취소')}</button>
             </div>
         </div>`;
@@ -1443,7 +1443,7 @@ async function adminLoadGivingPool() {
             infoEl.innerHTML = `
                 <div style="text-align:center;">
                     <div style="font-size:0.8rem; color:var(--accent);">🎁 글로벌 기부풀 잔액</div>
-                    <div style="font-size:2rem; font-weight:800; color:#00897b;">${(pool.totalAmount||0).toLocaleString()} <span style="font-size:0.9rem;">CRGC pt</span></div>
+                    <div style="font-size:2rem; font-weight:800; color:#6B8F3C;">${(pool.totalAmount||0).toLocaleString()} <span style="font-size:0.9rem;">CRGC pt</span></div>
                     <div style="font-size:0.75rem; color:var(--accent);">≈ ${((pool.totalAmount||0)/100).toFixed(2)} CRNY · 최종: ${updated}</div>
                 </div>`;
         } else {
@@ -1461,7 +1461,7 @@ async function adminLoadGivingPool() {
             const log = doc.data();
             const time = log.timestamp?.toDate ? log.timestamp.toDate().toLocaleString('ko-KR') : '--';
             html += `<div style="padding:0.4rem; border-bottom:1px solid #E8E0D8; font-size:0.78rem;">
-                <span style="color:#00897b; font-weight:600;">+${(log.givingAmount||0).toLocaleString()}</span>
+                <span style="color:#6B8F3C; font-weight:600;">+${(log.givingAmount||0).toLocaleString()}</span>
                 <span style="color:var(--accent);"> from ${log.email||'--'}</span>
                 <span style="color:#6B5744; float:right;">${time}</span>
             </div>`;
@@ -1604,7 +1604,7 @@ async function loadAdminUserList() {
                         ${appointOptions}
                     </select>
                 </div>
-                <button onclick="setUserAdminLevel(document.getElementById('admin-level-email').value, parseInt(document.getElementById('admin-level-select').value))" style="background:#9C27B0; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">설정</button>
+                <button onclick="setUserAdminLevel(document.getElementById('admin-level-email').value, parseInt(document.getElementById('admin-level-select').value))" style="background:#8B6914; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">설정</button>
             </div>
         </div>`;
         
@@ -1659,7 +1659,7 @@ async function loadAdminUserList() {
                             <span style="font-size:0.72rem; padding:2px 6px; background:${info.color}22; color:${info.color}; border-radius:3px;">
                                 ${info.icon} Lv${level}
                             </span>
-                            ${canManage ? `<button onclick="showAdminEditModal('${u.id}', window._adminUserCache['${u.id}'])" style="background:#9C27B0;color:#FFF8F0;border:none;padding:2px 6px;border-radius:3px;cursor:pointer;font-size:0.65rem;">편집</button>` : ''}
+                            ${canManage ? `<button onclick="showAdminEditModal('${u.id}', window._adminUserCache['${u.id}'])" style="background:#8B6914;color:#FFF8F0;border:none;padding:2px 6px;border-radius:3px;cursor:pointer;font-size:0.65rem;">편집</button>` : ''}
                         </div>
                     </div>
                 </div>
@@ -2277,7 +2277,7 @@ async function loadAdminParticipants() {
                                         일일한도: <span style="font-weight:700;">$${p.dailyLossLimit || 500}</span> · 
                                         청산한도: <span style="font-weight:700;">$${(p.maxDrawdown || 3000).toLocaleString()}</span>
                                         ${p.copyAccounts > 1 ? ` · <span style="color:#C4841D; font-weight:700;">카피: ${p.copyAccounts}계정</span>` : ''}
-                                        ${p.tradingTier ? ` · <span style="color:#9C27B0;">MNQ×${p.tradingTier.MNQ||0} NQ×${p.tradingTier.NQ||0}</span>` : ''}
+                                        ${p.tradingTier ? ` · <span style="color:#8B6914;">MNQ×${p.tradingTier.MNQ||0} NQ×${p.tradingTier.NQ||0}</span>` : ''}
                                     </div>
                                     ${isSuspended ? `<div style="font-size:0.75rem; color:#cc0000; margin-top:0.2rem;">사유: ${p.suspendReason || '-'}</div>` : ''}
                                 </div>
@@ -2322,7 +2322,7 @@ async function loadAdminParticipants() {
                                         📋 카피계정
                                     </button>
                                     <button onclick="adminAdjustTradingTier('${participantId}', '${challengeId}')" 
-                                        style="background:#9C27B0; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
+                                        style="background:#8B6914; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
                                         📊 거래티어
                                     </button>
                                 </div>

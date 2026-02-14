@@ -1891,7 +1891,7 @@ const SERVICE_LINK_CONFIG = {
     artist:   { action: '💖 후원하기', color: '#B54534', collection: 'artists', nameField: 'name', nav: (id) => { showPage('artist'); viewArtistDetail(id); } },
     campaign: { action: '💝 모금하기', color: '#6B8F3C', collection: 'campaigns', nameField: 'title', nav: (id) => { showPage('fundraise'); showCampaignDetail(id); } },
     business: { action: '💰 투자하기', color: '#3D2B1F', collection: 'businesses', nameField: 'name', nav: (id) => { showPage('business'); viewBusinessDetail(id); } },
-    art:      { action: '🎨 작품 구매', color: '#9C27B0', collection: 'artworks', nameField: 'title', nav: (id) => showPage('art') },
+    art:      { action: '🎨 작품 구매', color: '#8B6914', collection: 'artworks', nameField: 'title', nav: (id) => showPage('art') },
     book:     { action: '📚 책 구매', color: '#FF9800', collection: 'books', nameField: 'title', nav: (id) => showPage('books') },
     product:  { action: '🛒 상품 구매', color: '#5B7B8C', collection: 'products', nameField: 'name', nav: (id) => { showPage('product-detail'); renderProductDetail(id); } }
 };
