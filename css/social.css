@@ -460,7 +460,7 @@
 .story-avatar-wrap.has-story img, .story-avatar-wrap.has-story > div { border:2px solid #FFF8F0; }
 .story-avatar-wrap.viewed { background:linear-gradient(45deg,#E8E0D8,‌#6B5744);padding:3px; }
 .story-avatar-wrap.viewed img, .story-avatar-wrap.viewed > div { border:2px solid #FFF8F0; }
-.story-add-badge { position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border-radius:50%;background:#0095f6;color:#FFF8F0;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid #FFF8F0; }
+.story-add-badge { position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border-radius:50%;background:#5B7B8C;color:#FFF8F0;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid #FFF8F0; }
 
 /* ===== DOUBLE-TAP HEART ===== */
 @keyframes heartPop { 0%{transform:scale(0);opacity:1} 50%{transform:scale(1.2);opacity:1} 100%{transform:scale(1);opacity:0} }
@@ -522,7 +522,7 @@
     border-bottom-color: var(--dark-text) !important;
 }
 .social-tab-item .tab-badge {
-    background: #ff4444;
+    background: #B54534;
     color: #FFF8F08F0;
     font-size: 0.55rem;
     border-radius: 50%;
@@ -868,7 +868,7 @@
     padding: 8px;
     border: none;
     border-radius: 8px;
-    background: #0095f6;
+    background: #5B7B8C;
     color: #FFF8F08F0;
     font-weight: 600;
     font-size: 0.85rem;

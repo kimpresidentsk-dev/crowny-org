@@ -448,7 +448,7 @@ a:not(.nav-item) {
 /* Input fields unified */
 input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
 textarea, select {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #3D2B1F) !important;
     color: var(--text, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
@@ -473,7 +473,7 @@ input:focus, textarea:focus, select:focus {
 
 /* Unified secondary buttons */
 .btn-secondary {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #3D2B1F) !important;
     color: var(--text, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
@@ -487,7 +487,7 @@ input:focus, textarea:focus, select:focus {
 }
 #profile-edit-modal input,
 #add-contact-modal input {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #3D2B1F) !important;
     color: var(--text, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
@@ -509,7 +509,7 @@ input:focus, textarea:focus, select:focus {
     color: var(--text, #F7F3ED) !important;
 }
 .settings-btn {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #3D2B1F) !important;
     color: var(--text, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
@@ -522,7 +522,7 @@ input:focus, textarea:focus, select:focus {
 
 /* Link preview dark */
 .link-preview-card {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #3D2B1F) !important;
     border-color: var(--border, #E8E0D8) !important;
     color: var(--text, #F7F3ED) !important;
 }
@@ -541,7 +541,7 @@ input:focus, textarea:focus, select:focus {
     border-color: var(--border, #E8E0D8) !important;
 }
 .post-dropdown-menu div:hover {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #3D2B1F) !important;
 }
 
 /* Reaction picker dark */
@@ -573,7 +573,7 @@ input:focus, textarea:focus, select:focus {
     color: var(--text, #F7F3ED) !important;
 }
 .chat-menu-item:hover {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #3D2B1F) !important;
 }
 
 /* Friend request item dark */
@@ -596,28 +596,28 @@ input:focus, textarea:focus, select:focus {
 
 /* Reply preview bar dark */
 .reply-preview-bar {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #3D2B1F) !important;
     border-color: var(--gold, #8B6914) !important;
     color: var(--text, #F7F3ED) !important;
 }
 
 /* Pinned message dark */
 .pinned-message-banner {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #3D2B1F) !important;
     border-color: var(--gold, #8B6914) !important;
     color: var(--text, #F7F3ED) !important;
 }
 
 /* Dashboard shortcuts dark */
 .dash-shortcut-btn {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #3D2B1F) !important;
     color: var(--text, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Tab buttons dark */
 .tab-btn {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #3D2B1F) !important;
     color: var(--text, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
@@ -642,11 +642,11 @@ input:focus, textarea:focus, select:focus {
     border-color: var(--border, #E8E0D8) !important;
 }
 .ai-bubble-bot {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #3D2B1F) !important;
     color: var(--text, #F7F3ED) !important;
 }
 .ai-quick-card {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #3D2B1F) !important;
     color: var(--text, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
@@ -664,7 +664,7 @@ input:focus, textarea:focus, select:focus {
 
 /* Msg reaction chip dark */
 .msg-reaction-chip {
-    background: var(--bg-card-alt, #1e1e3a) !important;
+    background: var(--bg-card-alt, #3D2B1F) !important;
     border-color: var(--border, #E8E0D8) !important;
     color: var(--text, #F7F3ED) !important;
 }

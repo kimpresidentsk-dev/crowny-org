@@ -494,7 +494,7 @@
     display: inline-block;
 }
 .msg-read-receipt.read {
-    color: #2196F3;
+    color: #5B7B8C;
 }
 .msg-read-receipt.sent {
     color: #6B5744;
@@ -502,7 +502,7 @@
 
 /* Unread badge */
 .unread-badge {
-    background: #e53935;
+    background: #B54534;
     color: #FFF8F08F0;
     font-size: 0.65rem;
     font-weight: 700;
@@ -525,7 +525,7 @@
     flex-shrink: 0;
     border: 2px solid #FFF8F0;
 }
-.online-dot.online { background: #4CAF50; }
+.online-dot.online { background: #6B8F3C; }
 .online-dot.offline { background: #E8E0D8; }
 
 /* Message time */
@@ -613,7 +613,7 @@
     background: var(--border);
 }
 .msg-reaction-chip.mine {
-    border-color: #2196F3;
+    border-color: #5B7B8C;
     background: rgba(33,150,243,0.08);
 }
 
@@ -660,7 +660,7 @@
     background: var(--bg-card-alt);
 }
 .chat-menu-item.danger {
-    color: #e53935;
+    color: #B54534;
 }
 
 /* Message search highlight */
@@ -777,21 +777,21 @@
     display: inline-block; font-size: 0.65rem; padding: 0.1rem 0.4rem;
     border-radius: 4px; margin-left: 0.3rem;
 }
-.role-badge.owner { background: #FFF3CD; color: #856404; }
-.role-badge.admin { background: #D4EDDA; color: #155724; }
+.role-badge.owner { background: #F7F3ED; color: #6B5744; }
+.role-badge.admin { background: #F7F3ED; color: #6B8F3C; }
 .group-action-btn {
     background: none; border: 1px solid var(--border); border-radius: 6px;
     padding: 0.2rem 0.4rem; font-size: 0.7rem; cursor: pointer; color: var(--text);
 }
 .group-action-btn:hover { background: var(--bg-card-alt); }
-.group-action-btn.kick { border-color: #e53935; }
+.group-action-btn.kick { border-color: #B54534; }
 .group-action-btn.kick:hover { background: rgba(229,57,53,0.15); }
 .group-info-bottom { margin-top: 1rem; }
 .btn-danger {
     background: #dc3545; color: #FFF8F08F0; border: none;
     cursor: pointer; font-size: 0.85rem;
 }
-.btn-danger:hover { background: #c82333; }
+.btn-danger:hover { background: #B54534; }
 
 /* Group member selection modal */
 .group-member-select-overlay {
@@ -831,7 +831,7 @@
 .reply-preview-content { flex: 1; min-width: 0; overflow: hidden; }
 .pinned-message-banner {
     display: flex; align-items: center; gap: 0.5rem;
-    padding: 0.4rem 0.8rem; background: rgba(255,160,0,0.1); border-left: 3px solid #ffa000;
+    padding: 0.4rem 0.8rem; background: rgba(255,160,0,0.1); border-left: 3px solid #C4841D;
     margin: 0 0.5rem; border-radius: 0 8px 8px 0;
 }
 .voice-recording-ui {
@@ -839,7 +839,7 @@
     padding: 0.6rem 1rem; background: rgba(255,68,68,0.1); border-top: 1px solid var(--border);
 }
 .voice-rec-dot {
-    width: 12px; height: 12px; border-radius: 50%; background: #ff4444;
+    width: 12px; height: 12px; border-radius: 50%; background: #B54534;
     animation: voicePulse 1s infinite;
 }
 @keyframes voicePulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }

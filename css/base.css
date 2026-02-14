@@ -17,7 +17,7 @@
     --primary-light: #6B5744;           /* 라이트 브라운 */
     --primary-hover: #2A1A0F;          /* 호버 */
     --bg: #FFF8F0;                      /* 크림 아이보리 배경 */
-    --bg-secondary: #FFFBF5;           /* 밝은 크림 */
+    --bg-secondary: #FFF8F0;           /* 밝은 크림 */
     --bg-card: #F7F3ED;                /* 카드 배경 */
     --text: #3D2B1F;                   /* 초콜릿 브라운 글씨 */
     --text-secondary: #6B5744;         /* 보조 글씨 */
@@ -42,7 +42,7 @@
     --text-muted: #6B5744;
     --white: #FFF8F0;
     --card-bg: #F7F3ED;
-    --success: #4A7C59;                /* 자연 녹색 */
+    --success: #6B8F3C;                /* 자연 녹색 */
     --warning: #C4841D;                /* 경고/에러 기존 유지 */
     --error: #B54534;
     --danger: #B54534;
@@ -56,7 +56,7 @@
     --dark-text: #3D2B1F;
     --dark-muted: #6B5744;
     --dark-gold: #8B6914;
-    --dark-cream: #FFFBF5;
+    --dark-cream: #FFF8F0;
 }
 
 
@@ -307,7 +307,7 @@ h2 {
 }
 
 .btn-primary:hover {
-    background: #e6c040;
+    background: #C9A84C;
     color: #3D2B1F;
 }
 
