@@ -95,16 +95,41 @@ async function loadSettings() {
             <div class="settings-card">
                 <h4>🌐 ${getText('settings.language', '언어 설정')}</h4>
                 <div class="settings-lang-list">
-                    ${[
-                        ['ko', '🇰🇷 한국어'],
-                        ['en', '🇺🇸 English'],
-                        ['ja', '🇯🇵 日本語'],
-                        ['zh', '🇨🇳 中文'],
-                        ['es', '🇪🇸 Español']
-                    ].map(([code, label]) => `
+                    ${Object.entries(typeof SUPPORTED_LANGS !== 'undefined' ? SUPPORTED_LANGS : {
+                        ko: { name: '한국어', flag: '🇰🇷' },
+                        en: { name: 'English', flag: '🇺🇸' },
+                        zh: { name: '中文', flag: '🇨🇳' },
+                        ja: { name: '日本語', flag: '🇯🇵' },
+                        es: { name: 'Español', flag: '🇪🇸' },
+                        fr: { name: 'Français', flag: '🇫🇷' },
+                        de: { name: 'Deutsch', flag: '🇩🇪' },
+                        pt: { name: 'Português', flag: '🇧🇷' },
+                        ru: { name: 'Русский', flag: '🇷🇺' },
+                        ar: { name: 'العربية', flag: '🇸🇦' },
+                        hi: { name: 'हिन्दी', flag: '🇮🇳' },
+                        th: { name: 'ไทย', flag: '🇹🇭' },
+                        vi: { name: 'Tiếng Việt', flag: '🇻🇳' },
+                        id: { name: 'Bahasa Indonesia', flag: '🇮🇩' },
+                        tr: { name: 'Türkçe', flag: '🇹🇷' },
+                        it: { name: 'Italiano', flag: '🇮🇹' },
+                        nl: { name: 'Nederlands', flag: '🇳🇱' },
+                        pl: { name: 'Polski', flag: '🇵🇱' },
+                        sv: { name: 'Svenska', flag: '🇸🇪' },
+                        da: { name: 'Dansk', flag: '🇩🇰' },
+                        fi: { name: 'Suomi', flag: '🇫🇮' },
+                        no: { name: 'Norsk', flag: '🇳🇴' },
+                        uk: { name: 'Українська', flag: '🇺🇦' },
+                        ro: { name: 'Română', flag: '🇷🇴' },
+                        hu: { name: 'Magyar', flag: '🇭🇺' },
+                        cs: { name: 'Čeština', flag: '🇨🇿' },
+                        el: { name: 'Ελληνικά', flag: '🇬🇷' },
+                        he: { name: 'עברית', flag: '🇮🇱' },
+                        ms: { name: 'Bahasa Melayu', flag: '🇲🇾' },
+                        bn: { name: 'বাংলা', flag: '🇧🇩' }
+                    }).map(([code, info]) => `
                         <label class="settings-radio">
                             <input type="radio" name="lang" value="${code}" ${currentLang === code ? 'checked' : ''} onchange="changeLanguageSetting('${code}')">
-                            <span>${label}</span>
+                            <span>${info.flag} ${info.name}</span>
                         </label>
                     `).join('')}
                 </div>

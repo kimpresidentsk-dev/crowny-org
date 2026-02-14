@@ -3072,8 +3072,27 @@ input:checked + .notif-toggle-slider::before {
 .settings-toggle input[type="checkbox"]:checked { background: #2e7d32; }
 .settings-toggle input[type="checkbox"]::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; background: #FFF8F0; border-radius: 50%; transition: transform 0.2s; }
 .settings-toggle input[type="checkbox"]:checked::after { transform: translateX(18px); }
-.settings-lang-list { display: flex; flex-direction: column; gap: 0.4rem; }
-.settings-radio { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem; cursor: pointer; font-size: 0.9rem; }
+.settings-lang-list { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+    gap: 0.4rem; 
+    max-height: 300px; 
+    overflow-y: auto; 
+    padding: 0.5rem 0; 
+}
+.settings-radio { 
+    display: flex; 
+    align-items: center; 
+    gap: 0.5rem; 
+    padding: 0.3rem 0.5rem; 
+    cursor: pointer; 
+    font-size: 0.85rem; 
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+.settings-radio:hover {
+    background: rgba(218, 165, 32, 0.1);
+}
 .settings-radio input[type="radio"] { accent-color: var(--primary); }
 
 /* ===== BRAND: Section headers gold underline ===== */
