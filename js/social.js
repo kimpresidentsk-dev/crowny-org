@@ -2125,7 +2125,9 @@ async function createPost() {
     const textarea = document.getElementById('post-text');
     const fileInput = document.getElementById('post-image');
     const videoInput = document.getElementById('post-video');
+    const locationInput = document.getElementById('post-location');
     const text = textarea.value.trim();
+    const location = locationInput ? locationInput.value.trim() : '';
     const hasImage = fileInput.files[0];
     const hasVideo = videoInput.files[0];
     if (!text && !hasImage && !hasVideo) { showToast(t('social.enter_content','내용 또는 이미지/영상을 입력하세요'), 'warning'); return; }
@@ -2177,6 +2179,8 @@ async function createPost() {
             userId: currentUser.uid, text, imageUrl, likes: 0, likedBy: [], commentCount: 0, shareCount: 0, timestamp: new Date(),
             hashtags, mentions
         };
+        
+        if (location) postData.location = location;
 
         if (videoUrl) {
             postData.videoUrl = videoUrl;
@@ -2218,6 +2222,7 @@ async function createPost() {
         textarea.value = '';
         fileInput.value = '';
         videoInput.value = '';
+        if (locationInput) locationInput.value = '';
         document.getElementById('post-image-name').textContent = '';
         document.getElementById('post-video-preview').style.display = 'none';
         document.getElementById('post-service-link-preview').style.display = 'none';
@@ -2227,6 +2232,7 @@ async function createPost() {
         hideLoading();
         await loadSocialFeed();
         showToast(t('social.post_done','✅ 게시 완료!'), 'success');
+        if (window.lucide) lucide.createIcons();
     } catch (error) {
         hideLoading();
         console.error('Post error:', error);
