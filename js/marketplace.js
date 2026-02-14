@@ -2172,6 +2172,7 @@ async function loadCart() {
         if (summary) { summary.style.display = 'block'; }
         const totalEl = document.getElementById('cart-total');
         if (totalEl) totalEl.textContent = total + ' CRGC';
+        if(window.lucide) lucide.createIcons();
     } catch(e) { c.innerHTML = `<p style="color:red;">${e.message}</p>`; }
 }
 

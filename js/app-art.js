@@ -551,6 +551,7 @@ async function loadArtGallery() {
         if (filterSort === 'auction')    items = items.filter(a => a.saleType === 'auction');
 
         container.innerHTML = items.map(art => _renderArtCard(art)).join('');
+        if(window.lucide) lucide.createIcons();
     } catch (error) {
         container.innerHTML = `<p style="color:red; grid-column:1/-1;">로드 실패: ${error.message}</p>`;
     }
@@ -563,7 +564,7 @@ function _renderArtCard(art) {
     let badges = '';
     if (art.isNFT) {
         const typeLabel = art.nftType === 'erc1155' ? `Ed.×${art.editionCount || '?'}` : '1/1';
-        badges += `<div style="position:absolute;top:6px;right:6px;background:rgba(138,43,226,0.9);color:#fff;padding:2px 8px;border-radius:12px;font-size:0.65rem;font-weight:700;backdrop-filter:blur(4px)">🔗 NFT · ${typeLabel}</div>`;
+        badges += `<div style="position:absolute;top:6px;right:6px;background:rgba(138,43,226,0.9);color:#E8D5C4;padding:2px 8px;border-radius:12px;font-size:0.65rem;font-weight:700;backdrop-filter:blur(4px)">🔗 NFT · ${typeLabel}</div>`;
     }
 
     // Supply badge
@@ -571,9 +572,9 @@ function _renderArtCard(art) {
         const remaining = Math.max(0, art.totalSupply - (art.soldCount || 0));
         const isSoldOut = remaining <= 0;
         if (isSoldOut) {
-            badges += `<div style="position:absolute;top:6px;left:6px;background:rgba(204,0,0,0.9);color:#fff;padding:2px 8px;border-radius:12px;font-size:0.65rem;font-weight:700">SOLD OUT</div>`;
+            badges += `<div style="position:absolute;top:6px;left:6px;background:rgba(204,0,0,0.9);color:#E8D5C4;padding:2px 8px;border-radius:12px;font-size:0.65rem;font-weight:700">SOLD OUT</div>`;
         } else {
-            badges += `<div style="position:absolute;top:${art.isNFT ? '28' : '6'}px;right:6px;background:rgba(0,0,0,0.6);color:#fff;padding:2px 6px;border-radius:10px;font-size:0.6rem">${remaining}/${art.totalSupply}</div>`;
+            badges += `<div style="position:absolute;top:${art.isNFT ? '28' : '6'}px;right:6px;background:rgba(0,0,0,0.6);color:#E8D5C4;padding:2px 6px;border-radius:10px;font-size:0.6rem">${remaining}/${art.totalSupply}</div>`;
         }
     }
 
@@ -594,7 +595,7 @@ function _renderArtCard(art) {
     }
 
     return `
-        <div onclick="viewArtwork('${art.id}')" class="art-gallery-card" style="position:relative;background:#fff;border-radius:10px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:transform .2s" onmouseenter="this.style.transform='translateY(-3px)'" onmouseleave="this.style.transform=''">
+        <div onclick="viewArtwork('${art.id}')" class="art-gallery-card" style="position:relative;background:#FFF8F0;border-radius:10px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:transform .2s" onmouseenter="this.style.transform='translateY(-3px)'" onmouseleave="this.style.transform=''">
             ${badges}
             <div style="width:100%;height:170px;overflow:hidden;background:#f0f0f0">
                 <img src="${imgSrc}" style="width:100%;height:100%;object-fit:cover" alt="${art.title}" loading="lazy">
@@ -673,15 +674,15 @@ async function viewArtwork(artId) {
             const scanUrl = `https://polygonscan.com/token/${art.nftContract}?a=${art.nftTokenId}`;
             const ipfsUrl = art.ipfsImageUri ? ipfsToHttp(art.ipfsImageUri) : null;
             nftInfoHtml = `
-                <div style="background:linear-gradient(135deg,#8B6914,#6B5744);padding:.8rem;border-radius:8px;margin-bottom:1rem;color:#fff">
+                <div style="background:linear-gradient(135deg,#8B6914,#6B5744);padding:.8rem;border-radius:8px;margin-bottom:1rem;color:#E8D5C4">
                     <div style="font-weight:700;margin-bottom:.4rem">🔗 NFT 인증</div>
                     <div style="font-size:.78rem;display:grid;gap:.2rem">
                         <div>타입: ${typeLabel}</div>
                         <div>Token ID: #${art.nftTokenId}</div>
-                        <div>컨트랙트: <a href="${scanUrl}" target="_blank" style="color:#fff;text-decoration:underline">${cShort}</a></div>
+                        <div>컨트랙트: <a href="${scanUrl}" target="_blank" style="color:#E8D5C4;text-decoration:underline">${cShort}</a></div>
                         <div>로열티: ${art.royaltyPercent || 10}%</div>
-                        ${ipfsUrl ? `<div>IPFS: <a href="${ipfsUrl}" target="_blank" style="color:#fff;text-decoration:underline">원본 보기</a></div>` : ''}
-                        ${art.mintTxHash ? `<div>TX: <a href="https://polygonscan.com/tx/${art.mintTxHash}" target="_blank" style="color:#fff;text-decoration:underline">${art.mintTxHash.slice(0,10)}…</a></div>` : ''}
+                        ${ipfsUrl ? `<div>IPFS: <a href="${ipfsUrl}" target="_blank" style="color:#E8D5C4;text-decoration:underline">원본 보기</a></div>` : ''}
+                        ${art.mintTxHash ? `<div>TX: <a href="https://polygonscan.com/tx/${art.mintTxHash}" target="_blank" style="color:#E8D5C4;text-decoration:underline">${art.mintTxHash.slice(0,10)}…</a></div>` : ''}
                     </div>
                 </div>`;
         }
@@ -692,12 +693,12 @@ async function viewArtwork(artId) {
 
         if ((art.saleType === 'fixed' || art.basePrice > 0) && !isOwner && art.status === 'active') {
             if (isSoldOut) {
-                actionHtml = `<button disabled style="background:#999;color:#fff;border:none;padding:.8rem 2rem;border-radius:8px;width:100%;font-weight:700;cursor:not-allowed">🚫 SOLD OUT</button>`;
+                actionHtml = `<button disabled style="background:#999;color:#E8D5C4;border:none;padding:.8rem 2rem;border-radius:8px;width:100%;font-weight:700;cursor:not-allowed">🚫 SOLD OUT</button>`;
             } else {
                 actionHtml = `
                     <div style="display:flex;gap:.5rem">
-                        <button onclick="buyArtwork('${artId}')" style="background:#3D2B1F;color:#fff;border:none;padding:.8rem 1.5rem;border-radius:8px;cursor:pointer;font-weight:700;flex:1">💰 ${effectivePrice} ${art.priceToken || 'CRAC'} 구매</button>
-                        <button onclick="reserveArtwork('${artId}')" style="background:#ff9800;color:#fff;border:none;padding:.8rem 1rem;border-radius:8px;cursor:pointer;font-weight:700">📅 예약</button>
+                        <button onclick="buyArtwork('${artId}')" style="background:#3D2B1F;color:#E8D5C4;border:none;padding:.8rem 1.5rem;border-radius:8px;cursor:pointer;font-weight:700;flex:1">💰 ${effectivePrice} ${art.priceToken || 'CRAC'} 구매</button>
+                        <button onclick="reserveArtwork('${artId}')" style="background:#ff9800;color:#E8D5C4;border:none;padding:.8rem 1rem;border-radius:8px;cursor:pointer;font-weight:700">📅 예약</button>
                     </div>
                     <p style="font-size:.7rem;color:var(--accent);margin-top:.3rem;text-align:center">📅 예약: 보증금 ${Math.ceil(effectivePrice / 10)} ${art.priceToken || 'CRAC'} (1/10) · 1년 내 잔금 결제</p>`;
             }
@@ -707,7 +708,7 @@ async function viewArtwork(artId) {
             actionHtml = `
                 <div style="display:flex;gap:.5rem">
                     <input type="number" id="bid-amount-${artId}" value="${minBid}" min="${minBid}" style="flex:1;padding:.7rem;border:1px solid var(--border);border-radius:6px">
-                    <button onclick="placeBid('${artId}')" style="background:#ff9800;color:#fff;border:none;padding:.8rem 1.5rem;border-radius:8px;cursor:pointer;font-weight:700">🔨 입찰</button>
+                    <button onclick="placeBid('${artId}')" style="background:#ff9800;color:#E8D5C4;border:none;padding:.8rem 1.5rem;border-radius:8px;cursor:pointer;font-weight:700">🔨 입찰</button>
                 </div>
                 <p style="font-size:.75rem;color:var(--accent);margin-top:.3rem">현재 최고: ${curBid} CRAC${art.highestBidderNickname ? ' (' + art.highestBidderNickname + ')' : ''}</p>`;
         }
@@ -715,9 +716,9 @@ async function viewArtwork(artId) {
         if (isOwner) {
             actionHtml = '<div style="display:flex;gap:.5rem;flex-wrap:wrap">';
             if (!art.isNFT) {
-                actionHtml += `<button onclick="mintExistingArtwork('${artId}')" style="background:linear-gradient(135deg,#8B6914,#6B5744);color:#fff;border:none;padding:.6rem 1.2rem;border-radius:6px;cursor:pointer;font-size:.85rem;flex:1">🔗 NFT 민팅</button>`;
+                actionHtml += `<button onclick="mintExistingArtwork('${artId}')" style="background:linear-gradient(135deg,#8B6914,#6B5744);color:#E8D5C4;border:none;padding:.6rem 1.2rem;border-radius:6px;cursor:pointer;font-size:.85rem;flex:1">🔗 NFT 민팅</button>`;
             }
-            actionHtml += `<button onclick="deleteArtwork('${artId}')" style="background:#cc0000;color:#fff;border:none;padding:.6rem 1.2rem;border-radius:6px;cursor:pointer;font-size:.85rem">삭제</button></div>`;
+            actionHtml += `<button onclick="deleteArtwork('${artId}')" style="background:#cc0000;color:#E8D5C4;border:none;padding:.6rem 1.2rem;border-radius:6px;cursor:pointer;font-size:.85rem">삭제</button></div>`;
         }
 
         // Modal
@@ -727,8 +728,8 @@ async function viewArtwork(artId) {
         modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
 
         modal.innerHTML = `
-            <div style="background:#fff;border-radius:12px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;position:relative">
-                <button onclick="document.getElementById('art-modal').remove()" style="position:absolute;top:10px;right:12px;background:rgba(0,0,0,.5);color:#fff;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.1rem;z-index:1">✕</button>
+            <div style="background:#FFF8F0;border-radius:12px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;position:relative">
+                <button onclick="document.getElementById('art-modal').remove()" style="position:absolute;top:10px;right:12px;background:rgba(0,0,0,.5);color:#E8D5C4;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.1rem;z-index:1">✕</button>
                 <img src="${imgSrc}" style="width:100%;border-radius:12px 12px 0 0;max-height:50vh;object-fit:contain;background:#f0f0f0">
                 <div style="padding:1.2rem">
                     <h3 style="margin-bottom:.5rem">${art.title}</h3>
@@ -1277,6 +1278,7 @@ async function _loadMyArtworks(container) {
                 </div>`;
         });
         container.innerHTML = html + '</div>';
+        if(window.lucide) lucide.createIcons();
     } catch (e) {
         container.innerHTML = `<div class="art-empty-state"><span class="icon">⚠️</span><p>로드 실패: ${e.message}</p></div>`;
     }
@@ -1315,6 +1317,7 @@ async function _loadMyPurchases(container) {
                 </div>`;
         });
         container.innerHTML = html + '</div>';
+        if(window.lucide) lucide.createIcons();
     } catch (e) {
         container.innerHTML = `<div class="art-empty-state"><span class="icon">⚠️</span><p>로드 실패: ${e.message}</p></div>`;
     }
@@ -1363,6 +1366,7 @@ async function _loadMyNFTs(container) {
                 </div>`;
         });
         container.innerHTML = html + '</div>';
+        if(window.lucide) lucide.createIcons();
     } catch (e) {
         container.innerHTML = `<div class="art-empty-state"><span class="icon">⚠️</span><p>로드 실패: ${e.message}</p></div>`;
     }
@@ -1398,7 +1402,7 @@ async function _loadMyReservations(container) {
             const img = r.artworkImage || '';
 
             html += `
-                <div style="background:#fff;border-radius:10px;padding:.8rem;display:flex;gap:.8rem;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,.06)">
+                <div style="background:#FFF8F0;border-radius:10px;padding:.8rem;display:flex;gap:.8rem;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,.06)">
                     ${img ? `<img src="${img}" style="width:60px;height:60px;object-fit:cover;border-radius:8px">` : ''}
                     <div style="flex:1;min-width:0">
                         <div style="font-weight:600;font-size:.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.artworkTitle}</div>
@@ -1408,7 +1412,7 @@ async function _loadMyReservations(container) {
                     </div>
                     <div style="display:flex;flex-direction:column;gap:.3rem">
                         ${r.status === 'reserved' && !isExpired ? `
-                            <button onclick="completeReservation('${doc.id}')" style="background:#4CAF50;color:#fff;border:none;padding:.4rem .6rem;border-radius:6px;cursor:pointer;font-size:.75rem;font-weight:600">💰 잔금</button>
+                            <button onclick="completeReservation('${doc.id}')" style="background:#4CAF50;color:#E8D5C4;border:none;padding:.4rem .6rem;border-radius:6px;cursor:pointer;font-size:.75rem;font-weight:600">💰 잔금</button>
                             <button onclick="cancelReservation('${doc.id}')" style="background:none;border:1px solid #ccc;padding:.3rem .5rem;border-radius:6px;cursor:pointer;font-size:.7rem;color:#999">취소</button>
                         ` : ''}
                     </div>
@@ -1471,7 +1475,7 @@ async function _loadMyTransactions(container) {
             const dirColor = tx.direction === 'in' ? '#4CAF50' : '#e53935';
 
             html += `
-                <div style="background:#fff;padding:.6rem .8rem;border-radius:8px;display:flex;justify-content:space-between;align-items:center;font-size:.8rem">
+                <div style="background:#FFF8F0;padding:.6rem .8rem;border-radius:8px;display:flex;justify-content:space-between;align-items:center;font-size:.8rem">
                     <div>
                         <div style="font-weight:600">${dirIcon} ${typeLabel}</div>
                         <div style="color:var(--accent);font-size:.7rem">${tx.artworkTitle || '—'} · ${date.toLocaleDateString()}</div>
@@ -1541,9 +1545,9 @@ async function viewArtistProfile(artistId) {
         modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
 
         modal.innerHTML = `
-            <div style="background:#fff;border-radius:12px;max-width:400px;width:100%;padding:1.5rem">
+            <div style="background:#FFF8F0;border-radius:12px;max-width:400px;width:100%;padding:1.5rem">
                 <div style="text-align:center;margin-bottom:1rem">
-                    <div style="width:60px;height:60px;background:linear-gradient(135deg,#8B6914,#6B5744);border-radius:50%;margin:0 auto .5rem;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#fff">${nickname.charAt(0).toUpperCase()}</div>
+                    <div style="width:60px;height:60px;background:linear-gradient(135deg,#8B6914,#6B5744);border-radius:50%;margin:0 auto .5rem;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#E8D5C4">${nickname.charAt(0).toUpperCase()}</div>
                     <h3>${nickname} ${profile.verified ? '✅' : ''}</h3>
                     <div style="font-size:.85rem;color:#8B2BE2;margin-top:.3rem">⭐ 아티스트 가중치: ${weight}x</div>
                     ${profile.bio ? `<p style="font-size:.85rem;color:var(--accent);margin-top:.3rem">${profile.bio}</p>` : ''}

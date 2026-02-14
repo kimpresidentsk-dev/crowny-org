@@ -127,7 +127,7 @@ async function showProfileEdit() {
         </div>
         <div style="display:flex;gap:0.5rem;margin-top:1rem;">
             <button onclick="document.getElementById('profile-edit-modal').remove()" style="flex:1;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">${t('common.cancel','취소')}</button>
-            <button onclick="saveProfile()" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:var(--gold,#8B6914);color:#000;font-weight:700;">${t('common.save','저장')}</button>
+            <button onclick="saveProfile()" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:var(--gold,#8B6914);color:#3D2B1F;font-weight:700;">${t('common.save','저장')}</button>
         </div>
     </div>`;
     document.body.appendChild(overlay);
@@ -326,7 +326,7 @@ async function showAddContactModal() {
         <h3 style="margin-bottom:1rem;">${t('social.add_contact','➕ 연락처 추가')}</h3>
         <div style="display:flex;gap:0.5rem;margin-bottom:0.8rem;">
             <input type="text" id="contact-search-input" placeholder="${t('social.search_email_nick','이메일 또는 닉네임 검색')}" style="flex:1;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;font-size:0.9rem;">
-            <button onclick="searchContactUsers()" style="padding:0.7rem 1rem;border:none;border-radius:8px;background:var(--gold,#8B6914);color:#000;font-weight:600;cursor:pointer;">${t('social.search','검색')}</button>
+            <button onclick="searchContactUsers()" style="padding:0.7rem 1rem;border:none;border-radius:8px;background:var(--gold,#8B6914);color:#3D2B1F;font-weight:600;cursor:pointer;">${t('social.search','검색')}</button>
         </div>
         <div id="contact-search-results" style="max-height:300px;overflow-y:auto;"></div>
         <div style="margin-top:1rem;text-align:right;">
@@ -379,9 +379,10 @@ async function searchContactUsers() {
                     <strong style="font-size:0.9rem;">${nick}</strong> ${onlineDotHTML(data.isOnline)}
                     <p style="font-size:0.75rem;color:var(--text-muted,#6B5744);margin:0;">${data.email || ''}</p>
                 </div>
-                <button onclick="addContactFromSearch('${uid}','${(data.email||'').replace(/'/g,"\\'")}','${nick.replace(/'/g,"\\'")}')" style="padding:0.4rem 0.8rem;border:none;border-radius:6px;background:var(--gold,#8B6914);color:#000;font-size:0.8rem;cursor:pointer;">추가</button>`;
+                <button onclick="addContactFromSearch('${uid}','${(data.email||'').replace(/'/g,"\\'")}','${nick.replace(/'/g,"\\'")}')" style="padding:0.4rem 0.8rem;border:none;border-radius:6px;background:var(--gold,#8B6914);color:#3D2B1F;font-size:0.8rem;cursor:pointer;">추가</button>`;
             resultsDiv.appendChild(el);
         }
+        if(window.lucide) lucide.createIcons();
     } catch (e) {
         resultsDiv.innerHTML = `<p style="color:red;text-align:center;">${e.message}</p>`;
     }
@@ -1676,7 +1677,7 @@ async function loadSocialFeed() {
             if (post.videoUrl) {
                 const filterStyle = post.videoFilter ? `filter:${post.videoFilter};` : '';
                 const textOverlay = post.videoTextOverlay || '';
-                const textColor = post.videoTextColor || '#ffffff';
+                const textColor = post.videoTextColor || '#FFF8F0';
                 const textPos = post.videoTextPosition || 'bottom';
                 const posCSS = textPos === 'top' ? 'top:10%' : textPos === 'center' ? 'top:45%' : 'bottom:10%';
                 mediaHTML = `<div class="post-media-wrap" style="position:relative;cursor:pointer;" onclick="openShortsViewer('${doc.id}')">
@@ -1843,7 +1844,7 @@ async function editPost(postId) {
             <textarea id="edit-post-text" style="width:100%;min-height:120px;padding:0.8rem;border:1px solid var(--border,#E8E0D8);border-radius:10px;font-size:0.95rem;resize:vertical;background:var(--card-bg,#3D2B1F);color:var(--text,#FFF8F0);box-sizing:border-box;">${data.text || ''}</textarea>
             <div style="display:flex;gap:0.5rem;justify-content:flex-end;margin-top:1rem;">
                 <button onclick="this.closest('.modal-overlay').remove();" style="padding:0.6rem 1.2rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;background:none;color:var(--text,#3D2B1F);cursor:pointer;">취소</button>
-                <button onclick="saveEditPost('${postId}');" style="padding:0.6rem 1.2rem;border:none;border-radius:8px;background:#8B6914;color:#000;font-weight:600;cursor:pointer;">저장</button>
+                <button onclick="saveEditPost('${postId}');" style="padding:0.6rem 1.2rem;border:none;border-radius:8px;background:#8B6914;color:#3D2B1F;font-weight:600;cursor:pointer;">저장</button>
             </div>
         </div>`;
         document.body.appendChild(overlay);
@@ -1882,7 +1883,7 @@ function getTimeAgo(date) {
 }
 
 // ========== VIDEO EDITOR STATE ==========
-let _videoEditorState = { trimStart: 0, trimEnd: 0, filter: 'none', textOverlay: '', textPosition: 'bottom', textColor: '#ffffff' };
+let _videoEditorState = { trimStart: 0, trimEnd: 0, filter: 'none', textOverlay: '', textPosition: 'bottom', textColor: '#FFF8F0' };
 let _pendingServiceLink = null;
 
 // ========== SERVICE LINK CONFIG ==========
@@ -1915,7 +1916,7 @@ async function showServiceLinkModal() {
         <div id="service-link-search" style="display:none;">
             <div style="display:flex;gap:0.5rem;margin-bottom:0.8rem;">
                 <input type="text" id="service-link-query" placeholder="검색..." style="flex:1;padding:0.6rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;font-size:0.9rem;">
-                <button onclick="searchServiceItems()" style="padding:0.6rem 1rem;border:none;border-radius:8px;background:var(--gold,#8B6914);color:#000;cursor:pointer;">검색</button>
+                <button onclick="searchServiceItems()" style="padding:0.6rem 1rem;border:none;border-radius:8px;background:var(--gold,#8B6914);color:#3D2B1F;cursor:pointer;">검색</button>
             </div>
             <div id="service-link-results" style="max-height:250px;overflow-y:auto;"></div>
         </div>
@@ -2033,12 +2034,12 @@ function openVideoEditor() {
                     <select id="editor-text-pos" style="padding:0.3rem;border:1px solid var(--border,#E8E0D8);border-radius:6px;font-size:0.8rem;" onchange="updateTextOverlay()">
                         <option value="top">상단</option><option value="center">중앙</option><option value="bottom" selected>하단</option>
                     </select>
-                    <input type="color" id="editor-text-color" value="#ffffff" style="width:30px;height:30px;border:none;cursor:pointer;" onchange="updateTextOverlay()">
+                    <input type="color" id="editor-text-color" value="#FFF8F0" style="width:30px;height:30px;border:none;cursor:pointer;" onchange="updateTextOverlay()">
                 </div>
             </div>
             <div style="display:flex;gap:0.5rem;">
                 <button onclick="document.getElementById('video-editor-modal').remove()" style="flex:1;padding:0.6rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">취소</button>
-                <button onclick="applyVideoEdits()" style="flex:1;padding:0.6rem;border:none;border-radius:8px;cursor:pointer;background:var(--gold,#8B6914);color:#000;font-weight:700;">✅ 적용</button>
+                <button onclick="applyVideoEdits()" style="flex:1;padding:0.6rem;border:none;border-radius:8px;cursor:pointer;background:var(--gold,#8B6914);color:#3D2B1F;font-weight:700;">✅ 적용</button>
             </div>
         </div>
     </div>`;
@@ -2221,7 +2222,7 @@ async function createPost() {
         document.getElementById('post-video-preview').style.display = 'none';
         document.getElementById('post-service-link-preview').style.display = 'none';
         _pendingServiceLink = null;
-        _videoEditorState = { trimStart: 0, trimEnd: 0, filter: 'none', textOverlay: '', textPosition: 'bottom', textColor: '#ffffff' };
+        _videoEditorState = { trimStart: 0, trimEnd: 0, filter: 'none', textOverlay: '', textPosition: 'bottom', textColor: '#FFF8F0' };
 
         hideLoading();
         await loadSocialFeed();
@@ -2272,12 +2273,12 @@ function renderShortsViewer() {
         overlay.id = 'shorts-viewer';
         document.body.appendChild(overlay);
     }
-    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:#000;z-index:99999;display:flex;align-items:center;justify-content:center;';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:#3D2B1F;z-index:99999;display:flex;align-items:center;justify-content:center;';
 
     const filterCSS = post.data.videoFilter || '';
     const textOverlay = post.data.videoTextOverlay || '';
     const textPos = post.data.videoTextPosition || 'bottom';
-    const textColor = post.data.videoTextColor || '#ffffff';
+    const textColor = post.data.videoTextColor || '#FFF8F0';
     const posStyle = textPos === 'top' ? 'top:10%' : textPos === 'center' ? 'top:45%' : 'bottom:10%';
 
     const sl = post.data.serviceLink;

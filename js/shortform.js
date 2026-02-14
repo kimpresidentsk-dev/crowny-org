@@ -77,7 +77,7 @@
                             <select id="sf-text-pos" style="padding:0.4rem;border:1px solid var(--border);border-radius:6px;">
                                 <option value="top">상단</option><option value="center">중앙</option><option value="bottom" selected>하단</option>
                             </select>
-                            <input type="color" id="sf-text-color" value="#ffffff" style="width:40px;height:32px;border:none;cursor:pointer;">
+                            <input type="color" id="sf-text-color" value="#FFF8F0" style="width:40px;height:32px;border:none;cursor:pointer;">
                             <input type="range" id="sf-text-size" min="12" max="48" value="24" style="flex:1;">
                         </div>
                     </div>
@@ -295,7 +295,7 @@
         const isDefaultFilter = filterCSS === 'brightness(100%) contrast(100%) saturate(100%) sepia(0%) grayscale(0%)';
         const textOverlay = document.getElementById('sf-text')?.value || '';
         const textPosition = document.getElementById('sf-text-pos')?.value || 'bottom';
-        const textColor = document.getElementById('sf-text-color')?.value || '#ffffff';
+        const textColor = document.getElementById('sf-text-color')?.value || '#FFF8F0';
         const textSize = document.getElementById('sf-text-size')?.value || 24;
 
         document.getElementById('sf-submit-btn').disabled = true;

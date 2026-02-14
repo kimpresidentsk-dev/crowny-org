@@ -296,7 +296,7 @@ h2 {
 /* Buttons */
 .btn-primary {
     background: var(--gold);
-    color: #000;
+    color: #3D2B1F;
     border: none;
     padding: 1rem 2rem;
     border-radius: 6px;
@@ -308,7 +308,7 @@ h2 {
 
 .btn-primary:hover {
     background: #e6c040;
-    color: #000;
+    color: #3D2B1F;
 }
 
 .btn-buy {

@@ -2918,7 +2918,7 @@ function drawPositionLinesLW() {
         }
         const color = type === 'sl' ? '#ff0000' : '#00cc00';
         _dragLabel.style.top = (y - 10) + 'px';
-        _dragLabel.style.background = '#000';
+        _dragLabel.style.background = '#3D2B1F';
         _dragLabel.style.border = `1px solid ${color}`;
         _dragLabel.style.color = color;
         _dragLabel.textContent = `${type.toUpperCase()}: ${price.toFixed(2)}`;

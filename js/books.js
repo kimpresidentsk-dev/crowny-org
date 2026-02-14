@@ -1231,6 +1231,7 @@ async function _loadLibraryTreasures() {
         });
         html = `<div style="background:#ff9800;color:#FFF8F0;padding:1rem;border-radius:10px;text-align:center;margin-bottom:1rem;"><h3 style="margin:0;">🏆 총 보물 보상: ${total} CRGC</h3></div>` + html;
         c.innerHTML = html + '</div>';
+        if(window.lucide) lucide.createIcons();
     } catch (e) { c.innerHTML = `<p style="color:red;">${e.message}</p>`; }
 }
 
