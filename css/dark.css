@@ -130,12 +130,12 @@ p { color: var(--dark-muted); }
 label { color: var(--dark-muted) !important; }
 
 .token-card {
-    background: var(--dark-card-alt) !important;
-    border-color: var(--dark-border) !important;
+    background: #F7F3ED !important;
+    border-color: #E8E0D8 !important;
 }
-.token-name { color: var(--dark-text) !important; }
-.token-desc { color: var(--dark-muted) !important; }
-.token-balance { color: var(--dark-gold) !important; }
+.token-name { color: #3D2B1F !important; }
+.token-desc { color: #6B5744 !important; }
+.token-balance { color: #8B6914 !important; }
 
 /* Chat dark */
 .chat-window { background: var(--dark-bg) !important; }

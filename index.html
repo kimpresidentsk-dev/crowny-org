@@ -367,7 +367,7 @@
             <div style="background:white; padding:1.2rem; border-radius:12px; margin-bottom:1rem; box-shadow:0 2px 8px rgba(61,43,31,0.06);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
                     <strong style="font-size:0.95rem;" data-i18n="wallet.my_wallets">📂 내 지갑</strong>
-                    <button onclick="showAddWalletModal()" style="background:#0066cc; color:#FFF8F0; border:none; padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight:600;" data-i18n="wallet.add_wallet">➕ 지갑 추가</button>
+                    <button onclick="showAddWalletModal()" style="background:#3D2B1F; color:#FFF8F0; border:none; padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight:600;" data-i18n="wallet.add_wallet">➕ 지갑 추가</button>
                 </div>
                 <select id="wallet-selector" onchange="switchWallet()" style="width:100%; padding:0.8rem; border-radius:8px; border:1px solid #e0e0e0; font-size:0.9rem; background:white; cursor:pointer;">
                 </select>
@@ -387,15 +387,15 @@
                             </div>
                             <p id="wallet-address-full" style="font-family:'Consolas',monospace; font-size:0.7rem; color:#999; margin-top:0.3rem; word-break:break-all;"></p>
                         </div>
-                        <div style="display:flex; gap:0.4rem;">
-                            <button onclick="copyAddress()" style="background:#f5f5f5; border:none; padding:0.5rem; border-radius:8px; cursor:pointer; font-size:0.9rem;" title="주소 복사" data-i18n-title="wallet.copy_address">📋</button>
-                            <a id="polygonscan-link" href="#" target="_blank" style="background:#f5f5f5; border:none; padding:0.5rem; border-radius:8px; text-decoration:none; font-size:0.9rem;" title="Polygonscan">🔍</a>
-                            <button onclick="renameCurrentWallet()" style="background:#f5f5f5; border:none; padding:0.5rem; border-radius:8px; cursor:pointer; font-size:0.9rem;" title="지갑 이름 변경" data-i18n-title="wallet.rename">✏️</button>
-                            <button onclick="deleteCurrentWallet()" style="background:#fff5f5; border:none; padding:0.5rem; border-radius:8px; cursor:pointer; font-size:0.9rem;" title="지갑 삭제" data-i18n-title="wallet.delete_wallet">🗑️</button>
+                        <div style="display:flex; gap:0.3rem; flex-wrap:wrap;">
+                            <button onclick="copyAddress()" style="background:#f5f5f5; border:none; padding:0.4rem; border-radius:8px; cursor:pointer; font-size:0.85rem; min-width:32px;" title="주소 복사" data-i18n-title="wallet.copy_address"><i data-lucide="copy"></i></button>
+                            <a id="polygonscan-link" href="#" target="_blank" style="background:#f5f5f5; border:none; padding:0.4rem; border-radius:8px; text-decoration:none; font-size:0.85rem; min-width:32px; display:flex; align-items:center; justify-content:center;" title="Polygonscan"><i data-lucide="search"></i></a>
+                            <button onclick="renameCurrentWallet()" style="background:#f5f5f5; border:none; padding:0.4rem; border-radius:8px; cursor:pointer; font-size:0.85rem; min-width:32px;" title="지갑 이름 변경" data-i18n-title="wallet.rename"><i data-lucide="pencil"></i></button>
+                            <button onclick="deleteCurrentWallet()" style="background:#fff5f5; border:none; padding:0.4rem; border-radius:8px; cursor:pointer; font-size:0.85rem; min-width:32px;" title="지갑 삭제" data-i18n-title="wallet.delete_wallet"><i data-lucide="trash-2"></i></button>
                         </div>
                     </div>
                     
-                    <div id="gas-subsidy-info" style="background:#f0fdf4; padding:0.6rem 0.8rem; border-radius:8px; margin-top:0.8rem; display:none;">
+                    <div id="gas-subsidy-info" style="background:#F7F3ED; padding:0.6rem 0.8rem; border-radius:8px; margin-top:0.8rem; display:none;">
                         <p style="margin:0; font-size:0.8rem; color:#2e7d32;">
                             ⛽ 가스비 대납 누적: <strong id="total-gas-subsidy">0</strong> MATIC
                         </p>
@@ -427,8 +427,8 @@
                             </div>
                         </div>
                         <div style="display:flex; gap:0.4rem;">
-                            <button onclick="showMaticDeposit()" style="background:#3D2B1F; border:1px solid #6B5744; color:#E8D5C4; padding:0.3rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.7rem;" data-i18n="wallet.deposit">📥 입금</button>
-                            <button onclick="showMaticSend()" style="background:#3D2B1F; border:1px solid #6B5744; color:#E8D5C4; padding:0.3rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.7rem;" data-i18n="wallet.send">📤 송금</button>
+                            <button onclick="showMaticDeposit()" style="background:#3D2B1F; border:1px solid #6B5744; color:#E8D5C4; padding:0.3rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.7rem; display:flex; align-items:center; gap:0.3rem;" data-i18n="wallet.deposit"><i data-lucide="download" style="width:12px; height:12px;"></i>입금</button>
+                            <button onclick="showMaticSend()" style="background:#3D2B1F; border:1px solid #6B5744; color:#E8D5C4; padding:0.3rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.7rem; display:flex; align-items:center; gap:0.3rem;" data-i18n="wallet.send"><i data-lucide="send" style="width:12px; height:12px;"></i>송금</button>
                         </div>
                     </div>
                     
@@ -828,7 +828,7 @@
                 <button class="admin-register-btn" id="art-register-btn" onclick="openRegisterModal('art')" data-i18n="art.register">➕ 작품 등록</button>
             </div>
             
-            <div class="section-banner" id="art-banner" style="background:linear-gradient(135deg, #2d1b69, #11998e);">
+            <div class="section-banner" id="art-banner" style="background:linear-gradient(135deg, #F7F3ED, #E8E0D8); color: #3D2B1F;">
                 <h3 data-i18n="art.banner_title">🎨 ART GALLERY — 디지털 아트의 새로운 세계</h3>
                 <p data-i18n="art.banner_desc">NFT 민팅 · 아티스트 가중치 시스템 · 수량 한정 · 예약 구매 · 기부 자동 연동</p>
             </div>
@@ -2243,6 +2243,22 @@
             }
         });
         observer.observe(document.body, { childList: true, subtree: true });
+        
+        // 페이지 로드 완료 후 한 번 더 Lucide 초기화
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            }, 500);
+        });
+        
+        // 페이지 전환 시에도 Lucide 재초기화
+        window.addEventListener('DOMContentLoaded', function() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
     </script>
     
     <!-- Kakao SDK -->

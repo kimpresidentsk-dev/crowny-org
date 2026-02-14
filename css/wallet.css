@@ -132,7 +132,7 @@
 
 .token-name {
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 1.3rem;
 }
 
 .token-desc {
@@ -141,7 +141,7 @@
 }
 
 .token-balance {
-    font-size: 1.5rem;
+    font-size: 1.7rem;
     font-weight: bold;
 }
 
