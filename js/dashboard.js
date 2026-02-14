@@ -11,14 +11,26 @@ async function withTimeout(promise, timeoutMs = 5000) {
 }
 
 async function loadDashboard() {
-    console.log('[Dashboard] 로딩 시작 v1.1');
-    console.log('[Dashboard] currentUser:', currentUser ? currentUser.email : 'null');
-    console.log('[Dashboard] userWallet:', !!window.userWallet);
-    console.log('[Dashboard] db:', !!window.db);
-    console.log('[Dashboard] firebase auth:', !!window.auth);
+    console.log('[Dashboard] 로딩 시작 v1.2');
+    
+    // currentUser가 아직 없으면 auth 상태 대기 (최대 5초)
+    if (!currentUser && window.auth) {
+        console.log('[Dashboard] currentUser 없음 - auth 상태 대기 중...');
+        const container = document.getElementById('dashboard-content');
+        if (container) container.innerHTML = '<p style="text-align:center;padding:2rem;color:#6B5744;">로딩 중...</p>';
+        
+        await new Promise((resolve) => {
+            const timeout = setTimeout(resolve, 5000);
+            const unsub = auth.onAuthStateChanged((user) => {
+                if (user) { currentUser = user; clearTimeout(timeout); unsub(); resolve(); }
+            });
+            // 이미 로그인 상태면 즉시
+            if (auth.currentUser) { currentUser = auth.currentUser; clearTimeout(timeout); unsub(); resolve(); }
+        });
+    }
     
     if (!currentUser) {
-        console.warn('[Dashboard] currentUser 없음 - 로딩 중단');
+        console.warn('[Dashboard] currentUser 없음 - 로그인 필요');
         const container = document.getElementById('dashboard-content');
         if (container) {
             container.innerHTML = `<div style="text-align:center;padding:2rem;color:#3D2B1F;">
