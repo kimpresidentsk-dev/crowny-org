@@ -260,9 +260,13 @@ a:not(.nav-item) {
 }
 .sidebar .user-info .btn-logout {
     color: #E8D5C4 !important;
-    border-color: rgba(232,213,196,0.4) !important;
-    background: rgba(255,248,240,0.1) !important;
+    border-color: rgba(232,213,196,0.25) !important;
+    background: rgba(255,248,240,0.08) !important;
     font-weight: 600 !important;
+    border-radius: 20px !important;
+    padding: 0.4rem 0.8rem !important;
+    font-size: 0.8rem !important;
+    border-width: 1px !important;
 }
 .sidebar .user-info .btn-logout:hover {
     background: rgba(255,248,240,0.2) !important;
