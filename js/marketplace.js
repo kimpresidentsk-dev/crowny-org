@@ -8,8 +8,8 @@ const BRAND_SLOGANS = {
     mall: '일상의 가치', designers: '스타일을 입다'
 };
 const BRAND_COLORS = {
-    present:'#FDEBD0', doctor:'#D5F5E3', medical:'#D6EAF8', avls:'#E8DAEF',
-    solution:'#F2F3F4', architect:'#FADBD8', mall:'#FCF3CF', designers:'#EBDEF0'
+    present:'#F7F3ED', doctor:'#F7F3ED', medical:'#F7F3ED', avls:'#F7F3ED',
+    solution:'#F7F3ED', architect:'#F7F3ED', mall:'#F7F3ED', designers:'#F7F3ED'
 };
 const BRAND_ICONS = {
     present:'<i data-lucide="sparkles" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', doctor:'<i data-lucide="pill" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', medical:'<i data-lucide="hospital" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', avls:'<i data-lucide="film" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', solution:'<i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', architect:'<i data-lucide="building-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', mall:'<i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', designers:'<i data-lucide="shirt" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>'
@@ -780,7 +780,7 @@ async function loadEnergyProjects() {
                 ${renderMilestones(x.milestones)}
                 <div style="display:flex; gap:0.5rem; margin-top:0.5rem;" onclick="event.stopPropagation();">
                     <button onclick="investEnergy('${d.id}')" style="background:${catInfo.color}; color:#FFF8F0; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; flex:1;">${t('energy.invest_btn','☀️ 투자하기')}</button>
-                    ${isAdmin ? `<button onclick="distributeEnergyReturns('${d.id}')" style="background:#1976D2; color:#FFF8F0; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; flex:1; font-size:0.8rem;">${t('energy.distribute','<i data-lucide="bar-chart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 수익 배분')}</button>` : ''}
+                    ${isAdmin ? `<button onclick="distributeEnergyReturns('${d.id}')" style="background:#8B6914; color:#FFF8F0; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; flex:1; font-size:0.8rem;">${t('energy.distribute','<i data-lucide="bar-chart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 수익 배분')}</button>` : ''}
                 </div>
             </div>`; });
         if (!c.innerHTML.trim()) c.innerHTML = '<p style="color:var(--accent);">이 카테고리에 프로젝트가 없습니다.</p>';
