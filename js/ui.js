@@ -174,13 +174,13 @@ function showPromptModal(title, message, defaultValue, isPassword) {
         const overlay = document.createElement('div');
         overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.innerHTML = `
-            <div style="background:#3D2B1F;padding:1.5rem;border-radius:12px;max-width:400px;width:100%;">
-                <h3 style="margin-bottom:0.8rem;">${title}</h3>
+            <div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;max-width:400px;width:100%;box-shadow:0 8px 32px rgba(61,43,31,0.3);">
+                <h3 style="margin-bottom:0.8rem;color:#3D2B1F;">${title}</h3>
                 <p style="color:#6B5744;margin-bottom:1rem;white-space:pre-line;font-size:0.9rem;">${message}</p>
-                <input type="${inputType}" id="prompt-modal-input" value="${defaultValue || ''}" style="width:100%;padding:0.7rem;border:1px solid #E8E0D8;border-radius:8px;font-size:1rem;box-sizing:border-box;margin-bottom:1rem;">
+                <input type="${inputType}" id="prompt-modal-input" value="${defaultValue || ''}" style="width:100%;padding:0.7rem;border:1px solid #E8E0D8;border-radius:8px;font-size:1rem;box-sizing:border-box;margin-bottom:1rem;background:#F7F3ED;color:#3D2B1F;">
                 <div style="display:flex;gap:0.5rem;">
-                    <button id="prompt-cancel" style="flex:1;padding:0.7rem;border:1px solid #E8E0D8;border-radius:8px;cursor:pointer;background:#3D2B1F;">${t('common.cancel', '취소')}</button>
-                    <button id="prompt-ok" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#3D2B1F;color:#FFF8F0;font-weight:700;">${t('common.confirm', '확인')}</button>
+                    <button id="prompt-cancel" style="flex:1;padding:0.7rem;border:1px solid #E8E0D8;border-radius:8px;cursor:pointer;background:#F7F3ED;color:#3D2B1F;">${t('common.cancel', '취소')}</button>
+                    <button id="prompt-ok" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#8B6914;color:#FFF8F0;font-weight:700;">${t('common.confirm', '확인')}</button>
                 </div>
             </div>`;
         document.body.appendChild(overlay);
