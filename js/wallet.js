@@ -51,7 +51,7 @@ async function getDecryptedPrivateKey(wallet) {
     // 암호화된 경우
     if (wallet.encryptedPrivateKey) {
         const password = await showPromptModal(
-            t('wallet.enter_encryption_pw', '🔐 지갑 비밀번호'),
+            t('wallet.enter_encryption_pw', '지갑 비밀번호'),
             t('wallet.enter_encryption_pw_desc', '트랜잭션 서명을 위해 지갑 비밀번호를 입력하세요:')
         );
         if (!password) throw new Error(t('wallet.password_required', '비밀번호가 필요합니다'));
@@ -66,8 +66,8 @@ async function migrateWalletSecurity(walletToMigrate) {
     if (!wallet || !wallet.privateKey) return false;
 
     const password = await showPromptModal(
-        t('wallet.set_encryption_pw', '🔐 지갑 보안 비밀번호 설정'),
-        t('wallet.set_encryption_pw_desc', '개인키를 암호화할 비밀번호를 설정하세요.\n이 비밀번호는 전송 시 필요합니다.\n\n⚠️ 비밀번호를 잊으면 복구할 수 없습니다!')
+        t('wallet.set_encryption_pw', '지갑 보안 비밀번호 설정'),
+        t('wallet.set_encryption_pw_desc', '개인키를 암호화할 비밀번호를 설정하세요.\n이 비밀번호는 전송 시 필요합니다.\n\n비밀번호를 잊으면 복구할 수 없습니다!')
     );
     if (!password || password.length < 6) {
         if (password) showToast(t('wallet.pw_too_short', '비밀번호는 최소 6자 이상이어야 합니다'), 'warning');
@@ -75,7 +75,7 @@ async function migrateWalletSecurity(walletToMigrate) {
     }
 
     const confirmPw = await showPromptModal(
-        t('wallet.confirm_encryption_pw', '🔐 비밀번호 확인'),
+        t('wallet.confirm_encryption_pw', '비밀번호 확인'),
         t('wallet.confirm_encryption_pw_desc', '비밀번호를 다시 입력하세요:')
     );
     if (password !== confirmPw) {
@@ -128,7 +128,7 @@ async function checkWalletSecurityOnLogin() {
     const unencrypted = allWallets.filter(w => w.privateKey && !w.encryptedPrivateKey);
     if (unencrypted.length > 0) {
         const doMigrate = await showConfirmModal(
-            t('wallet.security_upgrade_title', '🔐 보안 업그레이드 필요'),
+            t('wallet.security_upgrade_title', '보안 업그레이드 필요'),
             t('wallet.security_upgrade_desc', `${unencrypted.length}개의 지갑에 암호화되지 않은 개인키가 있습니다.\n지금 보안 업그레이드를 진행하시겠습니까?`)
         );
         if (doMigrate) {
@@ -172,7 +172,7 @@ async function loadUserWallet() {
     allWallets.forEach((wallet, index) => {
         const option = document.createElement('option');
         option.value = wallet.id;
-        const type = wallet.isImported ? '📥' : '🏠';
+        const type = wallet.isImported ? '↓' : '⌂';
         const name = wallet.name || `${t('wallet.wallet_label', '지갑')} ${index + 1}`;
         const addr = wallet.walletAddress.slice(0, 6) + '...' + wallet.walletAddress.slice(-4);
         option.textContent = `${type} ${name} (${addr})`;
@@ -193,8 +193,8 @@ async function createFirstWallet() {
     
     // 암호화 비밀번호 설정
     const password = await showPromptModal(
-        t('wallet.set_encryption_pw', '🔐 지갑 보안 비밀번호 설정'),
-        t('wallet.first_wallet_pw_desc', '개인키를 보호할 비밀번호를 설정하세요.\n전송 시 이 비밀번호가 필요합니다.\n\n⚠️ 비밀번호를 잊으면 복구할 수 없습니다!\n(최소 6자)')
+        t('wallet.set_encryption_pw', '지갑 보안 비밀번호 설정'),
+        t('wallet.first_wallet_pw_desc', '개인키를 보호할 비밀번호를 설정하세요.\n전송 시 이 비밀번호가 필요합니다.\n\n비밀번호를 잊으면 복구할 수 없습니다!\n(최소 6자)')
     );
     
     let walletData = {
@@ -245,7 +245,7 @@ async function displayCurrentWallet() {
         `https://polygonscan.com/address/${addr}`;
     
     // Wallet type
-    const walletType = wallet.isImported ? t('wallet.type_external', '📥 외부 지갑') : t('wallet.type_crowny', '🏠 크라우니 지갑');
+    const walletType = wallet.isImported ? t('wallet.type_external', '외부 지갑') : t('wallet.type_crowny', '크라우니 지갑');
     document.getElementById('wallet-type').textContent = walletType;
     
     // Gas subsidy info (only for Crowny wallets)
@@ -303,7 +303,7 @@ async function showImportWallet() {
         
         const confirmed = await showConfirmModal(
             t('wallet.add_confirm_title', '지갑 추가 확인'),
-            `${t('wallet.add_confirm_msg', '이 지갑을 추가하시겠습니까?')}\n\n${t('wallet.wallet_name_label', '이름')}: ${name}\n${t('wallet.address_label', '주소')}: ${account.address}\n\n${t('wallet.external_gas_warning', '⚠️ 외부 지갑은 가스비가 자동 차감됩니다.')}`
+            `${t('wallet.add_confirm_msg', '이 지갑을 추가하시겠습니까?')}\n\n${t('wallet.wallet_name_label', '이름')}: ${name}\n${t('wallet.address_label', '주소')}: ${account.address}\n\n${t('wallet.external_gas_warning', '외부 지갑은 가스비가 자동 차감됩니다.')}`
         );
         
         if (confirmed) {
@@ -318,7 +318,7 @@ async function importExternalWallet(name, privateKey, address) {
     try {
         // 암호화 비밀번호 설정
         const password = await showPromptModal(
-            t('wallet.set_encryption_pw', '🔐 지갑 보안 비밀번호 설정'),
+            t('wallet.set_encryption_pw', '지갑 보안 비밀번호 설정'),
             t('wallet.import_pw_desc', '가져온 개인키를 보호할 비밀번호를 설정하세요.\n(최소 6자)')
         );
         
@@ -361,7 +361,7 @@ async function createNewWallet() {
         
         // 암호화 비밀번호 설정
         const password = await showPromptModal(
-            t('wallet.set_encryption_pw', '🔐 지갑 보안 비밀번호 설정'),
+            t('wallet.set_encryption_pw', '지갑 보안 비밀번호 설정'),
             t('wallet.new_wallet_pw_desc', '개인키를 보호할 비밀번호를 설정하세요.\n(최소 6자)')
         );
         
@@ -421,7 +421,7 @@ async function deleteCurrentWallet() {
     const wallet = allWallets.find(w => w.id === currentWalletId);
     const confirmed = await showConfirmModal(
         t('wallet.delete_wallet', '지갑 삭제'),
-        `${t('wallet.delete_confirm', '지갑을 삭제하시겠습니까?')}\n\n${wallet.name}\n${wallet.walletAddress}\n\n${t('wallet.delete_warning', '⚠️ 삭제된 지갑은 관리자만 복구할 수 있습니다.')}`
+        `${t('wallet.delete_confirm', '지갑을 삭제하시겠습니까?')}\n\n${wallet.name}\n${wallet.walletAddress}\n\n${t('wallet.delete_warning', '삭제된 지갑은 관리자만 복구할 수 있습니다.')}`
     );
     
     if (!confirmed) return;
@@ -438,7 +438,7 @@ async function deleteCurrentWallet() {
         } else {
             // 이메일/비밀번호 사용자: 비밀번호 입력
             const password = await showPromptModal(
-                t('wallet.password_confirm', '🔐 비밀번호 확인'),
+                t('wallet.password_confirm', '비밀번호 확인'),
                 t('wallet.password_confirm_desc', '지갑 삭제를 위해 비밀번호를 입력하세요:')
             );
             if (!password) return;
@@ -501,7 +501,7 @@ async function loadRealBalances() {
     } catch (error) {
         console.error('❌ Balance load error:', error);
         // 에러 시 기존 Firestore 잔액 유지 (덮어쓰기 안 함)
-        console.log('⚠️ 온체인 조회 실패 — 플랫폼 잔액 유지');
+        console.log('온체인 조회 실패 — 플랫폼 잔액 유지');
     }
 }
 
@@ -627,12 +627,12 @@ function showMaticDeposit() {
     overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
     overlay.innerHTML = `
         <div style="background:#3D2B1F;padding:1.5rem;border-radius:16px;max-width:420px;width:100%;text-align:center;">
-            <h3 style="margin-bottom:1rem;">${t('wallet.matic_deposit_title', '📥 MATIC 입금')}</h3>
+            <h3 style="margin-bottom:1rem;">${t('wallet.matic_deposit_title', 'MATIC 입금')}</h3>
             <p style="font-size:0.85rem;color:#6B5744;margin-bottom:1rem;">${t('wallet.matic_deposit_desc', '아래 Polygon 주소로 MATIC을 보내주세요')}</p>
             <div style="background:#F7F3ED;padding:1rem;border-radius:10px;margin-bottom:1rem;word-break:break-all;font-family:monospace;font-size:0.82rem;font-weight:600;color:#3D2B1F;cursor:pointer;" onclick="navigator.clipboard&&navigator.clipboard.writeText('${addr}').then(()=>showToast(t('wallet.address_copied','주소 복사됨'),'success'))">
                 ${addr}
             </div>
-            <p style="font-size:0.75rem;color:#c62828;margin-bottom:1rem;">${t('wallet.matic_deposit_warning', '⚠️ 반드시 <strong>Polygon 네트워크</strong>로 전송하세요!<br>다른 네트워크(ETH 등)로 보내면 복구 불가합니다.')}</p>
+            <p style="font-size:0.75rem;color:#c62828;margin-bottom:1rem;">${t('wallet.matic_deposit_warning', '반드시 <strong>Polygon 네트워크</strong>로 전송하세요!<br>다른 네트워크(ETH 등)로 보내면 복구 불가합니다.')}</p>
             <div style="display:flex;gap:0.5rem;">
                 <button onclick="navigator.clipboard&&navigator.clipboard.writeText('${addr}').then(()=>showToast(t('wallet.address_copied','주소 복사됨'),'success'))" style="flex:1;padding:0.7rem;background:#3D2B1F;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:700;display:flex;align-items:center;justify-content:center;gap:0.3rem;"><i data-lucide="copy" style="width:16px;height:16px;color:#FFF8F0;"></i>주소 복사</button>
                 <button onclick="this.closest('div[style*=fixed]').remove()" style="flex:1;padding:0.7rem;border:1px solid #E8E0D8;border-radius:8px;cursor:pointer;background:#3D2B1F;">${t('common.close', '닫기')}</button>
