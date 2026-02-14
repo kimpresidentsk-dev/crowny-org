@@ -89,7 +89,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.5);
+    background: rgba(61,43,31,0.5);
     z-index: 10000;
     align-items: center;
     justify-content: center;
@@ -457,7 +457,7 @@ body {
 .sidebar {
     width: 220px;
     background: #3D2B1F;
-    color: #E8D5C4;
+    color: #D2BCB0;
     border-right: none;
     padding: 1rem 0;
     position: fixed;
@@ -476,7 +476,7 @@ body {
 
 .logo {
     padding: 0 1rem 1rem;
-    border-bottom: 1px solid rgba(255,255,255,0.12);
+    border-bottom: 1px solid rgba(210,188,176,0.12);
     margin-bottom: 0.5rem;
     cursor: pointer;
 }
@@ -520,7 +520,7 @@ html[lang="en"] .nav-sub { display: none; }
 }
 
 .nav-item:hover {
-    background: rgba(255,255,255,0.08);
+    background: rgba(210,188,176,0.08);
     color: #FFD700;
 }
 
@@ -533,7 +533,7 @@ html[lang="en"] .nav-sub { display: none; }
 
 .sidebar .nav-divider {
     border: none;
-    border-top: 1px solid rgba(255,255,255,0.12);
+    border-top: 1px solid rgba(210,188,176,0.12);
     margin: 0.4rem 1rem;
 }
 
@@ -542,7 +542,7 @@ html[lang="en"] .nav-sub { display: none; }
     font-size: 0.65rem;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    color: #A08C7A;
+    color: rgba(210,188,176,0.3);
     font-weight: 700;
 }
 

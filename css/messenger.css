@@ -54,7 +54,7 @@
 .btn-chat {
     padding: 0.5rem 0.8rem;
     background: var(--text);
-    color: white;
+    color: #FFF8F08F0;
     border: none;
     border-radius: 6px;
     cursor: pointer;
@@ -76,7 +76,7 @@
 }
 
 .chat-sidebar {
-    background: var(--white);
+    background: #FFF8F0;
     display: flex;
     flex-direction: column;
     border-right: 1px solid var(--border);
@@ -104,7 +104,7 @@
 
 .sidebar-tabs .tab-btn.active {
     color: var(--text);
-    background: var(--white);
+    background: #FFF8F0;
 }
 
 .sidebar-tabs .tab-btn.active::after {
@@ -201,13 +201,13 @@
 .chat-input input:focus {
     outline: none;
     border-color: var(--accent);
-    background: var(--white);
+    background: #FFF8F0;
 }
 
 .chat-input button {
     padding: 0.6rem 1.2rem;
     background: var(--text);
-    color: var(--white);
+    color: #FFF8F0;
     border: none;
     border-radius: 24px;
     cursor: pointer;
@@ -376,7 +376,7 @@
 }
 .chat-search-bar input:focus {
     border-color: var(--accent);
-    background: var(--white);
+    background: #FFF8F0;
 }
 
 /* Chat header */
@@ -421,7 +421,7 @@
     gap: 0.5rem;
     padding: 0.5rem 1rem;
     border-bottom: 1px solid var(--border);
-    background: var(--white);
+    background: #FFF8F0;
 }
 .chat-search-overlay input {
     flex: 1;
@@ -472,7 +472,7 @@
 }
 .chat-input textarea:focus {
     border-color: var(--accent);
-    background: var(--white);
+    background: #FFF8F0;
 }
 
 /* Empty state */
@@ -503,7 +503,7 @@
 /* Unread badge */
 .unread-badge {
     background: #e53935;
-    color: white;
+    color: #FFF8F08F0;
     font-size: 0.65rem;
     font-weight: 700;
     min-width: 18px;
@@ -523,7 +523,7 @@
     border-radius: 50%;
     display: inline-block;
     flex-shrink: 0;
-    border: 2px solid var(--white);
+    border: 2px solid #FFF8F0;
 }
 .online-dot.online { background: #4CAF50; }
 .online-dot.offline { background: #ccc; }
@@ -788,7 +788,7 @@
 .group-action-btn.kick:hover { background: rgba(229,57,53,0.15); }
 .group-info-bottom { margin-top: 1rem; }
 .btn-danger {
-    background: #dc3545; color: white; border: none;
+    background: #dc3545; color: #FFF8F08F0; border: none;
     cursor: pointer; font-size: 0.85rem;
 }
 .btn-danger:hover { background: #c82333; }

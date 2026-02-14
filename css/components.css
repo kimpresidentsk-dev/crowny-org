@@ -5,7 +5,7 @@
     padding: 24px;
     border-radius: 12px;
     margin-bottom: 16px;
-    color: white;
+    color: #FFF8F0;
     position: relative;
     overflow: hidden;
     min-height: 120px;
@@ -32,7 +32,7 @@
     right: -30px;
     width: 120px;
     height: 120px;
-    background: rgba(255,255,255,0.06);
+    background: rgba(255,248,240,0.06);
     border-radius: 50%;
     pointer-events: none;
 }
@@ -51,7 +51,7 @@
     display: none;
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.7);
+    background: rgba(61,43,31,0.7);
     z-index: 10000;
     align-items: center;
     justify-content: center;
@@ -95,7 +95,7 @@
 /* Admin register button */
 .admin-register-btn {
     background: linear-gradient(135deg, #0066cc, #0052a3);
-    color: white;
+    color: #FFF8F0;
     border: none;
     padding: 0.6rem 1.2rem;
     border-radius: 10px;
@@ -140,7 +140,7 @@ input:checked + .notif-toggle-slider::before {
     box-shadow: 0 4px 16px rgba(0,0,0,0.2);
     border-radius: 10px !important;
     padding: 0.7rem 1rem !important;
-    color: white !important;
+    color: #FFF8F0 !important;
 }
 
 
@@ -153,7 +153,7 @@ input:checked + .notif-toggle-slider::before {
 
 
 /* ===== SEARCH OVERLAY ===== */
-.search-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 9999; align-items: flex-start; justify-content: center; padding-top: 10vh; }
+.search-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(61,43,31,0.7); z-index: 9999; align-items: flex-start; justify-content: center; padding-top: 10vh; }
 .search-overlay.active { display: flex; }
 .search-header { display: flex; align-items: center; padding: 1rem; border-bottom: 1px solid var(--border); }
 .search-input { flex: 1; border: none; outline: none; font-size: 1.1rem; padding: 0.5rem; background: transparent; color: var(--text); }
@@ -243,35 +243,35 @@ a:not(.nav-item) {
     
     /* Sidebar user-info in dark sidebar */
     .user-info {
-        color: rgba(255,255,255,0.8);
-        border-bottom-color: rgba(255,255,255,0.1);
+        color: rgba(255,248,240,0.8);
+        border-bottom-color: rgba(255,248,240,0.1);
     }
     .user-info .btn-logout {
-        color: rgba(255,255,255,0.7);
-        border-color: rgba(255,255,255,0.2);
+        color: rgba(255,248,240,0.7);
+        border-color: rgba(255,248,240,0.2);
     }
 }
 
 /* Sidebar user-info brand styling */
 .sidebar .user-info {
-    color: rgba(255,255,255,0.8);
-    border-bottom-color: rgba(255,255,255,0.1);
+    color: rgba(255,248,240,0.8);
+    border-bottom-color: rgba(255,248,240,0.1);
 }
 .sidebar .user-info .btn-logout {
-    color: rgba(255,255,255,0.7);
-    border-color: rgba(255,255,255,0.2);
-    background: rgba(255,255,255,0.05);
+    color: rgba(255,248,240,0.7);
+    border-color: rgba(255,248,240,0.2);
+    background: rgba(255,248,240,0.05);
 }
 .sidebar .user-info .btn-logout:hover {
-    background: rgba(255,255,255,0.15);
+    background: rgba(255,248,240,0.15);
     color: var(--gold);
 }
 
 /* Sidebar search button brand */
 .sidebar div[style*="padding:0.5rem"] button {
-    color: rgba(255,255,255,0.5) !important;
-    border-color: rgba(255,255,255,0.15) !important;
-    background: rgba(255,255,255,0.05) !important;
+    color: rgba(255,248,240,0.5) !important;
+    border-color: rgba(255,248,240,0.15) !important;
+    background: rgba(255,248,240,0.05) !important;
 }
 
 /* CREB LABS category tabs */
@@ -342,7 +342,7 @@ a:not(.nav-item) {
     bottom: 0;
     left: 0;
     right: 0;
-    background: var(--bg-card, #1a1a2e);
+    background: var(--bg-card, #3D2B1F);
     border-top: 1px solid var(--border, #2a2a3e);
     z-index: 999;
     padding-bottom: env(safe-area-inset-bottom);
@@ -415,7 +415,7 @@ a:not(.nav-item) {
 
 /* Toast messages */
 .notif-toast, .toast-message {
-    background: var(--bg-card, #1a1a2e) !important;
+    background: var(--bg-card, #3D2B1F) !important;
     color: var(--text, #f0f0f0) !important;
     border: 1px solid var(--border, #2a2a3e) !important;
     border-radius: 12px !important;
@@ -458,14 +458,14 @@ input:focus, textarea:focus, select:focus {
 
 /* Modal overlay unified */
 .modal, .register-modal-overlay, .bottom-sheet-overlay {
-    background: rgba(0,0,0,0.7) !important;
+    background: rgba(61,43,31,0.7) !important;
 }
 
 /* Sidebar unified */
 
 /* Menu toggle dark */
 .menu-toggle {
-    background: var(--bg-card, #1a1a2e) !important;
+    background: var(--bg-card, #3D2B1F) !important;
     color: var(--text, #f0f0f0) !important;
     border-color: var(--border, #2a2a3e) !important;
 }
@@ -481,7 +481,7 @@ input:focus, textarea:focus, select:focus {
 #profile-edit-modal > div,
 #add-contact-modal > div,
 .group-member-select-modal {
-    background: var(--bg-card, #1a1a2e) !important;
+    background: var(--bg-card, #3D2B1F) !important;
     color: var(--text, #f0f0f0) !important;
 }
 #profile-edit-modal input,
@@ -498,13 +498,13 @@ input:focus, textarea:focus, select:focus {
 
 /* Search overlay dark */
 .search-overlay-content {
-    background: var(--bg-card, #1a1a2e) !important;
+    background: var(--bg-card, #3D2B1F) !important;
     color: var(--text, #f0f0f0) !important;
 }
 
 /* Settings dark */
 .settings-card {
-    background: var(--bg-card, #1a1a2e) !important;
+    background: var(--bg-card, #3D2B1F) !important;
     color: var(--text, #f0f0f0) !important;
 }
 .settings-btn {
@@ -515,7 +515,7 @@ input:focus, textarea:focus, select:focus {
 
 /* Comment bottom sheet dark */
 .bottom-sheet {
-    background: var(--bg-card, #1a1a2e) !important;
+    background: var(--bg-card, #3D2B1F) !important;
     color: var(--text, #f0f0f0) !important;
 }
 
@@ -529,14 +529,14 @@ input:focus, textarea:focus, select:focus {
 /* All hardcoded white backgrounds → dark */
 .wallet-btn, .product-card, .credit-header, .trading-panel,
 .trading-header, .balance-item {
-    background: var(--bg-card, #1a1a2e) !important;
+    background: var(--bg-card, #3D2B1F) !important;
     color: var(--text, #f0f0f0) !important;
     border-color: var(--border, #2a2a3e) !important;
 }
 
 /* Social post dropdown dark */
 .post-dropdown-menu {
-    background: var(--bg-card, #1a1a2e) !important;
+    background: var(--bg-card, #3D2B1F) !important;
     border-color: var(--border, #2a2a3e) !important;
 }
 .post-dropdown-menu div:hover {
@@ -545,27 +545,27 @@ input:focus, textarea:focus, select:focus {
 
 /* Reaction picker dark */
 .reaction-picker-popup {
-    background: var(--bg-card, #1a1a2e) !important;
+    background: var(--bg-card, #3D2B1F) !important;
     border-color: var(--border, #2a2a3e) !important;
 }
 
 /* Sticker/GIF panel dark */
 .sticker-gif-panel {
-    background: var(--bg-card, #1a1a2e) !important;
+    background: var(--bg-card, #3D2B1F) !important;
     border-color: var(--border, #2a2a3e) !important;
     color: var(--text, #f0f0f0) !important;
 }
 
 /* Attach menu dark */
 .attach-menu-popup {
-    background: var(--bg-card, #1a1a2e) !important;
+    background: var(--bg-card, #3D2B1F) !important;
     border-color: var(--border, #2a2a3e) !important;
     color: var(--text, #f0f0f0) !important;
 }
 
 /* Chat menu dark */
 .chat-menu-dropdown {
-    background: var(--bg-card, #1a1a2e) !important;
+    background: var(--bg-card, #3D2B1F) !important;
     border-color: var(--border, #2a2a3e) !important;
 }
 .chat-menu-item {
@@ -582,14 +582,14 @@ input:focus, textarea:focus, select:focus {
 
 /* Group info panel dark */
 .group-info-panel {
-    background: var(--bg-card, #1a1a2e) !important;
+    background: var(--bg-card, #3D2B1F) !important;
     color: var(--text, #f0f0f0) !important;
     border-color: var(--border, #2a2a3e) !important;
 }
 
 /* Msg bubble colors fix for dark */
 .msg-actions-bar {
-    background: var(--bg-card, #1a1a2e) !important;
+    background: var(--bg-card, #3D2B1F) !important;
     border-color: var(--border, #2a2a3e) !important;
 }
 
@@ -637,7 +637,7 @@ input:focus, textarea:focus, select:focus {
 
 /* AI Assistant dark */
 .ai-input-bar {
-    background: var(--bg-card, #1a1a2e) !important;
+    background: var(--bg-card, #3D2B1F) !important;
     border-color: var(--border, #2a2a3e) !important;
 }
 .ai-bubble-bot {
@@ -652,7 +652,7 @@ input:focus, textarea:focus, select:focus {
 
 /* Date separator dark */
 .date-separator span {
-    background: var(--bg-card, #1a1a2e) !important;
+    background: var(--bg-card, #3D2B1F) !important;
     color: var(--text-muted, #888) !important;
 }
 
@@ -672,7 +672,7 @@ input:focus, textarea:focus, select:focus {
 
 /* Ensure all system messages are dark */
 .system-message {
-    background: rgba(255,255,255,0.05) !important;
+    background: rgba(255,248,240,0.05) !important;
     color: var(--text-muted) !important;
 }
 

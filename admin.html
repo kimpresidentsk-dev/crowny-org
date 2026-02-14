@@ -64,9 +64,9 @@
             </div>
             <a href="index.html" class="nav-link">← 메인으로</a>
             <div id="admin-sidebar-nav"></div>
-            <div style="padding:1rem 1.5rem; border-top:1px solid rgba(255,255,255,0.1); margin-top:1rem;">
-                <p id="admin-user-email" style="font-size:0.75rem; color:rgba(255,255,255,0.5);"></p>
-                <button onclick="auth.signOut();location.href='index.html'" style="margin-top:0.5rem;background:rgba(255,255,255,0.1);color:white;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.8rem;width:100%;">로그아웃</button>
+            <div style="padding:1rem 1.5rem; border-top:1px solid rgba(255,248,240,0.1); margin-top:1rem;">
+                <p id="admin-user-email" style="font-size:0.75rem; color:rgba(255,248,240,0.5);"></p>
+                <button onclick="auth.signOut();location.href='index.html'" style="margin-top:0.5rem;background:rgba(255,248,240,0.1);color:#FFF8F0;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.8rem;width:100%;">로그아웃</button>
             </div>
         </aside>
         <main class="admin-main">
@@ -78,7 +78,7 @@
             
             <div id="admin-panel" style="display:none;">
                 <!-- 관리자 레벨 표시 -->
-                <div id="admin-level-badge" style="text-align:center; padding:0.8rem; background:#1a1a2e; color:white; border-radius:8px; margin-bottom:1rem; font-size:0.9rem;"></div>
+                <div id="admin-level-badge" style="text-align:center; padding:0.8rem; background:#3D2B1F; color:#FFF8F0; border-radius:8px; margin-bottom:1rem; font-size:0.9rem;"></div>
                 
                 <!-- ★ 관리자 탭 메뉴 -->
                 <div id="admin-tab-bar" style="display:flex; gap:4px; overflow-x:auto; padding:4px; background:#f0f0f0; border-radius:10px; margin-bottom:1rem;">
@@ -89,7 +89,7 @@
                 <!-- TAB 1: 🔥 오프체인 포인트 관리 (레벨 2+)   -->
                 <!-- ═══════════════════════════════════════════ -->
                 <div id="admin-tab-offchain" class="admin-tab-content" style="display:none;">
-                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                    <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                         <h3 style="margin-bottom:1rem;">🔥 오프체인 포인트 관리</h3>
                         <p style="font-size:0.75rem; color:var(--accent); margin-bottom:1rem;">Firebase DB · Zero-Gas · 100 pt = 1 CRNY</p>
                         
@@ -98,7 +98,7 @@
                             <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">🔍 유저 오프체인 잔액 조회</h4>
                             <div style="display:flex; gap:0.5rem; align-items:end;">
                                 <input type="email" id="admin-off-lookup-email" placeholder="user@email.com" style="flex:1; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
-                                <button onclick="adminLookupOffchain()" style="background:#1565c0; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer; white-space:nowrap;">조회</button>
+                                <button onclick="adminLookupOffchain()" style="background:#1565c0; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer; white-space:nowrap;">조회</button>
                             </div>
                             <div id="admin-off-lookup-result" style="margin-top:0.5rem; font-size:0.85rem;"></div>
                         </div>
@@ -124,7 +124,7 @@
                                     <label style="font-size:0.7rem;">수량</label>
                                     <input type="number" id="admin-off-mint-amount" value="100" min="1" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
                                 </div>
-                                <button onclick="adminMintOffchain()" style="background:#2e7d32; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">발행</button>
+                                <button onclick="adminMintOffchain()" style="background:#2e7d32; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">발행</button>
                             </div>
                             <div>
                                 <label style="font-size:0.7rem;">사유</label>
@@ -153,7 +153,7 @@
                                     <label style="font-size:0.7rem;">수량</label>
                                     <input type="number" id="admin-off-burn-amount" value="100" min="1" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
                                 </div>
-                                <button onclick="adminBurnOffchain()" style="background:#c62828; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">차감</button>
+                                <button onclick="adminBurnOffchain()" style="background:#c62828; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">차감</button>
                             </div>
                             <div>
                                 <label style="font-size:0.7rem;">사유</label>
@@ -194,7 +194,7 @@
                                         <label style="font-size:0.68rem;">색상</label>
                                         <input type="color" id="new-token-color" value="#FF6D00" style="width:100%; height:32px; border:1px solid var(--border); border-radius:4px; cursor:pointer;">
                                     </div>
-                                    <button onclick="createCustomToken()" style="background:#E65100; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer; font-weight:600; font-size:0.82rem;">🪙 생성</button>
+                                    <button onclick="createCustomToken()" style="background:#E65100; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer; font-weight:600; font-size:0.82rem;">🪙 생성</button>
                                 </div>
                             </details>
                         </div>
@@ -223,8 +223,8 @@
                                 <textarea id="admin-dist-emails" rows="4" placeholder="user1@email.com&#10;user2@email.com&#10;user3@email.com" style="width:100%; padding:0.4rem; border:1px solid var(--border); border-radius:4px; font-size:0.8rem; resize:vertical; box-sizing:border-box;"></textarea>
                             </div>
                             <div style="display:flex; gap:0.4rem; margin-top:0.5rem;">
-                                <button onclick="adminBatchDistribute()" style="flex:1; background:#1565C0; color:white; border:none; padding:0.5rem; border-radius:4px; cursor:pointer; font-weight:600; font-size:0.82rem;">📦 선택 배포</button>
-                                <button onclick="adminDistributeToAll()" style="flex:0.6; background:#7B1FA2; color:white; border:none; padding:0.5rem; border-radius:4px; cursor:pointer; font-weight:600; font-size:0.82rem;">🌐 전체 배포</button>
+                                <button onclick="adminBatchDistribute()" style="flex:1; background:#1565C0; color:#FFF8F0; border:none; padding:0.5rem; border-radius:4px; cursor:pointer; font-weight:600; font-size:0.82rem;">📦 선택 배포</button>
+                                <button onclick="adminDistributeToAll()" style="flex:0.6; background:#7B1FA2; color:#FFF8F0; border:none; padding:0.5rem; border-radius:4px; cursor:pointer; font-weight:600; font-size:0.82rem;">🌐 전체 배포</button>
                             </div>
                             <div id="admin-dist-result" style="margin-top:0.5rem;"></div>
                         </div>
@@ -232,7 +232,7 @@
                         <!-- 최근 오프체인 거래 내역 -->
                         <div style="background:var(--bg); padding:1rem; border-radius:8px;">
                             <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">📜 최근 오프체인 거래 내역</h4>
-                            <button onclick="adminLoadOffchainTxLog()" style="background:#455a64; color:white; border:none; padding:0.4rem 0.8rem; border-radius:4px; cursor:pointer; font-size:0.8rem; margin-bottom:0.5rem;">🔄 새로고침</button>
+                            <button onclick="adminLoadOffchainTxLog()" style="background:#455a64; color:#FFF8F0; border:none; padding:0.4rem 0.8rem; border-radius:4px; cursor:pointer; font-size:0.8rem; margin-bottom:0.5rem;">🔄 새로고침</button>
                             <div id="admin-off-tx-log" style="max-height:300px; overflow-y:auto;"></div>
                         </div>
                     </div>
@@ -243,14 +243,14 @@
                 <!-- ═══════════════════════════════════════════ -->
                 <div id="admin-tab-wallet" class="admin-tab-content" style="display:none;">
                     <!-- 삭제된 지갑 조회 -->
-                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                    <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
                             <h3 style="margin:0;">🗑️ 삭제된 지갑</h3>
-                            <button onclick="adminLoadDeletedWallets()" style="background:#c62828;color:white;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.8rem;">🔍 조회</button>
+                            <button onclick="adminLoadDeletedWallets()" style="background:#c62828;color:#FFF8F0;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.8rem;">🔍 조회</button>
                         </div>
                         <div id="admin-deleted-wallets"><p style="font-size:0.85rem;color:#999;">조회 버튼을 눌러주세요</p></div>
                     </div>
-                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                    <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                         <h3 style="margin-bottom:1rem;">💰 온체인 지갑 관리</h3>
                         <div id="admin-wallet-info" style="margin-bottom:1rem;">
                             <button onclick="loadAdminWallet()" class="btn-primary" style="margin-bottom:0.5rem;">🔄 지갑 새로고침</button>
@@ -274,7 +274,7 @@
                                     <label style="font-size:0.75rem;">수량</label>
                                     <input type="number" id="admin-send-amount" value="1" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
                                 </div>
-                                <button onclick="adminSendToken()" style="background:#0066cc; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer; white-space:nowrap;">보내기</button>
+                                <button onclick="adminSendToken()" style="background:#0066cc; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer; white-space:nowrap;">보내기</button>
                             </div>
                             <p style="font-size:0.7rem; color:var(--accent); margin-top:0.5rem;">⚠️ Polygon 온체인 전송 — POL(MATIC) 가스비 필요</p>
                         </div>
@@ -285,7 +285,7 @@
                 <!-- TAB 3: 📊 챌린지 관리 (레벨 3+)           -->
                 <!-- ═══════════════════════════════════════════ -->
                 <div id="admin-tab-challenge" class="admin-tab-content" style="display:none;">
-                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                    <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                         <h3 style="margin-bottom:1rem;">📊 챌린지 참가자 관리</h3>
                         <button onclick="loadAdminParticipants()" class="btn-primary" style="margin-bottom:1rem;">🔄 참가자 목록 새로고침</button>
                         <div id="admin-participants-list"></div>
@@ -296,7 +296,7 @@
                 <!-- TAB 4: 👥 회원 관리 (레벨 6)              -->
                 <!-- ═══════════════════════════════════════════ -->
                 <div id="admin-tab-users" class="admin-tab-content" style="display:none;">
-                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                    <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                         <h3 style="margin-bottom:1rem;">👥 관리자 계층 관리</h3>
                         <!-- 권한 매트릭스 -->
                         <div style="background:#f3e5f5; padding:1rem; border-radius:8px; margin-bottom:1rem;">
@@ -319,7 +319,7 @@
                 <!-- TAB 5: 🎁 기부풀 관리 (레벨 3+)           -->
                 <!-- ═══════════════════════════════════════════ -->
                 <div id="admin-tab-giving" class="admin-tab-content" style="display:none;">
-                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                    <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                         <h3 style="margin-bottom:1rem;">🎁 기부풀 관리 (CRGC)</h3>
                         <button onclick="adminLoadGivingPool()" class="btn-primary" style="margin-bottom:1rem;">🔄 기부풀 현황</button>
                         <div id="admin-giving-pool-info" style="background:#e8f5e9; padding:1rem; border-radius:8px; margin-bottom:1rem;"></div>
@@ -334,7 +334,7 @@
                                     <label style="font-size:0.7rem;">수량 (CRGC pt)</label>
                                     <input type="number" id="admin-giving-amount" value="100" min="1" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
                                 </div>
-                                <button onclick="adminDistributeGivingPool()" style="background:#00897b; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">분배</button>
+                                <button onclick="adminDistributeGivingPool()" style="background:#00897b; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">분배</button>
                             </div>
                         </div>
                         <div style="margin-top:1rem;">
@@ -348,7 +348,7 @@
                 <!-- TAB: ⭐ 소개자 보상 설정 (수퍼관리자)      -->
                 <!-- ═══════════════════════════════════════════ -->
                 <div id="admin-tab-referral" class="admin-tab-content" style="display:none;">
-                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                    <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                         <h3 style="margin-bottom:1rem;">⭐ 소개자 보상 설정</h3>
                         <p style="font-size:0.85rem; color:var(--accent); margin-bottom:1rem;">회원가입 시 소개자에게 지급되는 오프체인 토큰 수치를 설정합니다.</p>
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin-bottom:1rem;">
@@ -377,7 +377,7 @@
                 <!-- TAB 6.5: ⚖️ 비율 관리 (수퍼관리자)         -->
                 <!-- ═══════════════════════════════════════════ -->
                 <div id="admin-tab-rate" class="admin-tab-content" style="display:none;">
-                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                    <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                         <h3 style="margin-bottom:1rem;">⚖️ 오프체인/CRNY 교환 비율</h3>
                         <p style="font-size:0.85rem; color:#666; margin-bottom:1rem;">
                             토큰별로 개별 비율을 설정할 수 있습니다.<br>
@@ -436,7 +436,7 @@
                             <input type="text" id="rate-change-reason" placeholder="비율 변경 사유를 입력하세요" style="width:100%; padding:0.7rem; border:1px solid #ddd; border-radius:8px; font-size:0.9rem; box-sizing:border-box;">
                         </div>
                         
-                        <button onclick="requestRateChange()" style="width:100%; background:#ff5722; color:white; border:none; padding:0.9rem; border-radius:8px; cursor:pointer; font-weight:700; font-size:1rem;">⚖️ 비율 변경</button>
+                        <button onclick="requestRateChange()" style="width:100%; background:#ff5722; color:#FFF8F0; border:none; padding:0.9rem; border-radius:8px; cursor:pointer; font-weight:700; font-size:1rem;">⚖️ 비율 변경</button>
                         
                         <h4 style="margin:1.5rem 0 0.8rem;">📜 변경 이력</h4>
                         <div id="admin-rate-history" style="max-height:300px; overflow-y:auto;">
@@ -449,7 +449,7 @@
                 <!-- TAB 6: 📋 관리자 로그 (레벨 3+)           -->
                 <!-- ═══════════════════════════════════════════ -->
                 <div id="admin-tab-log" class="admin-tab-content" style="display:none;">
-                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                    <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                         <h3 style="margin-bottom:1rem;">📋 관리자 활동 로그</h3>
                         <button onclick="loadAdminLog()" class="btn-primary" style="margin-bottom:1rem;">🔄 로그 새로고침</button>
                         <div id="admin-log-list"></div>
@@ -460,12 +460,12 @@
                 <!-- TAB: 📈 대시보드 통계 (레벨 3+)           -->
                 <!-- ═══════════════════════════════════════════ -->
                 <div id="admin-tab-dashboard" class="admin-tab-content" style="display:none;">
-                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                    <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                             <h3 style="margin:0;">📈 대시보드 통계</h3>
                             <div style="display:flex; gap:0.5rem; align-items:center;">
                                 <span id="dashboard-cache-info" style="font-size:0.7rem; color:#999;"></span>
-                                <button onclick="loadAdminDashboardStats(true)" style="background:#1565c0; color:white; border:none; padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; font-size:0.8rem;">🔄 새로고침</button>
+                                <button onclick="loadAdminDashboardStats(true)" style="background:#1565c0; color:#FFF8F0; border:none; padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; font-size:0.8rem;">🔄 새로고침</button>
                             </div>
                         </div>
 
@@ -531,11 +531,11 @@
 
                 <!-- 상품 승인/신고 관리 탭 -->
                 <div id="admin-tab-products" class="admin-tab-content" style="display:none;">
-                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                    <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                         <h3 style="margin-bottom:1rem;">📦 상품 승인 관리</h3>
                         <div id="admin-pending-products">로딩...</div>
                     </div>
-                    <div style="background:white; padding:1.5rem; border-radius:12px;">
+                    <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px;">
                         <h3 style="margin-bottom:1rem;">🚨 신고 관리</h3>
                         <div id="admin-reports-list">로딩...</div>
                     </div>
@@ -543,7 +543,7 @@
 
                 <!-- 쿠폰 관리 탭 -->
                 <div id="admin-tab-coupon" class="admin-tab-content" style="display:none;">
-                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                    <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                         <h3 style="margin-bottom:1rem;">🎟️ 쿠폰 관리</h3>
                         <div style="display:grid; gap:0.8rem;">
                             <input type="text" id="coupon-name" placeholder="쿠폰 이름 (예: 크라우니트레이딩 챌린지 기념 쿠폰 2026)" style="padding:0.6rem; border:1px solid #ddd; border-radius:6px;">
@@ -567,12 +567,12 @@
                             <button onclick="createCoupon()" class="btn-primary">🎟️ 쿠폰 생성</button>
                         </div>
                     </div>
-                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                    <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                         <h3 style="margin-bottom:1rem;">📋 쿠폰 목록</h3>
                         <button onclick="loadCouponList()" class="btn-primary" style="margin-bottom:1rem;">🔄 새로고침</button>
                         <div id="coupon-list"></div>
                     </div>
-                    <div id="coupon-log-section" style="display:none; background:white; padding:1.5rem; border-radius:12px;">
+                    <div id="coupon-log-section" style="display:none; background:#FFF8F0; padding:1.5rem; border-radius:12px;">
                         <h3 style="margin-bottom:1rem;">📜 쿠폰 사용 로그</h3>
                         <div id="coupon-log-list"></div>
                         <button onclick="closeCouponLog()" class="btn-primary" style="margin-top:0.5rem; background:#999;">닫기</button>
@@ -585,7 +585,7 @@
                 </div>
 
                 <div id="admin-tab-ai" class="admin-tab-content" style="display:none;">
-                    <div style="background:white; padding:1.5rem; border-radius:12px;">
+                    <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px;">
                         <h3 style="margin-bottom:1rem;">👑 크라우니 패널 설정</h3>
                         <div style="display:grid; gap:1rem;">
                             <label style="display:flex; align-items:center; gap:0.5rem; font-weight:600;">
@@ -604,33 +604,33 @@
                         </div>
                     </div>
 
-                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-top:1rem;">
+                    <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-top:1rem;">
                         <h3 style="margin-bottom:1rem;">🤖 AI 소셜 봇</h3>
                         <p style="font-size:0.85rem; color:#666; margin-bottom:1rem;">5명의 AI 캐릭터가 소셜 피드에 자동으로 글을 올리고, 댓글에 답변합니다.</p>
                         <div style="display:grid; gap:0.5rem;">
-                            <button onclick="aiSocialPostAll()" class="btn-primary" style="background:linear-gradient(135deg,#D4AF37,#F0C060);color:#1a1a2e;">🚀 전체 캐릭터 포스팅 (5명)</button>
+                            <button onclick="aiSocialPostAll()" class="btn-primary" style="background:linear-gradient(135deg,#D4AF37,#F0C060);color:#3D2B1F;">🚀 전체 캐릭터 포스팅 (5명)</button>
                             <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-top:0.5rem;">
-                                <button onclick="aiSocialPostOne('kps')" style="padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">👔 KPS</button>
-                                <button onclick="aiSocialPostOne('hansun')" style="padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">🎹 한선</button>
-                                <button onclick="aiSocialPostOne('michael')" style="padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">🎤 마이클</button>
-                                <button onclick="aiSocialPostOne('matthew')" style="padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">🔧 매튜</button>
-                                <button onclick="aiSocialPostOne('crownygirl')" style="padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;grid-column:span 2;">✨ 크라우니걸</button>
+                                <button onclick="aiSocialPostOne('kps')" style="padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;">👔 KPS</button>
+                                <button onclick="aiSocialPostOne('hansun')" style="padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;">🎹 한선</button>
+                                <button onclick="aiSocialPostOne('michael')" style="padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;">🎤 마이클</button>
+                                <button onclick="aiSocialPostOne('matthew')" style="padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;">🔧 매튜</button>
+                                <button onclick="aiSocialPostOne('crownygirl')" style="padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;grid-column:span 2;">✨ 크라우니걸</button>
                             </div>
                             <div id="ai-social-result" style="margin-top:0.5rem;font-size:0.8rem;color:#666;"></div>
                         </div>
                     </div>
 
-                    <div style="background:white; padding:1.5rem; border-radius:12px; margin-top:1rem;">
+                    <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-top:1rem;">
                         <h3 style="margin-bottom:1rem;">✨ 뷰티매니저 — 분석 요청</h3>
                         <p style="font-size:0.85rem; color:#666; margin-bottom:1rem;">사용자들의 피부 분석 요청 목록입니다. 사진을 확인하고 분석 결과를 입력하세요.</p>
-                        <button onclick="BEAUTY.loadAdminRequests()" style="padding:0.5rem 1rem;border:none;border-radius:6px;background:#E91E63;color:white;cursor:pointer;margin-bottom:0.5rem;">🔄 요청 목록 새로고침</button>
+                        <button onclick="BEAUTY.loadAdminRequests()" style="padding:0.5rem 1rem;border:none;border-radius:6px;background:#E91E63;color:#FFF8F0;cursor:pointer;margin-bottom:0.5rem;">🔄 요청 목록 새로고침</button>
                         <div id="beauty-admin-requests"><p style="color:#888;font-size:0.85rem;">목록을 로드하려면 위 버튼을 클릭하세요.</p></div>
                     </div>
                 </div>
 
                 <!-- TAB: 🔧 기능 관리 (Features) -->
                 <div id="admin-tab-features" class="admin-tab-content" style="display:none;">
-                    <div style="background:white; padding:1.5rem; border-radius:12px;">
+                    <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px;">
                         <h3 style="margin-bottom:1rem;">🔧 기능 관리 (Feature Flags)</h3>
                         <p style="color:#666; font-size:0.85rem; margin-bottom:1rem;">일반 유저에게 보이는 메뉴를 관리합니다. 수퍼관리자는 항상 모든 메뉴를 볼 수 있습니다.</p>
                         
@@ -638,7 +638,7 @@
                         <div style="background:#fff3e0;border:1px solid #ffcc02;border-radius:8px;padding:1rem;margin-bottom:1rem;">
                             <p style="font-size:0.85rem;margin-bottom:0.5rem;"><strong>🌱 초기 데이터 시드</strong></p>
                             <p style="font-size:0.75rem;color:#666;margin-bottom:0.8rem;">아티스트, 사업체, 캠페인, AI 봇 프로필 등 초기 데이터를 생성합니다. 이미 있는 데이터는 건드리지 않습니다.</p>
-                            <button onclick="seedAll().then(r=>document.getElementById('seed-result').textContent=r)" style="padding:0.6rem 1.2rem;background:#ff9800;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;">🌱 시드 데이터 실행</button>
+                            <button onclick="seedAll().then(r=>document.getElementById('seed-result').textContent=r)" style="padding:0.6rem 1.2rem;background:#ff9800;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:600;">🌱 시드 데이터 실행</button>
                             <pre id="seed-result" style="margin-top:0.5rem;font-size:0.75rem;color:#333;white-space:pre-wrap;"></pre>
                         </div>
                         <div id="feature-flags-list" style="display:grid; gap:0.8rem;"></div>
@@ -680,7 +680,7 @@
                                             : `<label style="position:relative;display:inline-block;width:48px;height:26px;">
                                                 <input type="checkbox" ${enabled?'checked':''} onchange="setFeatureFlag('${f.key}',this.checked)" style="opacity:0;width:0;height:0;">
                                                 <span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:${enabled?'#4CAF50':'#ccc'};border-radius:13px;transition:0.3s;"></span>
-                                                <span style="position:absolute;content:'';height:20px;width:20px;left:${enabled?'24px':'3px'};bottom:3px;background:white;border-radius:50%;transition:0.3s;"></span>
+                                                <span style="position:absolute;content:'';height:20px;width:20px;left:${enabled?'24px':'3px'};bottom:3px;background:#FFF8F0;border-radius:50%;transition:0.3s;"></span>
                                               </label>`
                                         }`;
                                     container.appendChild(div);
@@ -708,19 +708,19 @@
 
     <!-- Toast -->
     <div id="toast-container" style="position:fixed;top:20px;right:20px;z-index:99999;display:flex;flex-direction:column;gap:8px;pointer-events:none;"></div>
-    <div id="loading-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:99998;align-items:center;justify-content:center;">
-        <div style="background:white;padding:2rem;border-radius:12px;text-align:center;">
+    <div id="loading-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.5);z-index:99998;align-items:center;justify-content:center;">
+        <div style="background:#FFF8F0;padding:2rem;border-radius:12px;text-align:center;">
             <div style="width:40px;height:40px;border:4px solid #ddd;border-top:4px solid #0066cc;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 1rem;"></div>
             <p id="loading-text">처리 중...</p>
         </div>
     </div>
-    <div id="confirm-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;align-items:center;justify-content:center;padding:1rem;">
-        <div style="background:white;padding:1.5rem;border-radius:12px;max-width:400px;width:100%;">
+    <div id="confirm-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99997;align-items:center;justify-content:center;padding:1rem;">
+        <div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;max-width:400px;width:100%;">
             <h3 id="confirm-title"></h3>
             <p id="confirm-message" style="color:#666;margin:0.8rem 0 1.2rem;white-space:pre-line;"></p>
             <div style="display:flex;gap:0.5rem;">
-                <button id="confirm-cancel" onclick="closeConfirmModal(false)" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">취소</button>
-                <button id="confirm-ok" onclick="closeConfirmModal(true)" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#0066cc;color:white;font-weight:700;">확인</button>
+                <button id="confirm-cancel" onclick="closeConfirmModal(false)" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;">취소</button>
+                <button id="confirm-ok" onclick="closeConfirmModal(true)" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#0066cc;color:#FFF8F0;font-weight:700;">확인</button>
             </div>
         </div>
     </div>
@@ -728,7 +728,7 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes slideIn { from { transform: translateX(100%); opacity:0; } to { transform: translateX(0); opacity:1; } }
         @keyframes fadeOut { from { opacity:1; } to { opacity:0; transform:translateY(-10px); } }
-        .toast { pointer-events:auto; padding:0.8rem 1.2rem; border-radius:8px; color:white; font-size:0.9rem; box-shadow:0 4px 12px rgba(0,0,0,0.15); animation: slideIn 0.3s ease; max-width:350px; }
+        .toast { pointer-events:auto; padding:0.8rem 1.2rem; border-radius:8px; color:#FFF8F0; font-size:0.9rem; box-shadow:0 4px 12px rgba(61,43,31,0.15); animation: slideIn 0.3s ease; max-width:350px; }
         .toast.success { background:#4CAF50; } .toast.error { background:#f44336; } .toast.info { background:#2196F3; } .toast.warning { background:#ff9800; }
         .toast.fadeout { animation: fadeOut 0.3s ease forwards; }
     </style>
@@ -742,8 +742,8 @@
     function showPromptModal(title, message, defaultValue) {
         return new Promise(resolve => {
             const o = document.createElement('div');
-            o.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
-            o.innerHTML=`<div style="background:white;padding:1.5rem;border-radius:12px;max-width:400px;width:100%;"><h3>${title}</h3><p style="color:#666;margin:0.5rem 0;white-space:pre-line;font-size:0.9rem;">${message}</p><input type="text" id="prompt-input" value="${defaultValue||''}" style="width:100%;padding:0.7rem;border:1px solid #ddd;border-radius:8px;font-size:1rem;box-sizing:border-box;margin:0.5rem 0;"><div style="display:flex;gap:0.5rem;"><button id="p-cancel" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">취소</button><button id="p-ok" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#1a1a2e;color:white;font-weight:700;">확인</button></div></div>`;
+            o.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
+            o.innerHTML=`<div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;max-width:400px;width:100%;"><h3>${title}</h3><p style="color:#666;margin:0.5rem 0;white-space:pre-line;font-size:0.9rem;">${message}</p><input type="text" id="prompt-input" value="${defaultValue||''}" style="width:100%;padding:0.7rem;border:1px solid #ddd;border-radius:8px;font-size:1rem;box-sizing:border-box;margin:0.5rem 0;"><div style="display:flex;gap:0.5rem;"><button id="p-cancel" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;">취소</button><button id="p-ok" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#3D2B1F;color:#FFF8F0;font-weight:700;">확인</button></div></div>`;
             document.body.appendChild(o);
             const i=o.querySelector('#prompt-input'); i.focus(); i.select();
             i.onkeydown=e=>{if(e.key==='Enter'){o.remove();resolve(i.value);}if(e.key==='Escape'){o.remove();resolve(null);}};
@@ -786,7 +786,7 @@
         function showToast(msg, type, dur) {
             const d = document.createElement('div');
             d.textContent = msg;
-            d.style.cssText = 'position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);padding:0.8rem 1.5rem;border-radius:8px;z-index:99999;color:#fff;font-size:0.9rem;background:' + (type==='error'?'#c0392b':type==='warning'?'#e67e22':'#2ecc71');
+            d.style.cssText = 'position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);padding:0.8rem 1.5rem;border-radius:8px;z-index:99999;color:#FFF8F0;font-size:0.9rem;background:' + (type==='error'?'#c0392b':type==='warning'?'#e67e22':'#2ecc71');
             document.body.appendChild(d);
             setTimeout(() => d.remove(), dur || 3000);
         }

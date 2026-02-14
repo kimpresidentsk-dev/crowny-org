@@ -7,7 +7,7 @@
     
     <!-- PWA -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1a1a2e">
+    <meta name="theme-color" content="#3D2B1F">
     <link rel="apple-touch-icon" href="/img/icons/icon-192x192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -129,7 +129,7 @@
             <p style="font-size: 1.2rem; color: #888; margin-bottom: 3rem;">Protecting Beauty, Empowering Safety</p>
             
             <button onclick="document.getElementById('landing-page').classList.add('hidden'); document.getElementById('auth-modal').style.display='flex'" 
-                    style="padding: 1rem 3rem; font-size: 1.2rem; border-radius: 50px; background: var(--brand-pink); color: white; border: none; cursor: pointer; box-shadow: 0 0 20px rgba(233,30,99,0.4);">
+                    style="padding: 1rem 3rem; font-size: 1.2rem; border-radius: 50px; background: var(--brand-pink); color: #FFF8F0; border: none; cursor: pointer; box-shadow: 0 0 20px rgba(233,30,99,0.4);">
                 시작하기
             </button>
         </div>
@@ -364,10 +364,10 @@
             <h2 style="display:flex; align-items:center; gap:0.5rem;" data-i18n-html="wallet.title">💰 MY WALLET <span id="wallet-sync-badge" style="font-size:0.65rem; background:#e8f5e9; color:#2e7d32; padding:0.15rem 0.5rem; border-radius:10px; display:none;" data-i18n="wallet.synced">● 동기화됨</span></h2>
             
             <!-- Wallet Selector -->
-            <div style="background:white; padding:1.2rem; border-radius:12px; margin-bottom:1rem; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+            <div style="background:white; padding:1.2rem; border-radius:12px; margin-bottom:1rem; box-shadow:0 2px 8px rgba(61,43,31,0.06);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
                     <strong style="font-size:0.95rem;" data-i18n="wallet.my_wallets">📂 내 지갑</strong>
-                    <button onclick="showAddWalletModal()" style="background:#0066cc; color:white; border:none; padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight:600;" data-i18n="wallet.add_wallet">➕ 지갑 추가</button>
+                    <button onclick="showAddWalletModal()" style="background:#0066cc; color:#FFF8F0; border:none; padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight:600;" data-i18n="wallet.add_wallet">➕ 지갑 추가</button>
                 </div>
                 <select id="wallet-selector" onchange="switchWallet()" style="width:100%; padding:0.8rem; border-radius:8px; border:1px solid #e0e0e0; font-size:0.9rem; background:white; cursor:pointer;">
                 </select>
@@ -375,7 +375,7 @@
             
             <div class="wallet-info">
                 <!-- 지갑 주소 카드 -->
-                <div style="background:white; padding:1.2rem; border-radius:12px; margin-bottom:1rem; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                <div style="background:white; padding:1.2rem; border-radius:12px; margin-bottom:1rem; box-shadow:0 2px 8px rgba(61,43,31,0.06);">
                     <div style="display:flex; justify-content:space-between; align-items:start;">
                         <div style="flex:1;">
                             <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
@@ -383,7 +383,7 @@
                                 <span id="wallet-security-status" style="font-size:0.7rem;"></span>
                             </div>
                             <div style="display:flex; align-items:center; gap:0.5rem;">
-                                <span id="wallet-address" style="font-family:'Consolas',monospace; font-size:1rem; font-weight:700; color:#1a1a2e;"></span>
+                                <span id="wallet-address" style="font-family:'Consolas',monospace; font-size:1rem; font-weight:700; color:#3D2B1F;"></span>
                             </div>
                             <p id="wallet-address-full" style="font-family:'Consolas',monospace; font-size:0.7rem; color:#999; margin-top:0.3rem; word-break:break-all;"></p>
                         </div>
@@ -403,8 +403,8 @@
                 </div>
 
                 <!-- 총 자산 요약 + MATIC -->
-                <div style="background:linear-gradient(135deg, #0f0c29, #302b63, #24243e); color:white; padding:1.5rem; border-radius:16px; margin-bottom:1rem; position:relative; overflow:hidden;">
-                    <div style="position:absolute; top:-20px; right:-20px; width:100px; height:100px; background:rgba(255,255,255,0.05); border-radius:50%;"></div>
+                <div style="background:linear-gradient(135deg, #3D2B1F, #6B5744, #6B5744); color:#FFF8F0; padding:1.5rem; border-radius:16px; margin-bottom:1rem; position:relative; overflow:hidden;">
+                    <div style="position:absolute; top:-20px; right:-20px; width:100px; height:100px; background:rgba(255,248,240,0.05); border-radius:50%;"></div>
                     <div style="display:flex; justify-content:space-between; align-items:start;">
                         <div>
                             <div style="font-size:0.7rem; opacity:0.6; text-transform:uppercase; letter-spacing:1px;" data-i18n="wallet.total_assets">Total Assets</div>
@@ -418,7 +418,7 @@
                     </div>
                     
                     <!-- MATIC 잔액 -->
-                    <div style="margin-top:1rem; padding-top:0.8rem; border-top:1px solid rgba(255,255,255,0.1); display:flex; justify-content:space-between; align-items:center;">
+                    <div style="margin-top:1rem; padding-top:0.8rem; border-top:1px solid rgba(255,248,240,0.1); display:flex; justify-content:space-between; align-items:center;">
                         <div style="display:flex; align-items:center; gap:0.5rem;">
                             <div style="width:24px; height:24px; background:linear-gradient(135deg,#8247e5,#6f3adf); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.7rem;">⟠</div>
                             <div>
@@ -427,8 +427,8 @@
                             </div>
                         </div>
                         <div style="display:flex; gap:0.4rem;">
-                            <button onclick="showMaticDeposit()" style="background:rgba(255,255,255,0.15); border:none; color:white; padding:0.3rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.7rem;" data-i18n="wallet.deposit">📥 입금</button>
-                            <button onclick="showMaticSend()" style="background:rgba(255,255,255,0.15); border:none; color:white; padding:0.3rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.7rem;" data-i18n="wallet.send">📤 송금</button>
+                            <button onclick="showMaticDeposit()" style="background:rgba(255,248,240,0.15); border:none; color:#FFF8F0; padding:0.3rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.7rem;" data-i18n="wallet.deposit">📥 입금</button>
+                            <button onclick="showMaticSend()" style="background:rgba(255,248,240,0.15); border:none; color:#FFF8F0; padding:0.3rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.7rem;" data-i18n="wallet.send">📤 송금</button>
                         </div>
                     </div>
                     
@@ -445,7 +445,7 @@
                     </div>
                     <div class="token-balances">
                         <div class="token-card" onclick="selectToken('crny')" id="token-card-crny">
-                            <div class="token-icon" style="background:linear-gradient(135deg,#FFD700,#FFA000); color:#fff; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">👑</div>
+                            <div class="token-icon" style="background:linear-gradient(135deg,#FFD700,#FFA000); color:#FFF8F0; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">👑</div>
                             <div class="token-info">
                                 <span class="token-name">CRNY</span>
                                 <span class="token-desc" data-i18n="wallet.token.crny">거버넌스 · 앵커</span>
@@ -453,7 +453,7 @@
                             <strong class="token-balance" id="crny-balance">0</strong>
                         </div>
                         <div class="token-card" onclick="selectToken('fnc')" id="token-card-fnc">
-                            <div class="token-icon" style="background:linear-gradient(135deg,#42A5F5,#1565C0); color:#fff; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">🌉</div>
+                            <div class="token-icon" style="background:linear-gradient(135deg,#42A5F5,#1565C0); color:#FFF8F0; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">🌉</div>
                             <div class="token-info">
                                 <span class="token-name">FNC</span>
                                 <span class="token-desc" data-i18n="wallet.token.fnc">유틸리티 · 브릿지</span>
@@ -461,7 +461,7 @@
                             <strong class="token-balance" id="fnc-balance">0</strong>
                         </div>
                         <div class="token-card" onclick="selectToken('crfn')" id="token-card-crfn">
-                            <div class="token-icon" style="background:linear-gradient(135deg,#AB47BC,#7B1FA2); color:#fff; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">🔒</div>
+                            <div class="token-icon" style="background:linear-gradient(135deg,#AB47BC,#7B1FA2); color:#FFF8F0; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">🔒</div>
                             <div class="token-info">
                                 <span class="token-name">CRFN</span>
                                 <span class="token-desc" data-i18n="wallet.token.crfn">리워드 · 락인</span>
@@ -482,7 +482,7 @@
                     <div style="font-size:0.7rem; color:var(--accent); margin-bottom:0.6rem; padding-left:0.2rem;" data-i18n="wallet.pegging_info">📌 100 포인트 = 1 CRNY 페깅</div>
                     <div class="token-balances" style="grid-template-columns:1fr 1fr;">
                         <div class="token-card offchain-card" onclick="selectToken('crtd')" id="token-card-crtd" style="border-left:3px solid #FF6D00;">
-                            <div class="token-icon" style="background:linear-gradient(135deg,#FF6D00,#FF9100); color:#fff; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:1rem;">📈</div>
+                            <div class="token-icon" style="background:linear-gradient(135deg,#FF6D00,#FF9100); color:#FFF8F0; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:1rem;">📈</div>
                             <div class="token-info">
                                 <span class="token-name">CRTD</span>
                                 <span class="token-desc" data-i18n="wallet.token.crtd">트레이딩</span>
@@ -490,7 +490,7 @@
                             <strong class="token-balance" id="crtd-balance">0</strong>
                         </div>
                         <div class="token-card offchain-card" onclick="selectToken('crac')" id="token-card-crac" style="border-left:3px solid #E91E63;">
-                            <div class="token-icon" style="background:linear-gradient(135deg,#E91E63,#AD1457); color:#fff; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:1rem;">🎭</div>
+                            <div class="token-icon" style="background:linear-gradient(135deg,#E91E63,#AD1457); color:#FFF8F0; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:1rem;">🎭</div>
                             <div class="token-info">
                                 <span class="token-name">CRAC</span>
                                 <span class="token-desc" data-i18n="wallet.token.crac">엔터테인먼트</span>
@@ -498,7 +498,7 @@
                             <strong class="token-balance" id="crac-balance">0</strong>
                         </div>
                         <div class="token-card offchain-card" onclick="selectToken('crgc')" id="token-card-crgc" style="border-left:3px solid #00BFA5;">
-                            <div class="token-icon" style="background:linear-gradient(135deg,#00BFA5,#00897B); color:#fff; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:1rem;">🛒</div>
+                            <div class="token-icon" style="background:linear-gradient(135deg,#00BFA5,#00897B); color:#FFF8F0; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:1rem;">🛒</div>
                             <div class="token-info">
                                 <span class="token-name">CRGC</span>
                                 <span class="token-desc" data-i18n="wallet.token.crgc">커머스</span>
@@ -506,7 +506,7 @@
                             <strong class="token-balance" id="crgc-balance">0</strong>
                         </div>
                         <div class="token-card offchain-card" onclick="selectToken('creb')" id="token-card-creb" style="border-left:3px solid #2E7D32;">
-                            <div class="token-icon" style="background:linear-gradient(135deg,#66BB6A,#2E7D32); color:#fff; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:1rem;">🌱</div>
+                            <div class="token-icon" style="background:linear-gradient(135deg,#66BB6A,#2E7D32); color:#FFF8F0; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:1rem;">🌱</div>
                             <div class="token-info">
                                 <span class="token-name">CREB</span>
                                 <span class="token-desc" data-i18n="wallet.token.creb">에코 · 바이오</span>
@@ -542,7 +542,7 @@
                     </div>
                     <input type="number" id="bridge-amount" placeholder="수량" data-i18n-placeholder="placeholder.amount" oninput="updateBridgePreview()" style="width:100%; padding:0.6rem; border:1px solid var(--border); border-radius:6px; margin-top:0.5rem; box-sizing:border-box;">
                     <div id="bridge-preview" style="font-size:0.8rem; color:#1565c0; font-weight:600; margin-top:0.4rem; text-align:center;"></div>
-                    <button onclick="executeBridge()" style="width:100%; padding:0.7rem; background:linear-gradient(135deg,#1565c0,#7B1FA2); color:white; border:none; border-radius:8px; cursor:pointer; font-weight:700; margin-top:0.5rem;" data-i18n="wallet.bridge_exec">🔄 브릿지 실행</button>
+                    <button onclick="executeBridge()" style="width:100%; padding:0.7rem; background:linear-gradient(135deg,#1565c0,#7B1FA2); color:#FFF8F0; border:none; border-radius:8px; cursor:pointer; font-weight:700; margin-top:0.5rem;" data-i18n="wallet.bridge_exec">🔄 브릿지 실행</button>
                 </div>
             </div>
 
@@ -551,7 +551,7 @@
                 <h4 style="margin:0 0 0.5rem; font-size:0.9rem;" data-i18n="wallet.coupon_title">🎟️ 쿠폰 사용</h4>
                 <div style="display:flex; gap:0.5rem;">
                     <input type="text" id="coupon-code-input" placeholder="쿠폰 코드 입력" data-i18n-placeholder="wallet.coupon_placeholder" style="flex:1; padding:0.6rem; border:1px solid var(--border); border-radius:6px; font-size:0.85rem; text-transform:uppercase;">
-                    <button onclick="redeemCoupon()" style="padding:0.6rem 1rem; background:linear-gradient(135deg,#FF6D00,#FF9800); color:white; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.85rem;" data-i18n="wallet.coupon_use">사용</button>
+                    <button onclick="redeemCoupon()" style="padding:0.6rem 1rem; background:linear-gradient(135deg,#FF6D00,#FF9800); color:#FFF8F0; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.85rem;" data-i18n="wallet.coupon_use">사용</button>
                 </div>
                 <div id="coupon-result" style="font-size:0.8rem; margin-top:0.4rem; color:#e65100;"></div>
             </div>
@@ -798,7 +798,7 @@
                     // Show preview & open editor
                     const url = URL.createObjectURL(file);
                     preview.style.display = 'block';
-                    preview.innerHTML = `<div style="position:relative;display:inline-block;"><video src="${url}" style="max-width:200px;max-height:150px;border-radius:8px;" muted></video><button onclick="document.getElementById('post-video').value='';document.getElementById('post-video-preview').style.display='none';" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.6);color:white;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:14px;">✕</button><button onclick="openVideoEditor()" style="position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,0.6);color:white;border:none;border-radius:12px;padding:2px 8px;cursor:pointer;font-size:12px;">✂️ 편집</button></div>`;
+                    preview.innerHTML = `<div style="position:relative;display:inline-block;"><video src="${url}" style="max-width:200px;max-height:150px;border-radius:8px;" muted></video><button onclick="document.getElementById('post-video').value='';document.getElementById('post-video-preview').style.display='none';" style="position:absolute;top:4px;right:4px;background:rgba(61,43,31,0.6);color:#FFF8F0;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:14px;">✕</button><button onclick="openVideoEditor()" style="position:absolute;bottom:4px;right:4px;background:rgba(61,43,31,0.6);color:#FFF8F0;border:none;border-radius:12px;padding:2px 8px;cursor:pointer;font-size:12px;">✂️ 편집</button></div>`;
                     // Validate duration
                     const v = preview.querySelector('video');
                     v.onloadedmetadata = () => {
@@ -816,9 +816,9 @@
         <section id="reels" class="page" data-feature="reels">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
                 <h2 style="margin:0;" data-i18n="shortform.title">🎬 REELS</h2>
-                <button onclick="SHORTFORM.openUpload()" style="padding:0.5rem 1rem;border:none;border-radius:20px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;cursor:pointer;font-weight:600;font-size:0.85rem;">➕ 업로드</button>
+                <button onclick="SHORTFORM.openUpload()" style="padding:0.5rem 1rem;border:none;border-radius:20px;background:linear-gradient(135deg,#667eea,#764ba2);color:#FFF8F0;cursor:pointer;font-weight:600;font-size:0.85rem;">➕ 업로드</button>
             </div>
-            <div id="reels-container" style="width:100%;height:calc(100vh - 120px);background:#000;border-radius:16px;overflow:hidden;position:relative;"></div>
+            <div id="reels-container" style="width:100%;height:calc(100vh - 120px);background:#3D2B1F;border-radius:16px;overflow:hidden;position:relative;"></div>
         </section>
 
         <!-- ========== ART v2.0 - 디지털 아트 거래소 + NFT ========== -->
@@ -837,7 +837,7 @@
             <div id="my-collection-section" style="background:white; padding:1.2rem; border-radius:12px; margin-bottom:1rem;">
                 <h3 style="margin-bottom:.8rem; font-size:1rem;">📦 내 컬렉션</h3>
                 <div style="display:flex; gap:.4rem; margin-bottom:.8rem; flex-wrap:wrap; overflow-x:auto;">
-                    <button onclick="loadMyCollection('my-artworks')" class="collection-tab-btn active" data-tab="my-artworks" style="padding:.4rem .8rem; border-radius:20px; border:1px solid var(--border); background:var(--text); color:white; cursor:pointer; font-size:.78rem; font-weight:600; white-space:nowrap;">🎨 내 작품</button>
+                    <button onclick="loadMyCollection('my-artworks')" class="collection-tab-btn active" data-tab="my-artworks" style="padding:.4rem .8rem; border-radius:20px; border:1px solid var(--border); background:var(--text); color:#FFF8F0; cursor:pointer; font-size:.78rem; font-weight:600; white-space:nowrap;">🎨 내 작품</button>
                     <button onclick="loadMyCollection('my-purchases')" class="collection-tab-btn" data-tab="my-purchases" style="padding:.4rem .8rem; border-radius:20px; border:1px solid var(--border); background:var(--bg); cursor:pointer; font-size:.78rem; font-weight:600; white-space:nowrap;">🛒 구매 작품</button>
                     <button onclick="loadMyCollection('my-nfts')" class="collection-tab-btn" data-tab="my-nfts" style="padding:.4rem .8rem; border-radius:20px; border:1px solid var(--border); background:var(--bg); cursor:pointer; font-size:.78rem; font-weight:600; white-space:nowrap;">🔗 NFT</button>
                     <button onclick="loadMyCollection('my-reservations')" class="collection-tab-btn" data-tab="my-reservations" style="padding:.4rem .8rem; border-radius:20px; border:1px solid var(--border); background:var(--bg); cursor:pointer; font-size:.78rem; font-weight:600; white-space:nowrap;">📅 예약</button>
@@ -872,7 +872,7 @@
                     <option value="nft" data-i18n="art.nft_only">🔗 NFT만</option>
                     <option value="non-nft" data-i18n="art.non_nft">일반만</option>
                 </select>
-                <button onclick="loadArtGallery()" style="background:var(--primary); color:white; border:none; padding:0.5rem 1rem; border-radius:6px; cursor:pointer;">🔄</button>
+                <button onclick="loadArtGallery()" style="background:var(--primary); color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:6px; cursor:pointer;">🔄</button>
             </div>
             
             <!-- ══ 갤러리 그리드 ══ -->
@@ -887,20 +887,20 @@
                 <div style="display:flex; gap:0.4rem; align-items:center;">
                     <button onclick="showPage('buyer-orders'); loadBuyerOrders();" style="background:none; border:1px solid #4CAF50; color:#4CAF50; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem;">📋</button>
                     <button onclick="showPage('wishlist'); loadWishlist();" style="background:none; border:1px solid #e91e63; color:#e91e63; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem;">❤️</button>
-                    <button onclick="showPage('cart'); loadCart();" style="background:none; border:1px solid #0066cc; color:#0066cc; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem; position:relative;">🛒 <span id="cart-badge" style="display:none; position:absolute; top:-6px; right:-6px; background:#e53935; color:white; font-size:0.6rem; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;">0</span></button>
+                    <button onclick="showPage('cart'); loadCart();" style="background:none; border:1px solid #0066cc; color:#0066cc; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem; position:relative;">🛒 <span id="cart-badge" style="display:none; position:absolute; top:-6px; right:-6px; background:#e53935; color:#FFF8F0; font-size:0.6rem; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;">0</span></button>
                     <button onclick="showPage('my-shop'); loadMyShopDashboard();" style="background:none; border:1px solid #ff9800; color:#ff9800; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem;">🏪</button>
                     <button class="admin-register-btn" id="mall-register-btn" onclick="openRegisterModal('mall')" data-i18n="mall.register">➕ 상품 등록</button>
                 </div>
             </div>
             
-            <div class="section-banner" id="mall-banner" style="background:linear-gradient(135deg, #1a1a2e, #16213e);">
+            <div class="section-banner" id="mall-banner" style="background:linear-gradient(135deg, #3D2B1F, #6B5744);">
                 <h3 data-i18n="mall.banner_title">🛒 CROWNY MALL — 크라우니 생태계 마켓플레이스</h3>
                 <p data-i18n="mall.banner_desc">CRGC 토큰으로 결제</p>
             </div>
             
             <!-- 브랜드 카테고리 -->
             <div id="mall-brand-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:0.5rem; margin-bottom:1rem;">
-                <div onclick="filterMallBrand(null)" class="mall-brand-card active" data-brand="all" style="background:#333; color:white; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>🏪 전체</strong><br><span style="opacity:0.7;">ALL</span></div>
+                <div onclick="filterMallBrand(null)" class="mall-brand-card active" data-brand="all" style="background:#6B5744; color:#FFF8F0; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>🏪 전체</strong><br><span style="opacity:0.7;">ALL</span></div>
                 <div onclick="filterMallBrand('present')" class="mall-brand-card" data-brand="present" style="background:#FDEBD0; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>💄 프레즌트</strong><br><span style="color:var(--accent);">화장품</span></div>
                 <div onclick="filterMallBrand('doctor')" class="mall-brand-card" data-brand="doctor" style="background:#D5F5E3; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>💊 포닥터</strong><br><span style="color:var(--accent);">건강기능식품</span></div>
                 <div onclick="filterMallBrand('medical')" class="mall-brand-card" data-brand="medical" style="background:#D6EAF8; padding:0.8rem; border-radius:8px; text-align:center; cursor:pointer; font-size:0.8rem;"><strong>🏥 메디컬</strong><br><span style="color:var(--accent);">의료기기</span></div>
@@ -927,7 +927,7 @@
             </div>
             
             <!-- 필터 패널 -->
-            <div id="mall-filter-panel" style="display:none; background:white; padding:1rem; border-radius:8px; margin-bottom:0.8rem; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <div id="mall-filter-panel" style="display:none; background:white; padding:1rem; border-radius:8px; margin-bottom:0.8rem; box-shadow:0 2px 8px rgba(61,43,31,0.08);">
                 <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:0.5rem; align-items:end;">
                     <div>
                         <label style="font-size:0.7rem; color:var(--accent);">카테고리</label>
@@ -965,7 +965,7 @@
                     </div>
                 </div>
                 <div style="display:flex; gap:0.5rem; margin-top:0.8rem;">
-                    <button onclick="applyMallFilters()" style="flex:1; background:#0066cc; color:white; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight:600;">적용</button>
+                    <button onclick="applyMallFilters()" style="flex:1; background:#0066cc; color:#FFF8F0; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight:600;">적용</button>
                     <button onclick="resetMallFilters()" style="flex:1; background:#eee; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; font-size:0.8rem;">초기화</button>
                 </div>
             </div>
@@ -981,7 +981,7 @@
                 <div style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
                     <button onclick="loadMyOrders()" class="btn-primary" style="flex:1;" data-i18n="mall.my_orders">🛒 주문 내역</button>
                     <button onclick="loadMyProducts()" class="btn-secondary" style="flex:1;" data-i18n="mall.my_products">📦 내 상품</button>
-                    <button onclick="loadSellerOrders()" style="flex:1; background:#ff9800; color:white; border:none; padding:0.6rem; border-radius:6px; cursor:pointer; font-weight:600;" data-i18n="mall.seller_orders">📬 받은 주문</button>
+                    <button onclick="loadSellerOrders()" style="flex:1; background:#ff9800; color:#FFF8F0; border:none; padding:0.6rem; border-radius:6px; cursor:pointer; font-weight:600;" data-i18n="mall.seller_orders">📬 받은 주문</button>
                 </div>
                 <div id="mall-my-list"></div>
             </div>
@@ -1030,12 +1030,12 @@
                     <button onclick="showPage('mall')" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">← 쇼핑 계속</button>
                 </div>
                 <div id="cart-items" style="margin-bottom:1rem;"></div>
-                <div id="cart-summary" style="display:none; background:white; padding:1rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                <div id="cart-summary" style="display:none; background:white; padding:1rem; border-radius:12px; box-shadow:0 2px 8px rgba(61,43,31,0.08);">
                     <div style="display:flex; justify-content:space-between; font-size:1.1rem; font-weight:700; margin-bottom:1rem;">
                         <span>총 결제 금액</span>
                         <span id="cart-total" style="color:#0066cc;">0 CRGC</span>
                     </div>
-                    <button onclick="checkoutCart()" style="background:#0066cc; color:white; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; width:100%; font-size:1rem;">💳 일괄 결제</button>
+                    <button onclick="checkoutCart()" style="background:#0066cc; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; width:100%; font-size:1rem;">💳 일괄 결제</button>
                 </div>
             </div>
         </section>
@@ -1058,7 +1058,7 @@
                 <button class="admin-register-btn" id="fundraise-register-btn" onclick="openRegisterModal('fundraise')" data-i18n="fundraise.create">➕ 캠페인 만들기</button>
             </div>
             
-            <div class="section-banner" id="fundraise-banner" style="background:linear-gradient(135deg, #0f0c29, #302b63);">
+            <div class="section-banner" id="fundraise-banner" style="background:linear-gradient(135deg, #3D2B1F, #6B5744);">
                 <h3 data-i18n="fundraise.banner_title">💰 FUNDRAISE — 함께 만드는 미래</h3>
                 <p data-i18n="fundraise.banner_desc">개인부터 단체까지 — 수수료 20% (업계 최저) · 재단 시스템 운영비로 투명하게 사용</p>
             </div>
@@ -1090,7 +1090,7 @@
             <div id="fund-campaigns" style="display:grid; gap:1rem;"></div>
             
             <!-- 캠페인 상세 모달 -->
-            <div id="campaign-detail-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); z-index:10000; display:none; align-items:center; justify-content:center; padding:1rem;">
+            <div id="campaign-detail-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(61,43,31,0.85); z-index:10000; display:none; align-items:center; justify-content:center; padding:1rem;">
                 <div id="campaign-detail-content" style="background:white; border-radius:12px; max-width:550px; width:100%; max-height:90vh; overflow-y:auto; padding:1.5rem;"></div>
             </div>
         </section>
@@ -1179,7 +1179,7 @@
                 <button class="admin-register-btn" id="business-register-btn" onclick="openRegisterModal('business')" data-i18n="business.register">➕ 사업체 등록</button>
             </div>
             
-            <div class="section-banner" id="business-banner" style="background:linear-gradient(135deg, #1a1a2e, #e65100);">
+            <div class="section-banner" id="business-banner" style="background:linear-gradient(135deg, #3D2B1F, #e65100);">
                 <h3 data-i18n="business.banner_title">🏢 BUSINESS — 투자하고 성장하세요</h3>
                 <p data-i18n="business.banner_desc">153개국 크라우니 사업 네트워크 · 국가별 사업체에 투자</p>
             </div>
@@ -1207,12 +1207,12 @@
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                 <h2 style="margin:0;" data-i18n="books.title">📚 BOOKS</h2>
                 <div style="display:flex;gap:0.5rem;">
-                    <button onclick="showMyLibrary()" style="background:#ff9800;color:white;border:none;padding:0.5rem 0.8rem;border-radius:8px;cursor:pointer;font-size:0.8rem;font-weight:700;">📚 내 서재</button>
-                    <button onclick="showBookCreator()" style="background:#4CAF50;color:white;border:none;padding:0.5rem 0.8rem;border-radius:8px;cursor:pointer;font-size:0.8rem;font-weight:700;">✍️ 집필하기</button>
+                    <button onclick="showMyLibrary()" style="background:#ff9800;color:#FFF8F0;border:none;padding:0.5rem 0.8rem;border-radius:8px;cursor:pointer;font-size:0.8rem;font-weight:700;">📚 내 서재</button>
+                    <button onclick="showBookCreator()" style="background:#4CAF50;color:#FFF8F0;border:none;padding:0.5rem 0.8rem;border-radius:8px;cursor:pointer;font-size:0.8rem;font-weight:700;">✍️ 집필하기</button>
                 </div>
             </div>
             
-            <div class="section-banner" id="books-banner" style="background:linear-gradient(135deg, #1a1a2e, #16213e);">
+            <div class="section-banner" id="books-banner" style="background:linear-gradient(135deg, #3D2B1F, #6B5744);">
                 <h3 data-i18n="books.banner_title">📚 BOOKS — 인터랙티브 디지털 출판</h3>
                 <p data-i18n="books.banner_desc">한정판 발행 · CSS 효과 · TTS 읽기 · 보물찾기 · 다국어 번역 — CRGC 전용</p>
             </div>
@@ -1230,14 +1230,14 @@
         <section id="credit" class="page" data-feature="mall">
             <h2 data-i18n="credit.title">💳 CREDIT - P2P 크레딧</h2>
             
-            <div style="background:linear-gradient(135deg, #0066cc, #004d99); padding:1.5rem; border-radius:12px; margin-bottom:1rem; color:white;">
+            <div style="background:linear-gradient(135deg, #0066cc, #004d99); padding:1.5rem; border-radius:12px; margin-bottom:1rem; color:#FFF8F0;">
                 <h3 data-i18n="credit.banner_title">🤝 형제에게 이자를 받지 않는다</h3>
                 <p style="margin-top:0.5rem; opacity:0.9; font-size:0.85rem;" data-i18n="credit.banner_desc">무이자 P2P 크레딧 · 환전 · 품앗이 대출 · 공동체 보험 · 기부 연동</p>
             </div>
             
             <!-- 4개 서비스 탭 -->
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1fr; gap:0.3rem; margin-bottom:1rem;">
-                <button onclick="showCreditTab('exchange')" class="credit-tab active" id="tab-exchange" style="padding:0.6rem; border:2px solid var(--primary); background:var(--primary); color:white; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight:700;" data-i18n="credit.tab_exchange">💱 환전</button>
+                <button onclick="showCreditTab('exchange')" class="credit-tab active" id="tab-exchange" style="padding:0.6rem; border:2px solid var(--primary); background:var(--primary); color:#FFF8F0; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight:700;" data-i18n="credit.tab_exchange">💱 환전</button>
                 <button onclick="showCreditTab('pumasi')" class="credit-tab" id="tab-pumasi" style="padding:0.6rem; border:2px solid var(--border); background:white; border-radius:6px; cursor:pointer; font-size:0.8rem;" data-i18n="credit.tab_pumasi">🤝 품앗이</button>
                 <button onclick="showCreditTab('insurance')" class="credit-tab" id="tab-insurance" style="padding:0.6rem; border:2px solid var(--border); background:white; border-radius:6px; cursor:pointer; font-size:0.8rem;" data-i18n="credit.tab_insurance">🛡️ 보험</button>
                 <button onclick="showCreditTab('donate')" class="credit-tab" id="tab-donate" style="padding:0.6rem; border:2px solid var(--border); background:white; border-radius:6px; cursor:pointer; font-size:0.8rem;" data-i18n="credit.tab_donate">💝 기부</button>
@@ -1396,7 +1396,7 @@
             <h2 data-i18n="trading.title">📊 TRADING GAME</h2>
             
             <!-- 초기화 버튼 -->
-            <button id="trading-reload-btn" onclick="reloadTradingSystem()" style="margin-bottom:1rem; padding:0.6rem 1.2rem; background:linear-gradient(135deg,#333,#555); color:white; border:none; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600;">
+            <button id="trading-reload-btn" onclick="reloadTradingSystem()" style="margin-bottom:1rem; padding:0.6rem 1.2rem; background:linear-gradient(135deg,#333,#555); color:#FFF8F0; border:none; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600;">
                 🔄 트레이딩 초기화
             </button>
             <span id="trading-reload-status" style="margin-left:0.5rem; font-size:0.8rem; color:var(--accent);"></span>
@@ -1428,40 +1428,40 @@
                     </div>
                     
                     <!-- ★ CRTD 트레이딩 상태 -->
-                    <div id="crtd-balance-display" style="margin-top:0.8rem; padding:0.8rem 1rem; background:linear-gradient(135deg, #1a1a2e, #16213e); border-radius:8px; color:#ddd; font-size:0.82rem;">
+                    <div id="crtd-balance-display" style="margin-top:0.8rem; padding:0.8rem 1rem; background:linear-gradient(135deg, #3D2B1F, #6B5744); border-radius:8px; color:#ddd; font-size:0.82rem;">
                         💎 CRTD 트레이딩 상태 로딩...
                     </div>
                 </div>
                 
                 <!-- 통합 차트 (탭 시스템) -->
-                <div style="background:#1a1a2e; padding:0.5rem; border-radius:12px; margin-bottom:1rem; overflow:hidden;">
+                <div style="background:#3D2B1F; padding:0.5rem; border-radius:12px; margin-bottom:1rem; overflow:hidden;">
                     <!-- 차트 탭 바 -->
                     <div id="chart-tab-bar" style="display:flex; gap:2px; padding:4px 6px; background:#0d1b2a; border-radius:8px; margin-bottom:4px; overflow-x:auto; align-items:center;"></div>
                     
                     <!-- 탭 설정 + 타임존 -->
                     <div style="display:flex; flex-wrap:wrap; gap:4px; padding:6px 10px; background:#0d1b2a; border-radius:8px; margin-bottom:4px; align-items:center;">
-                        <select id="tab-symbol" onchange="updateTabSetting('symbol')" style="background:#16213e; color:#00ff88; border:1px solid #333; border-radius:4px; padding:3px 6px; font-size:0.75rem; font-weight:700;">
+                        <select id="tab-symbol" onchange="updateTabSetting('symbol')" style="background:#6B5744; color:#00ff88; border:1px solid #333; border-radius:4px; padding:3px 6px; font-size:0.75rem; font-weight:700;">
                             <option value="NQ">NQ ×$20</option>
                             <option value="MNQ" selected>MNQ ×$2</option>
                         </select>
-                        <select id="tab-chart-type" onchange="updateTabSetting('chartType')" style="background:#16213e; color:#ccc; border:1px solid #333; border-radius:4px; padding:3px 6px; font-size:0.75rem;">
+                        <select id="tab-chart-type" onchange="updateTabSetting('chartType')" style="background:#6B5744; color:#ccc; border:1px solid #333; border-radius:4px; padding:3px 6px; font-size:0.75rem;">
                             <option value="time">⏱ 타임</option>
                             <option value="tick">📊 틱</option>
                         </select>
-                        <select id="tab-interval" onchange="updateTabSetting('interval')" style="background:#16213e; color:#ccc; border:1px solid #333; border-radius:4px; padding:3px 6px; font-size:0.75rem;">
+                        <select id="tab-interval" onchange="updateTabSetting('interval')" style="background:#6B5744; color:#ccc; border:1px solid #333; border-radius:4px; padding:3px 6px; font-size:0.75rem;">
                             <option value="60">1분</option>
                             <option value="180">3분</option>
                             <option value="300">5분</option>
                             <option value="900">15분</option>
                         </select>
-                        <select id="tab-tick-count" onchange="updateTabSetting('tickCount')" style="display:none; background:#16213e; color:#ccc; border:1px solid #333; border-radius:4px; padding:3px 6px; font-size:0.75rem;">
+                        <select id="tab-tick-count" onchange="updateTabSetting('tickCount')" style="display:none; background:#6B5744; color:#ccc; border:1px solid #333; border-radius:4px; padding:3px 6px; font-size:0.75rem;">
                             <option value="50">50틱</option>
                             <option value="100">100틱</option>
                             <option value="200">200틱</option>
                             <option value="500">500틱</option>
                         </select>
                         <div style="flex:1;"></div>
-                        <select id="tz-selector" onchange="changeTimezone(this.value)" style="background:#16213e; color:#ccc; border:1px solid #333; border-radius:4px; padding:2px 6px; font-size:0.7rem;">
+                        <select id="tz-selector" onchange="changeTimezone(this.value)" style="background:#6B5744; color:#ccc; border:1px solid #333; border-radius:4px; padding:2px 6px; font-size:0.7rem;">
                             <option value="KR" data-i18n="trading.timezone.seoul">🇰🇷 서울</option>
                             <option value="US" data-i18n="trading.timezone.newyork">🇺🇸 뉴욕</option>
                             <option value="JP" data-i18n="trading.timezone.tokyo">🇯🇵 도쿄</option>
@@ -1469,8 +1469,8 @@
                             <option value="UTC">🌐 UTC</option>
                         </select>
                         <div style="display:flex; gap:4px; margin-left:auto;">
-                            <button onclick="scrollToLatest()" style="background:#16213e; color:#00ff88; border:1px solid #333; border-radius:4px; padding:2px 8px; font-size:0.7rem; cursor:pointer;">▶ 정렬</button>
-                            <button onclick="toggleMASettings()" style="background:#16213e; color:#ffab40; border:1px solid #333; border-radius:4px; padding:2px 8px; font-size:0.7rem; cursor:pointer;">📈 MA</button>
+                            <button onclick="scrollToLatest()" style="background:#6B5744; color:#00ff88; border:1px solid #333; border-radius:4px; padding:2px 8px; font-size:0.7rem; cursor:pointer;">▶ 정렬</button>
+                            <button onclick="toggleMASettings()" style="background:#6B5744; color:#ffab40; border:1px solid #333; border-radius:4px; padding:2px 8px; font-size:0.7rem; cursor:pointer;">📈 MA</button>
                         </div>
                     </div>
                     
@@ -1480,25 +1480,25 @@
                         <label style="float:right; font-size:0.65rem; color:#888; cursor:pointer;"><input type="checkbox" id="nq-ma-label-show" onchange="applyMASettings()" style="margin:0 2px 0 0; vertical-align:middle;"> 이름표시</label>
                         <div style="display:flex; flex-wrap:wrap; gap:4px; align-items:center; margin-top:4px;">
                             <input type="checkbox" id="nq-ma1-show" checked onchange="applyMASettings()" style="margin:0;">
-                            <select id="nq-ma1-type" onchange="applyMASettings()" style="background:#16213e; color:#aaa; border:1px solid #333; border-radius:3px; padding:1px 2px; font-size:0.65rem;"><option value="SMA">SMA</option><option value="EMA">EMA</option></select>
-                            <input type="number" id="nq-ma1-period" value="5" style="width:32px; background:#16213e; color:#fff; border:1px solid #333; border-radius:3px; padding:1px 3px; font-size:0.7rem; text-align:center;">
+                            <select id="nq-ma1-type" onchange="applyMASettings()" style="background:#6B5744; color:#aaa; border:1px solid #333; border-radius:3px; padding:1px 2px; font-size:0.65rem;"><option value="SMA">SMA</option><option value="EMA">EMA</option></select>
+                            <input type="number" id="nq-ma1-period" value="5" style="width:32px; background:#6B5744; color:#FFF8F0; border:1px solid #333; border-radius:3px; padding:1px 3px; font-size:0.7rem; text-align:center;">
                             <input type="color" id="nq-ma1-color" value="#ffeb3b" onchange="applyMASettings()" style="width:20px; height:20px; border:none; cursor:pointer; padding:0;">
                             <span style="margin-left:2px;"></span>
                             <input type="checkbox" id="nq-ma2-show" checked onchange="applyMASettings()" style="margin:0;">
-                            <select id="nq-ma2-type" onchange="applyMASettings()" style="background:#16213e; color:#aaa; border:1px solid #333; border-radius:3px; padding:1px 2px; font-size:0.65rem;"><option value="SMA">SMA</option><option value="EMA">EMA</option></select>
-                            <input type="number" id="nq-ma2-period" value="20" style="width:32px; background:#16213e; color:#fff; border:1px solid #333; border-radius:3px; padding:1px 3px; font-size:0.7rem; text-align:center;">
+                            <select id="nq-ma2-type" onchange="applyMASettings()" style="background:#6B5744; color:#aaa; border:1px solid #333; border-radius:3px; padding:1px 2px; font-size:0.65rem;"><option value="SMA">SMA</option><option value="EMA">EMA</option></select>
+                            <input type="number" id="nq-ma2-period" value="20" style="width:32px; background:#6B5744; color:#FFF8F0; border:1px solid #333; border-radius:3px; padding:1px 3px; font-size:0.7rem; text-align:center;">
                             <input type="color" id="nq-ma2-color" value="#FFA500" onchange="applyMASettings()" style="width:20px; height:20px; border:none; cursor:pointer; padding:0;">
                             <span style="margin-left:2px;"></span>
                             <input type="checkbox" id="nq-ma3-show" checked onchange="applyMASettings()" style="margin:0;">
-                            <select id="nq-ma3-type" onchange="applyMASettings()" style="background:#16213e; color:#aaa; border:1px solid #333; border-radius:3px; padding:1px 2px; font-size:0.65rem;"><option value="SMA">SMA</option><option value="EMA">EMA</option></select>
-                            <input type="number" id="nq-ma3-period" value="60" style="width:32px; background:#16213e; color:#fff; border:1px solid #333; border-radius:3px; padding:1px 3px; font-size:0.7rem; text-align:center;">
+                            <select id="nq-ma3-type" onchange="applyMASettings()" style="background:#6B5744; color:#aaa; border:1px solid #333; border-radius:3px; padding:1px 2px; font-size:0.65rem;"><option value="SMA">SMA</option><option value="EMA">EMA</option></select>
+                            <input type="number" id="nq-ma3-period" value="60" style="width:32px; background:#6B5744; color:#FFF8F0; border:1px solid #333; border-radius:3px; padding:1px 3px; font-size:0.7rem; text-align:center;">
                             <input type="color" id="nq-ma3-color" value="#FF3333" onchange="applyMASettings()" style="width:20px; height:20px; border:none; cursor:pointer; padding:0;">
                         </div>
-                        <button onclick="applyMASettings(); this.textContent='✅ 저장됨!'; setTimeout(()=>this.textContent='✅ 적용',1500);" style="background:#333; color:#ccc; border:none; border-radius:4px; padding:8px 12px; font-size:0.8rem; cursor:pointer; margin-top:6px; width:100%; touch-action:manipulation; -webkit-tap-highlight-color:transparent;">✅ 적용</button>
+                        <button onclick="applyMASettings(); this.textContent='✅ 저장됨!'; setTimeout(()=>this.textContent='✅ 적용',1500);" style="background:#6B5744; color:#ccc; border:none; border-radius:4px; padding:8px 12px; font-size:0.8rem; cursor:pointer; margin-top:6px; width:100%; touch-action:manipulation; -webkit-tap-highlight-color:transparent;">✅ 적용</button>
                     </div>
                     
                     <!-- 가격 + 시간 바 -->
-                    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; padding:8px 10px; background:#16213e; border-radius:8px; margin-bottom:4px; gap:6px;">
+                    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; padding:8px 10px; background:#6B5744; border-radius:8px; margin-bottom:4px; gap:6px;">
                         <div>
                             <div style="display:flex; align-items:baseline; gap:8px;">
                                 <span id="chart-symbol-label" style="color:#888; font-size:0.7rem;">MNQ 1분봉</span>
@@ -1530,7 +1530,7 @@
                     <div id="live-candle-chart" style="height:500px;"></div>
                     
                     <!-- ★ 퀵 SL/TP 설정 바 -->
-                    <div style="display:flex; align-items:center; gap:8px; padding:6px 8px; background:#1a1a2e; border-radius:6px; margin-top:4px; font-size:0.75rem;">
+                    <div style="display:flex; align-items:center; gap:8px; padding:6px 8px; background:#3D2B1F; border-radius:6px; margin-top:4px; font-size:0.75rem;">
                         <span style="color:#ff4444; font-weight:600;">SL</span>
                         <input type="number" id="stop-loss-points" value="50" step="5" min="1" style="width:50px; background:#0f0f23; color:#ff4444; border:1px solid #333; border-radius:3px; padding:3px 5px; text-align:center; font-size:0.8rem;">
                         <span style="color:#888;">pt</span>
@@ -1547,13 +1547,13 @@
                     
                     <!-- BUY / SELL / CLOSE -->
                     <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-top:4px; padding:0 4px;">
-                        <button id="btn-chart-buy" onclick="quickChartTrade('BUY')" style="background:#0066cc; color:white; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">📈 BUY</button>
-                        <button id="btn-chart-sell" onclick="quickChartTrade('SELL')" style="background:#cc0000; color:white; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">📉 SELL</button>
-                        <button onclick="closeAllPositions(getActiveTabSymbol())" style="background:#555; color:white; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">✕ CLOSE</button>
+                        <button id="btn-chart-buy" onclick="quickChartTrade('BUY')" style="background:#0066cc; color:#FFF8F0; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">📈 BUY</button>
+                        <button id="btn-chart-sell" onclick="quickChartTrade('SELL')" style="background:#cc0000; color:#FFF8F0; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">📉 SELL</button>
+                        <button onclick="closeAllPositions(getActiveTabSymbol())" style="background:#555; color:#FFF8F0; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">✕ CLOSE</button>
                     </div>
                     
                     <!-- 실시간 손익 -->
-                    <div id="live-pnl-bar" style="text-align:center; padding:8px; margin-top:8px; background:#16213e; border-radius:8px; display:none;">
+                    <div id="live-pnl-bar" style="text-align:center; padding:8px; margin-top:8px; background:#6B5744; border-radius:8px; display:none;">
                         <span style="color:#888; font-size:0.75rem;" data-i18n="trading.live_pnl">실시간 손익</span>
                         <div style="display:flex; justify-content:center; align-items:baseline; gap:12px;">
                             <div id="live-pnl" style="font-size:1.3rem; font-weight:700; color:#888;">$0.00</div>
@@ -1583,7 +1583,7 @@
                     <h4 style="margin-bottom:0.5rem;">💹 나스닥100 선물 거래</h4>
                     
                     <!-- ★ 거래 권한 배지 -->
-                    <div id="trading-permission-badge" style="display:none; padding:0.5rem 0.8rem; background:linear-gradient(135deg,#1a1a2e,#16213e); border-radius:8px; margin-bottom:1rem; font-size:0.75rem; color:#ccc;">
+                    <div id="trading-permission-badge" style="display:none; padding:0.5rem 0.8rem; background:linear-gradient(135deg,#3D2B1F,#6B5744); border-radius:8px; margin-bottom:1rem; font-size:0.75rem; color:#ccc;">
                     </div>
                     
                     <!-- Contract and Quantity -->
@@ -1665,20 +1665,20 @@
                     
                     <!-- Buy/Sell Buttons -->
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">
-                        <button id="btn-buy" onclick="executeFuturesTrade('BUY')" style="background:#0066cc; color:white; padding:1.2rem; border:none; border-radius:6px; cursor:pointer; font-size:1.1rem; font-weight:bold;">
+                        <button id="btn-buy" onclick="executeFuturesTrade('BUY')" style="background:#0066cc; color:#FFF8F0; padding:1.2rem; border:none; border-radius:6px; cursor:pointer; font-size:1.1rem; font-weight:bold;">
                             📈 BUY
                         </button>
-                        <button id="btn-sell" onclick="executeFuturesTrade('SELL')" style="background:#cc0000; color:white; padding:1.2rem; border:none; border-radius:6px; cursor:pointer; font-size:1.1rem; font-weight:bold;">
+                        <button id="btn-sell" onclick="executeFuturesTrade('SELL')" style="background:#cc0000; color:#FFF8F0; padding:1.2rem; border:none; border-radius:6px; cursor:pointer; font-size:1.1rem; font-weight:bold;">
                             📉 SELL
                         </button>
                     </div>
                     
                     <!-- Close / Flatten Buttons -->
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin-top:0.8rem;">
-                        <button id="btn-close-last" onclick="closeLastPosition()" style="background:#e65100; color:white; padding:0.9rem; border:none; border-radius:6px; cursor:pointer; font-size:0.95rem; font-weight:bold;">
+                        <button id="btn-close-last" onclick="closeLastPosition()" style="background:#e65100; color:#FFF8F0; padding:0.9rem; border:none; border-radius:6px; cursor:pointer; font-size:0.95rem; font-weight:bold;">
                             ✕ CLOSE
                         </button>
-                        <button id="btn-flatten" onclick="flattenAllPositions()" style="background:#b71c1c; color:white; padding:0.9rem; border:none; border-radius:6px; cursor:pointer; font-size:0.95rem; font-weight:bold;">
+                        <button id="btn-flatten" onclick="flattenAllPositions()" style="background:#b71c1c; color:#FFF8F0; padding:0.9rem; border:none; border-radius:6px; cursor:pointer; font-size:0.95rem; font-weight:bold;">
                             🚨 FLATTEN
                         </button>
                     </div>
@@ -2083,7 +2083,7 @@
     <div id="toast-container" style="position:fixed; top:20px; right:20px; z-index:99999; display:flex; flex-direction:column; gap:8px; pointer-events:none;"></div>
     
     <!-- 로딩 오버레이 -->
-    <div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:99998; align-items:center; justify-content:center;">
+    <div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(61,43,31,0.5); z-index:99998; align-items:center; justify-content:center;">
         <div style="background:white; padding:2rem; border-radius:12px; text-align:center;">
             <div style="width:40px; height:40px; border:4px solid #ddd; border-top:4px solid #0066cc; border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 1rem;"></div>
             <p id="loading-text" style="color:#333;" data-i18n="common.processing">처리 중...</p>
@@ -2091,13 +2091,13 @@
     </div>
     
     <!-- 범용 확인 모달 -->
-    <div id="confirm-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); z-index:99997; align-items:center; justify-content:center; padding:1rem;">
+    <div id="confirm-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(61,43,31,0.6); z-index:99997; align-items:center; justify-content:center; padding:1rem;">
         <div style="background:white; padding:1.5rem; border-radius:12px; max-width:400px; width:100%;">
             <h3 id="confirm-title" style="margin-bottom:0.8rem;"></h3>
             <p id="confirm-message" style="color:#666; margin-bottom:1.2rem; white-space:pre-line;"></p>
             <div style="display:flex; gap:0.5rem;">
                 <button id="confirm-cancel" onclick="closeConfirmModal(false)" style="flex:1; padding:0.7rem; border:1px solid #ddd; border-radius:8px; cursor:pointer; background:white;" data-i18n="common.cancel">취소</button>
-                <button id="confirm-ok" onclick="closeConfirmModal(true)" style="flex:1; padding:0.7rem; border:none; border-radius:8px; cursor:pointer; background:#0066cc; color:white; font-weight:700;" data-i18n="common.confirm">확인</button>
+                <button id="confirm-ok" onclick="closeConfirmModal(true)" style="flex:1; padding:0.7rem; border:none; border-radius:8px; cursor:pointer; background:#0066cc; color:#FFF8F0; font-weight:700;" data-i18n="common.confirm">확인</button>
             </div>
         </div>
     </div>
@@ -2106,7 +2106,7 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes slideIn { from { transform: translateX(100%); opacity:0; } to { transform: translateX(0); opacity:1; } }
         @keyframes fadeOut { from { opacity:1; } to { opacity:0; transform:translateY(-10px); } }
-        .toast { pointer-events:auto; padding:0.8rem 1.2rem; border-radius:8px; color:white; font-size:0.9rem; box-shadow:0 4px 12px rgba(0,0,0,0.15); animation: slideIn 0.3s ease; max-width:350px; }
+        .toast { pointer-events:auto; padding:0.8rem 1.2rem; border-radius:8px; color:#FFF8F0; font-size:0.9rem; box-shadow:0 4px 12px rgba(61,43,31,0.15); animation: slideIn 0.3s ease; max-width:350px; }
         .toast.success { background:#4CAF50; }
         .toast.error { background:#f44336; }
         .toast.info { background:#2196F3; }

@@ -154,7 +154,7 @@
 .btn-action {
     padding: 1rem;
     background: var(--text);
-    color: var(--white);
+    color: #FFF8F0;
     border: none;
     border-radius: 6px;
     cursor: pointer;
@@ -170,7 +170,7 @@
 .btn-copy {
     padding: 0.5rem 1rem;
     background: var(--accent);
-    color: white;
+    color: #FFF8F08F0;
     border: none;
     border-radius: 6px;
     cursor: pointer;
@@ -180,7 +180,7 @@
 .btn-send-token {
     padding: 0.8rem;
     background: var(--gold);
-    color: white;
+    color: #FFF8F08F0;
     border: none;
     border-radius: 6px;
     cursor: pointer;

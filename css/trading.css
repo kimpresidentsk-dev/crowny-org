@@ -71,7 +71,7 @@
     width: 100%;
     padding: 1rem;
     background: var(--text);
-    color: var(--white);
+    color: #FFF8F0;
     border: none;
     border-radius: 6px;
     font-size: 1rem;
@@ -95,21 +95,21 @@
     text-align: center;
     padding: 8px 4px;
     border-radius: 10px;
-    border: 2px solid #333;
-    background: #16213e;
+    border: 2px solid var(--border);
+    background: var(--bg-card);
     cursor: pointer;
     transition: all 0.2s;
     user-select: none;
 }
 
 .mentor-avatar:hover {
-    background: #1a2a4a;
+    background: var(--bg-card-alt);
     transform: translateY(-2px);
 }
 
 .mentor-avatar.active {
-    background: #1e2d4f;
-    box-shadow: 0 0 8px rgba(255,255,255,0.1);
+    background: var(--accent);
+    box-shadow: 0 0 8px rgba(61,43,31,0.1);
 }
 
 .mentor-avatar-icon {
@@ -134,7 +134,7 @@
 
 .mentor-avatar-name {
     font-size: 0.65rem;
-    color: #ccc;
+    color: var(--text-secondary);
     font-weight: 700;
     margin-bottom: 2px;
     white-space: nowrap;
@@ -167,7 +167,7 @@
 .mentor-detail-title {
     font-size: 0.85rem;
     font-weight: 700;
-    color: #eee;
+    color: var(--text);
 }
 
 .mentor-detail-signal {
@@ -176,7 +176,7 @@
 
 .mentor-detail-message {
     font-size: 0.8rem;
-    color: #ccc;
+    color: var(--text-secondary);
     font-style: italic;
     margin-bottom: 6px;
     line-height: 1.4;
@@ -184,13 +184,13 @@
 
 .mentor-detail-confidence {
     font-size: 0.72rem;
-    color: #aaa;
+    color: var(--text-secondary);
     margin-bottom: 4px;
 }
 
 .mentor-detail-reason {
     font-size: 0.68rem;
-    color: #888;
+    color: var(--text-secondary);
     line-height: 1.3;
 }
 
