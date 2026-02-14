@@ -430,9 +430,9 @@ async function loadContacts() {
                 <strong style="font-size:0.95rem;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${info.nickname}</strong>
                 <p style="font-size:0.7rem; margin:0.1rem 0; color:var(--accent); opacity:0.7; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${info.statusMessage || (info.lastSeen ? getTimeAgo(info.lastSeen) : '')}</p>
             </div>
-            <div style="display:flex; gap:0.3rem; flex-direction:column;">
-                <button onclick='startChatWithContact("${contact.email}")' class="btn-chat" style="font-size:0.8rem; padding:0.4rem 0.6rem;">${t('social.chat','채팅')}</button>
-                <button onclick='deleteContact("${doc.id}", "${info.nickname}")' style="background:none; border:1px solid #E8E0D8; border-radius:4px; padding:0.2rem 0.5rem; font-size:0.7rem; cursor:pointer; color:#B54534;"><i data-lucide="trash-2" style="width:12px;height:12px;display:inline-block;vertical-align:middle;"></i></button>
+            <div style="display:flex; gap:0.3rem; align-items:center;">
+                <button onclick='startChatWithContact("${contact.email}")' style="padding:0.35rem 0.7rem; border-radius:20px; font-size:0.75rem; background:#3D2B1F; color:#FFF8F0; border:none; cursor:pointer; display:flex; align-items:center; gap:3px;"><i data-lucide="message-circle" style="width:12px;height:12px;"></i> ${t('social.chat','채팅')}</button>
+                <button onclick='showContactMenu("${doc.id}", "${info.nickname}")' style="padding:0.35rem; border-radius:50%; background:none; border:1px solid #E8E0D8; cursor:pointer; display:flex; align-items:center; justify-content:center;"><i data-lucide="more-vertical" style="width:14px;height:14px;color:#6B5744;"></i></button>
             </div>`;
         contactList.appendChild(contactItem);
     }
@@ -2626,6 +2626,21 @@ async function unsubscribeChannel(channelId) {
 }
 
 // Channel message sending is handled within sendMessage by checking currentChannel
+
+function showContactMenu(contactDocId, contactName) {
+    document.querySelectorAll('.contact-menu-popup').forEach(el => el.remove());
+    const menu = document.createElement('div');
+    menu.className = 'contact-menu-popup';
+    menu.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#FFF8F0;border:1px solid #E8E0D8;border-radius:12px;padding:0.5rem;box-shadow:0 4px 20px rgba(61,43,31,0.15);z-index:9999;min-width:160px;';
+    menu.innerHTML = `
+        <button onclick="deleteContact('${contactDocId}','${contactName.replace(/'/g,"\\'")}');this.closest('.contact-menu-popup').remove();" style="display:flex;align-items:center;gap:6px;width:100%;padding:0.6rem 0.8rem;background:none;border:none;cursor:pointer;border-radius:8px;font-size:0.85rem;color:#B54534;"><i data-lucide="trash-2" style="width:16px;height:16px;"></i> ${t('social.delete_contact','연락처 삭제')}</button>`;
+    document.body.appendChild(menu);
+    if (typeof lucide !== 'undefined') setTimeout(() => lucide.createIcons(), 50);
+    setTimeout(() => {
+        const dismiss = (e) => { if (!menu.contains(e.target)) { menu.remove(); document.removeEventListener('click', dismiss); } };
+        document.addEventListener('click', dismiss);
+    }, 10);
+}
 
 async function deleteContact(contactDocId, contactName) {
     if (!await showConfirmModal(t('social.delete_contact','연락처 삭제'), `"${contactName}" ${t('social.confirm_delete_contact','연락처를 삭제하시겠습니까?')}`)) return;
