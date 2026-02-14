@@ -589,6 +589,10 @@ async function openChat(chatId, otherId) {
     if (container) container.classList.add('chat-open');
     const messengerPage = document.getElementById('messenger');
     if (messengerPage) messengerPage.classList.add('chat-active');
+    
+    // Hide bottom tab bar on mobile when chat is active
+    const bottomTab = document.querySelector('.bottom-tab-bar');
+    if (bottomTab) bottomTab.style.display = 'none';
 
     const info = await getUserDisplayInfo(otherId);
     document.getElementById('chat-username').innerHTML = `
@@ -846,7 +850,7 @@ async function openChat(chatId, otherId) {
 
                 msgEl.innerHTML = `
                     ${!isMine ? avatarHTML(senderInfo.photoURL, senderInfo.nickname, 28) : ''}
-                    <div style="max-width:70%;" class="msg-actions-wrapper"
+                    <div style="max-width:80%;" class="msg-actions-wrapper"
                         ontouchstart="msgTouchStart('${msgId}')" ontouchend="msgTouchEnd()" ontouchmove="msgTouchEnd()">
                         ${!isMine ? `<div style="font-size:0.7rem;color:var(--accent);margin-bottom:0.15rem;">${senderInfo.nickname}</div>` : ''}
                         ${actionsHTML}
@@ -869,6 +873,11 @@ function closeChatMobile() {
     if (container) container.classList.remove('chat-open');
     const messengerPage = document.getElementById('messenger');
     if (messengerPage) messengerPage.classList.remove('chat-active');
+    
+    // Restore bottom tab bar visibility when closing chat
+    const bottomTab = document.querySelector('.bottom-tab-bar');
+    if (bottomTab) bottomTab.style.display = '';
+    
     if (chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
     if (chatDocUnsubscribe) { chatDocUnsubscribe(); chatDocUnsubscribe = null; }
     currentChat = null;
@@ -1599,8 +1608,9 @@ function showChatMenu() {
     menu.style.top = '48px';
     menu.style.right = '8px';
     menu.innerHTML = `
-        ${currentChat ? `<button class="chat-menu-item" onclick="E2ECrypto.showChatSecuritySettings('${currentChat}');this.closest('.chat-menu-dropdown').remove();">🔐 보안 설정</button>` : ''}
-        <button class="chat-menu-item danger" onclick="leaveChat()">🚪 ${t('social.leave_chat','채팅방 나가기')}</button>`;
+        ${currentChat ? `<button class="chat-menu-item" onclick="E2ECrypto.showChatSecuritySettings('${currentChat}');this.closest('.chat-menu-dropdown').remove();"><i data-lucide="shield" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:6px;"></i> 보안 설정</button>` : ''}
+        <button class="chat-menu-item danger" onclick="leaveChat()"><i data-lucide="log-out" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:6px;"></i> ${t('social.leave_chat','채팅방 나가기')}</button>`;
+    if (typeof lucide !== 'undefined') setTimeout(() => lucide.createIcons(), 50);
     header.style.position = 'relative';
     header.appendChild(menu);
     setTimeout(() => {

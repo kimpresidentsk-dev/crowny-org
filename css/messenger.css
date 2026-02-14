@@ -683,13 +683,14 @@
     .messenger-container.chat-open .chat-window {
         display: flex !important;
         flex-direction: column !important;
-        height: calc(100vh - 80px) !important;
-        max-height: calc(100vh - 80px) !important;
+        height: calc(100vh - 60px) !important;
+        max-height: calc(100vh - 60px) !important;
     }
     .messenger-container.chat-open .chat-messages {
         flex: 1 !important;
         overflow-y: auto !important;
         min-height: 0 !important;
+        padding: 0.5rem 0.8rem !important;
     }
     .messenger-container.chat-open .chat-input {
         flex-shrink: 0 !important;
