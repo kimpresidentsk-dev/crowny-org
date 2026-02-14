@@ -65,7 +65,7 @@ async function loadDashboard() {
         const pos = myParticipation;
         positionSummary = `
             <div class="dash-card">
-                <h4>📊 ${t('dashboard.trading_position', '트레이딩 포지션')}</h4>
+                <h4><i data-lucide="bar-chart-3" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> ${t('dashboard.trading_position', '트레이딩 포지션')}</h4>
                 <p>${t('dashboard.balance', '잔고')}: <strong>$${(pos.balance || 0).toLocaleString()}</strong></p>
                 <p>${t('dashboard.pnl', '수익')}: <strong style="color:${(pos.totalPnl || 0) >= 0 ? '#2e7d32' : '#c62828'}">$${(pos.totalPnl || 0).toFixed(2)}</strong></p>
                 <button onclick="showPage('prop-trading')" class="dash-shortcut-btn">→ ${t('dashboard.go_trading', '트레이딩으로')}</button>
@@ -122,14 +122,14 @@ async function loadDashboard() {
                     <span>${Number(tx.amount || 0).toLocaleString()}</span>
                 </div>`).join('')}
                 ${recentOrders.map(o => `<div class="dash-activity-item">
-                    <span>🛒 ${o.productTitle || t('dashboard.order', '주문')}</span>
+                    <span><i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${o.productTitle || t('dashboard.order', '주문')}</span>
                     <span>${o.status || ''}</span>
                 </div>`).join('')}
             </div>
             
             <!-- Notifications -->
             <div class="dash-card">
-                <h4>🔔 ${t('dashboard.notifications', '알림')} <span class="dash-badge">${unread}</span></h4>
+                <h4><i data-lucide="bell" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> ${t('dashboard.notifications', '알림')} <span class="dash-badge">${unread}</span></h4>
                 ${recentNotifs.length === 0 ? `<p class="dash-empty">${t('dashboard.no_notifications', '새 알림 없음')}</p>` : ''}
                 ${recentNotifs.map(n => `<div class="dash-notif-item ${n.read ? '' : 'unread'}">${n.message || n.text || ''}</div>`).join('')}
             </div>
@@ -138,7 +138,7 @@ async function loadDashboard() {
             <div class="dash-card">
                 <h4 style="display:flex;align-items:center;justify-content:space-between;">
                     <span>⚡ ${t('dashboard.shortcuts', '빠른 바로가기')}</span>
-                    <button onclick="editShortcuts()" style="background:none;border:none;cursor:pointer;font-size:1rem;opacity:0.6;" title="${t('dashboard.edit_shortcuts','편집')}">✏️</button>
+                    <button onclick="editShortcuts()" style="background:none;border:none;cursor:pointer;font-size:1rem;opacity:0.6;" title="${t('dashboard.edit_shortcuts','편집')}"><i data-lucide="pencil" style="width:14px;height:14px;"></i></button>
                 </h4>
                 <div class="dash-shortcuts" id="dash-shortcuts-container">
                     ${renderShortcuts()}
@@ -147,7 +147,7 @@ async function loadDashboard() {
             
             <!-- Crowny Stats -->
             <div class="dash-card">
-                <h4>📈 ${t('dashboard.stats', '크라우니 통계')}</h4>
+                <h4><i data-lucide="trending-up" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> ${t('dashboard.stats', '크라우니 통계')}</h4>
                 <div class="dash-stat-row">
                     <span>${t('dashboard.total_users', '전체 사용자')}</span>
                     <strong>${totalUsers}</strong>
@@ -175,13 +175,13 @@ async function loadDashboard() {
     } catch(e) {
         console.error('Dashboard load error:', e);
         container.innerHTML = `<div style="text-align:center;padding:2rem;">
-            <h2>📊 DASHBOARD</h2>
+            <h2><i data-lucide="bar-chart-3" style="width:20px;height:20px;display:inline-block;vertical-align:middle;"></i> DASHBOARD</h2>
             <p style="margin-top:1rem;">환영합니다, ${currentUser.email?.split('@')[0] || ''}님!</p>
             <div class="dash-shortcuts" style="margin-top:1.5rem;display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;">
-                <button onclick="showPage('wallet')" class="dash-shortcut-btn">💰 WALLET</button>
-                <button onclick="showPage('social')" class="dash-shortcut-btn">📸 SOCIAL</button>
-                <button onclick="showPage('mall')" class="dash-shortcut-btn">🛒 MALL</button>
-                <button onclick="showPage('prop-trading')" class="dash-shortcut-btn">📈 TRADING</button>
+                <button onclick="showPage('wallet')" class="dash-shortcut-btn"><i data-lucide="coins" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> WALLET</button>
+                <button onclick="showPage('social')" class="dash-shortcut-btn"><i data-lucide="camera" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> SOCIAL</button>
+                <button onclick="showPage('mall')" class="dash-shortcut-btn"><i data-lucide="shopping-cart" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> MALL</button>
+                <button onclick="showPage('prop-trading')" class="dash-shortcut-btn"><i data-lucide="trending-up" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> TRADING</button>
             </div>
         </div>`;
     }
@@ -190,14 +190,14 @@ async function loadDashboard() {
 // ========== Quick Shortcuts (사용자 커스텀) ==========
 
 const ALL_PAGES = [
-    { id:'dashboard', icon:'📊', label:'DASHBOARD' },
+    { id:'dashboard', icon:'<i data-lucide="bar-chart-3"></i>', label:'DASHBOARD' },
     { id:'today', icon:'🏠', label:'TODAY' },
     { id:'messenger', icon:'💬', label:'MESSENGER' },
-    { id:'social', icon:'📸', label:'SOCIAL' },
-    { id:'wallet', icon:'💰', label:'WALLET' },
-    { id:'prop-trading', icon:'📈', label:'PROP TRADING' },
+    { id:'social', icon:'<i data-lucide="camera"></i>', label:'SOCIAL' },
+    { id:'wallet', icon:'<i data-lucide="coins"></i>', label:'WALLET' },
+    { id:'prop-trading', icon:'<i data-lucide="trending-up"></i>', label:'PROP TRADING' },
     { id:'credit', icon:'💳', label:'CREDIT' },
-    { id:'mall', icon:'🛒', label:'MALL' },
+    { id:'mall', icon:'<i data-lucide="shopping-cart"></i>', label:'MALL' },
     { id:'art', icon:'🎨', label:'ART' },
     { id:'books', icon:'📚', label:'BOOKS' },
     { id:'artist', icon:'🌟', label:'ARTIST' },

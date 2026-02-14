@@ -195,7 +195,7 @@
         <div class="user-info" id="user-info">
             <p id="user-email"></p>
             <div style="display:flex;gap:0.4rem;margin-top:0.3rem;">
-                <button onclick="showProfileEdit()" class="btn-logout" style="flex:1;" data-i18n="auth.profile">✏️ 프로필</button>
+                <button onclick="showProfileEdit()" class="btn-logout" style="flex:1;" data-i18n="auth.profile"><i data-lucide="pencil" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 프로필</button>
                 <button onclick="logout()" class="btn-logout" style="flex:1;" data-i18n="auth.logout">로그아웃</button>
             </div>
         </div>
@@ -568,7 +568,7 @@
                             <span style="font-size:0.8rem; color:var(--accent);" data-i18n="wallet.referral_code">내 소개 코드</span>
                             <div style="display:flex;align-items:center;gap:0.3rem;">
                                 <div id="my-referral-code" style="font-size:1.3rem; font-weight:700; color:var(--primary); letter-spacing:1px;">--</div>
-                                <button id="referral-nick-edit" onclick="editReferralNickname()" style="display:none;background:none;border:1px solid #E8E0D8;border-radius:4px;padding:0.1rem 0.3rem;cursor:pointer;font-size:0.65rem;" title="닉네임 변경">✏️</button>
+                                <button id="referral-nick-edit" onclick="editReferralNickname()" style="display:none;background:none;border:1px solid #E8E0D8;border-radius:4px;padding:0.1rem 0.3rem;cursor:pointer;font-size:0.65rem;" title="닉네임 변경"><i data-lucide="pencil" style="width:12px;height:12px;"></i></button>
                             </div>
                         </div>
                         <div style="text-align:right;">
@@ -591,7 +591,7 @@
                             <div id="referral-earn-crfn" style="font-weight:700;font-size:0.9rem;">0</div>
                         </div>
                         <div style="background:#FFF8F0; padding:0.4rem; border-radius:6px; text-align:center;">
-                            <div style="font-size:0.65rem; color:#C4841D;">📈 CRTD</div>
+                            <div style="font-size:0.65rem; color:#C4841D;"><i data-lucide="trending-up" style="width:12px;height:12px;display:inline-block;vertical-align:middle;"></i> CRTD</div>
                             <div id="referral-earn-crtd" style="font-weight:700;font-size:0.9rem;">0</div>
                         </div>
                         <div style="background:#FFF8F0; padding:0.4rem; border-radius:6px; text-align:center;">
@@ -855,7 +855,7 @@
                     <option value="painting" data-i18n="art.filter.painting">🖌️ 회화</option>
                     <option value="digital" data-i18n="art.filter.digital">💻 디지털</option>
                     <option value="photo" data-i18n="art.filter.photo">📷 사진</option>
-                    <option value="illustration" data-i18n="art.filter.illustration">✏️ 일러스트</option>
+                    <option value="illustration" data-i18n="art.filter.illustration">일러스트</option>
                     <option value="ai" data-i18n="art.filter.ai">🤖 AI</option>
                     <option value="generative" data-i18n="art.filter.generative">🌀 제너러티브</option>
                     <option value="kpop" data-i18n="art.filter.kpop">💜 K-팝</option>
@@ -1470,13 +1470,13 @@
                         </select>
                         <div style="display:flex; gap:4px; margin-left:auto;">
                             <button onclick="scrollToLatest()" style="background:#6B5744; color:#00ff88; border:1px solid #3D2B1F; border-radius:4px; padding:2px 8px; font-size:0.7rem; cursor:pointer;">▶ 정렬</button>
-                            <button onclick="toggleMASettings()" style="background:#6B5744; color:#ffab40; border:1px solid #3D2B1F; border-radius:4px; padding:2px 8px; font-size:0.7rem; cursor:pointer;">📈 MA</button>
+                            <button onclick="toggleMASettings()" style="background:#6B5744; color:#ffab40; border:1px solid #3D2B1F; border-radius:4px; padding:2px 8px; font-size:0.7rem; cursor:pointer;">MA</button>
                         </div>
                     </div>
                     
                     <!-- MA 세팅 패널 -->
                     <div id="ma-settings" style="display:none; padding:8px 10px; background:#F7F3ED; border-radius:8px; margin-bottom:4px;">
-                        <span style="color:#00ff88; font-size:0.7rem; font-weight:700;">📈 이동평균선</span>
+                        <span style="color:#00ff88; font-size:0.7rem; font-weight:700;">이동평균선</span>
                         <label style="float:right; font-size:0.65rem; color:#6B5744; cursor:pointer;"><input type="checkbox" id="nq-ma-label-show" onchange="applyMASettings()" style="margin:0 2px 0 0; vertical-align:middle;"> 이름표시</label>
                         <div style="display:flex; flex-wrap:wrap; gap:4px; align-items:center; margin-top:4px;">
                             <input type="checkbox" id="nq-ma1-show" checked onchange="applyMASettings()" style="margin:0;">
@@ -1547,8 +1547,8 @@
                     
                     <!-- BUY / SELL / CLOSE -->
                     <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-top:4px; padding:0 4px;">
-                        <button id="btn-chart-buy" onclick="quickChartTrade('BUY')" style="background:#3D2B1F; color:#FFF8F0; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">📈 BUY</button>
-                        <button id="btn-chart-sell" onclick="quickChartTrade('SELL')" style="background:#cc0000; color:#FFF8F0; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">📉 SELL</button>
+                        <button id="btn-chart-buy" onclick="quickChartTrade('BUY')" style="background:#3D2B1F; color:#FFF8F0; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">BUY</button>
+                        <button id="btn-chart-sell" onclick="quickChartTrade('SELL')" style="background:#cc0000; color:#FFF8F0; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">SELL</button>
                         <button onclick="closeAllPositions(getActiveTabSymbol())" style="background:#6B5744; color:#FFF8F0; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">✕ CLOSE</button>
                     </div>
                     
@@ -1666,10 +1666,10 @@
                     <!-- Buy/Sell Buttons -->
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">
                         <button id="btn-buy" onclick="executeFuturesTrade('BUY')" style="background:#3D2B1F; color:#FFF8F0; padding:1.2rem; border:none; border-radius:6px; cursor:pointer; font-size:1.1rem; font-weight:bold;">
-                            📈 BUY
+                            BUY
                         </button>
                         <button id="btn-sell" onclick="executeFuturesTrade('SELL')" style="background:#cc0000; color:#FFF8F0; padding:1.2rem; border:none; border-radius:6px; cursor:pointer; font-size:1.1rem; font-weight:bold;">
-                            📉 SELL
+                            SELL
                         </button>
                     </div>
                     
@@ -1843,7 +1843,7 @@
                         <option value="digital">💻 디지털 아트</option>
                         <option value="photo">📷 사진</option>
                         <option value="sculpture">🗿 조각/설치</option>
-                        <option value="illustration">✏️ 일러스트</option>
+                        <option value="illustration">일러스트</option>
                         <option value="calligraphy">🖋️ 서예/캘리</option>
                         <option value="mixed">🎭 혼합 매체</option>
                         <option value="ai">🤖 AI 아트</option>
@@ -2306,7 +2306,7 @@
             <div class="bottom-sheet-handle"></div>
             <div style="padding:12px 0;">
                 <div style="padding:12px 16px;font-weight:700;font-size:1rem;color:var(--text,#3D2B1F);">➕ 새로 만들기</div>
-                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('social');setTimeout(()=>{const t=document.getElementById('post-text');if(t){t.focus();t.scrollIntoView({behavior:'smooth',block:'center'})}},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:var(--text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;">📸 소셜 게시물</button>
+                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('social');setTimeout(()=>{const t=document.getElementById('post-text');if(t){t.focus();t.scrollIntoView({behavior:'smooth',block:'center'})}},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:var(--text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;"><i data-lucide="camera" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 소셜 게시물</button>
                 <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('reels');setTimeout(()=>{if(typeof SHORTFORM!=='undefined'&&SHORTFORM.openUpload)SHORTFORM.openUpload()},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:var(--text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;"><i data-lucide="clapperboard"></i> 숏폼 영상</button>
                 <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('social');setTimeout(()=>{if(typeof openStoryUpload==='function')openStoryUpload()},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:var(--text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;">📖 스토리</button>
                 <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();" style="width:100%;padding:14px 16px;border:none;background:none;color:#6B5744;font-size:0.95rem;cursor:pointer;text-align:left;">취소</button>
