@@ -193,7 +193,7 @@
         _selectedServiceType = type;
         document.querySelectorAll('.sf-svc-btn').forEach(b => {
             b.style.background = b.dataset.type === type ? CTA_MAP[type].color : 'transparent';
-            b.style.color = b.dataset.type === type ? '#fff' : CTA_MAP[type]?.color || '#666';
+            b.style.color = b.dataset.type === type ? '#E8D5C4' : CTA_MAP[type]?.color || '#666';
         });
         document.getElementById('sf-service-search').style.display = 'block';
         document.getElementById('sf-svc-query').value = '';
@@ -486,7 +486,7 @@
 
         const filterStyle = reel.filter ? `filter:${reel.filter};` : '';
         const textPos = reel.textPosition === 'top' ? 'top:12%' : reel.textPosition === 'center' ? 'top:45%' : 'bottom:15%';
-        const textHTML = reel.textOverlay ? `<div style="position:absolute;left:0;right:0;text-align:center;${textPos};font-size:${reel.textSize||24}px;font-weight:700;color:${reel.textColor||'#fff'};text-shadow:0 2px 8px rgba(0,0,0,0.8);pointer-events:none;padding:0 1rem;">${reel.textOverlay}</div>` : '';
+        const textHTML = reel.textOverlay ? `<div style="position:absolute;left:0;right:0;text-align:center;${textPos};font-size:${reel.textSize||24}px;font-weight:700;color:${reel.textColor||'#E8D5C4'};text-shadow:0 2px 8px rgba(0,0,0,0.8);pointer-events:none;padding:0 1rem;">${reel.textOverlay}</div>` : '';
 
         const isLiked = reel.likedBy && currentUser && reel.likedBy.includes(currentUser.uid);
 
