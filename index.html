@@ -24,18 +24,21 @@
     <meta name="twitter:description" content="지갑 · 트레이딩 · 마켓 · 소셜 · 아트 · 에너지 — 올인원 플랫폼">
     <meta name="twitter:image" content="https://crowny-org.vercel.app/img/og-image.png">
     
+    <!-- Lucide Icons (선형 아이콘) -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
     <!-- CSS Modules (organized by section) -->
-    <link rel="stylesheet" href="css/base.css?v=1.0">
-    <link rel="stylesheet" href="css/home.css?v=1.0">
-    <link rel="stylesheet" href="css/wallet.css?v=1.0">
-    <link rel="stylesheet" href="css/social.css?v=1.0">
+    <link rel="stylesheet" href="css/base.css?v=1.1">
+    <link rel="stylesheet" href="css/home.css?v=1.1">
+    <link rel="stylesheet" href="css/wallet.css?v=1.1">
+    <link rel="stylesheet" href="css/social.css?v=1.1">
     <link rel="stylesheet" href="css/messenger.css?v=1.1">
-    <link rel="stylesheet" href="css/trading.css?v=1.0">
-    <link rel="stylesheet" href="css/ai.css?v=1.0">
-    <link rel="stylesheet" href="css/care.css?v=1.0">
-    <link rel="stylesheet" href="css/components.css?v=1.0">
-    <link rel="stylesheet" href="css/settings.css?v=1.0">
-    <link rel="stylesheet" href="css/dark.css?v=1.0">
+    <link rel="stylesheet" href="css/trading.css?v=1.1">
+    <link rel="stylesheet" href="css/ai.css?v=1.1">
+    <link rel="stylesheet" href="css/care.css?v=1.1">
+    <link rel="stylesheet" href="css/components.css?v=1.1">
+    <link rel="stylesheet" href="css/settings.css?v=1.1">
+    <link rel="stylesheet" href="css/dark.css?v=1.1">
     <link rel="stylesheet" href="css/mobile.css?v=1.1">
     <!-- <link rel="stylesheet" href="style.css?v=15.9"> OLD: kept as backup -->
     
@@ -110,10 +113,10 @@
         };
         // 오프체인 유틸리티 포인트 (Firebase DB, zero-gas)
         window.OFFCHAIN_TOKENS = {
-            CRTD: { name: '크라우니 트레이딩 달러', icon: '📈', color: '#FF6D00', category: '트레이딩', desc: '프럍 트레이딩 · 챌린지 전용' },
-            CRAC: { name: '크라우니 아트 크레딧', icon: '🎭', color: '#E91E63', category: '엔터테인먼트', desc: 'K-팝 · 굿즈 · 멤버 투표' },
-            CRGC: { name: '크라우니 굿즈 & 기빙', icon: '🛒', color: '#00BFA5', category: '커머스', desc: 'H&B 결제 · 기부풀 자동 적립' },
-            CREB: { name: '크라우니 에코 바이오', icon: '🌱', color: '#2E7D32', category: '에코/바이오', desc: '태양광 · 나노봇 · PoV 크레딧' }
+            CRTD: { name: '크라우니 트레이딩 달러', icon: 'trending-up', color: '#FF6D00', category: '트레이딩', desc: '프럍 트레이딩 · 챌린지 전용' },
+            CRAC: { name: '크라우니 아트 크레딧', icon: 'palette', color: '#E91E63', category: '엔터테인먼트', desc: 'K-팝 · 굿즈 · 멤버 투표' },
+            CRGC: { name: '크라우니 굿즈 & 기빙', icon: 'shopping-bag', color: '#00BFA5', category: '커머스', desc: 'H&B 결제 · 기부풀 자동 적립' },
+            CREB: { name: '크라우니 에코 바이오', icon: 'leaf', color: '#2E7D32', category: '에코/바이오', desc: '태양광 · 나노봇 · PoV 크레딧' }
         };
         window.OFFCHAIN_RATE = 100; // 100 offchain point = 1 CRNY
     </script>
@@ -198,41 +201,41 @@
         </div>
         
         <div style="padding:0.5rem 1rem;">
-            <button onclick="openGlobalSearch()" style="background:none;border:1px solid var(--border);padding:0.5rem 0.8rem;border-radius:8px;cursor:pointer;width:100%;text-align:left;color:var(--accent);font-size:0.85rem;">🔍 검색...</button>
+            <button onclick="openGlobalSearch()" style="background:none;border:1px solid var(--border);padding:0.5rem 0.8rem;border-radius:8px;cursor:pointer;width:100%;text-align:left;color:var(--accent);font-size:0.85rem;"><i data-lucide="search" style="width:16px;height:16px;margin-right:6px;"></i>검색...</button>
         </div>
         
         <nav class="nav">
-            <a href="#" onclick="showPage('dashboard')" class="nav-item">📊 DASHBOARD<span class="nav-sub" data-i18n="nav.dashboard">대시보드</span></a>
-            <a href="#" onclick="showPage('today')" class="nav-item active">🏠 TODAY<span class="nav-sub" data-i18n="nav.today">투데이</span></a>
+            <a href="#" onclick="showPage('dashboard')" class="nav-item"><i data-lucide="bar-chart-3" style="width:20px;height:20px;margin-right:8px;"></i>DASHBOARD<span class="nav-sub" data-i18n="nav.dashboard">대시보드</span></a>
+            <a href="#" onclick="showPage('today')" class="nav-item active"><i data-lucide="home" style="width:20px;height:20px;margin-right:8px;"></i>TODAY<span class="nav-sub" data-i18n="nav.today">투데이</span></a>
             <hr class="nav-divider">
             <div class="nav-group-label">SOCIAL</div>
-            <a href="#" onclick="showPage('messenger')" class="nav-item">💬 MESSENGER<span class="nav-sub" data-i18n="nav.messenger">메신저</span></a>
-            <a href="#" onclick="showPage('social')" class="nav-item">📸 SOCIAL<span class="nav-sub" data-i18n="nav.social">소셜</span></a>
-            <a href="#" onclick="showPage('reels')" class="nav-item">🎬 REELS<span class="nav-sub" data-i18n="nav.reels">숏폼</span></a>
+            <a href="#" onclick="showPage('messenger')" class="nav-item"><i data-lucide="message-circle" style="width:20px;height:20px;margin-right:8px;"></i>MESSENGER<span class="nav-sub" data-i18n="nav.messenger">메신저</span></a>
+            <a href="#" onclick="showPage('social')" class="nav-item"><i data-lucide="camera" style="width:20px;height:20px;margin-right:8px;"></i>SOCIAL<span class="nav-sub" data-i18n="nav.social">소셜</span></a>
+            <a href="#" onclick="showPage('reels')" class="nav-item"><i data-lucide="video" style="width:20px;height:20px;margin-right:8px;"></i>REELS<span class="nav-sub" data-i18n="nav.reels">숏폼</span></a>
             <hr class="nav-divider">
             <div class="nav-group-label">FINANCE</div>
-            <a href="#" onclick="showPage('wallet')" class="nav-item">💰 WALLET<span class="nav-sub" data-i18n="nav.wallet">지갑</span></a>
-            <a href="#" onclick="showPage('prop-trading')" class="nav-item">📈 TRADING GAME<span class="nav-sub" data-i18n="nav.trading">트레이딩 게임</span></a>
-            <a href="#" onclick="showPage('credit')" class="nav-item">💳 CREDIT<span class="nav-sub" data-i18n="nav.credit">신용</span></a>
+            <a href="#" onclick="showPage('wallet')" class="nav-item"><i data-lucide="wallet" style="width:20px;height:20px;margin-right:8px;"></i>WALLET<span class="nav-sub" data-i18n="nav.wallet">지갑</span></a>
+            <a href="#" onclick="showPage('prop-trading')" class="nav-item"><i data-lucide="trending-up" style="width:20px;height:20px;margin-right:8px;"></i>TRADING GAME<span class="nav-sub" data-i18n="nav.trading">트레이딩 게임</span></a>
+            <a href="#" onclick="showPage('credit')" class="nav-item"><i data-lucide="credit-card" style="width:20px;height:20px;margin-right:8px;"></i>CREDIT<span class="nav-sub" data-i18n="nav.credit">신용</span></a>
             <hr class="nav-divider">
             <div class="nav-group-label">MARKETPLACE</div>
-            <a href="#" onclick="showPage('mall')" class="nav-item">🛒 MALL<span class="nav-sub" data-i18n="nav.mall">쇼핑몰</span></a>
-            <a href="#" onclick="showPage('art')" class="nav-item">🎨 ART<span class="nav-sub" data-i18n="nav.art">작품</span></a>
-            <a href="#" onclick="showPage('books')" class="nav-item">📚 BOOKS<span class="nav-sub" data-i18n="nav.books">도서</span></a>
-            <a href="#" onclick="showPage('artist')" class="nav-item">🌟 ARTIST<span class="nav-sub" data-i18n="nav.artist">아티스트</span></a>
+            <a href="#" onclick="showPage('mall')" class="nav-item"><i data-lucide="shopping-bag" style="width:20px;height:20px;margin-right:8px;"></i>MALL<span class="nav-sub" data-i18n="nav.mall">쇼핑몰</span></a>
+            <a href="#" onclick="showPage('art')" class="nav-item"><i data-lucide="palette" style="width:20px;height:20px;margin-right:8px;"></i>ART<span class="nav-sub" data-i18n="nav.art">작품</span></a>
+            <a href="#" onclick="showPage('books')" class="nav-item"><i data-lucide="book-open" style="width:20px;height:20px;margin-right:8px;"></i>BOOKS<span class="nav-sub" data-i18n="nav.books">도서</span></a>
+            <a href="#" onclick="showPage('artist')" class="nav-item"><i data-lucide="star" style="width:20px;height:20px;margin-right:8px;"></i>ARTIST<span class="nav-sub" data-i18n="nav.artist">아티스트</span></a>
             <hr class="nav-divider">
             <div class="nav-group-label">ECOSYSTEM</div>
-            <a href="#" onclick="showPage('energy')" class="nav-item">🔬 CREB LABS<span class="nav-sub" data-i18n="nav.creb_labs">미래기술</span></a>
-            <a href="#" onclick="showPage('business')" class="nav-item">🏢 BUSINESS<span class="nav-sub" data-i18n="nav.business">사업</span></a>
-            <a href="#" onclick="showPage('fundraise')" class="nav-item">💝 FUNDRAISE<span class="nav-sub" data-i18n="nav.fundraise">모금</span></a>
-            <a href="#" onclick="showPage('ai-assistant')" class="nav-item">👑 CROWNY PANEL<span class="nav-sub" data-i18n="nav.crowny_panel">크라우니 패널</span></a>
-            <a href="#" onclick="showPage('care')" class="nav-item">💝 CARE<span class="nav-sub" data-i18n="nav.care">크라우니케어</span></a>
-            <a href="#" onclick="showPage('beauty-manager')" class="nav-item">✨ BEAUTY<span class="nav-sub">뷰티매니저</span></a>
-            <a href="#" onclick="showPage('brain')" class="nav-item">🧠 BRAIN<span class="nav-sub">크라우니브레인</span></a>
-            <a href="#" onclick="showPage('movement')" class="nav-item">💪 MOVEMENT<span class="nav-sub">크라우니무브먼트</span></a>
+            <a href="#" onclick="showPage('energy')" class="nav-item"><i data-lucide="flask-round" style="width:20px;height:20px;margin-right:8px;"></i>CREB LABS<span class="nav-sub" data-i18n="nav.creb_labs">미래기술</span></a>
+            <a href="#" onclick="showPage('business')" class="nav-item"><i data-lucide="building-2" style="width:20px;height:20px;margin-right:8px;"></i>BUSINESS<span class="nav-sub" data-i18n="nav.business">사업</span></a>
+            <a href="#" onclick="showPage('fundraise')" class="nav-item"><i data-lucide="heart-handshake" style="width:20px;height:20px;margin-right:8px;"></i>FUNDRAISE<span class="nav-sub" data-i18n="nav.fundraise">모금</span></a>
+            <a href="#" onclick="showPage('ai-assistant')" class="nav-item"><i data-lucide="crown" style="width:20px;height:20px;margin-right:8px;"></i>CROWNY PANEL<span class="nav-sub" data-i18n="nav.crowny_panel">크라우니 패널</span></a>
+            <a href="#" onclick="showPage('care')" class="nav-item"><i data-lucide="heart" style="width:20px;height:20px;margin-right:8px;"></i>CARE<span class="nav-sub" data-i18n="nav.care">크라우니케어</span></a>
+            <a href="#" onclick="showPage('beauty-manager')" class="nav-item"><i data-lucide="sparkles" style="width:20px;height:20px;margin-right:8px;"></i>BEAUTY<span class="nav-sub">뷰티매니저</span></a>
+            <a href="#" onclick="showPage('brain')" class="nav-item"><i data-lucide="brain" style="width:20px;height:20px;margin-right:8px;"></i>BRAIN<span class="nav-sub">크라우니브레인</span></a>
+            <a href="#" onclick="showPage('movement')" class="nav-item"><i data-lucide="activity" style="width:20px;height:20px;margin-right:8px;"></i>MOVEMENT<span class="nav-sub">크라우니무브먼트</span></a>
             <hr class="nav-divider">
-            <a href="admin.html" class="nav-item" id="admin-nav-item" style="display:none; color:#e94560;">🔐 ADMIN<span class="nav-sub" data-i18n="nav.admin">관리자</span></a>
-            <a href="#" onclick="showPage('settings')" class="nav-item" style="margin-top:auto;">⚙️ SETTINGS<span class="nav-sub" data-i18n="nav.settings">설정</span></a>
+            <a href="admin.html" class="nav-item" id="admin-nav-item" style="display:none; color:#e94560;"><i data-lucide="shield-check" style="width:20px;height:20px;margin-right:8px;"></i>ADMIN<span class="nav-sub" data-i18n="nav.admin">관리자</span></a>
+            <a href="#" onclick="showPage('settings')" class="nav-item" style="margin-top:auto;"><i data-lucide="settings" style="width:20px;height:20px;margin-right:8px;"></i>SETTINGS<span class="nav-sub" data-i18n="nav.settings">설정</span></a>
         </nav>
     </aside>
 
@@ -249,7 +252,7 @@
 
     <main class="content">
         <section id="dashboard" class="page">
-            <h2>📊 DASHBOARD</h2>
+            <h2><i data-lucide="bar-chart-3" style="width:24px;height:24px;margin-right:8px;"></i>DASHBOARD</h2>
             <div id="dashboard-content"><p style="text-align:center;padding:2rem;color:var(--accent);">Loading...</p></div>
         </section>
 
@@ -265,35 +268,35 @@
 
             <div class="services">
                 <div class="service-card" onclick="showPage('wallet')">
-                    <span class="icon">💰</span>
+                    <span class="icon"><i data-lucide="wallet" style="width:24px;height:24px;color:var(--primary);"></i></span>
                     <h3>WALLET</h3>
                 </div>
                 <div class="service-card" onclick="showPage('messenger')">
-                    <span class="icon">💬</span>
+                    <span class="icon"><i data-lucide="message-circle" style="width:24px;height:24px;color:var(--primary);"></i></span>
                     <h3>MESSENGER</h3>
                 </div>
                 <div class="service-card" onclick="showPage('social')">
-                    <span class="icon">📸</span>
+                    <span class="icon"><i data-lucide="camera" style="width:24px;height:24px;color:var(--primary);"></i></span>
                     <h3>SOCIAL</h3>
                 </div>
                 <div class="service-card" data-feature="art" onclick="showPage('art')">
-                    <span class="icon">🎨</span>
+                    <span class="icon"><i data-lucide="palette" style="width:24px;height:24px;color:var(--primary);"></i></span>
                     <h3>ART</h3>
                 </div>
                 <div class="service-card" data-feature="mall" onclick="showPage('mall')">
-                    <span class="icon">🛒</span>
+                    <span class="icon"><i data-lucide="shopping-bag" style="width:24px;height:24px;color:var(--primary);"></i></span>
                     <h3>MALL</h3>
                 </div>
                 <div class="service-card" data-feature="business" onclick="showPage('fundraise')">
-                    <span class="icon">💝</span>
+                    <span class="icon"><i data-lucide="heart-handshake" style="width:24px;height:24px;color:var(--primary);"></i></span>
                     <h3>FUNDRAISE</h3>
                 </div>
                 <div class="service-card" data-feature="energy" onclick="showPage('energy')">
-                    <span class="icon">🔬</span>
+                    <span class="icon"><i data-lucide="flask-round" style="width:24px;height:24px;color:var(--primary);"></i></span>
                     <h3>CREB LABS</h3>
                 </div>
                 <div class="service-card" data-feature="business" onclick="showPage('business')">
-                    <span class="icon">🏢</span>
+                    <span class="icon"><i data-lucide="building-2" style="width:24px;height:24px;color:var(--primary);"></i></span>
                     <h3>BUSINESS</h3>
                 </div>
                 <div class="service-card" data-feature="artist" onclick="showPage('artist')">
@@ -2209,6 +2212,39 @@
     <script src="js/invite.js?v=21.0" defer></script>
     <script src="js/pwa.js?v=21.0"></script>
     
+    <!-- Lucide Icons 초기화 -->
+    <script>
+        // Lucide 아이콘 초기화
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+        
+        // 동적으로 생성되는 요소에도 아이콘 적용을 위한 함수
+        window.initLucideIcons = function() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        };
+        
+        // DOM 변경 감지 시 아이콘 다시 초기화
+        const observer = new MutationObserver(function(mutations) {
+            let shouldInit = false;
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList') {
+                    mutation.addedNodes.forEach(function(node) {
+                        if (node.nodeType === 1 && node.querySelector && node.querySelector('[data-lucide]')) {
+                            shouldInit = true;
+                        }
+                    });
+                }
+            });
+            if (shouldInit) {
+                setTimeout(window.initLucideIcons, 10);
+            }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+    </script>
+    
     <!-- Kakao SDK -->
     <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakNGPyeA" crossorigin="anonymous"></script>
     <!-- Facebook SDK -->
@@ -2217,23 +2253,23 @@
     <nav class="bottom-tab-bar" id="bottom-tab-bar">
         <div class="bottom-tab-bar-inner">
             <button class="bottom-tab-item" onclick="showPage('dashboard')" data-page="dashboard">
-                <span class="tab-icon">🏠</span>
+                <span class="tab-icon"><i data-lucide="home" style="width:20px;height:20px;"></i></span>
                 <span>홈</span>
             </button>
             <button class="bottom-tab-item" onclick="showPage('social')" data-page="social">
-                <span class="tab-icon">📸</span>
+                <span class="tab-icon"><i data-lucide="camera" style="width:20px;height:20px;"></i></span>
                 <span>소셜</span>
             </button>
             <button class="bottom-tab-item create-btn" onclick="showCreatePostModal()" data-page="create">
-                <span class="tab-icon">＋</span>
+                <span class="tab-icon"><i data-lucide="plus" style="width:20px;height:20px;"></i></span>
                 <span></span>
             </button>
             <button class="bottom-tab-item" onclick="showPage('wallet')" data-page="wallet">
-                <span class="tab-icon">💰</span>
+                <span class="tab-icon"><i data-lucide="wallet" style="width:20px;height:20px;"></i></span>
                 <span>지갑</span>
             </button>
             <button class="bottom-tab-item" onclick="showPage('messenger')" data-page="messenger">
-                <span class="tab-icon">💬</span>
+                <span class="tab-icon"><i data-lucide="message-circle" style="width:20px;height:20px;"></i></span>
                 <span>채팅</span>
             </button>
         </div>

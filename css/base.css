@@ -7,47 +7,56 @@
 }
 
 :root {
-    /* Brand Colors (New) */
+    /* Brand Colors (Cream/Chocolate Theme) */
     --brand-pink: #E91E63;   /* Protecting Beauty */
     --brand-blue: #2196F3;   /* Empowering Safety */
-    --brand-gold: #FFC107;   /* Wealth */
+    --brand-gold: #8B6914;   /* 골드 브라운 */
     
-    /* Base Overrides */
-    --primary: var(--brand-pink);       /* 버튼 등 주요 액션 */
-    --primary-light: #F48FB1;
-    --bg: #050505;                      /* 더 깊은 검정 */
-    --bg-card: rgba(30, 30, 40, 0.7);   /* Glassmorphism 준비 */
-    --text: #ffffff;
-    --border: rgba(255, 255, 255, 0.1);
+    /* Base Colors - Cream/Chocolate Theme */
+    --primary: #3D2B1F;                 /* 초콜릿 브라운 - 메인 */
+    --primary-light: #6B5744;           /* 라이트 브라운 */
+    --primary-hover: #2A1A0F;          /* 호버 */
+    --bg: #FFF8F0;                      /* 크림 아이보리 배경 */
+    --bg-secondary: #FFFBF5;           /* 밝은 크림 */
+    --bg-card: #F7F3ED;                /* 카드 배경 */
+    --text: #3D2B1F;                   /* 초콜릿 브라운 글씨 */
+    --text-secondary: #6B5744;         /* 보조 글씨 */
+    --border: #E8E0D8;                 /* 보더/구분선 */
+    
+    /* Accent & Links */
+    --gold: #8B6914;                   /* 링크/액센트 */
+    --accent: #8B6914;                 /* 액센트 컬러 */
+    
+    /* Button Colors */
+    --btn-primary-bg: #3D2B1F;
+    --btn-primary-text: #FFF8F0;
+    --btn-hover-bg: #2A1A0F;
     
     /* Legacy Compat (기존 코드 깨짐 방지) */
-    --gold: var(--brand-gold);
-    --accent: var(--brand-gold);
-
-    --primary-legacy: #1a1a2e; /* Original primary kept for backup */
-    --gold-dark: #B8860B;
+    --primary-legacy: #3D2B1F;
+    --gold-dark: #8B6914;
     --cream: #FFF8F0;
-    --cream-dark: #F5E6D3;
-    --bg-card-alt: #1e1e3a;
-    --text-light: #aaa;
-    --text-muted: #888;
-    --white: #1a1a2e;
-    --card-bg: #1a1a2e;
-    --success: #4CAF50;
-    --warning: #ff9800;
+    --cream-dark: #F7F3ED;
+    --bg-card-alt: #F7F3ED;
+    --text-light: #6B5744;
+    --text-muted: #6B5744;
+    --white: #FFF8F0;
+    --card-bg: #F7F3ED;
+    --success: #4A7C59;                /* 자연 녹색 */
+    --warning: #ff9800;                /* 경고/에러 기존 유지 */
     --error: #ff4444;
     --danger: #ff4444;
     --info: #2196f3;
 
-    /* Legacy aliases */
-    --dark-bg: #0a0a1a;
-    --dark-card: #1a1a2e;
-    --dark-card-alt: #1e1e3a;
-    --dark-border: #2a2a3e;
-    --dark-text: #f0f0f0;
-    --dark-muted: #888;
-    --dark-gold: #D4AF37;
-    --dark-cream: #FFF8F0;
+    /* Legacy aliases - Light Theme */
+    --dark-bg: #FFF8F0;
+    --dark-card: #F7F3ED;
+    --dark-card-alt: #F7F3ED;
+    --dark-border: #E8E0D8;
+    --dark-text: #3D2B1F;
+    --dark-muted: #6B5744;
+    --dark-gold: #8B6914;
+    --dark-cream: #FFFBF5;
 }
 
 

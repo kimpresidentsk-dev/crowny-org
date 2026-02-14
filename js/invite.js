@@ -216,7 +216,7 @@
                     📋 ${t('invite.copy_link', '링크 복사')}
                 </button>
                 <button onclick="INVITE.shareSMS()" style="padding:0.8rem;border:none;border-radius:10px;background:#25D366;color:white;font-weight:700;cursor:pointer;font-size:0.85rem;">
-                    💬 ${t('invite.sms_share', 'SMS/공유')}
+                    <i data-lucide="message-circle" style="width:16px;height:16px;margin-right:6px;"></i>${t('invite.sms_share', 'SMS/공유')}
                 </button>
                 <button onclick="INVITE.shareKakao()" style="padding:0.8rem;border:none;border-radius:10px;background:#FEE500;color:#3C1E1E;font-weight:700;cursor:pointer;font-size:0.85rem;">
                     💛 ${t('invite.kakao', '카카오톡')}

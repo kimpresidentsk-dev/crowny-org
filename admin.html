@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CROWNY ADMIN</title>
+    <!-- Lucide Icons (선형 아이콘) -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
     <!-- CSS Modules -->
-<link rel="stylesheet" href="css/base.css?v=1.0">
-<link rel="stylesheet" href="css/components.css?v=1.0">
-<link rel="stylesheet" href="css/dark.css?v=1.0">
-<link rel="stylesheet" href="css/mobile.css?v=1.0">
+<link rel="stylesheet" href="css/base.css?v=1.1">
+<link rel="stylesheet" href="css/components.css?v=1.1">
+<link rel="stylesheet" href="css/dark.css?v=1.1">
+<link rel="stylesheet" href="css/mobile.css?v=1.1">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-app-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-auth-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-firestore-compat.min.js"></script>
@@ -28,22 +31,22 @@
         window.db = firebase.firestore();
         window.OFFCHAIN_RATE = 100;
         window.OFFCHAIN_TOKENS = {
-            CRTD: { name: '크라우니 트레이딩 달러', icon: '📈', color: '#FF6D00' },
-            CRAC: { name: '크라우니 아트 크레딧', icon: '🎭', color: '#E91E63' },
-            CRGC: { name: '크라우니 굿즈 & 기빙', icon: '🛒', color: '#00BFA5' },
-            CREB: { name: '크라우니 에코 바이오', icon: '🌱', color: '#2E7D32' }
+            CRTD: { name: '크라우니 트레이딩 달러', icon: 'trending-up', color: '#FF6D00' },
+            CRAC: { name: '크라우니 아트 크레딧', icon: 'palette', color: '#E91E63' },
+            CRGC: { name: '크라우니 굿즈 & 기빙', icon: 'shopping-bag', color: '#00BFA5' },
+            CREB: { name: '크라우니 에코 바이오', icon: 'leaf', color: '#2E7D32' }
         };
         window.THIRDWEB_CONFIG = { clientId: '26c044bdfa2f575538d00945419126bf', contracts: { CRNY: '0xe56173b6a57680286253566B9C80Fcc175c88bE1', FNC: '0x68E3aA1049F583C2f1701fefc4443e398ebF32ee', CRFN: '0x396DAd0C7625a4881cA0cd444Cd80A9bbce4A054' } };
     </script>
     <style>
         .admin-layout { display:flex; min-height:100vh; }
-        .admin-sidebar { width:220px; background:#1a1a2e; color:white; padding:1rem 0; position:fixed; height:100vh; overflow-y:auto; }
-        .admin-sidebar .logo { padding:1rem 1.5rem; border-bottom:1px solid rgba(255,255,255,0.1); margin-bottom:1rem; }
-        .admin-sidebar .logo h1 { font-size:1.2rem; letter-spacing:2px; color:#FFD700; }
-        .admin-sidebar .logo p { font-size:0.75rem; color:rgba(255,255,255,0.5); }
-        .admin-sidebar .nav-link { display:block; padding:0.7rem 1.5rem; color:rgba(255,255,255,0.7); text-decoration:none; font-size:0.85rem; transition:all 0.2s; }
-        .admin-sidebar .nav-link:hover { background:rgba(255,255,255,0.1); color:white; }
-        .admin-sidebar .nav-link.active { background:rgba(255,255,255,0.15); color:#FFD700; border-left:3px solid #FFD700; }
+        .admin-sidebar { width:220px; background:var(--bg-card); color:var(--text); padding:1rem 0; position:fixed; height:100vh; overflow-y:auto; border-right:1px solid var(--border); }
+        .admin-sidebar .logo { padding:1rem 1.5rem; border-bottom:1px solid var(--border); margin-bottom:1rem; }
+        .admin-sidebar .logo h1 { font-size:1.2rem; letter-spacing:2px; color:var(--accent); }
+        .admin-sidebar .logo p { font-size:0.75rem; color:var(--text-secondary); }
+        .admin-sidebar .nav-link { display:block; padding:0.7rem 1.5rem; color:var(--text-secondary); text-decoration:none; font-size:0.85rem; transition:all 0.2s; }
+        .admin-sidebar .nav-link:hover { background:rgba(139,105,20,0.1); color:var(--text); }
+        .admin-sidebar .nav-link.active { background:rgba(139,105,20,0.15); color:var(--accent); border-left:3px solid var(--accent); }
         .admin-main { margin-left:220px; padding:1.5rem; flex:1; background:var(--bg); min-height:100vh; }
         @media(max-width:768px) {
             .admin-sidebar { width:100%; height:auto; position:relative; }
@@ -826,6 +829,17 @@
         
         initAdminPage();
     });
+    
+    // Lucide Icons 초기화
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+    
+    window.initLucideIcons = function() {
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    };
     </script>
 </body>
 </html>

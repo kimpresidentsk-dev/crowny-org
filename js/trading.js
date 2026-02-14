@@ -375,7 +375,7 @@ function updateCRTDDisplay() {
         
         <!-- 인출 정보 -->
         <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.72rem; padding-top:0.3rem; border-top:1px solid rgba(255,255,255,0.1);">
-            <span>💰 ${t('trading.withdrawable','인출 가능')}: <strong style="color:${withdrawable > 0 ? '#00ff88' : '#888'};">${withdrawable} CRTD</strong> (${cfg.withdrawUnit}단위)</span>
+            <span><i data-lucide="wallet" style="width:16px;height:16px;margin-right:6px;"></i>${t('trading.withdrawable','인출 가능')}: <strong style="color:${withdrawable > 0 ? '#00ff88' : '#888'};">${withdrawable} CRTD</strong> (${cfg.withdrawUnit}단위)</span>
             <span>${t('trading.withdrawn','기인출')}: ${totalWithdrawn}</span>
         </div>
         ${withdrawable >= cfg.withdrawUnit ? `

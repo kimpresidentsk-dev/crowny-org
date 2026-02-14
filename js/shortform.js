@@ -15,12 +15,12 @@
     let reelsMuted = true;
 
     const CTA_MAP = {
-        artist:   { label: '💖 후원하기', color: '#E91E63', page: 'artist' },
-        campaign: { label: '💝 참여하기', color: '#4CAF50', page: 'fundraise' },
-        business: { label: '💰 투자하기', color: '#0066cc', page: 'business' },
-        art:      { label: '🎨 구매하기', color: '#9C27B0', page: 'art' },
-        book:     { label: '📚 읽기',     color: '#FF9800', page: 'books' },
-        product:  { label: '🛒 구매하기', color: '#2196F3', page: 'mall' }
+        artist:   { label: '<i data-lucide="heart" style="width:14px;height:14px;margin-right:4px;"></i>후원하기', color: '#E91E63', page: 'artist' },
+        campaign: { label: '<i data-lucide="heart-handshake" style="width:14px;height:14px;margin-right:4px;"></i>참여하기', color: '#4CAF50', page: 'fundraise' },
+        business: { label: '<i data-lucide="wallet" style="width:14px;height:14px;margin-right:4px;"></i>투자하기', color: '#0066cc', page: 'business' },
+        art:      { label: '<i data-lucide="palette" style="width:14px;height:14px;margin-right:4px;"></i>구매하기', color: '#9C27B0', page: 'art' },
+        book:     { label: '<i data-lucide="book-open" style="width:14px;height:14px;margin-right:4px;"></i>읽기', color: '#FF9800', page: 'books' },
+        product:  { label: '<i data-lucide="shopping-bag" style="width:14px;height:14px;margin-right:4px;"></i>구매하기', color: '#2196F3', page: 'mall' }
     };
 
     // ====== UPLOAD MODAL ======
@@ -35,7 +35,7 @@
         modal.onclick = e => { if (e.target === modal) modal.remove(); };
         modal.innerHTML = `
         <div style="background:var(--card,#fff);padding:1.5rem;border-radius:16px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;color:var(--text,#222);">
-            <h3 style="margin:0 0 1rem;">🎬 ${t('shortform.upload_title','숏폼 영상 업로드')}</h3>
+            <h3 style="margin:0 0 1rem;"><i data-lucide="video" style="width:20px;height:20px;margin-right:8px;"></i>${t('shortform.upload_title','숏폼 영상 업로드')}</h3>
 
             <!-- file select -->
             <label style="display:block;border:2px dashed var(--border,#ccc);border-radius:12px;padding:2rem;text-align:center;cursor:pointer;margin-bottom:1rem;" id="sf-drop-zone">
