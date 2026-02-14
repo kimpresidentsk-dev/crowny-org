@@ -45,7 +45,7 @@
   "auth.email_verify_desc": "Enviamos un enlace de verificación a tu correo.\nVerifica y haz clic en el botón de abajo.",
   "auth.verify_done": "✅ Verificación completada",
   "auth.resend_verify": "Reenviar correo de verificación",
-  "auth.profile": "✏️ Perfil",
+  "auth.profile": "Perfil",
   "section.today": "TODAY",
   "section.wallet": "WALLET",
   "section.messenger": "MESSENGER",

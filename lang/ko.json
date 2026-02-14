@@ -45,7 +45,7 @@
   "auth.email_verify_desc": "가입하신 이메일로 인증 링크를 보냈습니다.\n인증 후 아래 버튼을 눌러주세요.",
   "auth.verify_done": "✅ 인증 완료 확인",
   "auth.resend_verify": "인증 메일 재발송",
-  "auth.profile": "✏️ 프로필",
+  "auth.profile": "프로필",
   "section.today": "TODAY",
   "section.wallet": "WALLET",
   "section.messenger": "MESSENGER",

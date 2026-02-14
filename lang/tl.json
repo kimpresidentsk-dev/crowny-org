@@ -45,7 +45,7 @@
   "auth.email_verify_desc": "Nagpadala kami ng verification link sa inyong email.\nPaki-verify at pindutin ang button sa ibaba.",
   "auth.verify_done": "✅ Tapos na ang Verification",
   "auth.resend_verify": "Ipadala ulit ang verification email",
-  "auth.profile": "✏️ Profile",
+  "auth.profile": "Profile",
   "section.today": "NGAYON",
   "section.wallet": "WALLET",
   "section.messenger": "MESSENGER",

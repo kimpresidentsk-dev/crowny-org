@@ -24,7 +24,22 @@ function updateLandingState(user) {
 }
 
 function toggleMenu() {
-    document.getElementById('sidebar').classList.toggle('active');
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('active');
+    
+    // 사이드바 열릴 때 오버레이 추가 (외부 클릭 시 닫기)
+    let overlay = document.getElementById('sidebar-overlay');
+    if (sidebar.classList.contains('active')) {
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'sidebar-overlay';
+            overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.3);z-index:998;';
+            overlay.onclick = function() { sidebar.classList.remove('active'); this.remove(); };
+            document.body.appendChild(overlay);
+        }
+    } else if (overlay) {
+        overlay.remove();
+    }
 }
 
 function showPage(pageId) {
@@ -43,6 +58,8 @@ function showPage(pageId) {
     }
     
     document.getElementById('sidebar').classList.remove('active');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    if (sidebarOverlay) sidebarOverlay.remove();
     
     // Sync bottom tab bar highlight
     if (typeof updateBottomTab === 'function') updateBottomTab(pageId);

@@ -45,7 +45,7 @@
   "auth.email_verify_desc": "登録メールアドレスに認証リンクを送信しました。\n認証後、下のボタンを押してください。",
   "auth.verify_done": "✅ 認証完了確認",
   "auth.resend_verify": "認証メール再送信",
-  "auth.profile": "✏️ プロフィール",
+  "auth.profile": "プロフィール",
   "section.today": "TODAY",
   "section.wallet": "WALLET",
   "section.messenger": "MESSENGER",
