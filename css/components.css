@@ -441,16 +441,26 @@ a:not(.nav-item) {
 /* Post create "게시" button gold */
 .post-create .btn-primary {
     background: var(--gold, #8B6914) !important;
-    color: #3D2B1F !important;
+    color: #FFF8F0 !important;
     font-weight: 700;
 }
 
 /* Input fields unified */
 input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
 textarea, select {
-    background: var(--bg-card-alt, #3D2B1F) !important;
-    color: var(--text, #F7F3ED) !important;
-    border-color: var(--border, #E8E0D8) !important;
+    background: var(--bg-card, #F7F3ED);
+    color: #3D2B1F;
+    border: 1px solid var(--border, #E8E0D8);
+}
+
+/* Auth form inputs */
+.auth-form input {
+    background: #FFF8F0 !important;
+    color: #3D2B1F !important;
+}
+.auth-form input::placeholder {
+    color: #6B5744 !important;
+    opacity: 0.7;
 }
 input:focus, textarea:focus, select:focus {
     border-color: var(--gold, #8B6914) !important;
