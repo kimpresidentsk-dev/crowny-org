@@ -9,7 +9,7 @@
 :root {
     /* Brand Colors (Cream/Chocolate Theme) */
     --brand-pink: #8B6914;   /* Protecting Beauty */
-    --brand-blue: #2196F3;   /* Empowering Safety */
+    --brand-blue: #5B7B8C;   /* Empowering Safety */
     --brand-gold: #8B6914;   /* 골드 브라운 */
     
     /* Base Colors - Cream/Chocolate Theme */
@@ -43,10 +43,10 @@
     --white: #FFF8F0;
     --card-bg: #F7F3ED;
     --success: #4A7C59;                /* 자연 녹색 */
-    --warning: #ff9800;                /* 경고/에러 기존 유지 */
-    --error: #ff4444;
-    --danger: #ff4444;
-    --info: #2196f3;
+    --warning: #C4841D;                /* 경고/에러 기존 유지 */
+    --error: #B54534;
+    --danger: #B54534;
+    --info: #5B7B8C;
 
     /* Legacy aliases - Light Theme */
     --dark-bg: #FFF8F0;

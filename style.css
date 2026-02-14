@@ -7,7 +7,7 @@
 :root {
     /* Brand Colors (Cream/Chocolate Theme) */
     --brand-pink: #8B6914;   /* Protecting Beauty */
-    --brand-blue: #2196F3;   /* Empowering Safety */
+    --brand-blue: #5B7B8C;   /* Empowering Safety */
     --brand-gold: #8B6914;   /* 골드 브라운 */
     
     /* Base Colors - Cream/Chocolate Theme */
@@ -41,10 +41,10 @@
     --white: #FFF8F0;
     --card-bg: #F7F3ED;
     --success: #4A7C59;                /* 자연 녹색 */
-    --warning: #ff9800;                /* 경고/에러 기존 유지 */
-    --error: #ff4444;
-    --danger: #ff4444;
-    --info: #2196f3;
+    --warning: #C4841D;                /* 경고/에러 기존 유지 */
+    --error: #B54534;
+    --danger: #B54534;
+    --info: #5B7B8C;
 
     /* Legacy aliases - Light Theme */
     --dark-bg: #FFF8F0;
@@ -2207,7 +2207,7 @@ h2 {
     transition: 0.3s;
 }
 input:checked + .notif-toggle-slider {
-    background: #4CAF50;
+    background: #6B8F3C;
 }
 input:checked + .notif-toggle-slider::before {
     transform: translateX(20px);
@@ -2381,7 +2381,7 @@ input:checked + .notif-toggle-slider::before {
     display: inline-block;
 }
 .msg-read-receipt.read {
-    color: #2196F3;
+    color: #5B7B8C;
 }
 .msg-read-receipt.sent {
     color: #999;
@@ -2412,7 +2412,7 @@ input:checked + .notif-toggle-slider::before {
     flex-shrink: 0;
     border: 2px solid var(--white);
 }
-.online-dot.online { background: #4CAF50; }
+.online-dot.online { background: #6B8F3C; }
 .online-dot.offline { background: #ccc; }
 
 /* Message time */
@@ -2500,7 +2500,7 @@ input:checked + .notif-toggle-slider::before {
     background: var(--border);
 }
 .msg-reaction-chip.mine {
-    border-color: #2196F3;
+    border-color: #5B7B8C;
     background: rgba(33,150,243,0.08);
 }
 
@@ -3186,7 +3186,7 @@ a:not(.nav-item) {
     padding: 0.6rem 1rem; background: rgba(255,68,68,0.1); border-top: 1px solid var(--border);
 }
 .voice-rec-dot {
-    width: 12px; height: 12px; border-radius: 50%; background: #ff4444;
+    width: 12px; height: 12px; border-radius: 50%; background: #B54534;
     animation: voicePulse 1s infinite;
 }
 @keyframes voicePulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
@@ -3524,7 +3524,7 @@ a:not(.nav-item) {
 .care-med-done {
     font-size: 1.2rem;
     font-weight: 700;
-    color: #4CAF50;
+    color: #6B8F3C;
 }
 
 /* Health Card */
@@ -3716,14 +3716,14 @@ a:not(.nav-item) {
 .sos-location-status {
     font-size: 1.1rem;
     font-weight: 700;
-    color: #1565c0;
+    color: #5B7B8C;
 }
 .sos-map-btn {
     display: inline-block;
     margin-top: 0.5rem;
     padding: 0.5rem 1rem;
     background: #e3f2fd;
-    color: #1565c0;
+    color: #5B7B8C;
     border-radius: 8px;
     text-decoration: none;
     font-weight: 600;
@@ -3779,7 +3779,7 @@ a:not(.nav-item) {
 .sos-call-btn {
     display: inline-block;
     padding: 0.6rem 1.2rem;
-    background: #4CAF50;
+    background: #6B8F3C;
     color: #FFF8F0;
     border-radius: 10px;
     text-decoration: none;
@@ -4021,7 +4021,7 @@ input, textarea, select {
     border-bottom-color: var(--dark-text) !important;
 }
 .social-tab-item .tab-badge {
-    background: #ff4444;
+    background: #B54534;
     color: #FFF8F0;
     font-size: 0.55rem;
     border-radius: 50%;

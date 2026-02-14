@@ -128,7 +128,7 @@
     transition: 0.3s;
 }
 input:checked + .notif-toggle-slider {
-    background: #4CAF50;
+    background: #6B8F3C;
 }
 input:checked + .notif-toggle-slider::before {
     transform: translateX(20px);
