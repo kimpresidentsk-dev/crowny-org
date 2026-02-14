@@ -75,7 +75,29 @@ function applyI18n() {
         const key = el.dataset.i18n;
         const translated = t(key);
         if (translated && translated !== key) {
-            el.textContent = translated;
+            // Check if element has child elements (icons, etc.) to preserve
+            const hasChildElements = el.querySelector('i, svg, img, span.icon');
+            if (!hasChildElements) {
+                el.textContent = translated;
+            } else {
+                // Replace only text nodes, preserve element children
+                const children = Array.from(el.childNodes);
+                let textNodeFound = false;
+                children.forEach(node => {
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        if (!textNodeFound) {
+                            node.textContent = translated + ' ';
+                            textNodeFound = true;
+                        } else {
+                            node.textContent = '';
+                        }
+                    }
+                });
+                if (!textNodeFound) {
+                    // No text node exists, prepend one before first child
+                    el.insertBefore(document.createTextNode(translated + ' '), el.firstChild);
+                }
+            }
         }
     });
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
