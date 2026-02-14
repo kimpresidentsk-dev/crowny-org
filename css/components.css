@@ -22,7 +22,7 @@
 }
 .section-banner p {
     margin-top: 0.5rem;
-    opacity: 0.9;
+    opacity: 1.0;
     font-size: 0.85rem;
 }
 .section-banner::after {

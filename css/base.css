@@ -300,10 +300,26 @@ html[lang="en"] .nav-sub { display: none; }
     display: block;
 }
 
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text);
+}
+
 h2 {
     font-size: 1.8rem;
     margin-bottom: 2rem;
     letter-spacing: 1px;
+}
+
+p, span, label {
+    color: var(--text);
+}
+
+button {
+    color: var(--text);
+}
+
+a {
+    color: var(--text);
 }
 
 

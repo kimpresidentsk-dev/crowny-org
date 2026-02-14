@@ -238,7 +238,7 @@ body {
 .landing-logo{display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:1rem}
 .landing-logo-icon{font-size:2.5rem}
 .landing-logo-text{font-size:2rem;font-weight:900;letter-spacing:3px;color:#3D2B1F}
-.landing-invited-by{font-size:.85rem;color:#6B5744;margin-bottom:1rem}
+.landing-invited-by{font-size:.85rem;color:#3D2B1F;margin-bottom:1rem}
 .landing-slogan{font-size:1.35rem;font-weight:700;line-height:1.5;color:#3D2B1F;margin-bottom:2rem}
 .landing-slogan em{color:#8B6914;font-style:normal}
 
@@ -258,12 +258,12 @@ body {
 .landing-feature-card:active{transform:scale(.97)}
 .landing-feat-icon{font-size:2rem;margin-bottom:.4rem}
 .landing-feature-card h3{font-size:.9rem;font-weight:700;margin-bottom:.25rem;color:#3D2B1F}
-.landing-feature-card p{font-size:.75rem;color:#6B5744;line-height:1.4}
+.landing-feature-card p{font-size:.75rem;color:#3D2B1F;line-height:1.4}
 
 /* Social proof */
 .landing-proof{text-align:center;padding:2rem 0}
 .landing-proof-number{font-size:3rem;font-weight:900;background:linear-gradient(135deg,#8B6914,#B8860B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.landing-proof p{font-size:.9rem;color:#6B5744;margin-top:.25rem}
+.landing-proof p{font-size:.9rem;color:#3D2B1F;margin-top:.25rem}
 
 /* CTA */
 .landing-cta{text-align:center;padding:1.5rem 0 2rem;position:sticky;bottom:0;background:linear-gradient(transparent,#FFF8F0 30%);z-index:1}
