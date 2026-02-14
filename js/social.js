@@ -658,9 +658,13 @@ async function openChat(chatId, otherId) {
     }
 
     // Listen for messages
+    let _isMarkingRead = false;
     chatUnsubscribe = db.collection('chats').doc(chatId)
         .collection('messages').orderBy('timestamp')
         .onSnapshot(async (snapshot) => {
+            // readBy 업데이트로 인한 재실행 방지
+            if (_isMarkingRead) return;
+            
             const messagesDiv = document.getElementById('chat-messages');
             messagesDiv.innerHTML = '';
             if (snapshot.empty) {
@@ -669,7 +673,7 @@ async function openChat(chatId, otherId) {
             const senderCache = {};
             let lastDateStr = '';
 
-            // Mark unread messages as read
+            // Mark unread messages as read (비동기, 리렌더링 방지)
             const unreadDocs = [];
             for (const doc of snapshot.docs) {
                 const msg = doc.data();
@@ -677,13 +681,13 @@ async function openChat(chatId, otherId) {
                     unreadDocs.push(doc.ref);
                 }
             }
-            // Batch mark as read
             if (unreadDocs.length > 0) {
+                _isMarkingRead = true;
                 const batch = db.batch();
                 for (const ref of unreadDocs) {
                     batch.update(ref, { readBy: firebase.firestore.FieldValue.arrayUnion(currentUser.uid) });
                 }
-                batch.commit().catch(() => {});
+                batch.commit().catch(() => {}).finally(() => { setTimeout(() => { _isMarkingRead = false; }, 1000); });
             }
 
             for (const doc of snapshot.docs) {
