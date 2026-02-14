@@ -190,8 +190,8 @@ const MOVEMENT = (() => {
             <div style="background:var(--card-bg,#F7F3ED);border-radius:12px;padding:1rem;">
                 <h4 style="margin:0 0 0.5rem 0;font-size:0.9rem;">📋 ${stage.name} 운동 목록</h4>
                 ${stage.exercises.map((ex, i) => `
-                    <div style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0;border-bottom:1px solid #F7F3ED;${i === exerciseIndex ? 'background:#fff3e0;margin:0 -0.5rem;padding:0.5rem;border-radius:6px;' : ''}">
-                        <span style="font-size:0.8rem;width:20px;text-align:center;color:${i === exerciseIndex ? '#E91E63' : '#6B5744'};">${i === exerciseIndex ? '▶' : (i + 1)}</span>
+                    <div style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0;border-bottom:1px solid #F7F3ED;${i === exerciseIndex ? 'background:#F7F3ED;margin:0 -0.5rem;padding:0.5rem;border-radius:6px;' : ''}">
+                        <span style="font-size:0.8rem;width:20px;text-align:center;color:${i === exerciseIndex ? '#B54534' : '#6B5744'};">${i === exerciseIndex ? '▶' : (i + 1)}</span>
                         <div style="flex:1;">
                             <div style="font-size:0.8rem;font-weight:${i === exerciseIndex ? '700' : '400'};">${ex.name}</div>
                             <div style="font-size:0.7rem;color:var(--accent);">${ex.duration}</div>

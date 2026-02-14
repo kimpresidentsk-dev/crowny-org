@@ -263,7 +263,7 @@ async function displayCurrentWallet() {
         if (wallet.encryptedPrivateKey) {
             securityEl.innerHTML = `<span style="color:#2e7d32;">🔒 ${t('wallet.encrypted', '암호화됨')} ✅</span>`;
         } else if (wallet.privateKey) {
-            securityEl.innerHTML = `<span style="color:#e65100;">⚠️ ${t('wallet.not_encrypted', '미암호화')}</span> <button onclick="migrateWalletSecurity()" style="margin-left:8px;padding:4px 10px;background:#3D2B1F;color:#FFF8F0;border:none;border-radius:6px;cursor:pointer;font-size:0.75rem;">🔐 ${t('wallet.upgrade_security', '보안 업그레이드')}</button>`;
+            securityEl.innerHTML = `<span style="color:#C4841D;">⚠️ ${t('wallet.not_encrypted', '미암호화')}</span> <button onclick="migrateWalletSecurity()" style="margin-left:8px;padding:4px 10px;background:#3D2B1F;color:#FFF8F0;border:none;border-radius:6px;cursor:pointer;font-size:0.75rem;">🔐 ${t('wallet.upgrade_security', '보안 업그레이드')}</button>`;
         }
     }
     

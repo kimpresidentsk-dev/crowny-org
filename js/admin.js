@@ -80,9 +80,9 @@ const ADMIN_EMAIL = SUPER_ADMIN_EMAIL; // 하위 호환
 const ADMIN_LEVELS = {
     6: { name: t('admin.level.super','수퍼관리자'), icon: '👑', color: '#8B6914' },
     5: { name: t('admin.level.country','국가관리자'), icon: '🌍', color: '#9C27B0' },
-    4: { name: t('admin.level.business','사업관리자'), icon: '💼', color: '#2196F3' },
+    4: { name: t('admin.level.business','사업관리자'), icon: '💼', color: '#5B7B8C' },
     3: { name: t('admin.level.service','서비스관리자'), icon: '🔧', color: '#FF9800' },
-    2: { name: t('admin.level.ops','운영관리자'), icon: '📝', color: '#4CAF50' },
+    2: { name: t('admin.level.ops','운영관리자'), icon: '📝', color: '#6B8F3C' },
     1: { name: t('admin.level.cs','CS관리자'), icon: '💬', color: '#607D8B' },
     0: { name: t('admin.level.member','정회원'), icon: '⭐', color: '#795548' },
     '-1': { name: t('admin.level.basic','일반회원'), icon: '👤', color: '#9E9E9E' }
@@ -232,8 +232,8 @@ function normalizeToArray(val) {
 function buildCheckboxGrid(name, options, selectedArr) {
     return options.map(o => {
         const checked = selectedArr.includes(o.v) ? 'checked' : '';
-        return `<label style="display:inline-flex;align-items:center;gap:0.2rem;padding:0.25rem 0.5rem;background:${checked ? '#e3f2fd' : '#F7F3ED'};border-radius:6px;cursor:pointer;font-size:0.78rem;border:1px solid ${checked ? '#90caf9' : '#E8E0D8'};transition:all 0.15s;">
-            <input type="checkbox" name="${name}" value="${o.v}" ${checked} style="margin:0;accent-color:#1565c0;"> ${o.l}
+        return `<label style="display:inline-flex;align-items:center;gap:0.2rem;padding:0.25rem 0.5rem;background:${checked ? '#F7F3ED' : '#F7F3ED'};border-radius:6px;cursor:pointer;font-size:0.78rem;border:1px solid ${checked ? '#90caf9' : '#E8E0D8'};transition:all 0.15s;">
+            <input type="checkbox" name="${name}" value="${o.v}" ${checked} style="margin:0;accent-color:#5B7B8C;"> ${o.l}
         </label>`;
     }).join('');
 }
@@ -327,7 +327,7 @@ async function showAdminEditModal(userId, userData) {
     overlay.querySelectorAll('input[type="checkbox"]').forEach(cb => {
         cb.addEventListener('change', () => {
             const lbl = cb.closest('label');
-            if (cb.checked) { lbl.style.background = '#e3f2fd'; lbl.style.borderColor = '#90caf9'; }
+            if (cb.checked) { lbl.style.background = '#F7F3ED'; lbl.style.borderColor = '#90caf9'; }
             else { lbl.style.background = '#F7F3ED'; lbl.style.borderColor = '#E8E0D8'; }
         });
     });
@@ -1181,11 +1181,11 @@ async function loadTokenList() {
     
     let html = '<div style="display:grid; gap:0.4rem;">';
     for (const [key, info] of Object.entries(OFFCHAIN_TOKEN_REGISTRY)) {
-        const badge = info.isDefault ? '<span style="font-size:0.6rem; background:#E8E0D8; padding:1px 4px; border-radius:2px;">기본</span>' : '<span style="font-size:0.6rem; background:#e3f2fd; padding:1px 4px; border-radius:2px;">커스텀</span>';
+        const badge = info.isDefault ? '<span style="font-size:0.6rem; background:#E8E0D8; padding:1px 4px; border-radius:2px;">기본</span>' : '<span style="font-size:0.6rem; background:#F7F3ED; padding:1px 4px; border-radius:2px;">커스텀</span>';
         html += `
             <div style="display:flex; justify-content:space-between; align-items:center; padding:0.4rem 0.6rem; background:var(--bg); border-radius:4px; border-left:3px solid ${info.color};">
                 <span style="font-size:0.82rem;">${info.icon} <strong>${info.name}</strong> ${info.fullName} ${badge}</span>
-                ${!info.isDefault && isSuperAdmin() ? `<button onclick="deleteCustomToken('${key}')" style="background:#ff4444; color:#FFF8F0; border:none; padding:2px 6px; border-radius:3px; cursor:pointer; font-size:0.65rem;">삭제</button>` : ''}
+                ${!info.isDefault && isSuperAdmin() ? `<button onclick="deleteCustomToken('${key}')" style="background:#B54534; color:#FFF8F0; border:none; padding:2px 6px; border-radius:3px; cursor:pointer; font-size:0.65rem;">삭제</button>` : ''}
             </div>`;
     }
     html += '</div>';
@@ -1337,7 +1337,7 @@ async function adminBatchDistribute() {
     });
     
     resultEl.innerHTML = `
-        <div style="padding:0.6rem; border-radius:6px; ${fail > 0 ? 'background:#fff3e0; border:1px solid #ffcc80;' : 'background:#e8f5e9; border:1px solid #a5d6a7;'}">
+        <div style="padding:0.6rem; border-radius:6px; ${fail > 0 ? 'background:#F7F3ED; border:1px solid #ffcc80;' : 'background:#F7F3ED; border:1px solid #a5d6a7;'}">
             <strong>✅ ${success}명 성공</strong>${fail > 0 ? ` / ❌ ${fail}명 실패` : ''}
             <div style="font-size:0.78rem; margin-top:0.3rem;">총 발행: ${(amount * success).toLocaleString()} ${ti.name}</div>
             ${failList.length > 0 ? `<div style="font-size:0.72rem; color:#c62828; margin-top:0.3rem;">실패: ${failList.join(', ')}</div>` : ''}
@@ -1394,7 +1394,7 @@ async function adminLoadOffchainTxLog() {
         };
         const typeColors = {
             'admin_mint': '#2e7d32', 'admin_burn': '#c62828',
-            'earn': '#1565c0', 'spend': '#ff6f00',
+            'earn': '#5B7B8C', 'spend': '#ff6f00',
             'transfer': '#455a64', 'swap_offchain': '#6a1b9a'
         };
         
@@ -1555,7 +1555,7 @@ async function loadAdminUserList() {
         let quotaHTML = '';
         if (isSuperAdmin()) {
             quotaHTML = `
-            <div style="background:#fff3e0; padding:1rem; border-radius:8px; margin-bottom:1rem;">
+            <div style="background:#F7F3ED; padding:1rem; border-radius:8px; margin-bottom:1rem;">
                 <h4 style="font-size:0.85rem; margin-bottom:0.6rem;">⚙️ 관리자 쿼터 설정</h4>
                 <table style="width:100%; border-collapse:collapse; font-size:0.78rem;">
                     <thead>
@@ -1579,7 +1579,7 @@ async function loadAdminUserList() {
                         }).join('')}
                     </tbody>
                 </table>
-                <button onclick="saveAdminQuotas()" style="margin-top:0.5rem; background:#FF6D00; color:#FFF8F0; border:none; padding:0.4rem 1rem; border-radius:4px; cursor:pointer; font-size:0.8rem;">💾 쿼터 저장</button>
+                <button onclick="saveAdminQuotas()" style="margin-top:0.5rem; background:#C4841D; color:#FFF8F0; border:none; padding:0.4rem 1rem; border-radius:4px; cursor:pointer; font-size:0.8rem;">💾 쿼터 저장</button>
             </div>`;
         }
         
@@ -1632,8 +1632,8 @@ async function loadAdminUserList() {
             const countryArr = normalizeToArray(u.adminCountry);
             const businessArr = normalizeToArray(u.adminBusiness);
             const serviceArr = normalizeToArray(u.adminService);
-            const countryBadge = countryArr.map(c => `<span style="font-size:0.6rem;background:#e3f2fd;color:#1565c0;padding:1px 4px;border-radius:3px;">${c}</span>`).join('');
-            const businessBadge = businessArr.map(b => `<span style="font-size:0.6rem;background:#fff3e0;color:#e65100;padding:1px 4px;border-radius:3px;">${b}</span>`).join('');
+            const countryBadge = countryArr.map(c => `<span style="font-size:0.6rem;background:#F7F3ED;color:#5B7B8C;padding:1px 4px;border-radius:3px;">${c}</span>`).join('');
+            const businessBadge = businessArr.map(b => `<span style="font-size:0.6rem;background:#F7F3ED;color:#C4841D;padding:1px 4px;border-radius:3px;">${b}</span>`).join('');
             const serviceBadge = serviceArr.map(s => `<span style="font-size:0.6rem;background:#f3e5f5;color:#7b1fa2;padding:1px 4px;border-radius:3px;">${s}</span>`).join('');
             
             let periodText = '';
@@ -1949,7 +1949,7 @@ async function adminLoadDeletedWallets() {
                             <div style="font-size:0.72rem;color:#6B5744;font-family:monospace;">${w.walletAddress || '--'}</div>
                             <div style="font-size:0.68rem;color:#c62828;">삭제: ${deletedAt}</div>
                         </div>
-                        ${hasLevel(4) ? `<button onclick="adminRestoreWallet('${userDoc.id}','${wDoc.id}')" style="background:#4CAF50;color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;font-size:0.7rem;">♻️ 복구</button>` : ''}
+                        ${hasLevel(4) ? `<button onclick="adminRestoreWallet('${userDoc.id}','${wDoc.id}')" style="background:#6B8F3C;color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;font-size:0.7rem;">♻️ 복구</button>` : ''}
                     </div>
                 </div>`;
             }
@@ -2029,15 +2029,15 @@ async function loadAdminWallet() {
                 <span style="margin-left:0.5rem; color:#8e24aa;">Polygon</span>
             </div>
             <div style="display:flex; gap:0.8rem; flex-wrap:wrap; margin-bottom:0.5rem;">
-                <div style="background:#fff3e0; padding:0.6rem 1rem; border-radius:6px; text-align:center; min-width:80px;">
-                    <div style="font-size:0.7rem; color:#e65100;">CRNY</div>
+                <div style="background:#F7F3ED; padding:0.6rem 1rem; border-radius:6px; text-align:center; min-width:80px;">
+                    <div style="font-size:0.7rem; color:#C4841D;">CRNY</div>
                     <strong style="font-size:1.2rem;">${balances.crny.toLocaleString(undefined, {maximumFractionDigits:2})}</strong>
                 </div>
-                <div style="background:#e3f2fd; padding:0.6rem 1rem; border-radius:6px; text-align:center; min-width:80px;">
-                    <div style="font-size:0.7rem; color:#1565c0;">FNC</div>
+                <div style="background:#F7F3ED; padding:0.6rem 1rem; border-radius:6px; text-align:center; min-width:80px;">
+                    <div style="font-size:0.7rem; color:#5B7B8C;">FNC</div>
                     <strong style="font-size:1.2rem;">${balances.fnc.toLocaleString(undefined, {maximumFractionDigits:2})}</strong>
                 </div>
-                <div style="background:#e8f5e9; padding:0.6rem 1rem; border-radius:6px; text-align:center; min-width:80px;">
+                <div style="background:#F7F3ED; padding:0.6rem 1rem; border-radius:6px; text-align:center; min-width:80px;">
                     <div style="font-size:0.7rem; color:#2e7d32;">CRFN</div>
                     <strong style="font-size:1.2rem;">${balances.crfn.toLocaleString(undefined, {maximumFractionDigits:2})}</strong>
                 </div>
@@ -2276,7 +2276,7 @@ async function loadAdminParticipants() {
                                         일일 PnL: <span style="color:${(p.dailyPnL || 0) < 0 ? '#cc0000' : '#3D2B1F'}">$${(p.dailyPnL || 0).toFixed(2)}</span> / 
                                         일일한도: <span style="font-weight:700;">$${p.dailyLossLimit || 500}</span> · 
                                         청산한도: <span style="font-weight:700;">$${(p.maxDrawdown || 3000).toLocaleString()}</span>
-                                        ${p.copyAccounts > 1 ? ` · <span style="color:#FF6D00; font-weight:700;">카피: ${p.copyAccounts}계정</span>` : ''}
+                                        ${p.copyAccounts > 1 ? ` · <span style="color:#C4841D; font-weight:700;">카피: ${p.copyAccounts}계정</span>` : ''}
                                         ${p.tradingTier ? ` · <span style="color:#9C27B0;">MNQ×${p.tradingTier.MNQ||0} NQ×${p.tradingTier.NQ||0}</span>` : ''}
                                     </div>
                                     ${isSuspended ? `<div style="font-size:0.75rem; color:#cc0000; margin-top:0.2rem;">사유: ${p.suspendReason || '-'}</div>` : ''}
@@ -2290,7 +2290,7 @@ async function loadAdminParticipants() {
                                     ` : ''}
                                     ${!isSuspended ? `
                                         <button onclick="adminSuspendTrading('${participantId}', '${challengeId}')" 
-                                            style="background:#ff9800; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
+                                            style="background:#C4841D; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
                                             ⛔ 거래 중단
                                         </button>
                                     ` : `
@@ -2301,7 +2301,7 @@ async function loadAdminParticipants() {
                                     `}
                                     ${isLocked ? `
                                         <button onclick="adminUnlockTrading('${participantId}', '${challengeId}')" 
-                                            style="background:#2196F3; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
+                                            style="background:#5B7B8C; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
                                             🔓 잠금 해제
                                         </button>
                                     ` : ''}
@@ -2318,7 +2318,7 @@ async function loadAdminParticipants() {
                                         💰 잔액 조정
                                     </button>
                                     <button onclick="adminAdjustCopyAccounts('${participantId}', '${challengeId}')" 
-                                        style="background:#FF6D00; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
+                                        style="background:#C4841D; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
                                         📋 카피계정
                                     </button>
                                     <button onclick="adminAdjustTradingTier('${participantId}', '${challengeId}')" 
@@ -2374,7 +2374,7 @@ async function loadAdminLog() {
                     break;
                 case 'suspend_trading':
                     actionText = '⛔ 거래 중단';
-                    actionColor = '#ff9800';
+                    actionColor = '#C4841D';
                     break;
                 case 'resume_trading':
                     actionText = '✅ 중단 해제';
@@ -2880,7 +2880,7 @@ async function loadExchangeRate() {
                         const tokenLabel = h.token ? h.token.toUpperCase() : '전체';
                         return `<div style="padding:0.5rem; background:var(--bg); border-radius:6px; margin-bottom:0.3rem; font-size:0.8rem;">
                             <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <div><span style="background:#e3f2fd; color:#1565c0; padding:0.1rem 0.4rem; border-radius:4px; font-size:0.7rem; font-weight:700;">${tokenLabel}</span> <strong>${h.oldRate} → ${h.newRate}</strong></div>
+                                <div><span style="background:#F7F3ED; color:#5B7B8C; padding:0.1rem 0.4rem; border-radius:4px; font-size:0.7rem; font-weight:700;">${tokenLabel}</span> <strong>${h.oldRate} → ${h.newRate}</strong></div>
                                 <span style="color:var(--accent); font-size:0.7rem;">${date}</span>
                             </div>
                             <div style="color:#6B5744; font-size:0.75rem; margin-top:0.2rem;">📝 ${h.reason || '-'}</div>
@@ -3053,8 +3053,8 @@ async function loadCouponList() {
                 <td style="text-align:center;">
                     <div style="display:flex; flex-direction:column; gap:3px; align-items:center;">
                         <button onclick="toggleCoupon('${doc.id}', ${!c.enabled})" style="padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem; background:${c.enabled ? '#ffcdd2' : '#c8e6c9'}; color:${c.enabled ? '#c62828' : '#2e7d32'}; width:100%;">${c.enabled ? '비활성화' : '활성화'}</button>
-                        <button onclick="viewCouponLog('${doc.id}','${c.code}')" style="padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem; background:#e3f2fd; color:#1565c0; width:100%;">📜 로그</button>
-                        <button onclick="deleteCoupon('${doc.id}','${c.code}')" style="padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem; background:#fce4ec; color:#c62828; width:100%;">🗑️ 삭제</button>
+                        <button onclick="viewCouponLog('${doc.id}','${c.code}')" style="padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem; background:#F7F3ED; color:#5B7B8C; width:100%;">📜 로그</button>
+                        <button onclick="deleteCoupon('${doc.id}','${c.code}')" style="padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem; background:#F7F3ED; color:#c62828; width:100%;">🗑️ 삭제</button>
                     </div>
                 </td>
             </tr>`;
@@ -3296,7 +3296,7 @@ async function showInternalTransfer(fromType) {
                 <input type="number" id="transfer-amount" min="1" placeholder="0" style="width:100%;padding:0.6rem;border:1px solid #E8E0D8;border-radius:8px;box-sizing:border-box;">
             </div>
             
-            ${fromType === 'original' ? '<p style="font-size:0.75rem;color:#FF6D00;margin-bottom:0.8rem;">⚠️ 오리지널 계좌 출금: 2단계 확인 필요</p>' : ''}
+            ${fromType === 'original' ? '<p style="font-size:0.75rem;color:#C4841D;margin-bottom:0.8rem;">⚠️ 오리지널 계좌 출금: 2단계 확인 필요</p>' : ''}
             
             <div style="display:flex;gap:0.5rem;">
                 <button id="transfer-submit" style="flex:1;padding:0.7rem;background:#8B6914;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:700;">💸 이체</button>
@@ -3608,7 +3608,7 @@ function renderDashboardStats(stats) {
     const sections = stats.sections || {};
     const sectionEl = el('dash-section-stats');
     if (sectionEl) {
-        const colors = { mall: '#00BFA5', art: '#E91E63', books: '#FF9800', trading: '#FF6D00', social: '#2196F3' };
+        const colors = { mall: '#6B8F3C', art: '#B54534', books: '#FF9800', trading: '#C4841D', social: '#5B7B8C' };
         sectionEl.innerHTML = Object.entries(sections).map(([key, sec]) => {
             const color = colors[key] || '#607D8B';
             return `<div style="background:#FFF8F0; border:1px solid ${color}33; border-left:4px solid ${color}; padding:1rem; border-radius:10px;">
@@ -3631,7 +3631,7 @@ function renderDashboardStats(stats) {
             const pct = Math.max((count / maxVal) * 100, 2);
             const dayLabel = new Date(date + 'T00:00:00').toLocaleDateString('ko-KR', { weekday: 'short' });
             return `<div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
-                <span style="font-size:0.7rem; font-weight:700; color:#1565c0;">${count}</span>
+                <span style="font-size:0.7rem; font-weight:700; color:#5B7B8C;">${count}</span>
                 <div style="width:100%; background:linear-gradient(180deg,#F0C060,#8B6914); border-radius:4px 4px 0 0; height:${pct}%; min-height:4px; transition:height 0.3s;"></div>
                 <span style="font-size:0.65rem; color:#6B5744;">${dayLabel}</span>
             </div>`;
@@ -3646,7 +3646,7 @@ function renderDashboardStats(stats) {
             chartTokenEl.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;color:#6B5744;font-size:0.85rem;">거래 데이터 없음</div>';
         } else {
             const maxVol = Math.max(...entries.map(([,v]) => v), 1);
-            const tokenColors = { CRTD: '#FF6D00', CRAC: '#E91E63', CRGC: '#00BFA5', CREB: '#2E7D32' };
+            const tokenColors = { CRTD: '#C4841D', CRAC: '#B54534', CRGC: '#6B8F3C', CREB: '#2E7D32' };
             chartTokenEl.innerHTML = entries.map(([tk, vol]) => {
                 const pct = Math.max((vol / maxVol) * 100, 2);
                 const color = tokenColors[tk] || '#607D8B';
@@ -3681,7 +3681,7 @@ async function loadAdminPendingProducts() {
             const p = d.data();
             const thumb = p.images?.[0] || p.imageData || '';
             const dateStr = p.createdAt?.toDate ? p.createdAt.toDate().toLocaleDateString('ko-KR') : '';
-            c.innerHTML += `<div style="background:var(--bg);padding:0.8rem;border-radius:8px;margin-bottom:0.5rem;border-left:4px solid #ff9800;">
+            c.innerHTML += `<div style="background:var(--bg);padding:0.8rem;border-radius:8px;margin-bottom:0.5rem;border-left:4px solid #C4841D;">
                 <div style="display:flex;gap:0.8rem;align-items:center;">
                     <div style="width:60px;height:60px;border-radius:8px;overflow:hidden;background:#F7F3ED;flex-shrink:0;">
                         ${thumb ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover;">` : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#E8E0D8;">🛒</div>'}
@@ -3693,7 +3693,7 @@ async function loadAdminPendingProducts() {
                     </div>
                 </div>
                 <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
-                    <button onclick="approveProduct('${d.id}')" style="flex:1;background:#4CAF50;color:#FFF8F0;border:none;padding:0.5rem;border-radius:6px;cursor:pointer;font-weight:600;">✅ 승인</button>
+                    <button onclick="approveProduct('${d.id}')" style="flex:1;background:#6B8F3C;color:#FFF8F0;border:none;padding:0.5rem;border-radius:6px;cursor:pointer;font-weight:600;">✅ 승인</button>
                     <button onclick="rejectProduct('${d.id}')" style="flex:1;background:#f44336;color:#FFF8F0;border:none;padding:0.5rem;border-radius:6px;cursor:pointer;font-weight:600;">❌ 거부</button>
                 </div>
             </div>`;
@@ -3745,7 +3745,7 @@ async function loadAdminReports() {
         snap.forEach(d => {
             const r = d.data();
             const dateStr = r.createdAt?.toDate ? r.createdAt.toDate().toLocaleDateString('ko-KR') : '';
-            c.innerHTML += `<div style="background:#fff3e0;padding:0.8rem;border-radius:8px;margin-bottom:0.5rem;border-left:4px solid #f44336;">
+            c.innerHTML += `<div style="background:#F7F3ED;padding:0.8rem;border-radius:8px;margin-bottom:0.5rem;border-left:4px solid #f44336;">
                 <div style="display:flex;justify-content:space-between;align-items:center;">
                     <div>
                         <strong>🚨 ${REPORT_REASONS[r.reason] || r.reason}</strong>

@@ -201,7 +201,7 @@ async function searchFriends() {
                     <div style="font-weight:600;font-size:0.9rem;">${info.nickname}</div>
                     <div style="font-size:0.75rem;color:var(--text-muted,#6B5744);">${data.statusMessage || ''}</div>
                 </div>
-                ${isFriend ? `<span style="font-size:0.75rem;color:#4CAF50;">✅ 친구</span>` :
+                ${isFriend ? `<span style="font-size:0.75rem;color:#6B8F3C;">✅ 친구</span>` :
                 `<button onclick="sendFriendRequest('${doc.id}');this.textContent='요청됨';this.disabled=true;" class="btn-primary" style="padding:0.3rem 0.8rem;font-size:0.8rem;border-radius:6px;">친구 추가</button>`}
             </div>`;
         }
@@ -300,7 +300,7 @@ async function showUserProfile(uid) {
             ${!isMe ? `
             <div style="display:flex;gap:0.5rem;">
                 <button onclick="followUser('${uid}');document.getElementById('user-profile-modal')?.remove();" class="btn-primary" style="flex:1;padding:0.6rem;border-radius:8px;font-size:0.85rem;">${amFollowing ? '팔로잉 ✓' : '팔로우'}</button>
-                ${!amFriend ? `<button onclick="sendFriendRequest('${uid}');document.getElementById('user-profile-modal')?.remove();" style="flex:1;padding:0.6rem;border-radius:8px;font-size:0.85rem;border:1px solid var(--border,#E8E0D8);background:var(--bg-card,#3D2B1F);cursor:pointer;">친구 추가</button>` : `<span style="flex:1;display:flex;align-items:center;justify-content:center;font-size:0.85rem;color:#4CAF50;">✅ 친구</span>`}
+                ${!amFriend ? `<button onclick="sendFriendRequest('${uid}');document.getElementById('user-profile-modal')?.remove();" style="flex:1;padding:0.6rem;border-radius:8px;font-size:0.85rem;border:1px solid var(--border,#E8E0D8);background:var(--bg-card,#3D2B1F);cursor:pointer;">친구 추가</button>` : `<span style="flex:1;display:flex;align-items:center;justify-content:center;font-size:0.85rem;color:#6B8F3C;">✅ 친구</span>`}
                 <button onclick="startChatFromProfile('${uid}');document.getElementById('user-profile-modal')?.remove();" style="flex:1;padding:0.6rem;border-radius:8px;font-size:0.85rem;border:1px solid var(--border,#E8E0D8);background:var(--bg-card,#3D2B1F);cursor:pointer;">💬 메시지</button>
             </div>
             ` : ''}

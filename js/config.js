@@ -97,7 +97,7 @@ function updateRiskGaugeUI() {
     
     if (dailyBar) {
         dailyBar.style.width = dailyPercent + '%';
-        dailyBar.style.background = dailyPercent >= 100 ? '#f44336' : dailyPercent >= 80 ? '#ff9800' : '#4caf50';
+        dailyBar.style.background = dailyPercent >= 100 ? '#f44336' : dailyPercent >= 80 ? '#C4841D' : '#4caf50';
     }
     if (dailyText) {
         dailyText.textContent = `$${dailyPnL.toFixed(0)} / -$${actualDailyLimit}`;
@@ -111,7 +111,7 @@ function updateRiskGaugeUI() {
     
     if (cumulativeBar) {
         cumulativeBar.style.width = cumulativePercent + '%';
-        cumulativeBar.style.background = cumulativePercent >= 100 ? '#f44336' : cumulativePercent >= 80 ? '#ff9800' : '#4caf50';
+        cumulativeBar.style.background = cumulativePercent >= 100 ? '#f44336' : cumulativePercent >= 80 ? '#C4841D' : '#4caf50';
     }
     if (cumulativeText) {
         cumulativeText.textContent = `$${cumulativePnL.toFixed(0)} / -$${actualCumulativeLimit.toLocaleString()}`;

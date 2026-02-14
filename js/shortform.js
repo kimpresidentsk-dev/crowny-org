@@ -15,12 +15,12 @@
     let reelsMuted = true;
 
     const CTA_MAP = {
-        artist:   { label: '<i data-lucide="heart" style="width:14px;height:14px;margin-right:4px;"></i>후원하기', color: '#E91E63', page: 'artist' },
-        campaign: { label: '<i data-lucide="heart-handshake" style="width:14px;height:14px;margin-right:4px;"></i>참여하기', color: '#4CAF50', page: 'fundraise' },
+        artist:   { label: '<i data-lucide="heart" style="width:14px;height:14px;margin-right:4px;"></i>후원하기', color: '#B54534', page: 'artist' },
+        campaign: { label: '<i data-lucide="heart-handshake" style="width:14px;height:14px;margin-right:4px;"></i>참여하기', color: '#6B8F3C', page: 'fundraise' },
         business: { label: '<i data-lucide="wallet" style="width:14px;height:14px;margin-right:4px;"></i>투자하기', color: '#3D2B1F', page: 'business' },
         art:      { label: '<i data-lucide="palette" style="width:14px;height:14px;margin-right:4px;"></i>구매하기', color: '#9C27B0', page: 'art' },
         book:     { label: '<i data-lucide="book-open" style="width:14px;height:14px;margin-right:4px;"></i>읽기', color: '#FF9800', page: 'books' },
-        product:  { label: '<i data-lucide="shopping-bag" style="width:14px;height:14px;margin-right:4px;"></i>구매하기', color: '#2196F3', page: 'mall' }
+        product:  { label: '<i data-lucide="shopping-bag" style="width:14px;height:14px;margin-right:4px;"></i>구매하기', color: '#5B7B8C', page: 'mall' }
     };
 
     // ====== UPLOAD MODAL ======

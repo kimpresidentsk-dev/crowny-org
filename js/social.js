@@ -115,12 +115,12 @@ async function showProfileEdit() {
             <div style="margin-top:0.8rem; padding-top:0.8rem; border-top:1px solid #E8E0D8; display:grid; gap:0.5rem;">
                 <p style="font-size:0.8rem; font-weight:600; color:var(--text,#3D2B1F); margin-bottom:0.2rem;">${t('social.login_method','🔐 로그인 방법')}</p>
                 ${currentUser && currentUser.providerData.some(p => p.providerId === 'google.com') ? `
-                <p style="font-size:0.75rem; color:#4CAF50;">${t('social.google_linked','✅ Google 계정 연동됨')}</p>` : `
+                <p style="font-size:0.75rem; color:#6B8F3C;">${t('social.google_linked','✅ Google 계정 연동됨')}</p>` : `
                 <button onclick="linkGoogleAccount(); document.getElementById('profile-edit-modal').remove();" style="width:100%;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:0.5rem;">
                     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width:16px;height:16px;"> ${t('social.link_google','Google 계정 연동')}
                 </button>`}
                 ${currentUser && currentUser.providerData.some(p => p.providerId === 'password') ? `
-                <p style="font-size:0.75rem; color:#4CAF50;">${t('social.pw_login_set','✅ 이메일/비밀번호 로그인 설정됨')}</p>
+                <p style="font-size:0.75rem; color:#6B8F3C;">${t('social.pw_login_set','✅ 이메일/비밀번호 로그인 설정됨')}</p>
                 <button onclick="changePasswordFromProfile()" style="width:100%;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">${t('auth.change_pw','🔑 비밀번호 변경')}</button>` : `
                 <button onclick="setupPasswordFromProfile()" style="width:100%;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">${t('social.setup_pw','🔑 비밀번호 설정 (이메일 로그인 추가)')}</button>`}
             </div>
@@ -234,7 +234,7 @@ async function loadReferralInfo() {
                     pending.forEach(doc => {
                         const r = doc.data();
                         const releaseDate = r.releaseDate?.toDate ? r.releaseDate.toDate().toLocaleDateString('ko-KR') : '--';
-                        pendingHTML += `<div style="font-size:0.75rem;color:#e65100;">⏳ ${r.amount} ${(r.token||'').toUpperCase()} → ${releaseDate}</div>`;
+                        pendingHTML += `<div style="font-size:0.75rem;color:#C4841D;">⏳ ${r.amount} ${(r.token||'').toUpperCase()} → ${releaseDate}</div>`;
                     });
                 }
                 pendingEl.innerHTML = pendingHTML || '<div style="font-size:0.75rem;color:var(--text-muted,#6B5744);">대기 중인 보상 없음</div>';
@@ -767,7 +767,7 @@ async function openChat(chatId, otherId) {
                         const pageMap = { product: 'mall', artist: 'artist', campaign: 'fundraise', art: 'art' };
                         content += `<div onclick="showPage('${pageMap[sc.itemType]||sc.itemType}')" style="border:1px solid var(--border,#E8E0D8);border-radius:10px;overflow:hidden;cursor:pointer;margin-bottom:0.3rem;max-width:220px;">
                             ${sc.imageUrl ? `<img src="${sc.imageUrl}" style="width:100%;height:100px;object-fit:cover;">` : ''}
-                            <div style="padding:0.4rem 0.6rem;"><div style="font-size:0.8rem;font-weight:600;">${sc.name}</div>${sc.price ? `<div style="font-size:0.75rem;color:#e65100;">${sc.price}</div>` : ''}<div style="font-size:0.7rem;color:#3D2B1F;margin-top:0.2rem;">🛒 보기</div></div></div>`;
+                            <div style="padding:0.4rem 0.6rem;"><div style="font-size:0.8rem;font-weight:600;">${sc.name}</div>${sc.price ? `<div style="font-size:0.75rem;color:#C4841D;">${sc.price}</div>` : ''}<div style="font-size:0.7rem;color:#3D2B1F;margin-top:0.2rem;">🛒 보기</div></div></div>`;
                     } else if (msgType === 'transfer') {
                         content += `<div style="background:linear-gradient(135deg,#8B6914,#F0C060);color:#FFF8F0;padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
                     }
@@ -780,7 +780,7 @@ async function openChat(chatId, otherId) {
                         // Signature warning
                         let sigWarning = '';
                         if (msg._decryptedText && msg._decryptedText.endsWith('⚠️ 서명 검증 실패')) {
-                            sigWarning = '<div style="font-size:0.7rem;color:#e65100;margin-top:0.2rem;">⚠️ 서명 검증 실패</div>';
+                            sigWarning = '<div style="font-size:0.7rem;color:#C4841D;margin-top:0.2rem;">⚠️ 서명 검증 실패</div>';
                         }
                         // Link preview
                         if (typeof parseLinkPreviews === 'function') {
@@ -820,7 +820,7 @@ async function openChat(chatId, otherId) {
                 let expiryHTML = '';
                 if (msg.expiresAt && typeof E2ECrypto !== 'undefined') {
                     const remaining = E2ECrypto.getRemainingTime(msg);
-                    if (remaining) expiryHTML = `<span style="font-size:0.65rem;color:#e65100;margin-left:0.3rem;">⏱️${remaining}</span>`;
+                    if (remaining) expiryHTML = `<span style="font-size:0.65rem;color:#C4841D;margin-left:0.3rem;">⏱️${remaining}</span>`;
                 }
 
                 // Action buttons (reaction + reply + forward + pin + delete)
@@ -1888,12 +1888,12 @@ let _pendingServiceLink = null;
 
 // ========== SERVICE LINK CONFIG ==========
 const SERVICE_LINK_CONFIG = {
-    artist:   { action: '💖 후원하기', color: '#E91E63', collection: 'artists', nameField: 'name', nav: (id) => { showPage('artist'); viewArtistDetail(id); } },
-    campaign: { action: '💝 모금하기', color: '#4CAF50', collection: 'campaigns', nameField: 'title', nav: (id) => { showPage('fundraise'); showCampaignDetail(id); } },
+    artist:   { action: '💖 후원하기', color: '#B54534', collection: 'artists', nameField: 'name', nav: (id) => { showPage('artist'); viewArtistDetail(id); } },
+    campaign: { action: '💝 모금하기', color: '#6B8F3C', collection: 'campaigns', nameField: 'title', nav: (id) => { showPage('fundraise'); showCampaignDetail(id); } },
     business: { action: '💰 투자하기', color: '#3D2B1F', collection: 'businesses', nameField: 'name', nav: (id) => { showPage('business'); viewBusinessDetail(id); } },
     art:      { action: '🎨 작품 구매', color: '#9C27B0', collection: 'artworks', nameField: 'title', nav: (id) => showPage('art') },
     book:     { action: '📚 책 구매', color: '#FF9800', collection: 'books', nameField: 'title', nav: (id) => showPage('books') },
-    product:  { action: '🛒 상품 구매', color: '#2196F3', collection: 'products', nameField: 'name', nav: (id) => { showPage('product-detail'); renderProductDetail(id); } }
+    product:  { action: '🛒 상품 구매', color: '#5B7B8C', collection: 'products', nameField: 'name', nav: (id) => { showPage('product-detail'); renderProductDetail(id); } }
 };
 
 // ========== SERVICE LINK MODAL ==========
@@ -2480,7 +2480,7 @@ async function loadChannelList() {
             el.className = 'chat-item';
             el.onclick = () => openChannel(doc.id);
             el.innerHTML = `
-                <div style="width:44px;height:44px;border-radius:50%;background:#e3f2fd;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">📢</div>
+                <div style="width:44px;height:44px;border-radius:50%;background:#F7F3ED;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">📢</div>
                 <div class="chat-preview" style="flex:1;min-width:0;">
                     <strong>${ch.name}</strong>
                     <p style="font-size:0.75rem;color:var(--accent);">${ch.subscribers?.length || 0} 구독자${isSub ? ' · ✅ 구독중' : ''}</p>
@@ -2525,7 +2525,7 @@ async function openChannel(channelId) {
 
     document.getElementById('chat-username').innerHTML = `
         <div style="display:flex;align-items:center;gap:0.5rem;">
-            <div style="width:32px;height:32px;border-radius:50%;background:#e3f2fd;display:flex;align-items:center;justify-content:center;">📢</div>
+            <div style="width:32px;height:32px;border-radius:50%;background:#F7F3ED;display:flex;align-items:center;justify-content:center;">📢</div>
             <div><strong>${ch.name}</strong><div style="font-size:0.7rem;color:var(--accent);">${ch.subscribers?.length || 0} 구독자</div></div>
             ${!isSub ? `<button onclick="subscribeChannel('${channelId}')" style="margin-left:0.5rem;padding:0.3rem 0.6rem;border:none;border-radius:6px;background:#3D2B1F;color:#FFF8F0;font-size:0.75rem;cursor:pointer;">구독</button>` :
                 `<button onclick="unsubscribeChannel('${channelId}')" style="margin-left:0.5rem;padding:0.3rem 0.6rem;border:1px solid var(--border,#E8E0D8);border-radius:6px;background:var(--bg-card,#3D2B1F);font-size:0.75rem;cursor:pointer;">구독취소</button>`}
@@ -2550,7 +2550,7 @@ async function openChannel(channelId) {
                 let content = '';
                 if (msg.mediaUrl && msg.type === 'image') content += `<img src="${msg.mediaUrl}" style="max-width:300px;border-radius:8px;display:block;margin-bottom:0.3rem;">`;
                 if (msg.text) content += `<span>${msg.text}</span>`;
-                el.innerHTML = `<div style="background:#e3f2fd;padding:0.6rem 0.8rem;border-radius:12px;word-break:break-word;font-size:0.9rem;line-height:1.4;">${content}</div>
+                el.innerHTML = `<div style="background:#F7F3ED;padding:0.6rem 0.8rem;border-radius:12px;word-break:break-word;font-size:0.9rem;line-height:1.4;">${content}</div>
                     <div style="font-size:0.7rem;color:var(--accent);margin-top:0.15rem;">${formatMsgTime(timestamp)}</div>`;
                 messagesDiv.appendChild(el);
             }
@@ -3051,7 +3051,7 @@ function showPostMenu(postId, isMyPost) {
     let menuItems = '';
     if (isMyPost) {
         menuItems += `<button onclick="editPost('${postId}');closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:var(--dark-text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;">✏️ 수정</button>`;
-        menuItems += `<button onclick="deletePost('${postId}');closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:#ff4444;font-size:0.95rem;font-weight:600;cursor:pointer;text-align:left;">🗑️ 삭제</button>`;
+        menuItems += `<button onclick="deletePost('${postId}');closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:#B54534;font-size:0.95rem;font-weight:600;cursor:pointer;text-align:left;">🗑️ 삭제</button>`;
     }
     menuItems += `<button onclick="copyShareURL('post','${postId}');closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:var(--dark-text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;">🔗 링크 복사</button>`;
     menuItems += `<button onclick="repostPost('${postId}');closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:var(--dark-text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;">🔄 리포스트</button>`;

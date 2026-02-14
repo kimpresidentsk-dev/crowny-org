@@ -621,7 +621,7 @@ const E2ECrypto = (() => {
         overlay.innerHTML = `
         <div style="background:#FFF8F0;padding:1.5rem;border-radius:16px;max-width:420px;width:100%;">
             <h3 style="margin-bottom:1rem;">🔐 채팅 보안 설정</h3>
-            ${isSecret ? '<div style="background:#fff3e0;padding:0.5rem;border-radius:8px;margin-bottom:1rem;font-size:0.8rem;">🔒 비밀 채팅 — E2E 암호화가 강제 적용됩니다</div>' : ''}
+            ${isSecret ? '<div style="background:#F7F3ED;padding:0.5rem;border-radius:8px;margin-bottom:1rem;font-size:0.8rem;">🔒 비밀 채팅 — E2E 암호화가 강제 적용됩니다</div>' : ''}
             
             <div style="display:flex;justify-content:space-between;align-items:center;padding:0.8rem 0;border-bottom:1px solid #E8E0D8;">
                 <div>

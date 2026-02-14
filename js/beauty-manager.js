@@ -69,7 +69,7 @@ const BEAUTY = (() => {
             <!-- 전체 얼굴 촬영 -->
             <div style="background:var(--card-bg,#F7F3ED);border-radius:12px;padding:1.2rem;margin-bottom:1.2rem;">
                 <button onclick="BEAUTY.captureZone('full')" 
-                    style="width:100%;padding:1rem;border:2px dashed var(--primary,#E91E63);border-radius:10px;background:transparent;cursor:pointer;font-size:0.9rem;font-weight:600;color:var(--primary,#E91E63);">
+                    style="width:100%;padding:1rem;border:2px dashed var(--primary,#B54534);border-radius:10px;background:transparent;cursor:pointer;font-size:0.9rem;font-weight:600;color:var(--primary,#B54534);">
                     🤳 전체 얼굴 촬영
                 </button>
             </div>
@@ -155,7 +155,7 @@ const BEAUTY = (() => {
             <video id="beauty-video" autoplay playsinline style="max-width:90%;max-height:50vh;border-radius:12px;transform:scaleX(-1);"></video>
             <canvas id="beauty-canvas" style="display:none;"></canvas>
             <div style="display:flex;gap:1rem;margin-top:1.5rem;">
-                <button onclick="BEAUTY.takePhoto()" style="width:70px;height:70px;border-radius:50%;border:4px solid white;background:var(--primary,#E91E63);cursor:pointer;font-size:1.5rem;">📸</button>
+                <button onclick="BEAUTY.takePhoto()" style="width:70px;height:70px;border-radius:50%;border:4px solid white;background:var(--primary,#B54534);cursor:pointer;font-size:1.5rem;">📸</button>
             </div>
             <button onclick="BEAUTY.closeCapture()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:#FFF8F0;font-size:1.5rem;cursor:pointer;">✕</button>
             <div style="margin-top:1rem;">
@@ -399,7 +399,7 @@ JSON만 출력하세요.`;
     function renderAnalysis(analysis) {
         const scores = analysis.scores || {};
         const metricsKo = { moisture: '수분', oil: '유분', pore: '모공', wrinkle: '주름', pigment: '색소', elasticity: '탄력', overall: '전체' };
-        const colors = { moisture: '#4FC3F7', oil: '#FFB74D', pore: '#BA68C8', wrinkle: '#F06292', pigment: '#A1887F', elasticity: '#81C784', overall: '#E91E63' };
+        const colors = { moisture: '#4FC3F7', oil: '#FFB74D', pore: '#BA68C8', wrinkle: '#F06292', pigment: '#A1887F', elasticity: '#81C784', overall: '#B54534' };
 
         const date = analysis.createdAt?.toDate ? analysis.createdAt.toDate().toLocaleDateString('ko-KR') : new Date().toLocaleDateString('ko-KR');
         const typeLabel = analysis.type === 'ai' ? '✨ 크라우니걸 AI' : '👩‍⚕️ 전문가';
@@ -407,7 +407,7 @@ JSON만 출력하세요.`;
         return `
             <div style="margin-bottom:0.8rem;">
                 <span style="font-size:0.75rem;color:var(--accent);">${date} · ${typeLabel}</span>
-                <div style="margin-top:0.3rem;font-size:0.9rem;font-weight:700;">피부 타입: <span style="color:var(--primary,#E91E63);">${analysis.skinType || '분석 중'}</span></div>
+                <div style="margin-top:0.3rem;font-size:0.9rem;font-weight:700;">피부 타입: <span style="color:var(--primary,#B54534);">${analysis.skinType || '분석 중'}</span></div>
             </div>
             <div style="display:grid;gap:0.5rem;margin-bottom:1rem;">
                 ${Object.entries(scores).map(([key, val]) => `
@@ -417,14 +417,14 @@ JSON만 출력하세요.`;
                             <span style="font-weight:700;color:${colors[key] || '#6B5744'};">${val}점</span>
                         </div>
                         <div style="background:#F7F3ED;border-radius:10px;height:8px;overflow:hidden;">
-                            <div style="background:${colors[key] || '#E91E63'};height:100%;width:${val}%;border-radius:10px;transition:width 0.5s;"></div>
+                            <div style="background:${colors[key] || '#B54534'};height:100%;width:${val}%;border-radius:10px;transition:width 0.5s;"></div>
                         </div>
                     </div>
                 `).join('')}
             </div>
-            ${analysis.summary ? `<div style="background:#fce4ec;padding:0.8rem;border-radius:8px;font-size:0.85rem;margin-bottom:0.8rem;">${analysis.summary}</div>` : ''}
+            ${analysis.summary ? `<div style="background:#F7F3ED;padding:0.8rem;border-radius:8px;font-size:0.85rem;margin-bottom:0.8rem;">${analysis.summary}</div>` : ''}
             ${analysis.advice ? `<div style="font-size:0.8rem;color:var(--accent);"><strong>💡 관리 조언:</strong> ${analysis.advice}</div>` : ''}
-            ${analysis.recommended ? `<div style="font-size:0.8rem;color:var(--primary,#E91E63);margin-top:0.5rem;"><strong>🎁 추천:</strong> ${analysis.recommended}</div>` : ''}
+            ${analysis.recommended ? `<div style="font-size:0.8rem;color:var(--primary,#B54534);margin-top:0.5rem;"><strong>🎁 추천:</strong> ${analysis.recommended}</div>` : ''}
         `;
     }
 
@@ -479,7 +479,7 @@ JSON만 출력하세요.`;
                         const prev = i > 0 ? (entries[i - 1].scores?.overall || 0) : overall;
                         const diff = overall - prev;
                         const diffText = i === 0 ? '기준' : (diff > 0 ? `+${diff} ↑` : diff < 0 ? `${diff} ↓` : '변동 없음');
-                        const diffColor = diff > 0 ? '#4CAF50' : diff < 0 ? '#F44336' : '#6B5744';
+                        const diffColor = diff > 0 ? '#6B8F3C' : diff < 0 ? '#F44336' : '#6B5744';
                         return `
                             <div style="display:flex;align-items:center;gap:0.8rem;">
                                 <div style="width:50px;text-align:center;font-size:0.7rem;color:var(--accent);">${date}</div>
@@ -535,7 +535,7 @@ JSON만 출력하세요.`;
                         </div>
                         <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
                             <button onclick="BEAUTY.adminAnalyze('${doc.id}','${d.userId}')" 
-                                style="flex:1;padding:0.5rem;border:none;border-radius:6px;background:#4CAF50;color:#FFF8F0;cursor:pointer;font-size:0.8rem;">
+                                style="flex:1;padding:0.5rem;border:none;border-radius:6px;background:#6B8F3C;color:#FFF8F0;cursor:pointer;font-size:0.8rem;">
                                 📊 분석 입력
                             </button>
                         </div>
@@ -571,7 +571,7 @@ JSON만 출력하세요.`;
                     <textarea id="admin-advice" placeholder="관리 조언" rows="2" style="padding:0.5rem;border:1px solid #E8E0D8;border-radius:6px;"></textarea>
                     <input type="text" id="admin-recommended" placeholder="추천 제품/서비스" style="padding:0.5rem;border:1px solid #E8E0D8;border-radius:6px;">
                     <button onclick="BEAUTY.submitAdminAnalysis('${requestId}','${userId}')" 
-                        style="padding:0.8rem;border:none;border-radius:8px;background:#4CAF50;color:#FFF8F0;font-weight:700;cursor:pointer;">
+                        style="padding:0.8rem;border:none;border-radius:8px;background:#6B8F3C;color:#FFF8F0;font-weight:700;cursor:pointer;">
                         ✅ 분석 결과 저장
                     </button>
                 </div>

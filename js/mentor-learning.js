@@ -325,8 +325,8 @@ function renderMentorPerformanceUI(mentorId) {
 
     const winPct = Math.round(stats.winRate * 100);
     const avgPnl = stats.avgPnl.toFixed(1);
-    const avgPnlColor = stats.avgPnl >= 0 ? '#00cc66' : '#ff4444';
-    const winColor = winPct >= 70 ? '#00cc66' : winPct >= 50 ? '#ffaa00' : '#ff4444';
+    const avgPnlColor = stats.avgPnl >= 0 ? '#00cc66' : '#B54534';
+    const winColor = winPct >= 70 ? '#00cc66' : winPct >= 50 ? '#ffaa00' : '#B54534';
 
     // Recent 10 dots
     const recent = history.slice(-10);

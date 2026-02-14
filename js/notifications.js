@@ -169,7 +169,7 @@ function initNotifBell() {
     bellContainer.innerHTML = `
         <button id="notif-bell-btn" onclick="toggleNotifPanel()" style="background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:0.5rem 0.8rem; cursor:pointer; font-size:1rem; width:100%; display:flex; align-items:center; gap:0.5rem; position:relative;">
             🔔 <span style="font-size:0.85rem; flex:1; text-align:left;">알림</span>
-            <span id="notif-badge" style="display:none; background:#ff4444; color:#FFF8F0; font-size:0.65rem; font-weight:700; padding:0.1rem 0.4rem; border-radius:10px; min-width:16px; text-align:center;">0</span>
+            <span id="notif-badge" style="display:none; background:#B54534; color:#FFF8F0; font-size:0.65rem; font-weight:700; padding:0.1rem 0.4rem; border-radius:10px; min-width:16px; text-align:center;">0</span>
         </button>
         <div id="notif-panel" style="display:none; position:fixed; left:60px; top:auto; z-index:99999; margin-top:0.3rem; background:var(--bg-card, white); border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.3); border:1px solid var(--border); max-height:70vh; overflow-y:auto; width:320px;">
             <div id="notif-panel-header" style="padding:0.8rem 1rem; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; background:#FFF8F0; border-radius:12px 12px 0 0;">
@@ -233,7 +233,7 @@ function renderNotifPanel() {
                     <div style="font-size:0.82rem; line-height:1.4; color:var(--text); ${n.read ? '' : 'font-weight:600;'}">${n.message}</div>
                     <div style="font-size:0.68rem; color:var(--accent); margin-top:0.2rem;">${timeAgo}</div>
                 </div>
-                ${n.read ? '' : '<span style="width:8px; height:8px; border-radius:50%; background:#2196F3; flex-shrink:0; margin-top:0.3rem;"></span>'}
+                ${n.read ? '' : '<span style="width:8px; height:8px; border-radius:50%; background:#5B7B8C; flex-shrink:0; margin-top:0.3rem;"></span>'}
             </div>`;
     }).join('');
 }

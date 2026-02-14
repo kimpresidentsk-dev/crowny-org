@@ -589,7 +589,7 @@ function _renderArtCard(art) {
         const ended = endMs && new Date(endMs) < new Date();
         priceLabel = ended
             ? '<span style="color:#cc0000">경매 종료</span>'
-            : `<span style="color:#ff9800">🔨 ${art.currentBid || art.startPrice} CRAC</span>`;
+            : `<span style="color:#C4841D">🔨 ${art.currentBid || art.startPrice} CRAC</span>`;
     } else {
         priceLabel = '<span style="color:var(--accent)">전시 중</span>';
     }
@@ -643,7 +643,7 @@ async function viewArtwork(artId) {
                         <span style="color:var(--accent)">${pct}% 판매됨</span>
                     </div>
                     <div style="background:#e0e0e0;border-radius:4px;height:6px;overflow:hidden">
-                        <div style="background:${isSoldOut ? '#cc0000' : '#4CAF50'};height:100%;width:${pct}%;border-radius:4px;transition:width .3s"></div>
+                        <div style="background:${isSoldOut ? '#cc0000' : '#6B8F3C'};height:100%;width:${pct}%;border-radius:4px;transition:width .3s"></div>
                     </div>
                 </div>`;
         }
@@ -698,7 +698,7 @@ async function viewArtwork(artId) {
                 actionHtml = `
                     <div style="display:flex;gap:.5rem">
                         <button onclick="buyArtwork('${artId}')" style="background:#3D2B1F;color:#E8D5C4;border:none;padding:.8rem 1.5rem;border-radius:8px;cursor:pointer;font-weight:700;flex:1">💰 ${effectivePrice} ${art.priceToken || 'CRAC'} 구매</button>
-                        <button onclick="reserveArtwork('${artId}')" style="background:#ff9800;color:#E8D5C4;border:none;padding:.8rem 1rem;border-radius:8px;cursor:pointer;font-weight:700">📅 예약</button>
+                        <button onclick="reserveArtwork('${artId}')" style="background:#C4841D;color:#E8D5C4;border:none;padding:.8rem 1rem;border-radius:8px;cursor:pointer;font-weight:700">📅 예약</button>
                     </div>
                     <p style="font-size:.7rem;color:var(--accent);margin-top:.3rem;text-align:center">📅 예약: 보증금 ${Math.ceil(effectivePrice / 10)} ${art.priceToken || 'CRAC'} (1/10) · 1년 내 잔금 결제</p>`;
             }
@@ -708,7 +708,7 @@ async function viewArtwork(artId) {
             actionHtml = `
                 <div style="display:flex;gap:.5rem">
                     <input type="number" id="bid-amount-${artId}" value="${minBid}" min="${minBid}" style="flex:1;padding:.7rem;border:1px solid var(--border);border-radius:6px">
-                    <button onclick="placeBid('${artId}')" style="background:#ff9800;color:#E8D5C4;border:none;padding:.8rem 1.5rem;border-radius:8px;cursor:pointer;font-weight:700">🔨 입찰</button>
+                    <button onclick="placeBid('${artId}')" style="background:#C4841D;color:#E8D5C4;border:none;padding:.8rem 1.5rem;border-radius:8px;cursor:pointer;font-weight:700">🔨 입찰</button>
                 </div>
                 <p style="font-size:.75rem;color:var(--accent);margin-top:.3rem">현재 최고: ${curBid} CRAC${art.highestBidderNickname ? ' (' + art.highestBidderNickname + ')' : ''}</p>`;
         }
@@ -1408,11 +1408,11 @@ async function _loadMyReservations(container) {
                         <div style="font-weight:600;font-size:.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.artworkTitle}</div>
                         <div style="font-size:.75rem;color:var(--accent)">${statusLabel} · 총 ${r.totalPrice} ${r.depositToken || 'CRAC'}</div>
                         <div style="font-size:.7rem;color:var(--accent)">보증금: ${r.depositAmount} · 잔금: ${r.remainingAmount}</div>
-                        ${r.status === 'reserved' && !isExpired ? `<div style="font-size:.7rem;color:#ff9800">만료: ${expiresAt.toLocaleDateString()}</div>` : ''}
+                        ${r.status === 'reserved' && !isExpired ? `<div style="font-size:.7rem;color:#C4841D">만료: ${expiresAt.toLocaleDateString()}</div>` : ''}
                     </div>
                     <div style="display:flex;flex-direction:column;gap:.3rem">
                         ${r.status === 'reserved' && !isExpired ? `
-                            <button onclick="completeReservation('${doc.id}')" style="background:#4CAF50;color:#E8D5C4;border:none;padding:.4rem .6rem;border-radius:6px;cursor:pointer;font-size:.75rem;font-weight:600">💰 잔금</button>
+                            <button onclick="completeReservation('${doc.id}')" style="background:#6B8F3C;color:#E8D5C4;border:none;padding:.4rem .6rem;border-radius:6px;cursor:pointer;font-size:.75rem;font-weight:600">💰 잔금</button>
                             <button onclick="cancelReservation('${doc.id}')" style="background:none;border:1px solid #E8E0D8;padding:.3rem .5rem;border-radius:6px;cursor:pointer;font-size:.7rem;color:#6B5744">취소</button>
                         ` : ''}
                     </div>
@@ -1472,7 +1472,7 @@ async function _loadMyTransactions(container) {
                 'art_reservation_complete': '✅ 예약 완료'
             }[tx.type] || tx.type;
             const dirIcon = tx.direction === 'in' ? '📥' : '📤';
-            const dirColor = tx.direction === 'in' ? '#4CAF50' : '#e53935';
+            const dirColor = tx.direction === 'in' ? '#6B8F3C' : '#e53935';
 
             html += `
                 <div style="background:#FFF8F0;padding:.6rem .8rem;border-radius:8px;display:flex;justify-content:space-between;align-items:center;font-size:.8rem">

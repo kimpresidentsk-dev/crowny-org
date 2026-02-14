@@ -20,7 +20,7 @@ async function registerServiceWorker() {
 function initOfflineBanner() {
   const banner = document.createElement('div');
   banner.id = 'offline-banner';
-  banner.style.cssText = 'display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:#ff9800;color:#FFF8F0;text-align:center;padding:6px 12px;font-size:0.82rem;font-weight:600;transition:transform 0.3s;';
+  banner.style.cssText = 'display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:#C4841D;color:#FFF8F0;text-align:center;padding:6px 12px;font-size:0.82rem;font-weight:600;transition:transform 0.3s;';
   banner.textContent = '📡 오프라인 모드 — 인터넷 연결을 확인하세요';
   document.body.prepend(banner);
 

@@ -360,7 +360,7 @@ const BRAIN = (() => {
                 <button onclick="BRAIN.init()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;">✕</button>
             </div>
             <div id="brain-chat" style="background:var(--bg);border-radius:12px;padding:1rem;height:50vh;overflow-y:auto;margin-bottom:1rem;">
-                <div style="background:#fce4ec;padding:0.8rem;border-radius:10px;margin-bottom:0.5rem;font-size:0.85rem;">
+                <div style="background:#F7F3ED;padding:0.8rem;border-radius:10px;margin-bottom:0.5rem;font-size:0.85rem;">
                     ✨ 안녕하세요! 크라우니걸이에요~ 지금부터 몇 가지 질문을 할 거예요. 편하게 답해주세요! 💕
                 </div>
             </div>
@@ -381,14 +381,14 @@ const BRAIN = (() => {
     function addBotMessage(text) {
         const chat = document.getElementById('brain-chat');
         if (!chat) return;
-        chat.innerHTML += `<div style="background:#fce4ec;padding:0.8rem;border-radius:10px;margin-bottom:0.5rem;font-size:0.85rem;">${text}</div>`;
+        chat.innerHTML += `<div style="background:#F7F3ED;padding:0.8rem;border-radius:10px;margin-bottom:0.5rem;font-size:0.85rem;">${text}</div>`;
         chat.scrollTop = chat.scrollHeight;
     }
 
     function addUserMessage(text) {
         const chat = document.getElementById('brain-chat');
         if (!chat) return;
-        chat.innerHTML += `<div style="background:#e3f2fd;padding:0.8rem;border-radius:10px;margin-bottom:0.5rem;font-size:0.85rem;text-align:right;">${text}</div>`;
+        chat.innerHTML += `<div style="background:#F7F3ED;padding:0.8rem;border-radius:10px;margin-bottom:0.5rem;font-size:0.85rem;text-align:right;">${text}</div>`;
         chat.scrollTop = chat.scrollHeight;
     }
 

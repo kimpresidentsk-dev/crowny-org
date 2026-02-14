@@ -163,7 +163,7 @@ function applyTradingPermissions() {
         const mnqColor = tier.MNQ > 0 ? '#00cc00' : '#6B5744';
         const nqColor = tier.NQ > 0 ? '#00cc00' : '#6B5744';
         const copyAccounts = getCopyAccounts();
-        const copyBadge = copyAccounts > 1 ? `<span style="margin-left:8px; color:#ff9800; font-weight:600;">📋 ${t('trading.copy','카피')}: ${copyAccounts}${t('trading.accounts','계정')}</span>` : '';
+        const copyBadge = copyAccounts > 1 ? `<span style="margin-left:8px; color:#C4841D; font-weight:600;">📋 ${t('trading.copy','카피')}: ${copyAccounts}${t('trading.accounts','계정')}</span>` : '';
         badge.style.display = 'block';
         badge.innerHTML = `
             ${t('trading.permission_label','📋 거래 권한:')} 
@@ -340,7 +340,7 @@ function updateCRTDDisplay() {
     const profitColor = pnl >= cfg.profitThreshold ? '#00cc00' : pnl > 0 ? '#4488ff' : '#6B5744';
     
     const pnlSign = pnl >= 0 ? '+' : '';
-    const pnlColor = pnl >= 0 ? '#00cc00' : '#ff4444';
+    const pnlColor = pnl >= 0 ? '#00cc00' : '#B54534';
     
     el.innerHTML = `
         <div style="margin-bottom:0.6rem;">
@@ -348,7 +348,7 @@ function updateCRTDDisplay() {
                 <span>💎 ${cfg.tier}${t('trading.tier_label','등급')} · ${cfg.deposit} CRTD</span>
                 <strong style="color:${pnlColor}; font-size:1.05rem;">${pnlSign}$${pnl.toFixed(0)}</strong>
             </div>
-            <div style="font-size:0.7rem; color:#6B5744; margin-bottom:0.3rem;">🪙 CRTD ${t('trading.crtd_balance','잔고')}: <strong style="color:#FF6D00;">${(userWallet?.offchainBalances?.crtd || 0).toLocaleString()} pt</strong></div>
+            <div style="font-size:0.7rem; color:#6B5744; margin-bottom:0.3rem;">🪙 CRTD ${t('trading.crtd_balance','잔고')}: <strong style="color:#C4841D;">${(userWallet?.offchainBalances?.crtd || 0).toLocaleString()} pt</strong></div>
         </div>
         
         <!-- 생존 게이지 -->
@@ -446,7 +446,7 @@ async function loadTradingDashboard() {
                 <p><strong>💀 ${t('trading.liquidation','청산')}:</strong> -$${cfg.liquidation.toLocaleString()} ${t('trading.liquidation_desc','손실 시 계좌 종료')} (${cfg.deposit} CRTD ${t('trading.forfeited','소멸')})</p>
                 <p><strong>📈 ${t('trading.profit_convert','수익 변환')}:</strong> +$${cfg.profitThreshold.toLocaleString()} ${t('trading.profit_convert_desc','초과분 → 1:1 CRTD')}</p>
                 <p><strong>💰 ${t('trading.withdraw_btn','인출')}:</strong> ${cfg.withdrawUnit.toLocaleString()} CRTD ${t('trading.unit','단위')}</p>
-                <p style="margin-top:0.5rem; padding:0.5rem; background:rgba(255,165,0,0.1); border-radius:6px; border-left:3px solid #ff9800; font-size:0.82rem; color:#ff9800;">⚠️ SL/TP 자동 청산은 브라우저가 열려 있을 때만 작동합니다. 브라우저를 닫으면 포지션은 유지되지만 자동 청산이 실행되지 않으니, 재접속 후 확인해 주세요.</p>
+                <p style="margin-top:0.5rem; padding:0.5rem; background:rgba(255,165,0,0.1); border-radius:6px; border-left:3px solid #C4841D; font-size:0.82rem; color:#C4841D;">⚠️ SL/TP 자동 청산은 브라우저가 열려 있을 때만 작동합니다. 브라우저를 닫으면 포지션은 유지되지만 자동 청산이 실행되지 않으니, 재접속 후 확인해 주세요.</p>
             `;
         }
         
@@ -779,7 +779,7 @@ async function initTradingViewChart() {
         return chart;
     } catch (error) {
         console.error('❌ 차트 로드 실패:', error);
-        container.innerHTML = `<p style="text-align:center; padding:2rem; color:#ff4444;">${t('trading.chart_fail','차트 로드 실패')}</p>`;
+        container.innerHTML = `<p style="text-align:center; padding:2rem; color:#B54534;">${t('trading.chart_fail','차트 로드 실패')}</p>`;
     }
 }
 
@@ -991,7 +991,7 @@ function updateLivePriceDisplay(data) {
     // 가격 색상 (이전 대비)
     if (window.liveTicks.length >= 2) {
         const prev = window.liveTicks[window.liveTicks.length - 2].price;
-        priceEl.style.color = data.price > prev ? '#00ff88' : data.price < prev ? '#ff4444' : '#00ff88';
+        priceEl.style.color = data.price > prev ? '#00ff88' : data.price < prev ? '#B54534' : '#00ff88';
     }
     
     if (bidEl) bidEl.textContent = data.bid ? data.bid.toFixed(2) : '--';
@@ -1261,7 +1261,7 @@ function aggregateTicksToCandles(ticks, intervalSec) {
 function updateLiveStatus(connected) {
     const dot = document.getElementById('live-status-dot');
     const text = document.getElementById('live-status-text');
-    if (dot) dot.style.background = connected ? '#00ff88' : '#ff4444';
+    if (dot) dot.style.background = connected ? '#00ff88' : '#B54534';
     if (text) text.textContent = connected ? `Databento Live · ${window.liveTicks.length} ticks` : t('trading.disconnected','연결 끊김');
 }
 
@@ -1298,7 +1298,7 @@ function updateLivePnL() {
     }
     
     pnlEl.textContent = `${totalPnL >= 0 ? '+' : ''}$${totalPnL.toFixed(2)}`;
-    pnlEl.style.color = totalPnL > 0 ? '#00ff88' : totalPnL < 0 ? '#ff4444' : '#6B5744';
+    pnlEl.style.color = totalPnL > 0 ? '#00ff88' : totalPnL < 0 ? '#B54534' : '#6B5744';
     
     // ★ CRTD 프랍 — 실시간 상태
     const cfg = getCRTDConfig();
@@ -1312,7 +1312,7 @@ function updateLivePnL() {
         } else if (realTimePnL < 0) {
             const left = cfg.liquidation + realTimePnL;
             crtdEstEl.textContent = `🛡️ -$${cfg.liquidation}까지 $${left.toFixed(0)} 남음`;
-            crtdEstEl.style.color = left < cfg.liquidation * 0.3 ? '#ff4444' : '#ffaa00';
+            crtdEstEl.style.color = left < cfg.liquidation * 0.3 ? '#B54534' : '#ffaa00';
         } else {
             crtdEstEl.textContent = `📈 +$${cfg.profitThreshold}까지 $${(cfg.profitThreshold - realTimePnL).toFixed(0)}`;
             crtdEstEl.style.color = '#4488ff';
@@ -1482,7 +1482,7 @@ function updateFeeDisplay() {
     const feeEl = document.getElementById('trade-fee-display');
     if (feeEl) {
         feeEl.innerHTML = `<i data-lucide="coins"></i> ${t('trading.est_fee','예상 수수료')}: <strong>$${fee.toFixed(2)}</strong>` +
-            (copyAccounts > 1 ? ` <span style="color:#ff9800;">(${contracts}계약 × ${copyAccounts}계정 = ${effectiveContracts}계약)</span>` : '');
+            (copyAccounts > 1 ? ` <span style="color:#C4841D;">(${contracts}계약 × ${copyAccounts}계정 = ${effectiveContracts}계약)</span>` : '');
     }
     
     // 카피트레이딩 표시
@@ -1490,7 +1490,7 @@ function updateFeeDisplay() {
     if (copyEl) {
         if (copyAccounts > 1) {
             copyEl.style.display = 'block';
-            copyEl.innerHTML = `<i data-lucide="clipboard"></i> ${t('trading.copy_trading','카피트레이딩')}: <strong>${copyAccounts}${t('trading.accounts','계정')}</strong> × ${contracts}계약 = <strong style="color:#ff9800;">${effectiveContracts}계약</strong> 실효`;
+            copyEl.innerHTML = `<i data-lucide="clipboard"></i> ${t('trading.copy_trading','카피트레이딩')}: <strong>${copyAccounts}${t('trading.accounts','계정')}</strong> × ${contracts}계약 = <strong style="color:#C4841D;">${effectiveContracts}계약</strong> 실효`;
         } else {
             copyEl.style.display = 'none';
         }
@@ -1812,15 +1812,15 @@ function updateOpenPositions() {
         // SL/TP 인라인 수정 UI
         const ts = trade.trailingStop;
         const trailBadge = (ts && ts.enabled) 
-            ? `<span style="display:inline-block; background:${ts.activated ? '#ff9800' : '#6B5744'}; color:#FFF8F0; font-size:0.6rem; padding:1px 4px; border-radius:3px; margin-left:4px;">${ts.activated ? '🔄 TRAIL' : '⏳ 대기'}</span>` 
+            ? `<span style="display:inline-block; background:${ts.activated ? '#C4841D' : '#6B5744'}; color:#FFF8F0; font-size:0.6rem; padding:1px 4px; border-radius:3px; margin-left:4px;">${ts.activated ? '🔄 TRAIL' : '⏳ 대기'}</span>` 
             : '';
         
         let slTPHTML = `
             <div style="display:flex; gap:4px; margin-top:6px; font-size:0.8rem; flex-wrap:wrap; align-items:center;">
-                <span style="color:#ff4444;">SL:</span>
+                <span style="color:#B54534;">SL:</span>
                 <button onclick="adjustSLTP(${actualIndex},'sl',-0.25)" style="background:#6B5744; color:#FFF8F0; border:none; border-radius:3px; padding:1px 6px; cursor:pointer; font-size:0.75rem;">−</button>
-                <span id="sl-val-${actualIndex}" style="color:#ff4444; font-weight:700; min-width:60px; text-align:center; cursor:pointer;" onclick="editSLTP(${actualIndex},'sl')">${trade.stopLoss ? trade.stopLoss.toFixed(2) : '없음'}</span>
-                <button onclick="adjustSLTP(${actualIndex},'sl',+0.25)" style="background:#3D2B1F; color:#ff4444; border:none; border-radius:3px; padding:1px 6px; cursor:pointer; font-size:0.75rem;">+</button>
+                <span id="sl-val-${actualIndex}" style="color:#B54534; font-weight:700; min-width:60px; text-align:center; cursor:pointer;" onclick="editSLTP(${actualIndex},'sl')">${trade.stopLoss ? trade.stopLoss.toFixed(2) : '없음'}</span>
+                <button onclick="adjustSLTP(${actualIndex},'sl',+0.25)" style="background:#3D2B1F; color:#B54534; border:none; border-radius:3px; padding:1px 6px; cursor:pointer; font-size:0.75rem;">+</button>
                 <span style="margin-left:6px; color:#00cc00;">TP:</span>
                 <button onclick="adjustSLTP(${actualIndex},'tp',-0.25)" style="background:#3D2B1F; color:#00cc00; border:none; border-radius:3px; padding:1px 6px; cursor:pointer; font-size:0.75rem;">−</button>
                 <span id="tp-val-${actualIndex}" style="color:#00cc00; font-weight:700; min-width:60px; text-align:center; cursor:pointer;" onclick="editSLTP(${actualIndex},'tp')">${trade.takeProfit ? trade.takeProfit.toFixed(2) : '없음'}</span>
@@ -1831,7 +1831,7 @@ function updateOpenPositions() {
         
         if (ts && ts.enabled && ts.activated) {
             const hwm = ts.highWaterMark || trade.entryPrice;
-            slTPHTML += `<div style="font-size:0.7rem; color:#ff9800; margin-top:2px;">🔄 최${trade.side === 'BUY' ? '고' : '저'}가: ${hwm.toFixed(2)} | 거리: ${ts.distance}pt</div>`;
+            slTPHTML += `<div style="font-size:0.7rem; color:#C4841D; margin-top:2px;">🔄 최${trade.side === 'BUY' ? '고' : '저'}가: ${hwm.toFixed(2)} | 거리: ${ts.distance}pt</div>`;
         }
         
         // 분할 청산 버튼 (2계약 이상)
@@ -1844,7 +1844,7 @@ function updateOpenPositions() {
                 <div style="flex:1;">
                     <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.3rem;">
                         <strong style="color:${trade.side === 'BUY' ? '#3D2B1F' : '#cc0000'}">${trade.side}</strong> 
-                        <span>${trade.contract} × ${trade.contracts}${(trade.copyAccounts || 1) > 1 ? ` <span style="color:#ff9800; font-size:0.75rem;">×${trade.copyAccounts}계정=${effContracts}계약</span>` : ''}</span>
+                        <span>${trade.contract} × ${trade.contracts}${(trade.copyAccounts || 1) > 1 ? ` <span style="color:#C4841D; font-size:0.75rem;">×${trade.copyAccounts}계정=${effContracts}계약</span>` : ''}</span>
                         <span style="font-size:0.75rem; color:var(--accent);">${trade.orderType}</span>
                     </div>
                     <div style="font-size:0.85rem;">
@@ -1869,7 +1869,7 @@ function updateOpenPositions() {
                     </button>
                     ${partialCloseBtn}
                     ${(ts && ts.enabled) ? `
-                        <button onclick="toggleTrailingForTrade(${actualIndex})" style="background:${ts.activated ? '#ff9800' : '#6B5744'}; color:#FFF8F0; border:none; padding:0.3rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.6rem;">
+                        <button onclick="toggleTrailingForTrade(${actualIndex})" style="background:${ts.activated ? '#C4841D' : '#6B5744'}; color:#FFF8F0; border:none; padding:0.3rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.6rem;">
                             ${ts.activated ? '🔄 ON' : '⏸ OFF'}
                         </button>
                     ` : `
@@ -2715,7 +2715,7 @@ function updateChartRulesOverlay() {
     overlay.innerHTML = `
         <div style="font-weight:700; color:#8B6914; margin-bottom:3px; font-size:0.76rem;">💎 ${cfg.tier}군 · ${cfg.deposit} CRTD</div>
         <div>📊 ${products.join(' + ') || '미설정'}</div>
-        <div style="color:#ff4444;">🔴 일일 -$${p.dailyLossLimit || 500}</div>
+        <div style="color:#B54534;">🔴 일일 -$${p.dailyLossLimit || 500}</div>
         <div style="color:#ff6666;">💀 청산 -$${cfg.liquidation.toLocaleString()}</div>
         <div style="color:#00cc66;">📈 수익 +$${cfg.profitThreshold.toLocaleString()}</div>
     `;
@@ -2756,7 +2756,7 @@ function drawPositionLinesLW() {
             const isTrailing = trade.trailingStop?.activated;
             const slLine = window.candleSeries.createPriceLine({
                 price: trade.stopLoss,
-                color: isTrailing ? '#ff9800' : '#ff0000',
+                color: isTrailing ? '#C4841D' : '#ff0000',
                 lineWidth: 2,
                 lineStyle: isTrailing ? LightweightCharts.LineStyle.SparseDotted : LightweightCharts.LineStyle.Dashed,
                 axisLabelVisible: true,
@@ -2834,7 +2834,7 @@ function drawPositionLinesLW() {
         
         const color = type === 'sl' ? '#ff0000' : '#00cc00';
         const isTrailing = type === 'sl' && trade.trailingStop?.activated;
-        const displayColor = isTrailing ? '#ff9800' : color;
+        const displayColor = isTrailing ? '#C4841D' : color;
         
         const isMobile = window.innerWidth < 768;
         const handleW = isMobile ? '80px' : '60px';
@@ -3016,7 +3016,7 @@ function drawPositionLinesLW() {
                 const isTrailing = t.trailingStop?.activated;
                 window.positionLines.push(window.candleSeries.createPriceLine({
                     price: t.stopLoss,
-                    color: isTrailing ? '#ff9800' : '#ff0000',
+                    color: isTrailing ? '#C4841D' : '#ff0000',
                     lineWidth: 2,
                     lineStyle: isTrailing ? LightweightCharts.LineStyle.SparseDotted : LightweightCharts.LineStyle.Dashed,
                     axisLabelVisible: true, title: isTrailing ? '🔄 TRAIL' : 'SL',

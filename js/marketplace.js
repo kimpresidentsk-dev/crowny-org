@@ -1,7 +1,7 @@
 // ===== marketplace.js - 쇼핑몰, 모금, 에너지, 비즈니스, 아티스트, 출판, P2P크레딧 =====
 
 const ORDER_STATUS_LABELS = { paid:t('mall.status_paid','💰 결제완료'), shipping:t('mall.status_shipping','🚚 배송중'), delivered:t('mall.status_delivered','✅ 배송완료'), cancelled:t('mall.status_cancelled','❌ 취소') };
-const ORDER_STATUS_COLORS = { paid:'#ff9800', shipping:'#2196f3', delivered:'#4CAF50', cancelled:'#cc0000' };
+const ORDER_STATUS_COLORS = { paid:'#C4841D', shipping:'#5B7B8C', delivered:'#6B8F3C', cancelled:'#cc0000' };
 const BRAND_SLOGANS = {
     present: '아름다움을 선물하다', doctor: '건강한 삶의 시작', medical: '신뢰할 수 있는 의료',
     avls: '감각을 깨우다', solution: '안전을 디자인하다', architect: '공간을 창조하다',
@@ -171,7 +171,7 @@ async function renderProductDetail(id) {
                     </div>`;
                 revSnap.forEach(r => {
                     const rv = r.data();
-                    const verifiedBadge = rv.verified ? '<span style="background:#e8f5e9;color:#2e7d32;font-size:0.7rem;padding:0.1rem 0.4rem;border-radius:4px;margin-left:0.3rem;">✅ 구매인증</span>' : '';
+                    const verifiedBadge = rv.verified ? '<span style="background:#F7F3ED;color:#2e7d32;font-size:0.7rem;padding:0.1rem 0.4rem;border-radius:4px;margin-left:0.3rem;">✅ 구매인증</span>' : '';
                     const dateStr = rv.createdAt?.toDate ? rv.createdAt.toDate().toLocaleDateString('ko-KR') : '';
                     reviewsHtml += `<div style="background:var(--bg); padding:0.8rem; border-radius:8px; margin-bottom:0.5rem;">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -199,7 +199,7 @@ async function renderProductDetail(id) {
                 if (!myOrders.empty) {
                     const existingReview = await db.collection('product_reviews').where('productId','==',id).where('buyerId','==',currentUser.uid).limit(1).get();
                     if (existingReview.empty) {
-                        reviewBtnHtml = `<button onclick="writeReview('${id}')" style="background:#ff9800; color:#FFF8F0; border:none; padding:0.7rem; border-radius:8px; cursor:pointer; font-weight:600; width:100%; margin-top:0.5rem;">⭐ 리뷰 작성</button>`;
+                        reviewBtnHtml = `<button onclick="writeReview('${id}')" style="background:#C4841D; color:#FFF8F0; border:none; padding:0.7rem; border-radius:8px; cursor:pointer; font-weight:600; width:100%; margin-top:0.5rem;">⭐ 리뷰 작성</button>`;
                     }
                 }
             } catch(e) { console.warn("[catch]", e); }
@@ -283,7 +283,7 @@ async function writeReview(productId) {
             </div>
             <div style="display:flex; gap:0.5rem;">
                 <button id="review-cancel" style="flex:1;padding:0.7rem;border:1px solid #E8E0D8;border-radius:8px;cursor:pointer;background:#FFF8F0;">취소</button>
-                <button id="review-submit" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#ff9800;color:#FFF8F0;font-weight:700;">등록</button>
+                <button id="review-submit" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#C4841D;color:#FFF8F0;font-weight:700;">등록</button>
             </div>
         </div>`;
         document.body.appendChild(overlay);
@@ -439,7 +439,7 @@ async function loadMyOrders() {
             const x = d.data();
             const statusLabel = ORDER_STATUS_LABELS[x.status] || x.status;
             const statusColor = ORDER_STATUS_COLORS[x.status] || 'var(--accent)';
-            const reviewBtn = x.status === 'delivered' ? `<button onclick="event.stopPropagation(); writeReview('${x.productId}')" style="background:#ff9800; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem; margin-left:0.5rem;">⭐ 리뷰</button>` : '';
+            const reviewBtn = x.status === 'delivered' ? `<button onclick="event.stopPropagation(); writeReview('${x.productId}')" style="background:#C4841D; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem; margin-left:0.5rem;">⭐ 리뷰</button>` : '';
             c.innerHTML += `<div style="padding:0.6rem; background:var(--bg); border-radius:6px; margin-bottom:0.4rem; font-size:0.85rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
                 <div><strong>${x.productTitle}</strong> — ${x.amount} ${x.token}</div>
                 <div><span style="color:${statusColor}; font-weight:600;">${statusLabel}</span>${reviewBtn}</div>
@@ -456,13 +456,13 @@ async function loadMyProducts() {
         c.innerHTML='';
         o.forEach(d => {
             const x = d.data();
-            const statusBadge = x.status === 'active' ? '<span style="color:#4CAF50; font-size:0.75rem;">● 판매중</span>' : x.status === 'pending' ? '<span style="color:#ff9800; font-size:0.75rem;">● 승인대기</span>' : x.status === 'rejected' ? '<span style="color:#f44336; font-size:0.75rem;">● 거부됨</span>' : '<span style="color:#6B5744; font-size:0.75rem;">● 비활성</span>';
+            const statusBadge = x.status === 'active' ? '<span style="color:#6B8F3C; font-size:0.75rem;">● 판매중</span>' : x.status === 'pending' ? '<span style="color:#C4841D; font-size:0.75rem;">● 승인대기</span>' : x.status === 'rejected' ? '<span style="color:#f44336; font-size:0.75rem;">● 거부됨</span>' : '<span style="color:#6B5744; font-size:0.75rem;">● 비활성</span>';
             c.innerHTML += `<div style="padding:0.6rem; background:var(--bg); border-radius:6px; margin-bottom:0.4rem; font-size:0.85rem;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.3rem;">
                     <div><strong>${x.title}</strong> — ${x.price} CRGC · 판매: ${x.sold||0}/${x.stock} ${statusBadge}</div>
                     <div style="display:flex; gap:0.3rem;">
-                        <button onclick="editProduct('${d.id}')" style="background:#2196f3; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.edit_btn','✏️ 수정')}</button>
-                        <button onclick="toggleProduct('${d.id}','${x.status}')" style="background:${x.status==='active'?'#6B5744':'#4CAF50'}; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${x.status==='active'?t('mall.deactivate','⏸ 비활성'):t('mall.activate','▶ 활성')}</button>
+                        <button onclick="editProduct('${d.id}')" style="background:#5B7B8C; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.edit_btn','✏️ 수정')}</button>
+                        <button onclick="toggleProduct('${d.id}','${x.status}')" style="background:${x.status==='active'?'#6B5744':'#6B8F3C'}; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${x.status==='active'?t('mall.deactivate','⏸ 비활성'):t('mall.activate','▶ 활성')}</button>
                         <button onclick="deleteProduct('${d.id}')" style="background:#cc0000; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">🗑️</button>
                     </div>
                 </div>
@@ -529,8 +529,8 @@ async function loadSellerOrders() {
             const statusLabel = ORDER_STATUS_LABELS[x.status] || x.status;
             const statusColor = ORDER_STATUS_COLORS[x.status] || 'var(--accent)';
             const nextActions = [];
-            if (x.status === 'paid') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','shipping')" style="background:#2196f3; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.process_shipping','🚚 배송처리')}</button>`);
-            if (x.status === 'shipping') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','delivered')" style="background:#4CAF50; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.mark_delivered','✅ 배송완료')}</button>`);
+            if (x.status === 'paid') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','shipping')" style="background:#5B7B8C; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.process_shipping','🚚 배송처리')}</button>`);
+            if (x.status === 'shipping') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','delivered')" style="background:#6B8F3C; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.mark_delivered','✅ 배송완료')}</button>`);
             const shipInfo = x.shippingInfo ? `<div style="font-size:0.7rem; color:#6B5744; margin-top:0.2rem;">📦 ${x.shippingInfo.name} · ${x.shippingInfo.phone} · ${x.shippingInfo.address}${x.shippingInfo.memo ? ' · '+x.shippingInfo.memo : ''}</div>` : '';
             c.innerHTML += `<div style="padding:0.6rem; background:var(--bg); border-radius:6px; margin-bottom:0.4rem; font-size:0.85rem;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.3rem;">
@@ -637,14 +637,14 @@ async function loadCampaigns() {
                         <p style="font-size:0.85rem; color:var(--accent); margin-bottom:0.5rem;">${x.creatorNickname || x.creatorEmail} · ${x.backerCount || x.backers || 0}명 참여</p>
                         <p style="font-size:0.75rem; color:#2e7d32; margin-bottom:0.5rem;">💰 수수료 ${x.platformFee||2.5}% · 수령 ${100-(x.platformFee||2.5)}%</p>
                         <div style="background:#e0e0e0; height:8px; border-radius:4px; margin-bottom:0.5rem;">
-                            <div style="background:#4CAF50; height:100%; border-radius:4px; width:${pct}%;"></div>
+                            <div style="background:#6B8F3C; height:100%; border-radius:4px; width:${pct}%;"></div>
                         </div>
                         <div style="display:flex; justify-content:space-between; font-size:0.85rem;">
                             <span style="font-weight:700;">${x.raised} / ${x.goal} ${x.token}</span>
                             <span style="color:var(--accent);">${pct}%</span>
                         </div>
                         <div style="display:flex; gap:0.5rem; margin-top:0.8rem;">
-                            <button onclick="event.stopPropagation(); donateCampaign('${d.id}')" style="background:#4CAF50; color:#FFF8F0; border:none; padding:0.6rem; border-radius:6px; cursor:pointer; flex:1; font-weight:700;">${t('fundraise.donate_btn','💝 기부하기')}</button>
+                            <button onclick="event.stopPropagation(); donateCampaign('${d.id}')" style="background:#6B8F3C; color:#FFF8F0; border:none; padding:0.6rem; border-radius:6px; cursor:pointer; flex:1; font-weight:700;">${t('fundraise.donate_btn','💝 기부하기')}</button>
                             ${isCreator ? `<button onclick="event.stopPropagation(); closeCampaign('${d.id}')" style="background:#e53935; color:#FFF8F0; border:none; padding:0.6rem; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.8rem;">${t('fund.close','🔒 종료')}</button>` : ''}
                         </div>
                     </div>
@@ -692,16 +692,16 @@ async function donateCampaign(id) {
 // ========== CREB LABS - 미래기술 투자 ==========
 
 const CREB_CATEGORIES = {
-    energy: { icon: '⚡', color: '#ff9800', label: '에너지', sdg: 'SDG 7' },
-    genetics: { icon: '🧬', color: '#E91E63', label: '유전공학', sdg: 'SDG 3' },
-    biotech: { icon: '🔬', color: '#4CAF50', label: '생명공학', sdg: 'SDG 3' },
-    ai_robotics: { icon: '🤖', color: '#2196F3', label: 'AI·로보틱스', sdg: 'SDG 9' }
+    energy: { icon: '⚡', color: '#C4841D', label: '에너지', sdg: 'SDG 7' },
+    genetics: { icon: '🧬', color: '#B54534', label: '유전공학', sdg: 'SDG 3' },
+    biotech: { icon: '🔬', color: '#6B8F3C', label: '생명공학', sdg: 'SDG 3' },
+    ai_robotics: { icon: '🤖', color: '#5B7B8C', label: 'AI·로보틱스', sdg: 'SDG 9' }
 };
 
 const CREB_INVEST_TYPES = {
-    return: { icon: '💰', label: '수익형', color: '#ff9800', bg: '#FFF3E0' },
-    donation: { icon: '💝', label: '기부형 · 선한 투자', color: '#4CAF50', bg: '#E8F5E9' },
-    hybrid: { icon: '🔄', label: '하이브리드', color: '#2196F3', bg: '#E3F2FD' }
+    return: { icon: '💰', label: '수익형', color: '#C4841D', bg: '#FFF3E0' },
+    donation: { icon: '💝', label: '기부형 · 선한 투자', color: '#6B8F3C', bg: '#E8F5E9' },
+    hybrid: { icon: '🔄', label: '하이브리드', color: '#5B7B8C', bg: '#E3F2FD' }
 };
 
 const CREB_IMPACT = {
@@ -739,7 +739,7 @@ function renderMilestones(milestones) {
     if (!milestones || !milestones.length) return '';
     return milestones.map(m => {
         const pct = Math.min(100, Math.round((m.current / m.target) * 100));
-        return `<div style="margin-top:0.3rem;"><div style="font-size:0.7rem; color:#6B5744;">${m.name} (${pct}%)</div><div style="background:#e0e0e0; height:4px; border-radius:2px;"><div style="background:#2196F3; height:100%; border-radius:2px; width:${pct}%;"></div></div></div>`;
+        return `<div style="margin-top:0.3rem;"><div style="font-size:0.7rem; color:#6B5744;">${m.name} (${pct}%)</div><div style="background:#e0e0e0; height:4px; border-radius:2px;"><div style="background:#5B7B8C; height:100%; border-radius:2px; width:${pct}%;"></div></div></div>`;
     }).join('');
 }
 
@@ -772,8 +772,8 @@ async function loadEnergyProjects() {
                 <div style="margin-bottom:0.3rem;">${renderInvestBadge(x)}</div>
                 <p style="font-size:0.85rem; color:var(--accent); margin:0.3rem 0;">${x.location || ''} ${x.capacity ? '· ' + x.capacity + 'kW' : ''} ${rate > 0 ? '· 예상 수익률 ' + rate + '%' : ''}</p>
                 ${rate > 0 ? `<div style="font-size:0.8rem; color:#2e7d32; margin-top:0.3rem;">💰 100 CREB 투자 시 → 월 ${exMonthly} CREB (연 ${rate}%)</div>` : ''}
-                ${itype === 'donation' ? `<div style="font-size:0.8rem; color:#4CAF50; margin-top:0.3rem;">💝 순수 기부 · 수익 없이 미래를 위한 투자</div>` : ''}
-                ${itype === 'hybrid' ? `<div style="font-size:0.8rem; color:#2196F3; margin-top:0.3rem;">🔄 수익 50% + 재투자 50%</div>` : ''}
+                ${itype === 'donation' ? `<div style="font-size:0.8rem; color:#6B8F3C; margin-top:0.3rem;">💝 순수 기부 · 수익 없이 미래를 위한 투자</div>` : ''}
+                ${itype === 'hybrid' ? `<div style="font-size:0.8rem; color:#5B7B8C; margin-top:0.3rem;">🔄 수익 50% + 재투자 50%</div>` : ''}
                 <div style="font-size:0.75rem; color:var(--accent);">👥 투자자 ${xInvestors}명</div>
                 <div style="background:#e0e0e0; height:6px; border-radius:3px; margin:0.5rem 0;"><div style="background:${catInfo.color}; height:100%; border-radius:3px; width:${pct}%;"></div></div>
                 <div style="display:flex; justify-content:space-between; font-size:0.85rem;"><span>${xInvested}/${xGoal} CREB</span><span>${pct}%</span></div>
@@ -988,7 +988,7 @@ async function loadArtistList() {
                 ${x.imageData ? `<img src="${x.imageData}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : `<div style="height:100%; display:flex; align-items:center; justify-content:center; font-size:3rem; color:#FFF8F0;">${GENRES[x.genre]||'🌟'}</div>`}</div>
                 <div style="padding:0.6rem;"><div style="font-weight:700;">${x.name}</div>
                 <div style="font-size:0.75rem; color:var(--accent);">${GENRES[x.genre]||''} · 팬 ${x.fans}명</div>
-                <button onclick="event.stopPropagation(); supportArtist('${d.id}')" style="background:#E91E63; color:#FFF8F0; border:none; padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; margin-top:0.4rem; font-size:0.8rem;">${t('artist.support_btn','💖 후원')}</button>
+                <button onclick="event.stopPropagation(); supportArtist('${d.id}')" style="background:#B54534; color:#FFF8F0; border:none; padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; margin-top:0.4rem; font-size:0.8rem;">${t('artist.support_btn','💖 후원')}</button>
                 </div></div>`; });
     } catch (e) { c.innerHTML = e.message; }
 }
@@ -1152,14 +1152,14 @@ async function loadInsuranceAdmin() {
         c.innerHTML = '<h4 style="margin-bottom:0.5rem;">⏳ 승인 대기 보험 요청</h4>';
         docs.forEach(d => {
             const r = d.data();
-            c.innerHTML += `<div style="background:#fff3e0; padding:0.8rem; border-radius:8px; margin-bottom:0.5rem; border-left:4px solid #ff9800;">
+            c.innerHTML += `<div style="background:#F7F3ED; padding:0.8rem; border-radius:8px; margin-bottom:0.5rem; border-left:4px solid #C4841D;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div><strong>${r.requesterNickname || r.requesterEmail}</strong> <span style="font-size:0.75rem; color:var(--accent);">${TYPES[r.type] || r.type}</span></div>
-                    <span style="font-weight:700; color:#e65100;">${r.amount} CRTD</span>
+                    <span style="font-weight:700; color:#C4841D;">${r.amount} CRTD</span>
                 </div>
                 <p style="font-size:0.85rem; color:#6B5744; margin:0.3rem 0;">${r.reason}</p>
                 <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
-                    <button onclick="approveInsurance('${d.id}')" style="flex:1; background:#4CAF50; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; font-weight:600;">✅ 승인</button>
+                    <button onclick="approveInsurance('${d.id}')" style="flex:1; background:#6B8F3C; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; font-weight:600;">✅ 승인</button>
                     <button onclick="rejectInsurance('${d.id}')" style="flex:1; background:#f44336; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; font-weight:600;">❌ 거절</button>
                 </div>
             </div>`;
@@ -1175,7 +1175,7 @@ async function loadMyInsuranceClaims() {
         const docs = await db.collection('insurance_requests').where('requesterId', '==', currentUser.uid).orderBy('createdAt', 'desc').limit(10).get();
         if (docs.empty) { c.innerHTML = '<p style="color:var(--accent); font-size:0.85rem;">보험 신청 내역이 없습니다</p>'; return; }
         const STATUS = { pending: '⏳ 대기중', approved: '✅ 승인', rejected: '❌ 거절' };
-        const STATUS_COLOR = { pending: '#ff9800', approved: '#4CAF50', rejected: '#f44336' };
+        const STATUS_COLOR = { pending: '#C4841D', approved: '#6B8F3C', rejected: '#f44336' };
         c.innerHTML = '';
         docs.forEach(d => {
             const r = d.data();
@@ -1268,16 +1268,16 @@ async function loadCreditScoreBreakdown() {
 
         c.innerHTML = `
             <div style="display:grid; gap:0.5rem;">
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem; background:#e3f2fd; border-radius:6px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem; background:#F7F3ED; border-radius:6px;">
                     <span>👑 CRTD 보유량</span><span style="font-weight:700;">${crtdHeld} CRTD → +${holdingScore}점</span>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem; background:#e8f5e9; border-radius:6px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem; background:#F7F3ED; border-radius:6px;">
                     <span>👥 추천인 수</span><span style="font-weight:700;">${referrals}명 → +${referralScore}점</span>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem; background:#fff3e0; border-radius:6px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem; background:#F7F3ED; border-radius:6px;">
                     <span>📊 거래 횟수</span><span style="font-weight:700;">${txCount}건 → +${txScore}점</span>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem; background:#fce4ec; border-radius:6px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem; background:#F7F3ED; border-radius:6px;">
                     <span>💯 상환율</span><span style="font-weight:700;">${repayRate}% → +${repayScore}점</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; padding:0.8rem; background:linear-gradient(135deg,#8B6914,#6B5744); border-radius:8px; color:#FFF8F0; margin-top:0.3rem;">
@@ -1287,7 +1287,7 @@ async function loadCreditScoreBreakdown() {
             </div>`;
         // 메인 점수도 업데이트
         const scoreEl = document.getElementById('credit-score');
-        if (scoreEl) { scoreEl.textContent = totalScore; scoreEl.style.color = totalScore >= 700 ? '#4CAF50' : totalScore >= 500 ? '#ff9800' : '#cc0000'; }
+        if (scoreEl) { scoreEl.textContent = totalScore; scoreEl.style.color = totalScore >= 700 ? '#6B8F3C' : totalScore >= 500 ? '#C4841D' : '#cc0000'; }
     } catch (e) { c.innerHTML = `<p style="color:red;">${e.message}</p>`; }
 }
 
@@ -1427,7 +1427,7 @@ async function viewArtistDetail(id) {
                 <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">💖 최근 후원</h4>
                 ${supportHtml || '<p style="font-size:0.8rem; color:var(--accent);">후원 내역 없음</p>'}
             </div>
-            <button onclick="supportArtist('${id}'); document.getElementById('artist-detail-modal').remove();" style="background:#E91E63; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; width:100%; margin-bottom:0.5rem;">💖 후원하기</button>
+            <button onclick="supportArtist('${id}'); document.getElementById('artist-detail-modal').remove();" style="background:#B54534; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; width:100%; margin-bottom:0.5rem;">💖 후원하기</button>
             <button onclick="document.getElementById('artist-detail-modal').remove()" style="background:#E8E0D8; border:none; padding:0.6rem; border-radius:8px; cursor:pointer; width:100%;">닫기</button>
         </div></div>`;
     document.body.appendChild(modal);
@@ -1457,8 +1457,8 @@ async function viewBookDetail(id) {
             ${b.description ? `<p style="font-size:0.9rem; margin:0.8rem 0; line-height:1.6;">${b.description}</p>` : ''}
             <div style="display:flex; gap:0.5rem; margin-top:1rem;">
                 ${!isOwner && b.price > 0 ? `<button onclick="buyBook('${id}'); document.getElementById('book-detail-modal').remove();" style="flex:1; background:#3D2B1F; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">🛒 구매하기</button>` : ''}
-                ${!isOwner && b.price <= 0 ? `<button onclick="showToast('📖 무료 열람!', 'info'); document.getElementById('book-detail-modal').remove();" style="flex:1; background:#4CAF50; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">📖 무료 읽기</button>` : ''}
-                <button onclick="addToReadingList('${id}')" style="flex:1; background:#ff9800; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">📚 읽고 싶은 책</button>
+                ${!isOwner && b.price <= 0 ? `<button onclick="showToast('📖 무료 열람!', 'info'); document.getElementById('book-detail-modal').remove();" style="flex:1; background:#6B8F3C; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">📖 무료 읽기</button>` : ''}
+                <button onclick="addToReadingList('${id}')" style="flex:1; background:#C4841D; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">📚 읽고 싶은 책</button>
             </div>
             <button onclick="document.getElementById('book-detail-modal').remove()" style="background:#E8E0D8; border:none; padding:0.6rem; border-radius:8px; cursor:pointer; width:100%; margin-top:0.5rem;">닫기</button>
         </div></div>`;
@@ -1576,11 +1576,11 @@ async function loadPumasiList() {
         docs.forEach(d => { const x = d.data(); const pct = Math.min(100, Math.round((x.raised/x.amount)*100));
             c.innerHTML += `<div style="background:#FFF8F0; padding:1rem; border-radius:8px; margin-bottom:0.5rem;">
                 <div style="display:flex; justify-content:space-between;"><strong>${x.requesterNickname || x.requesterEmail}</strong><span style="color:#3D2B1F; font-weight:700;">${x.amount} CRTD</span></div>
-                ${x.targetNickname ? `<p style="font-size:0.8rem; color:#E91E63; margin:0.2rem 0;">→ 대상: ${x.targetNickname || x.targetEmail}</p>` : '<p style="font-size:0.8rem; color:var(--accent); margin:0.2rem 0;">공동체 전체 공개</p>'}
+                ${x.targetNickname ? `<p style="font-size:0.8rem; color:#B54534; margin:0.2rem 0;">→ 대상: ${x.targetNickname || x.targetEmail}</p>` : '<p style="font-size:0.8rem; color:var(--accent); margin:0.2rem 0;">공동체 전체 공개</p>'}
                 <p style="font-size:0.85rem; color:var(--accent); margin:0.3rem 0;">${x.reason}</p>
-                <div style="background:#e0e0e0; height:6px; border-radius:3px; margin:0.5rem 0;"><div style="background:#4CAF50; height:100%; border-radius:3px; width:${pct}%;"></div></div>
-                <div style="display:flex; justify-content:space-between; font-size:0.8rem;"><span>${x.raised}/${x.amount} · ${x.backers}명</span><span style="color:#4CAF50;">이자 0%</span></div>
-                ${x.requesterId !== currentUser?.uid ? `<button onclick="contributePumasi('${d.id}')" style="background:#4CAF50; color:#FFF8F0; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.5rem;">🤝 도와주기</button>` : ''}
+                <div style="background:#e0e0e0; height:6px; border-radius:3px; margin:0.5rem 0;"><div style="background:#6B8F3C; height:100%; border-radius:3px; width:${pct}%;"></div></div>
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem;"><span>${x.raised}/${x.amount} · ${x.backers}명</span><span style="color:#6B8F3C;">이자 0%</span></div>
+                ${x.requesterId !== currentUser?.uid ? `<button onclick="contributePumasi('${d.id}')" style="background:#6B8F3C; color:#FFF8F0; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.5rem;">🤝 도와주기</button>` : ''}
             </div>`; });
     } catch (e) { c.innerHTML = e.message; }
 }
@@ -1701,7 +1701,7 @@ async function loadCreditInfo() {
         const score = Math.min(850, 300 + crtdHeld * 10 + (data.referralCount || 0) * 20);
         
         const scoreEl = document.getElementById('credit-score');
-        if (scoreEl) { scoreEl.textContent = score; scoreEl.style.color = score >= 700 ? '#4CAF50' : score >= 500 ? '#ff9800' : '#cc0000'; }
+        if (scoreEl) { scoreEl.textContent = score; scoreEl.style.color = score >= 700 ? '#6B8F3C' : score >= 500 ? '#C4841D' : '#cc0000'; }
         
         const loans = await db.collection('pumasi_requests').where('requesterId','==',currentUser.uid).where('status','==','active').get();
         const loansEl = document.getElementById('active-loans');
@@ -1795,7 +1795,7 @@ async function loadGyeList() {
                 </div>
                 ${!isMember && g.currentMembers < g.maxMembers ? `<button onclick="joinGye('${d.id}')" style="background:#FF9800; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.5rem; font-size:0.85rem;">🤝 참여하기</button>` : ''}
                 ${isMember ? '<div style="text-align:center; font-size:0.8rem; color:#FF9800; margin-top:0.5rem;">✅ 참여 중</div>' : ''}
-                ${g.organizerId === currentUser?.uid && g.status === 'active' && g.currentRound < (g.members?.length || 0) ? `<button onclick="executeGyeRound('${d.id}')" style="background:#E91E63; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.3rem; font-size:0.8rem;">🔄 Round ${g.currentRound + 1} 실행</button>` : ''}
+                ${g.organizerId === currentUser?.uid && g.status === 'active' && g.currentRound < (g.members?.length || 0) ? `<button onclick="executeGyeRound('${d.id}')" style="background:#B54534; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.3rem; font-size:0.8rem;">🔄 Round ${g.currentRound + 1} 실행</button>` : ''}
                 ${g.status === 'recruiting' && g.currentMembers >= g.maxMembers ? '<div style="text-align:center; font-size:0.8rem; color:#6B5744; margin-top:0.5rem;">모집 완료</div>' : ''}
             </div>`;
         });
@@ -1894,7 +1894,7 @@ async function loadMyEnergyInvestments() {
                     </div>
                     <div style="text-align:right;">
                         <div style="font-weight:700; color:${catInfo.color};">${inv.amount} ${inv.token || 'CREB'}</div>
-                        ${rate > 0 ? `<div style="font-size:0.75rem; color:#4CAF50;">월 ${monthlyReturn.toFixed(2)} CREB (연 ${rate}%)</div>` : `<div style="font-size:0.75rem; color:#4CAF50;">💝 기부</div>`}
+                        ${rate > 0 ? `<div style="font-size:0.75rem; color:#6B8F3C;">월 ${monthlyReturn.toFixed(2)} CREB (연 ${rate}%)</div>` : `<div style="font-size:0.75rem; color:#6B8F3C;">💝 기부</div>`}
                     </div>
                 </div>
             </div>`;
@@ -1903,7 +1903,7 @@ async function loadMyEnergyInvestments() {
         c.innerHTML = `
             <div style="background:#FFF8E1; padding:0.8rem; border-radius:8px; margin-bottom:0.8rem; display:flex; justify-content:space-around; text-align:center;">
                 <div><div style="font-size:0.7rem; color:var(--accent);">총 투자</div><strong>${totalInvested.toFixed(1)}</strong></div>
-                <div><div style="font-size:0.7rem; color:var(--accent);">예상 월 수익</div><strong style="color:#4CAF50;">${totalMonthly.toFixed(2)} CREB</strong></div>
+                <div><div style="font-size:0.7rem; color:var(--accent);">예상 월 수익</div><strong style="color:#6B8F3C;">${totalMonthly.toFixed(2)} CREB</strong></div>
                 <div><div style="font-size:0.7rem; color:var(--accent);">예상 연 수익</div><strong style="color:#1976D2;">${(totalMonthly * 12).toFixed(2)} CREB</strong></div>
             </div>
             ${rows}`;
@@ -2077,7 +2077,7 @@ async function showCampaignDetail(id) {
             ${camp.description ? `<p style="margin-bottom:1rem; font-size:0.9rem;">${camp.description}</p>` : ''}
             <div style="background:#F7F3ED; padding:1rem; border-radius:8px; margin-bottom:1rem;">
                 <div style="background:#e0e0e0; height:10px; border-radius:5px; margin-bottom:0.5rem;">
-                    <div style="background:#4CAF50; height:100%; border-radius:5px; width:${pct}%;"></div>
+                    <div style="background:#6B8F3C; height:100%; border-radius:5px; width:${pct}%;"></div>
                 </div>
                 <div style="display:flex; justify-content:space-between; font-size:0.9rem;">
                     <span style="font-weight:700;">${camp.raised} / ${camp.goal} ${camp.token}</span>
@@ -2085,7 +2085,7 @@ async function showCampaignDetail(id) {
                 </div>
                 <div style="font-size:0.8rem; color:#2e7d32; margin-top:0.5rem;">💰 수수료 ${fee}% · 창작자 수령 ${(100 - fee).toFixed(1)}%</div>
             </div>
-            <button onclick="donateCampaign('${id}')" style="background:#4CAF50; color:#FFF8F0; border:none; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-weight:700; margin-bottom:0.8rem;">💝 기부하기</button>
+            <button onclick="donateCampaign('${id}')" style="background:#6B8F3C; color:#FFF8F0; border:none; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-weight:700; margin-bottom:0.8rem;">💝 기부하기</button>
             ${isCreator && camp.status === 'active' ? `<button onclick="closeCampaign('${id}')" style="background:#e53935; color:#FFF8F0; border:none; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-weight:700; margin-bottom:1rem;">🔒 캠페인 종료 및 수령</button>` : ''}
             <h4 style="margin-bottom:0.5rem;">👥 후원자 내역 (${donorDocs.size}명)</h4>
             ${donorList}`;
@@ -2404,7 +2404,7 @@ async function renderStorePage(sellerId) {
                         </div>
                     </div>
                 </div>
-                ${isOwner ? `<button onclick="showStoreSettingsModal()" style="margin-top:0.8rem; background:#ff9800; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600;">⚙️ 스토어 설정</button>` : (currentUser ? `<button onclick="reportSeller('${sellerId}')" style="margin-top:0.8rem; background:none; color:#cc0000; border:1px solid #cc0000; padding:0.4rem 0.8rem; border-radius:8px; cursor:pointer; font-size:0.8rem;">🚨 ${t('mall.report_seller','판매자 신고')}</button>` : '')}
+                ${isOwner ? `<button onclick="showStoreSettingsModal()" style="margin-top:0.8rem; background:#C4841D; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600;">⚙️ 스토어 설정</button>` : (currentUser ? `<button onclick="reportSeller('${sellerId}')" style="margin-top:0.8rem; background:none; color:#cc0000; border:1px solid #cc0000; padding:0.4rem 0.8rem; border-radius:8px; cursor:pointer; font-size:0.8rem;">🚨 ${t('mall.report_seller','판매자 신고')}</button>` : '')}
             </div>
             <h3 style="margin-bottom:0.8rem;">📦 상품 목록</h3>
             <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:0.8rem;">
@@ -2490,13 +2490,13 @@ async function loadMyShopDashboard() {
         prodDocs.forEach(d => {
             const p = d.data();
             const remaining = p.stock - (p.sold || 0);
-            const statusBadge = p.status === 'active' ? '<span style="color:#4CAF50; font-size:0.7rem;">● 판매중</span>' : '<span style="color:#6B5744; font-size:0.7rem;">● 비활성</span>';
+            const statusBadge = p.status === 'active' ? '<span style="color:#6B8F3C; font-size:0.7rem;">● 판매중</span>' : '<span style="color:#6B5744; font-size:0.7rem;">● 비활성</span>';
             productsHtml += `<div style="padding:0.6rem; background:var(--bg); border-radius:8px; margin-bottom:0.4rem;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.3rem;">
                     <div><strong>${p.title}</strong> — ${p.price} CRGC · 판매 ${p.sold||0}/${p.stock} · 재고 ${remaining} ${statusBadge}</div>
                     <div style="display:flex; gap:0.3rem;">
-                        <button onclick="editProductModal('${d.id}')" style="background:#2196f3; color:#FFF8F0; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">✏️ 수정</button>
-                        <button onclick="toggleProduct('${d.id}','${p.status}')" style="background:${p.status==='active'?'#6B5744':'#4CAF50'}; color:#FFF8F0; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${p.status==='active'?'⏸':'▶'}</button>
+                        <button onclick="editProductModal('${d.id}')" style="background:#5B7B8C; color:#FFF8F0; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">✏️ 수정</button>
+                        <button onclick="toggleProduct('${d.id}','${p.status}')" style="background:${p.status==='active'?'#6B5744':'#6B8F3C'}; color:#FFF8F0; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${p.status==='active'?'⏸':'▶'}</button>
                         <button onclick="deleteProduct('${d.id}')" style="background:#cc0000; color:#FFF8F0; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">🗑️</button>
                     </div>
                 </div>
@@ -2510,8 +2510,8 @@ async function loadMyShopDashboard() {
             const statusLabel = ORDER_STATUS_LABELS[o.status] || o.status;
             const statusColor = ORDER_STATUS_COLORS[o.status] || 'var(--accent)';
             const nextActions = [];
-            if (o.status === 'paid') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','shipping')" style="background:#2196f3; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.7rem;">🚚 배송</button>`);
-            if (o.status === 'shipping') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','delivered')" style="background:#4CAF50; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.7rem;">✅ 완료</button>`);
+            if (o.status === 'paid') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','shipping')" style="background:#5B7B8C; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.7rem;">🚚 배송</button>`);
+            if (o.status === 'shipping') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','delivered')" style="background:#6B8F3C; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.7rem;">✅ 완료</button>`);
             const shipInfo = o.shippingInfo ? `<div style="font-size:0.65rem; color:#6B5744;">📦 ${o.shippingInfo.name} · ${o.shippingInfo.phone} · ${o.shippingInfo.address}</div>` : '';
             ordersHtml += `<div style="padding:0.5rem; background:var(--bg); border-radius:6px; margin-bottom:0.3rem; font-size:0.8rem;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.2rem;">
@@ -2546,7 +2546,7 @@ async function loadMyShopDashboard() {
             
             <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
                 <button onclick="viewStore('${currentUser.uid}')" style="background:#3D2B1F; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem;">🏪 내 스토어 보기</button>
-                <button onclick="showStoreSettingsModal()" style="background:#ff9800; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem;">⚙️ 스토어 설정</button>
+                <button onclick="showStoreSettingsModal()" style="background:#C4841D; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem;">⚙️ 스토어 설정</button>
             </div>
             
             <!-- 내 상품 -->
@@ -2807,7 +2807,7 @@ async function showOrderDetail(orderId) {
         let timelineHtml = '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin:1.5rem 0;position:relative;">';
         // Connector line
         timelineHtml += `<div style="position:absolute;top:14px;left:16%;right:16%;height:3px;background:#e0e0e0;z-index:0;">
-            <div style="width:${currentIdx >= 2 ? 100 : currentIdx === 1 ? 50 : 0}%;height:100%;background:#4CAF50;transition:width 0.3s;"></div>
+            <div style="width:${currentIdx >= 2 ? 100 : currentIdx === 1 ? 50 : 0}%;height:100%;background:#6B8F3C;transition:width 0.3s;"></div>
         </div>`;
         steps.forEach((step, i) => {
             const done = i <= currentIdx;
@@ -2815,7 +2815,7 @@ async function showOrderDetail(orderId) {
             const dateStr = ts ? new Date(ts).toLocaleString('ko-KR', {month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
             timelineHtml += `<div style="text-align:center;flex:1;z-index:1;">
                 <div style="width:28px;height:28px;border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:0.8rem;
-                    background:${done ? '#4CAF50' : '#e0e0e0'};color:${done ? 'white' : '#6B5744'};">${done ? '✓' : i+1}</div>
+                    background:${done ? '#6B8F3C' : '#e0e0e0'};color:${done ? 'white' : '#6B5744'};">${done ? '✓' : i+1}</div>
                 <div style="font-size:0.7rem;font-weight:600;margin-top:0.3rem;color:${done ? '#333' : '#6B5744'};">${stepLabels[step]}</div>
                 <div style="font-size:0.6rem;color:var(--accent);">${dateStr}</div>
             </div>`;
@@ -2823,7 +2823,7 @@ async function showOrderDetail(orderId) {
         timelineHtml += '</div>';
 
         // Tracking number
-        const trackingHtml = o.trackingNumber ? `<div style="background:#e3f2fd;padding:0.6rem;border-radius:8px;margin-bottom:1rem;font-size:0.85rem;">📦 추적번호: <strong>${o.trackingNumber}</strong></div>` : '';
+        const trackingHtml = o.trackingNumber ? `<div style="background:#F7F3ED;padding:0.6rem;border-radius:8px;margin-bottom:1rem;font-size:0.85rem;">📦 추적번호: <strong>${o.trackingNumber}</strong></div>` : '';
 
         // Return status check
         let returnHtml = '';
@@ -2831,7 +2831,7 @@ async function showOrderDetail(orderId) {
         if (!returnSnap.empty) {
             const ret = returnSnap.docs[0].data();
             const retStatus = {requested:'⏳ 반품 요청중',approved:'✅ 반품 승인',rejected:'❌ 반품 거절',completed:'🔄 환불 완료'};
-            const retColor = {requested:'#ff9800',approved:'#4CAF50',rejected:'#f44336',completed:'#2196f3'};
+            const retColor = {requested:'#C4841D',approved:'#6B8F3C',rejected:'#f44336',completed:'#5B7B8C'};
             returnHtml = `<div style="background:${retColor[ret.status]}15;border-left:4px solid ${retColor[ret.status]};padding:0.8rem;border-radius:0 8px 8px 0;margin-bottom:1rem;">
                 <div style="font-weight:700;color:${retColor[ret.status]};">${retStatus[ret.status] || ret.status}</div>
                 <div style="font-size:0.8rem;color:#6B5744;margin-top:0.2rem;">사유: ${ret.reasonCategory} — ${ret.reasonDetail||''}</div>
@@ -2852,7 +2852,7 @@ async function showOrderDetail(orderId) {
         if (o.status === 'delivered') {
             const existingReview = await db.collection('product_reviews').where('productId','==',o.productId).where('buyerId','==',currentUser.uid).limit(1).get();
             if (existingReview.empty) {
-                reviewBtnHtml = `<button onclick="writeReview('${o.productId}')" style="background:#ff9800;color:#FFF8F0;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;font-weight:600;width:100%;margin-bottom:0.5rem;">⭐ 리뷰 작성</button>`;
+                reviewBtnHtml = `<button onclick="writeReview('${o.productId}')" style="background:#C4841D;color:#FFF8F0;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;font-weight:600;width:100%;margin-bottom:0.5rem;">⭐ 리뷰 작성</button>`;
             }
         }
 
@@ -2958,14 +2958,14 @@ async function loadSellerReturns() {
         snap.forEach(d => {
             const r = d.data();
             const dateStr = r.createdAt?.toDate ? r.createdAt.toDate().toLocaleDateString('ko-KR') : '';
-            html += `<div style="background:#fff3e0;padding:0.8rem;border-radius:8px;margin-bottom:0.5rem;border-left:4px solid #ff9800;">
+            html += `<div style="background:#F7F3ED;padding:0.8rem;border-radius:8px;margin-bottom:0.5rem;border-left:4px solid #C4841D;">
                 <div style="display:flex;justify-content:space-between;align-items:center;">
                     <div><strong>${r.productTitle}</strong> — ${r.amount} ${r.token}</div>
                     <span style="font-size:0.75rem;color:var(--accent);">${dateStr}</span>
                 </div>
                 <div style="font-size:0.8rem;color:#6B5744;margin:0.3rem 0;">${r.buyerEmail} · ${r.reasonCategory}: ${r.reasonDetail||''}</div>
                 <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
-                    <button onclick="approveReturn('${d.id}')" style="flex:1;background:#4CAF50;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.8rem;">✅ 승인 (환불)</button>
+                    <button onclick="approveReturn('${d.id}')" style="flex:1;background:#6B8F3C;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.8rem;">✅ 승인 (환불)</button>
                     <button onclick="rejectReturn('${d.id}')" style="flex:1;background:#f44336;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.8rem;">❌ 거절</button>
                 </div>
             </div>`;

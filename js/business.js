@@ -100,7 +100,7 @@
                         <strong style="display:block;font-size:0.95rem;margin-bottom:0.5rem;">${d.title || '캠페인'}</strong>
                         <p style="font-size:0.8rem;color:var(--text-muted,#6B5744);margin-bottom:0.8rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${d.description || ''}</p>
                         <div style="background:var(--bg,#0a0a1a);border-radius:4px;height:8px;overflow:hidden;margin-bottom:0.5rem;">
-                            <div style="height:100%;background:${progress >= 100 ? '#4CAF50' : 'var(--gold,#8B6914)'};width:${progress}%;border-radius:4px;transition:width 0.3s;"></div>
+                            <div style="height:100%;background:${progress >= 100 ? '#6B8F3C' : 'var(--gold,#8B6914)'};width:${progress}%;border-radius:4px;transition:width 0.3s;"></div>
                         </div>
                         <div style="display:flex;justify-content:space-between;font-size:0.75rem;">
                             <span>${(d.raised || 0).toLocaleString()} / ${(d.goal || 0).toLocaleString()} CRTD</span>
@@ -131,7 +131,7 @@
             </div>
             <p style="font-size:0.9rem;line-height:1.7;margin-bottom:1.5rem;white-space:pre-wrap;">${data.description || ''}</p>
             <div style="background:#F7F3ED;border-radius:6px;height:10px;overflow:hidden;margin-bottom:0.5rem;">
-                <div style="height:100%;background:${progress >= 100 ? '#4CAF50' : '#8B6914'};width:${progress}%;border-radius:6px;"></div>
+                <div style="height:100%;background:${progress >= 100 ? '#6B8F3C' : '#8B6914'};width:${progress}%;border-radius:6px;"></div>
             </div>
             <p style="font-size:0.85rem;margin-bottom:1rem;"><strong>${(data.raised||0).toLocaleString()}</strong> / ${(data.goal||0).toLocaleString()} CRTD (${progress}%)</p>
             <button onclick="donateToCampaign('${id}')" class="btn-primary" style="width:100%;padding:0.8rem;">💝 후원하기</button>

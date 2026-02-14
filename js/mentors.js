@@ -565,7 +565,7 @@ function renderMentorPanel() {
 
     const signalConfig = {
         buy: { label: '매수', color: '#00cc66', bg: 'rgba(0,204,102,0.15)', emoji: '🟢' },
-        sell: { label: '매도', color: '#ff4444', bg: 'rgba(255,68,68,0.15)', emoji: '🔴' },
+        sell: { label: '매도', color: '#B54534', bg: 'rgba(255,68,68,0.15)', emoji: '🔴' },
         hold: { label: '유지', color: '#6B5744', bg: 'rgba(136,136,136,0.1)', emoji: '⚪' },
         wait: { label: '관망', color: '#ffaa00', bg: 'rgba(255,170,0,0.15)', emoji: '🟡' },
     };
