@@ -428,10 +428,10 @@ async function loadContacts() {
             </div>
             <div class="contact-info" style="flex:1;min-width:0;overflow:hidden;">
                 <strong style="font-size:0.95rem;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${info.nickname}</strong>
-                <p style="font-size:0.7rem; margin:0.1rem 0; color:var(--accent); opacity:0.7; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${info.statusMessage || (info.lastSeen ? getTimeAgo(info.lastSeen) : '')}</p>
+                <p style="font-size:0.8rem; margin:0.1rem 0; color:var(--accent); opacity:0.7; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${info.statusMessage || (info.lastSeen ? getTimeAgo(info.lastSeen) : '')}</p>
             </div>
             <div style="display:flex; gap:0.3rem; align-items:center;">
-                <button onclick='startChatWithContact("${contact.email}")' style="padding:0.35rem 0.7rem; border-radius:20px; font-size:0.75rem; background:#3D2B1F; color:#FFF8F0; border:none; cursor:pointer; display:flex; align-items:center; gap:3px;"><i data-lucide="message-circle" style="width:12px;height:12px;"></i> ${t('social.chat','채팅')}</button>
+                <button onclick='startChatWithContact("${contact.email}")' style="padding:0.35rem 0.7rem; border-radius:20px; font-size:0.8rem; background:#3D2B1F; color:#FFF8F0; border:none; cursor:pointer; display:flex; align-items:center; gap:3px;"><i data-lucide="message-circle" style="width:12px;height:12px;"></i> ${t('social.chat','채팅')}</button>
                 <button onclick='showContactMenu("${doc.id}", "${info.nickname}")' style="padding:0.35rem; border-radius:50%; background:none; border:1px solid #E8E0D8; cursor:pointer; display:flex; align-items:center; justify-content:center;"><i data-lucide="more-vertical" style="width:14px;height:14px;color:#6B5744;"></i></button>
             </div>`;
         contactList.appendChild(contactItem);
@@ -2423,7 +2423,7 @@ async function editContact(contactDocId, currentName) {
     if (!newName || newName.trim() === currentName) return;
     try {
         await db.collection('users').doc(currentUser.uid).collection('contacts').doc(contactDocId).update({ name: newName.trim() });
-        showToast('✅ 연락처 이름이 변경되었습니다', 'success');
+        showToast(t('social.contact_renamed','연락처 이름이 변경되었습니다'), 'success');
         loadContacts();
     } catch (error) { showToast('변경 실패: ' + error.message, 'error'); }
 }
@@ -2646,7 +2646,7 @@ async function deleteContact(contactDocId, contactName) {
     if (!await showConfirmModal(t('social.delete_contact','연락처 삭제'), `"${contactName}" ${t('social.confirm_delete_contact','연락처를 삭제하시겠습니까?')}`)) return;
     try {
         await db.collection('users').doc(currentUser.uid).collection('contacts').doc(contactDocId).delete();
-        showToast(t('social.contact_deleted','✅ 연락처가 삭제되었습니다'), 'success');
+        showToast(t('social.contact_deleted','연락처가 삭제되었습니다'), 'success');
         loadContacts();
     } catch (error) { showToast(t('social.delete_fail','삭제 실패') + ': ' + error.message, 'error'); }
 }
