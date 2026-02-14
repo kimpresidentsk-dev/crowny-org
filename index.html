@@ -914,7 +914,8 @@
             <!-- 검색/정렬 -->
             <div style="display:flex; gap:0.5rem; margin-bottom:0.5rem; flex-wrap:wrap;">
                 <div style="flex:1; min-width:140px; position:relative;">
-                    <input type="text" id="mall-search" placeholder="<i data-lucide="search"></i> 상품 검색..." data-i18n-placeholder="mall.search_placeholder" style="width:100%; padding:0.6rem; border:1px solid var(--border); border-radius:6px; font-size:0.85rem; box-sizing:border-box;">
+                    <input type="text" id="mall-search" placeholder="상품 검색..." data-i18n-placeholder="mall.search_placeholder" style="width:100%; padding:0.6rem 0.6rem 0.6rem 2.5rem; border:1px solid var(--border); border-radius:6px; font-size:0.85rem; box-sizing:border-box;">
+                    <i data-lucide="search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--accent); width:16px; height:16px; pointer-events:none;"></i>
                 </div>
                 <select id="mall-sort" onchange="loadMallProducts()" style="padding:0.6rem; border:1px solid var(--border); border-radius:6px; font-size:0.85rem;">
                     <option value="newest" data-i18n="mall.sort.newest">최신순</option>
