@@ -456,8 +456,8 @@ body {
 /* Sidebar */
 .sidebar {
     width: 220px;
-    background: var(--primary);
-    color: #e0e0e0;
+    background: #3D2B1F;
+    color: #E8D5C4;
     border-right: none;
     padding: 1rem 0;
     position: fixed;
@@ -476,7 +476,7 @@ body {
 
 .logo {
     padding: 0 1rem 1rem;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255,255,255,0.12);
     margin-bottom: 0.5rem;
     cursor: pointer;
 }
@@ -513,7 +513,7 @@ html[lang="en"] .nav-sub { display: none; }
     display: block;
     padding: 0.5rem 1rem;
     text-decoration: none;
-    color: rgba(255,255,255,0.75);
+    color: #D2BCB0;
     font-size: 0.85rem;
     letter-spacing: 0.5px;
     transition: all 0.2s;
@@ -521,7 +521,7 @@ html[lang="en"] .nav-sub { display: none; }
 
 .nav-item:hover {
     background: rgba(255,255,255,0.08);
-    color: var(--gold);
+    color: #FFD700;
 }
 
 .nav-item.active {
@@ -533,7 +533,7 @@ html[lang="en"] .nav-sub { display: none; }
 
 .sidebar .nav-divider {
     border: none;
-    border-top: 1px solid rgba(255,255,255,0.08);
+    border-top: 1px solid rgba(255,255,255,0.12);
     margin: 0.4rem 1rem;
 }
 
@@ -542,7 +542,7 @@ html[lang="en"] .nav-sub { display: none; }
     font-size: 0.65rem;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    color: rgba(255,255,255,0.3);
+    color: #A08C7A;
     font-weight: 700;
 }
 
