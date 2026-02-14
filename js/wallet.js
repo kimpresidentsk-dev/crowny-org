@@ -261,9 +261,9 @@ async function displayCurrentWallet() {
     const securityEl = document.getElementById('wallet-security-status');
     if (securityEl) {
         if (wallet.encryptedPrivateKey) {
-            securityEl.innerHTML = `<span style="color:#2e7d32;">🔒 ${t('wallet.encrypted', '암호화됨')} ✅</span>`;
+            securityEl.innerHTML = `<span style="color:#2e7d32;display:flex;align-items:center;gap:0.3rem;"><i data-lucide="lock" style="width:16px;height:16px;color:#2e7d32;"></i>${t('wallet.encrypted', '암호화됨')}<i data-lucide="check" style="width:16px;height:16px;color:#2e7d32;"></i></span>`;
         } else if (wallet.privateKey) {
-            securityEl.innerHTML = `<span style="color:#C4841D;">⚠️ ${t('wallet.not_encrypted', '미암호화')}</span> <button onclick="migrateWalletSecurity()" style="margin-left:8px;padding:4px 10px;background:#3D2B1F;color:#FFF8F0;border:none;border-radius:6px;cursor:pointer;font-size:0.75rem;">🔐 ${t('wallet.upgrade_security', '보안 업그레이드')}</button>`;
+            securityEl.innerHTML = `<span style="color:#C4841D;display:flex;align-items:center;gap:0.3rem;"><i data-lucide="alert-circle" style="width:16px;height:16px;color:#C4841D;"></i>${t('wallet.not_encrypted', '미암호화')}</span> <button onclick="migrateWalletSecurity()" style="margin-left:8px;padding:4px 10px;background:#3D2B1F;color:#FFF8F0;border:none;border-radius:6px;cursor:pointer;font-size:0.75rem;display:flex;align-items:center;gap:0.3rem;"><i data-lucide="shield" style="width:14px;height:14px;color:#FFF8F0;"></i>${t('wallet.upgrade_security', '보안 업그레이드')}</button>`;
         }
     }
     
@@ -634,7 +634,7 @@ function showMaticDeposit() {
             </div>
             <p style="font-size:0.75rem;color:#c62828;margin-bottom:1rem;">${t('wallet.matic_deposit_warning', '⚠️ 반드시 <strong>Polygon 네트워크</strong>로 전송하세요!<br>다른 네트워크(ETH 등)로 보내면 복구 불가합니다.')}</p>
             <div style="display:flex;gap:0.5rem;">
-                <button onclick="navigator.clipboard&&navigator.clipboard.writeText('${addr}').then(()=>showToast(t('wallet.address_copied','주소 복사됨'),'success'))" style="flex:1;padding:0.7rem;background:#3D2B1F;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:700;display:flex;align-items:center;justify-content:center;gap:0.3rem;"><i data-lucide="copy" style="width:16px;height:16px;"></i>주소 복사</button>
+                <button onclick="navigator.clipboard&&navigator.clipboard.writeText('${addr}').then(()=>showToast(t('wallet.address_copied','주소 복사됨'),'success'))" style="flex:1;padding:0.7rem;background:#3D2B1F;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:700;display:flex;align-items:center;justify-content:center;gap:0.3rem;"><i data-lucide="copy" style="width:16px;height:16px;color:#FFF8F0;"></i>주소 복사</button>
                 <button onclick="this.closest('div[style*=fixed]').remove()" style="flex:1;padding:0.7rem;border:1px solid #E8E0D8;border-radius:8px;cursor:pointer;background:#3D2B1F;">${t('common.close', '닫기')}</button>
             </div>
         </div>`;
