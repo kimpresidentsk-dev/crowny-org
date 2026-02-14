@@ -343,7 +343,7 @@ a:not(.nav-item) {
     bottom: 0;
     left: 0;
     right: 0;
-    background: var(--bg-card, #3D2B1F);
+    background: var(--bg-card, #F7F3ED);
     border-top: 1px solid var(--border, #E8E0D8);
     z-index: 999;
     padding-bottom: env(safe-area-inset-bottom);
@@ -416,8 +416,8 @@ a:not(.nav-item) {
 
 /* Toast messages */
 .notif-toast, .toast-message {
-    background: var(--bg-card, #3D2B1F) !important;
-    color: var(--text, #F7F3ED) !important;
+    background: var(--bg-card, #F7F3ED) !important;
+    color: var(--text, #3D2B1F) !important;
     border: 1px solid var(--border, #E8E0D8) !important;
     border-radius: 12px !important;
     box-shadow: 0 4px 16px rgba(0,0,0,0.4) !important;
@@ -476,15 +476,15 @@ input:focus, textarea:focus, select:focus {
 
 /* Menu toggle dark */
 .menu-toggle {
-    background: var(--bg-card, #3D2B1F) !important;
-    color: var(--text, #F7F3ED) !important;
+    background: var(--bg-card, #F7F3ED) !important;
+    color: var(--text, #3D2B1F) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Unified secondary buttons */
 .btn-secondary {
-    background: var(--bg-card-alt, #3D2B1F) !important;
-    color: var(--text, #F7F3ED) !important;
+    background: var(--bg-card-alt, #FFF8F0) !important;
+    color: var(--text, #3D2B1F) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 
@@ -492,13 +492,13 @@ input:focus, textarea:focus, select:focus {
 #profile-edit-modal > div,
 #add-contact-modal > div,
 .group-member-select-modal {
-    background: var(--bg-card, #3D2B1F) !important;
-    color: var(--text, #F7F3ED) !important;
+    background: var(--bg-card, #F7F3ED) !important;
+    color: var(--text, #3D2B1F) !important;
 }
 #profile-edit-modal input,
 #add-contact-modal input {
-    background: var(--bg-card-alt, #3D2B1F) !important;
-    color: var(--text, #F7F3ED) !important;
+    background: var(--bg-card-alt, #FFF8F0) !important;
+    color: var(--text, #3D2B1F) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 
@@ -509,81 +509,81 @@ input:focus, textarea:focus, select:focus {
 
 /* Search overlay dark */
 .search-overlay-content {
-    background: var(--bg-card, #3D2B1F) !important;
-    color: var(--text, #F7F3ED) !important;
+    background: var(--bg-card, #F7F3ED) !important;
+    color: var(--text, #3D2B1F) !important;
 }
 
 /* Settings dark */
 .settings-card {
-    background: var(--bg-card, #3D2B1F) !important;
-    color: var(--text, #F7F3ED) !important;
+    background: var(--bg-card, #F7F3ED) !important;
+    color: var(--text, #3D2B1F) !important;
 }
 .settings-btn {
-    background: var(--bg-card-alt, #3D2B1F) !important;
-    color: var(--text, #F7F3ED) !important;
+    background: var(--bg-card-alt, #FFF8F0) !important;
+    color: var(--text, #3D2B1F) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Comment bottom sheet dark */
 .bottom-sheet {
-    background: var(--bg-card, #3D2B1F) !important;
-    color: var(--text, #F7F3ED) !important;
+    background: #FFF8F0 !important;
+    color: #3D2B1F !important;
 }
 
 /* Link preview dark */
 .link-preview-card {
-    background: var(--bg-card-alt, #3D2B1F) !important;
+    background: var(--bg-card-alt, #FFF8F0) !important;
     border-color: var(--border, #E8E0D8) !important;
-    color: var(--text, #F7F3ED) !important;
+    color: var(--text, #3D2B1F) !important;
 }
 
 /* All hardcoded white backgrounds → dark */
 .wallet-btn, .product-card, .credit-header, .trading-panel,
 .trading-header, .balance-item {
-    background: var(--bg-card, #3D2B1F) !important;
-    color: var(--text, #F7F3ED) !important;
+    background: var(--bg-card, #F7F3ED) !important;
+    color: var(--text, #3D2B1F) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Social post dropdown dark */
 .post-dropdown-menu {
-    background: var(--bg-card, #3D2B1F) !important;
+    background: var(--bg-card, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 .post-dropdown-menu div:hover {
-    background: var(--bg-card-alt, #3D2B1F) !important;
+    background: var(--bg-card-alt, #FFF8F0) !important;
 }
 
 /* Reaction picker dark */
 .reaction-picker-popup {
-    background: var(--bg-card, #3D2B1F) !important;
+    background: var(--bg-card, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Sticker/GIF panel dark */
 .sticker-gif-panel {
-    background: var(--bg-card, #3D2B1F) !important;
+    background: var(--bg-card, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
-    color: var(--text, #F7F3ED) !important;
+    color: var(--text, #3D2B1F) !important;
 }
 
 /* Attach menu dark */
 .attach-menu-popup {
-    background: var(--bg-card, #3D2B1F) !important;
+    background: var(--bg-card, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
-    color: var(--text, #F7F3ED) !important;
+    color: var(--text, #3D2B1F) !important;
 }
 
 /* Chat menu dark */
 .chat-menu-dropdown {
-    background: var(--bg-card, #3D2B1F) !important;
+    background: var(--bg-card, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 .chat-menu-item {
-    color: var(--text, #F7F3ED) !important;
+    color: var(--text, #3D2B1F) !important;
 }
 .chat-menu-item:hover {
-    background: var(--bg-card-alt, #3D2B1F) !important;
+    background: var(--bg-card-alt, #FFF8F0) !important;
 }
 
 /* Friend request item dark */
@@ -593,42 +593,42 @@ input:focus, textarea:focus, select:focus {
 
 /* Group info panel dark */
 .group-info-panel {
-    background: var(--bg-card, #3D2B1F) !important;
-    color: var(--text, #F7F3ED) !important;
+    background: var(--bg-card, #F7F3ED) !important;
+    color: var(--text, #3D2B1F) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Msg bubble colors fix for dark */
 .msg-actions-bar {
-    background: var(--bg-card, #3D2B1F) !important;
+    background: var(--bg-card, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Reply preview bar dark */
 .reply-preview-bar {
-    background: var(--bg-card-alt, #3D2B1F) !important;
+    background: var(--bg-card-alt, #FFF8F0) !important;
     border-color: var(--gold, #8B6914) !important;
-    color: var(--text, #F7F3ED) !important;
+    color: var(--text, #3D2B1F) !important;
 }
 
 /* Pinned message dark */
 .pinned-message-banner {
-    background: var(--bg-card-alt, #3D2B1F) !important;
+    background: var(--bg-card-alt, #FFF8F0) !important;
     border-color: var(--gold, #8B6914) !important;
-    color: var(--text, #F7F3ED) !important;
+    color: var(--text, #3D2B1F) !important;
 }
 
 /* Dashboard shortcuts dark */
 .dash-shortcut-btn {
-    background: var(--bg-card-alt, #3D2B1F) !important;
-    color: var(--text, #F7F3ED) !important;
+    background: var(--bg-card-alt, #FFF8F0) !important;
+    color: var(--text, #3D2B1F) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Tab buttons dark */
 .tab-btn {
-    background: var(--bg-card-alt, #3D2B1F) !important;
-    color: var(--text, #F7F3ED) !important;
+    background: var(--bg-card-alt, #FFF8F0) !important;
+    color: var(--text, #3D2B1F) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 .tab-btn.active {
@@ -648,22 +648,22 @@ input:focus, textarea:focus, select:focus {
 
 /* AI Assistant dark */
 .ai-input-bar {
-    background: var(--bg-card, #3D2B1F) !important;
+    background: var(--bg-card, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 .ai-bubble-bot {
-    background: var(--bg-card-alt, #3D2B1F) !important;
-    color: var(--text, #F7F3ED) !important;
+    background: var(--bg-card-alt, #FFF8F0) !important;
+    color: var(--text, #3D2B1F) !important;
 }
 .ai-quick-card {
-    background: var(--bg-card-alt, #3D2B1F) !important;
-    color: var(--text, #F7F3ED) !important;
+    background: var(--bg-card-alt, #FFF8F0) !important;
+    color: var(--text, #3D2B1F) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Date separator dark */
 .date-separator span {
-    background: var(--bg-card, #3D2B1F) !important;
+    background: var(--bg-card, #F7F3ED) !important;
     color: var(--text-muted, ‌#6B5744) !important;
 }
 
@@ -674,9 +674,9 @@ input:focus, textarea:focus, select:focus {
 
 /* Msg reaction chip dark */
 .msg-reaction-chip {
-    background: var(--bg-card-alt, #3D2B1F) !important;
+    background: var(--bg-card-alt, #FFF8F0) !important;
     border-color: var(--border, #E8E0D8) !important;
-    color: var(--text, #F7F3ED) !important;
+    color: var(--text, #3D2B1F) !important;
 }
 
 /* ===== GLOBAL DARK MODE CLEANUP ===== */
