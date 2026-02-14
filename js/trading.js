@@ -725,8 +725,8 @@ async function initTradingViewChart() {
             grid: { vertLines: { color: '#1a1a2a', style: 1 }, horzLines: { color: '#1a1a2a', style: 1 } },
             crosshair: {
                 mode: LightweightCharts.CrosshairMode.Normal,
-                vertLine: { color: '#ffffff44', width: 1, style: 2, labelBackgroundColor: '#333' },
-                horzLine: { color: '#ffffff44', width: 1, style: 2, labelBackgroundColor: '#3D2B1F' },
+                vertLine: { color: '#FFF8F044', width: 1, style: 2, labelBackgroundColor: '#333' },
+                horzLine: { color: '#FFF8F044', width: 1, style: 2, labelBackgroundColor: '#3D2B1F' },
             },
             rightPriceScale: { borderColor: '#333', scaleMargins: { top: 0.05, bottom: 0.15 }, autoScale: true },
             timeScale: {
