@@ -11,9 +11,9 @@ async function loadDashboard() {
         console.warn('[Dashboard] currentUser 없음 - 로딩 중단');
         const container = document.getElementById('dashboard-content');
         if (container) {
-            container.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--error);">
+            container.innerHTML = `<div style="text-align:center;padding:2rem;color:#d32f2f;">
                 <h3>로그인이 필요합니다</h3>
-                <button onclick="document.getElementById('auth-modal').style.display='flex'" style="background:var(--gold);color:#FFF8F0;border:none;padding:0.8rem 1.5rem;border-radius:6px;margin-top:1rem;cursor:pointer;">로그인</button>
+                <button onclick="document.getElementById('auth-modal').style.display='flex'" style="background:#8B6914;color:#FFF8F0;border:none;padding:0.8rem 1.5rem;border-radius:6px;margin-top:1rem;cursor:pointer;">로그인</button>
             </div>`;
         }
         return;
@@ -26,7 +26,7 @@ async function loadDashboard() {
     }
     
     // 초기 로딩 표시
-    container.innerHTML = `<p style="text-align:center;padding:2rem;color:var(--accent);"><i data-lucide="loader" style="width:16px;height:16px;display:inline-block;vertical-align:middle;animation:spin 1s linear infinite;"></i> 대시보드 로딩 중...</p>`;
+    container.innerHTML = `<p style="text-align:center;padding:2rem;color:#3D2B1F;"><i data-lucide="loader" style="width:16px;height:16px;display:inline-block;vertical-align:middle;animation:spin 1s linear infinite;"></i> 대시보드 로딩 중...</p>`;
     if (window.lucide) lucide.createIcons();
     
     try {
@@ -239,20 +239,20 @@ async function loadDashboard() {
             <h2><i data-lucide="bar-chart-3" style="width:20px;height:20px;display:inline-block;vertical-align:middle;"></i> DASHBOARD</h2>
             <p style="margin-top:1rem;color:#3D2B1F;">환영합니다, ${currentUser?.email?.split('@')[0] || 'Guest'}님!</p>
             
-            <div style="background:var(--bg-card);border-radius:12px;padding:1.5rem;margin:1.5rem 0;text-align:left;">
+            <div style="background:#F7F3ED;border-radius:12px;padding:1.5rem;margin:1.5rem 0;text-align:left;">
                 <h4 style="color:#3D2B1F;margin-bottom:1rem;"><i data-lucide="zap" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> 빠른 바로가기</h4>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;">
-                    <button onclick="showPage('wallet')" style="background:var(--bg-card-alt);border:1px solid var(--border);border-radius:8px;padding:1rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;color:#3D2B1F;font-weight:600;font-size:0.9rem;">
-                        <i data-lucide="coins" style="width:18px;height:18px;color:var(--gold);"></i> WALLET
+                    <button onclick="showPage('wallet')" style="background:#FFF8F0;border:1px solid #E8E0D8;border-radius:8px;padding:1rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;color:#3D2B1F;font-weight:600;font-size:0.9rem;">
+                        <i data-lucide="coins" style="width:18px;height:18px;color:#8B6914;"></i> WALLET
                     </button>
-                    <button onclick="showPage('social')" style="background:var(--bg-card-alt);border:1px solid var(--border);border-radius:8px;padding:1rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;color:#3D2B1F;font-weight:600;font-size:0.9rem;">
-                        <i data-lucide="camera" style="width:18px;height:18px;color:var(--gold);"></i> SOCIAL
+                    <button onclick="showPage('social')" style="background:#FFF8F0;border:1px solid #E8E0D8;border-radius:8px;padding:1rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;color:#3D2B1F;font-weight:600;font-size:0.9rem;">
+                        <i data-lucide="camera" style="width:18px;height:18px;color:#8B6914;"></i> SOCIAL
                     </button>
-                    <button onclick="showPage('mall')" style="background:var(--bg-card-alt);border:1px solid var(--border);border-radius:8px;padding:1rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;color:#3D2B1F;font-weight:600;font-size:0.9rem;">
-                        <i data-lucide="shopping-cart" style="width:18px;height:18px;color:var(--gold);"></i> MALL
+                    <button onclick="showPage('mall')" style="background:#FFF8F0;border:1px solid #E8E0D8;border-radius:8px;padding:1rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;color:#3D2B1F;font-weight:600;font-size:0.9rem;">
+                        <i data-lucide="shopping-cart" style="width:18px;height:18px;color:#8B6914;"></i> MALL
                     </button>
-                    <button onclick="showPage('prop-trading')" style="background:var(--bg-card-alt);border:1px solid var(--border);border-radius:8px;padding:1rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;color:#3D2B1F;font-weight:600;font-size:0.9rem;">
-                        <i data-lucide="trending-up" style="width:18px;height:18px;color:var(--gold);"></i> TRADING
+                    <button onclick="showPage('prop-trading')" style="background:#FFF8F0;border:1px solid #E8E0D8;border-radius:8px;padding:1rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;color:#3D2B1F;font-weight:600;font-size:0.9rem;">
+                        <i data-lucide="trending-up" style="width:18px;height:18px;color:#8B6914;"></i> TRADING
                     </button>
                 </div>
             </div>
