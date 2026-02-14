@@ -195,7 +195,7 @@ async function searchFriends() {
             const data = doc.data();
             const info = { nickname: data.nickname || data.email?.split('@')[0] || '사용자', photoURL: data.photoURL || '' };
             const isFriend = friendsList.some(f => f.uid === doc.id);
-            html += `<div style="display:flex;align-items:center;gap:0.8rem;padding:0.6rem 0;border-bottom:1px solid #f0f0f0;">
+            html += `<div style="display:flex;align-items:center;gap:0.8rem;padding:0.6rem 0;border-bottom:1px solid #F7F3ED;">
                 ${avatarHTML(info.photoURL, info.nickname, 40)}
                 <div style="flex:1;min-width:0;">
                     <div style="font-weight:600;font-size:0.9rem;">${info.nickname}</div>
@@ -291,7 +291,7 @@ async function showUserProfile(uid) {
                 <h3 style="margin-top:0.5rem;margin-bottom:0.2rem;">${info.nickname}</h3>
                 ${info.statusMessage ? `<p style="font-size:0.85rem;color:var(--text-muted,#6B5744);">${info.statusMessage}</p>` : ''}
             </div>
-            <div style="display:flex;justify-content:space-around;text-align:center;margin-bottom:1rem;padding:0.8rem 0;border-top:1px solid #eee;border-bottom:1px solid var(--border,#E8E0D8);">
+            <div style="display:flex;justify-content:space-around;text-align:center;margin-bottom:1rem;padding:0.8rem 0;border-top:1px solid #E8E0D8;border-bottom:1px solid var(--border,#E8E0D8);">
                 <div><div style="font-weight:700;font-size:1.1rem;">${postCount}</div><div style="font-size:0.75rem;color:var(--text-muted,#6B5744);">게시물</div></div>
                 <div><div style="font-weight:700;font-size:1.1rem;">${friendCount}</div><div style="font-size:0.75rem;color:var(--text-muted,#6B5744);">친구</div></div>
                 <div><div style="font-weight:700;font-size:1.1rem;">${followCounts.followers}</div><div style="font-size:0.75rem;color:var(--text-muted,#6B5744);">팔로워</div></div>

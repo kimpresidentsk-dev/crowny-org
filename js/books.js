@@ -217,11 +217,11 @@ async function viewBookDetailV2(id) {
             <div style="display:flex;gap:0.5rem;margin-top:1rem;">
                 ${userOwns || isOwner || price <= 0 ? `<button onclick="openBookReader('${id}');document.getElementById('book-detail-modal-v2')?.remove();" style="flex:1;background:#4CAF50;color:#FFF8F0;border:none;padding:0.8rem;border-radius:8px;cursor:pointer;font-weight:700;">📖 읽기</button>` : ''}
                 ${!userOwns && !isOwner && price > 0 && !isSoldOut ? `<button onclick="buyBookV2('${id}');document.getElementById('book-detail-modal-v2')?.remove();" style="flex:1;background:#3D2B1F;color:#FFF8F0;border:none;padding:0.8rem;border-radius:8px;cursor:pointer;font-weight:700;">🛒 구매 (${price} CRGC)</button>` : ''}
-                ${isSoldOut && !userOwns ? '<button disabled style="flex:1;background:#ccc;color:#6B5744;border:none;padding:0.8rem;border-radius:8px;font-weight:700;">매진</button>' : ''}
+                ${isSoldOut && !userOwns ? '<button disabled style="flex:1;background:#E8E0D8;color:#6B5744;border:none;padding:0.8rem;border-radius:8px;font-weight:700;">매진</button>' : ''}
                 <button onclick="addToReadingList('${id}')" style="background:#ff9800;color:#FFF8F0;border:none;padding:0.8rem;border-radius:8px;cursor:pointer;font-weight:700;">📚</button>
             </div>
             ${!userOwns && !isOwner && price > 0 ? `<button onclick="requestTranslation('${id}')" style="background:none;border:1px solid var(--border);padding:0.5rem;border-radius:8px;cursor:pointer;width:100%;margin-top:0.5rem;font-size:0.85rem;">🌍 번역 요청</button>` : ''}
-            <button onclick="document.getElementById('book-detail-modal-v2')?.remove()" style="background:#eee;border:none;padding:0.6rem;border-radius:8px;cursor:pointer;width:100%;margin-top:0.5rem;">닫기</button>
+            <button onclick="document.getElementById('book-detail-modal-v2')?.remove()" style="background:#E8E0D8;border:none;padding:0.6rem;border-radius:8px;cursor:pointer;width:100%;margin-top:0.5rem;">닫기</button>
         </div>
     </div>`;
     document.body.appendChild(modal);
@@ -359,7 +359,7 @@ function _renderBookCreator() {
     modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:#FFF8F0;z-index:10001;overflow-y:auto;';
 
     const steps = ['기본 정보', '챕터/씬', '미리보기', '발행'];
-    const stepBar = `<div style="display:flex;gap:0;border-bottom:2px solid #eee;">
+    const stepBar = `<div style="display:flex;gap:0;border-bottom:2px solid #E8E0D8;">
         ${steps.map((s, i) => `<div style="flex:1;text-align:center;padding:0.8rem 0.3rem;font-size:0.8rem;font-weight:${d.step === i + 1 ? '700' : '400'};color:${d.step === i + 1 ? '#3D2B1F' : '#6B5744'};border-bottom:${d.step === i + 1 ? '2px solid #3D2B1F' : 'none'};cursor:pointer;" onclick="_bookCreatorData.step=${i + 1};_renderBookCreator();">${i + 1}. ${s}</div>`).join('')}
     </div>`;
 
@@ -370,7 +370,7 @@ function _renderBookCreator() {
     else if (d.step === 4) content = _renderCreatorStep4();
 
     modal.innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:1rem;border-bottom:1px solid #eee;">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:1rem;border-bottom:1px solid #E8E0D8;">
             <h2 style="margin:0;font-size:1.1rem;">✍️ ${d.editBookId ? '책 수정' : '새 책 만들기'}</h2>
             <button onclick="document.getElementById('book-creator-modal')?.remove()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">&times;</button>
         </div>
@@ -441,7 +441,7 @@ function _renderCreatorStep2() {
     let html = '<div style="display:grid;gap:1rem;">';
 
     d.chapters.forEach((ch, ci) => {
-        html += `<div style="background:#f9f9f9;border-radius:12px;padding:1rem;border:1px solid #eee;">
+        html += `<div style="background:#f9f9f9;border-radius:12px;padding:1rem;border:1px solid #E8E0D8;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
                 <div style="display:flex;align-items:center;gap:0.5rem;">
                     ${ci > 0 ? `<button onclick="_moveChapter(${ci},-1)" style="background:none;border:none;cursor:pointer;">⬆️</button>` : ''}
@@ -478,11 +478,11 @@ function _renderCreatorStep2() {
             </div>`;
         });
 
-        html += `<button onclick="_addScene(${ci})" style="width:100%;padding:0.4rem;border:1px dashed #ccc;background:none;border-radius:6px;cursor:pointer;font-size:0.8rem;color:#6B5744;">+ 씬 추가</button>
+        html += `<button onclick="_addScene(${ci})" style="width:100%;padding:0.4rem;border:1px dashed #E8E0D8;background:none;border-radius:6px;cursor:pointer;font-size:0.8rem;color:#6B5744;">+ 씬 추가</button>
         </div>`;
     });
 
-    html += `<button onclick="_addChapter()" style="width:100%;padding:0.7rem;border:2px dashed #ccc;background:none;border-radius:10px;cursor:pointer;font-size:0.9rem;color:#6B5744;">+ 챕터 추가</button>`;
+    html += `<button onclick="_addChapter()" style="width:100%;padding:0.7rem;border:2px dashed #E8E0D8;background:none;border-radius:10px;cursor:pointer;font-size:0.9rem;color:#6B5744;">+ 챕터 추가</button>`;
 
     html += `<div style="display:flex;justify-content:space-between;margin-top:1rem;">
         <button onclick="_bookCreatorData.step=1;_renderBookCreator();" style="padding:0.7rem 1.5rem;border:1px solid var(--border);background:#FFF8F0;border-radius:8px;cursor:pointer;">← 이전</button>
@@ -1127,11 +1127,11 @@ async function showMyLibrary() {
     modal.id = 'my-library-modal';
     modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:#FFF8F0;z-index:10001;overflow-y:auto;';
 
-    modal.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;padding:1rem;border-bottom:1px solid #eee;">
+    modal.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;padding:1rem;border-bottom:1px solid #E8E0D8;">
         <h2 style="margin:0;font-size:1.1rem;">📚 내 서재</h2>
         <button onclick="document.getElementById('my-library-modal')?.remove()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">&times;</button>
     </div>
-    <div style="display:flex;border-bottom:1px solid #eee;">
+    <div style="display:flex;border-bottom:1px solid #E8E0D8;">
         <button onclick="_showLibraryTab('purchased')" class="lib-tab active" style="flex:1;padding:0.8rem;border:none;background:#FFF8F0;cursor:pointer;font-weight:700;border-bottom:2px solid #3D2B1F;">📖 구매한 책</button>
         <button onclick="_showLibraryTab('wishlist')" class="lib-tab" style="flex:1;padding:0.8rem;border:none;background:#FFF8F0;cursor:pointer;">💝 위시리스트</button>
         <button onclick="_showLibraryTab('treasures')" class="lib-tab" style="flex:1;padding:0.8rem;border:none;background:#FFF8F0;cursor:pointer;">🎯 보물</button>
@@ -1285,7 +1285,7 @@ function _selectLanguage() {
             <div style="display:grid;gap:0.5rem;">
                 ${langs.map(l => `<button onclick="this.closest('div').closest('div').closest('div')._resolve('${l.code}')" style="padding:0.7rem;border:1px solid var(--border);background:#FFF8F0;border-radius:8px;cursor:pointer;text-align:left;font-size:1rem;">${l.label}</button>`).join('')}
             </div>
-            <button onclick="this.closest('div').closest('div')._resolve(null)" style="width:100%;margin-top:0.5rem;padding:0.5rem;border:none;background:#eee;border-radius:8px;cursor:pointer;">취소</button>
+            <button onclick="this.closest('div').closest('div')._resolve(null)" style="width:100%;margin-top:0.5rem;padding:0.5rem;border:none;background:#E8E0D8;border-radius:8px;cursor:pointer;">취소</button>
         </div>`;
         m._resolve = (val) => { m.remove(); resolve(val); };
         document.body.appendChild(m);

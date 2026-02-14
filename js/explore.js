@@ -265,7 +265,7 @@ async function runExploreSearch() {
             for (const doc of matchedPosts) {
                 const p = doc.data();
                 const info = await getUserDisplayInfo(p.userId);
-                html += `<div onclick="scrollToPostOrOpen('${doc.id}')" style="padding:0.4rem 0;cursor:pointer;border-bottom:1px solid #f0f0f0;">
+                html += `<div onclick="scrollToPostOrOpen('${doc.id}')" style="padding:0.4rem 0;cursor:pointer;border-bottom:1px solid #F7F3ED;">
                     <div style="font-size:0.8rem;font-weight:600;">${info.nickname}</div>
                     <div style="font-size:0.75rem;color:var(--accent);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${(p.text || '').substring(0, 60)}</div>
                 </div>`;

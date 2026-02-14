@@ -146,11 +146,11 @@
                 <input type="password" id="login-password" placeholder="비밀번호" data-i18n-placeholder="placeholder.password" class="input">
                 <button onclick="login()" class="btn-primary" data-i18n="auth.login">로그인</button>
                 <div style="display:flex; align-items:center; gap:0.5rem; margin:1rem 0;">
-                    <hr style="flex:1; border:none; border-top:1px solid #ddd;">
+                    <hr style="flex:1; border:none; border-top:1px solid #E8E0D8;">
                     <span style="color:#6B5744; font-size:0.85rem;" data-i18n="common.or">또는</span>
-                    <hr style="flex:1; border:none; border-top:1px solid #ddd;">
+                    <hr style="flex:1; border:none; border-top:1px solid #E8E0D8;">
                 </div>
-                <button onclick="loginWithGoogle()" class="btn-google" style="background:#FFF8F0; color:#3D2B1F; border:1px solid #ddd; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-size:0.95rem; display:flex; align-items:center; justify-content:center; gap:0.5rem;">
+                <button onclick="loginWithGoogle()" class="btn-google" style="background:#FFF8F0; color:#3D2B1F; border:1px solid #E8E0D8; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-size:0.95rem; display:flex; align-items:center; justify-content:center; gap:0.5rem;">
                     <img loading="lazy" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width:18px; height:18px;" data-i18n="auth.google_login"> Google로 로그인
                 </button>
                 <p style="margin-top:1rem;" data-i18n-html="auth.no_account_link">계정이 없으신가요? <a href="#" onclick="showSignup()">회원가입</a></p>
@@ -164,11 +164,11 @@
                 <div id="password-strength" style="font-size:0.75rem; margin-top:-0.3rem; margin-bottom:0.5rem;"></div>
                 <button onclick="signup()" class="btn-primary" data-i18n="auth.signup_btn">가입하기</button>
                 <div style="display:flex; align-items:center; gap:0.5rem; margin:1rem 0;">
-                    <hr style="flex:1; border:none; border-top:1px solid #ddd;">
+                    <hr style="flex:1; border:none; border-top:1px solid #E8E0D8;">
                     <span style="color:#6B5744; font-size:0.85rem;">또는</span>
-                    <hr style="flex:1; border:none; border-top:1px solid #ddd;">
+                    <hr style="flex:1; border:none; border-top:1px solid #E8E0D8;">
                 </div>
-                <button onclick="loginWithGoogle()" class="btn-google" style="background:#FFF8F0; color:#3D2B1F; border:1px solid #ddd; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-size:0.95rem; display:flex; align-items:center; justify-content:center; gap:0.5rem;">
+                <button onclick="loginWithGoogle()" class="btn-google" style="background:#FFF8F0; color:#3D2B1F; border:1px solid #E8E0D8; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-size:0.95rem; display:flex; align-items:center; justify-content:center; gap:0.5rem;">
                     <img loading="lazy" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width:18px; height:18px;" data-i18n="auth.google_signup"> Google로 가입
                 </button>
                 <p style="margin-top:1rem;" data-i18n-html="auth.has_account_link">이미 계정이 있으신가요? <a href="#" onclick="showLogin()">로그인</a></p>
@@ -179,7 +179,7 @@
                 <h3 data-i18n="auth.email_verify">📧 이메일 인증</h3>
                 <p style="color:#6B5744; margin-bottom:1rem;" data-i18n-html="auth.email_verify_desc">가입하신 이메일로 인증 링크를 보냈습니다.<br>인증 후 아래 버튼을 눌러주세요.</p>
                 <button onclick="checkEmailVerified()" class="btn-primary" data-i18n="auth.verify_done">✅ 인증 완료 확인</button>
-                <button onclick="resendVerification()" style="background:none; border:1px solid #ddd; padding:0.5rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.5rem; color:#6B5744;" data-i18n="auth.resend_verify">인증 메일 재발송</button>
+                <button onclick="resendVerification()" style="background:none; border:1px solid #E8E0D8; padding:0.5rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.5rem; color:#6B5744;" data-i18n="auth.resend_verify">인증 메일 재발송</button>
             </div>
         </div>
     </div>
@@ -388,9 +388,9 @@
                             <p id="wallet-address-full" style="font-family:'Consolas',monospace; font-size:0.7rem; color:#6B5744; margin-top:0.3rem; word-break:break-all;"></p>
                         </div>
                         <div style="display:flex; gap:0.3rem; flex-wrap:wrap;">
-                            <button onclick="copyAddress()" style="background:#f5f5f5; border:none; padding:0.4rem; border-radius:8px; cursor:pointer; font-size:0.85rem; min-width:32px;" title="주소 복사" data-i18n-title="wallet.copy_address"><i data-lucide="copy"></i></button>
-                            <a id="polygonscan-link" href="#" target="_blank" style="background:#f5f5f5; border:none; padding:0.4rem; border-radius:8px; text-decoration:none; font-size:0.85rem; min-width:32px; display:flex; align-items:center; justify-content:center;" title="Polygonscan"><i data-lucide="search"></i></a>
-                            <button onclick="renameCurrentWallet()" style="background:#f5f5f5; border:none; padding:0.4rem; border-radius:8px; cursor:pointer; font-size:0.85rem; min-width:32px;" title="지갑 이름 변경" data-i18n-title="wallet.rename"><i data-lucide="pencil"></i></button>
+                            <button onclick="copyAddress()" style="background:#F7F3ED; border:none; padding:0.4rem; border-radius:8px; cursor:pointer; font-size:0.85rem; min-width:32px;" title="주소 복사" data-i18n-title="wallet.copy_address"><i data-lucide="copy"></i></button>
+                            <a id="polygonscan-link" href="#" target="_blank" style="background:#F7F3ED; border:none; padding:0.4rem; border-radius:8px; text-decoration:none; font-size:0.85rem; min-width:32px; display:flex; align-items:center; justify-content:center;" title="Polygonscan"><i data-lucide="search"></i></a>
+                            <button onclick="renameCurrentWallet()" style="background:#F7F3ED; border:none; padding:0.4rem; border-radius:8px; cursor:pointer; font-size:0.85rem; min-width:32px;" title="지갑 이름 변경" data-i18n-title="wallet.rename"><i data-lucide="pencil"></i></button>
                             <button onclick="deleteCurrentWallet()" style="background:#FFF8F0; border:none; padding:0.4rem; border-radius:8px; cursor:pointer; font-size:0.85rem; min-width:32px;" title="지갑 삭제" data-i18n-title="wallet.delete_wallet"><i data-lucide="trash-2"></i></button>
                         </div>
                     </div>
@@ -568,7 +568,7 @@
                             <span style="font-size:0.8rem; color:var(--accent);" data-i18n="wallet.referral_code">내 소개 코드</span>
                             <div style="display:flex;align-items:center;gap:0.3rem;">
                                 <div id="my-referral-code" style="font-size:1.3rem; font-weight:700; color:var(--primary); letter-spacing:1px;">--</div>
-                                <button id="referral-nick-edit" onclick="editReferralNickname()" style="display:none;background:none;border:1px solid #ddd;border-radius:4px;padding:0.1rem 0.3rem;cursor:pointer;font-size:0.65rem;" title="닉네임 변경">✏️</button>
+                                <button id="referral-nick-edit" onclick="editReferralNickname()" style="display:none;background:none;border:1px solid #E8E0D8;border-radius:4px;padding:0.1rem 0.3rem;cursor:pointer;font-size:0.65rem;" title="닉네임 변경">✏️</button>
                             </div>
                         </div>
                         <div style="text-align:right;">
@@ -966,7 +966,7 @@
                 </div>
                 <div style="display:flex; gap:0.5rem; margin-top:0.8rem;">
                     <button onclick="applyMallFilters()" style="flex:1; background:#3D2B1F; color:#FFF8F0; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight:600;">적용</button>
-                    <button onclick="resetMallFilters()" style="flex:1; background:#eee; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; font-size:0.8rem;">초기화</button>
+                    <button onclick="resetMallFilters()" style="flex:1; background:#E8E0D8; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; font-size:0.8rem;">초기화</button>
                 </div>
             </div>
             
@@ -1428,7 +1428,7 @@
                     </div>
                     
                     <!-- ★ CRTD 트레이딩 상태 -->
-                    <div id="crtd-balance-display" style="margin-top:0.8rem; padding:0.8rem 1rem; background:linear-gradient(135deg, #3D2B1F, #6B5744); border-radius:8px; color:#ddd; font-size:0.82rem;">
+                    <div id="crtd-balance-display" style="margin-top:0.8rem; padding:0.8rem 1rem; background:linear-gradient(135deg, #3D2B1F, #6B5744); border-radius:8px; color:#E8E0D8; font-size:0.82rem;">
                         💎 CRTD 트레이딩 상태 로딩...
                     </div>
                 </div>
@@ -1444,24 +1444,24 @@
                             <option value="NQ">NQ ×$20</option>
                             <option value="MNQ" selected>MNQ ×$2</option>
                         </select>
-                        <select id="tab-chart-type" onchange="updateTabSetting('chartType')" style="background:#6B5744; color:#ccc; border:1px solid #3D2B1F; border-radius:4px; padding:3px 6px; font-size:0.75rem;">
+                        <select id="tab-chart-type" onchange="updateTabSetting('chartType')" style="background:#6B5744; color:#E8E0D8; border:1px solid #3D2B1F; border-radius:4px; padding:3px 6px; font-size:0.75rem;">
                             <option value="time">⏱ 타임</option>
                             <option value="tick">틱</option>
                         </select>
-                        <select id="tab-interval" onchange="updateTabSetting('interval')" style="background:#6B5744; color:#ccc; border:1px solid #3D2B1F; border-radius:4px; padding:3px 6px; font-size:0.75rem;">
+                        <select id="tab-interval" onchange="updateTabSetting('interval')" style="background:#6B5744; color:#E8E0D8; border:1px solid #3D2B1F; border-radius:4px; padding:3px 6px; font-size:0.75rem;">
                             <option value="60">1분</option>
                             <option value="180">3분</option>
                             <option value="300">5분</option>
                             <option value="900">15분</option>
                         </select>
-                        <select id="tab-tick-count" onchange="updateTabSetting('tickCount')" style="display:none; background:#6B5744; color:#ccc; border:1px solid #3D2B1F; border-radius:4px; padding:3px 6px; font-size:0.75rem;">
+                        <select id="tab-tick-count" onchange="updateTabSetting('tickCount')" style="display:none; background:#6B5744; color:#E8E0D8; border:1px solid #3D2B1F; border-radius:4px; padding:3px 6px; font-size:0.75rem;">
                             <option value="50">50틱</option>
                             <option value="100">100틱</option>
                             <option value="200">200틱</option>
                             <option value="500">500틱</option>
                         </select>
                         <div style="flex:1;"></div>
-                        <select id="tz-selector" onchange="changeTimezone(this.value)" style="background:#6B5744; color:#ccc; border:1px solid #3D2B1F; border-radius:4px; padding:2px 6px; font-size:0.7rem;">
+                        <select id="tz-selector" onchange="changeTimezone(this.value)" style="background:#6B5744; color:#E8E0D8; border:1px solid #3D2B1F; border-radius:4px; padding:2px 6px; font-size:0.7rem;">
                             <option value="KR" data-i18n="trading.timezone.seoul">🇰🇷 서울</option>
                             <option value="US" data-i18n="trading.timezone.newyork">🇺🇸 뉴욕</option>
                             <option value="JP" data-i18n="trading.timezone.tokyo">🇯🇵 도쿄</option>
@@ -1494,7 +1494,7 @@
                             <input type="number" id="nq-ma3-period" value="60" style="width:32px; background:#6B5744; color:#FFF8F0; border:1px solid #3D2B1F; border-radius:3px; padding:1px 3px; font-size:0.7rem; text-align:center;">
                             <input type="color" id="nq-ma3-color" value="#FF3333" onchange="applyMASettings()" style="width:20px; height:20px; border:none; cursor:pointer; padding:0;">
                         </div>
-                        <button onclick="applyMASettings(); this.textContent='✅ 저장됨!'; setTimeout(()=>this.textContent='✅ 적용',1500);" style="background:#6B5744; color:#ccc; border:none; border-radius:4px; padding:8px 12px; font-size:0.8rem; cursor:pointer; margin-top:6px; width:100%; touch-action:manipulation; -webkit-tap-highlight-color:transparent;">✅ 적용</button>
+                        <button onclick="applyMASettings(); this.textContent='✅ 저장됨!'; setTimeout(()=>this.textContent='✅ 적용',1500);" style="background:#6B5744; color:#E8E0D8; border:none; border-radius:4px; padding:8px 12px; font-size:0.8rem; cursor:pointer; margin-top:6px; width:100%; touch-action:manipulation; -webkit-tap-highlight-color:transparent;">✅ 적용</button>
                     </div>
                     
                     <!-- 가격 + 시간 바 -->
@@ -1583,7 +1583,7 @@
                     <h4 style="margin-bottom:0.5rem;">💹 나스닥100 선물 거래</h4>
                     
                     <!-- ★ 거래 권한 배지 -->
-                    <div id="trading-permission-badge" style="display:none; padding:0.5rem 0.8rem; background:linear-gradient(135deg,#3D2B1F,#6B5744); border-radius:8px; margin-bottom:1rem; font-size:0.75rem; color:#ccc;">
+                    <div id="trading-permission-badge" style="display:none; padding:0.5rem 0.8rem; background:linear-gradient(135deg,#3D2B1F,#6B5744); border-radius:8px; margin-bottom:1rem; font-size:0.75rem; color:#E8E0D8;">
                     </div>
                     
                     <!-- Contract and Quantity -->
@@ -2085,7 +2085,7 @@
     <!-- 로딩 오버레이 -->
     <div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(61,43,31,0.5); z-index:99998; align-items:center; justify-content:center;">
         <div style="background:#FFF8F0; padding:2rem; border-radius:12px; text-align:center;">
-            <div style="width:40px; height:40px; border:4px solid #ddd; border-top:4px solid #3D2B1F; border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 1rem;"></div>
+            <div style="width:40px; height:40px; border:4px solid #E8E0D8; border-top:4px solid #3D2B1F; border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 1rem;"></div>
             <p id="loading-text" style="color:#3D2B1F;" data-i18n="common.processing">처리 중...</p>
         </div>
     </div>
@@ -2096,7 +2096,7 @@
             <h3 id="confirm-title" style="margin-bottom:0.8rem;"></h3>
             <p id="confirm-message" style="color:#6B5744; margin-bottom:1.2rem; white-space:pre-line;"></p>
             <div style="display:flex; gap:0.5rem;">
-                <button id="confirm-cancel" onclick="closeConfirmModal(false)" style="flex:1; padding:0.7rem; border:1px solid #ddd; border-radius:8px; cursor:pointer; background:#FFF8F0;" data-i18n="common.cancel">취소</button>
+                <button id="confirm-cancel" onclick="closeConfirmModal(false)" style="flex:1; padding:0.7rem; border:1px solid #E8E0D8; border-radius:8px; cursor:pointer; background:#FFF8F0;" data-i18n="common.cancel">취소</button>
                 <button id="confirm-ok" onclick="closeConfirmModal(true)" style="flex:1; padding:0.7rem; border:none; border-radius:8px; cursor:pointer; background:#3D2B1F; color:#FFF8F0; font-weight:700;" data-i18n="common.confirm">확인</button>
             </div>
         </div>
@@ -2121,7 +2121,7 @@
         /* Toggle Switch */
         .toggle-switch { position:relative; display:inline-block; width:44px; height:24px; }
         .toggle-switch input { opacity:0; width:0; height:0; }
-        .toggle-slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#ccc; border-radius:24px; transition:0.3s; }
+        .toggle-slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#E8E0D8; border-radius:24px; transition:0.3s; }
         .toggle-slider::before { content:''; position:absolute; height:18px; width:18px; left:3px; bottom:3px; background:#FFF8F0; border-radius:50%; transition:0.3s; }
         .toggle-switch input:checked + .toggle-slider { background:#4CAF50; }
         .toggle-switch input:checked + .toggle-slider::before { transform:translateX(20px); }

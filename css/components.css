@@ -94,7 +94,7 @@
 
 /* Admin register button */
 .admin-register-btn {
-    background: linear-gradient(135deg, #3D2B1F, #0052a3);
+    background: linear-gradient(135deg, #3D2B1F, #6B5744);
     color: #FFF8F0;
     border: none;
     padding: 0.6rem 1.2rem;
@@ -377,7 +377,7 @@ a:not(.nav-item) {
     line-height: 1;
 }
 .bottom-tab-item.create-btn .tab-icon {
-    background: linear-gradient(135deg, #3D2B1F, #2A1F15);
+    background: linear-gradient(135deg, #8B6914, #6B5744);
     color: #FFF8F0;
     width: 36px;
     height: 36px;
@@ -417,7 +417,7 @@ a:not(.nav-item) {
 /* Toast messages */
 .notif-toast, .toast-message {
     background: var(--bg-card, #3D2B1F) !important;
-    color: var(--text, #f0f0f0) !important;
+    color: var(--text, #F7F3ED) !important;
     border: 1px solid var(--border, #E8E0D8) !important;
     border-radius: 12px !important;
     box-shadow: 0 4px 16px rgba(0,0,0,0.4) !important;
@@ -449,7 +449,7 @@ a:not(.nav-item) {
 input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
 textarea, select {
     background: var(--bg-card-alt, #1e1e3a) !important;
-    color: var(--text, #f0f0f0) !important;
+    color: var(--text, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 input:focus, textarea:focus, select:focus {
@@ -467,14 +467,14 @@ input:focus, textarea:focus, select:focus {
 /* Menu toggle dark */
 .menu-toggle {
     background: var(--bg-card, #3D2B1F) !important;
-    color: var(--text, #f0f0f0) !important;
+    color: var(--text, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Unified secondary buttons */
 .btn-secondary {
     background: var(--bg-card-alt, #1e1e3a) !important;
-    color: var(--text, #f0f0f0) !important;
+    color: var(--text, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 
@@ -483,12 +483,12 @@ input:focus, textarea:focus, select:focus {
 #add-contact-modal > div,
 .group-member-select-modal {
     background: var(--bg-card, #3D2B1F) !important;
-    color: var(--text, #f0f0f0) !important;
+    color: var(--text, #F7F3ED) !important;
 }
 #profile-edit-modal input,
 #add-contact-modal input {
     background: var(--bg-card-alt, #1e1e3a) !important;
-    color: var(--text, #f0f0f0) !important;
+    color: var(--text, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 
@@ -500,38 +500,38 @@ input:focus, textarea:focus, select:focus {
 /* Search overlay dark */
 .search-overlay-content {
     background: var(--bg-card, #3D2B1F) !important;
-    color: var(--text, #f0f0f0) !important;
+    color: var(--text, #F7F3ED) !important;
 }
 
 /* Settings dark */
 .settings-card {
     background: var(--bg-card, #3D2B1F) !important;
-    color: var(--text, #f0f0f0) !important;
+    color: var(--text, #F7F3ED) !important;
 }
 .settings-btn {
     background: var(--bg-card-alt, #1e1e3a) !important;
-    color: var(--text, #f0f0f0) !important;
+    color: var(--text, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Comment bottom sheet dark */
 .bottom-sheet {
     background: var(--bg-card, #3D2B1F) !important;
-    color: var(--text, #f0f0f0) !important;
+    color: var(--text, #F7F3ED) !important;
 }
 
 /* Link preview dark */
 .link-preview-card {
     background: var(--bg-card-alt, #1e1e3a) !important;
     border-color: var(--border, #E8E0D8) !important;
-    color: var(--text, #f0f0f0) !important;
+    color: var(--text, #F7F3ED) !important;
 }
 
 /* All hardcoded white backgrounds → dark */
 .wallet-btn, .product-card, .credit-header, .trading-panel,
 .trading-header, .balance-item {
     background: var(--bg-card, #3D2B1F) !important;
-    color: var(--text, #f0f0f0) !important;
+    color: var(--text, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 
@@ -554,14 +554,14 @@ input:focus, textarea:focus, select:focus {
 .sticker-gif-panel {
     background: var(--bg-card, #3D2B1F) !important;
     border-color: var(--border, #E8E0D8) !important;
-    color: var(--text, #f0f0f0) !important;
+    color: var(--text, #F7F3ED) !important;
 }
 
 /* Attach menu dark */
 .attach-menu-popup {
     background: var(--bg-card, #3D2B1F) !important;
     border-color: var(--border, #E8E0D8) !important;
-    color: var(--text, #f0f0f0) !important;
+    color: var(--text, #F7F3ED) !important;
 }
 
 /* Chat menu dark */
@@ -570,7 +570,7 @@ input:focus, textarea:focus, select:focus {
     border-color: var(--border, #E8E0D8) !important;
 }
 .chat-menu-item {
-    color: var(--text, #f0f0f0) !important;
+    color: var(--text, #F7F3ED) !important;
 }
 .chat-menu-item:hover {
     background: var(--bg-card-alt, #1e1e3a) !important;
@@ -584,7 +584,7 @@ input:focus, textarea:focus, select:focus {
 /* Group info panel dark */
 .group-info-panel {
     background: var(--bg-card, #3D2B1F) !important;
-    color: var(--text, #f0f0f0) !important;
+    color: var(--text, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 
@@ -598,27 +598,27 @@ input:focus, textarea:focus, select:focus {
 .reply-preview-bar {
     background: var(--bg-card-alt, #1e1e3a) !important;
     border-color: var(--gold, #8B6914) !important;
-    color: var(--text, #f0f0f0) !important;
+    color: var(--text, #F7F3ED) !important;
 }
 
 /* Pinned message dark */
 .pinned-message-banner {
     background: var(--bg-card-alt, #1e1e3a) !important;
     border-color: var(--gold, #8B6914) !important;
-    color: var(--text, #f0f0f0) !important;
+    color: var(--text, #F7F3ED) !important;
 }
 
 /* Dashboard shortcuts dark */
 .dash-shortcut-btn {
     background: var(--bg-card-alt, #1e1e3a) !important;
-    color: var(--text, #f0f0f0) !important;
+    color: var(--text, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Tab buttons dark */
 .tab-btn {
     background: var(--bg-card-alt, #1e1e3a) !important;
-    color: var(--text, #f0f0f0) !important;
+    color: var(--text, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 .tab-btn.active {
@@ -643,11 +643,11 @@ input:focus, textarea:focus, select:focus {
 }
 .ai-bubble-bot {
     background: var(--bg-card-alt, #1e1e3a) !important;
-    color: var(--text, #f0f0f0) !important;
+    color: var(--text, #F7F3ED) !important;
 }
 .ai-quick-card {
     background: var(--bg-card-alt, #1e1e3a) !important;
-    color: var(--text, #f0f0f0) !important;
+    color: var(--text, #F7F3ED) !important;
     border-color: var(--border, #E8E0D8) !important;
 }
 
@@ -666,7 +666,7 @@ input:focus, textarea:focus, select:focus {
 .msg-reaction-chip {
     background: var(--bg-card-alt, #1e1e3a) !important;
     border-color: var(--border, #E8E0D8) !important;
-    color: var(--text, #f0f0f0) !important;
+    color: var(--text, #F7F3ED) !important;
 }
 
 /* ===== GLOBAL DARK MODE CLEANUP ===== */

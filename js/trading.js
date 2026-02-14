@@ -2706,7 +2706,7 @@ function updateChartRulesOverlay() {
         padding: '8px 12px',
         fontSize: '0.72rem',
         lineHeight: '1.6',
-        color: '#ccc',
+        color: '#E8E0D8',
         pointerEvents: 'none',
         maxWidth: '220px',
         border: '1px solid rgba(255,255,255,0.08)',

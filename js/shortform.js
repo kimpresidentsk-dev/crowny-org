@@ -100,7 +100,7 @@
                     </div>
                     <div id="sf-svc-results" style="max-height:150px;overflow-y:auto;margin-top:0.3rem;"></div>
                 </div>
-                <div id="sf-svc-selected" style="display:none;margin-top:0.3rem;padding:0.4rem 0.6rem;background:var(--bg,#f5f5f5);border-radius:8px;font-size:0.85rem;"></div>
+                <div id="sf-svc-selected" style="display:none;margin-top:0.3rem;padding:0.4rem 0.6rem;background:var(--bg,#F7F3ED);border-radius:8px;font-size:0.85rem;"></div>
             </div>
 
             <!-- progress -->

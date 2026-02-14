@@ -240,7 +240,7 @@ async function editShortcuts() {
 
     const items = ALL_PAGES.map(p => {
         const checked = current.includes(p.id) ? 'checked' : '';
-        return `<label style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0;border-bottom:1px solid #f0f0f0;cursor:pointer;">
+        return `<label style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0;border-bottom:1px solid #F7F3ED;cursor:pointer;">
             <input type="checkbox" value="${p.id}" ${checked} style="width:18px;height:18px;accent-color:var(--gold,#8B6914);">
             <span style="font-size:1rem;">${p.icon}</span>
             <span style="font-size:0.9rem;font-weight:500;">${p.label}</span>
@@ -253,9 +253,9 @@ async function editShortcuts() {
         <div id="shortcut-checklist">${items}</div>
         <div style="display:flex;gap:0.5rem;margin-top:1rem;">
             <button onclick="saveShortcutEdit()" style="flex:1;background:#3D2B1F;color:#FFF8F0;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;font-weight:700;">${t('common.save','저장')}</button>
-            <button onclick="document.getElementById('shortcut-edit-modal').remove()" style="flex:1;background:#eee;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;">${t('common.cancel','취소')}</button>
+            <button onclick="document.getElementById('shortcut-edit-modal').remove()" style="flex:1;background:#E8E0D8;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;">${t('common.cancel','취소')}</button>
         </div>
-        <div style="margin-top:0.8rem;padding-top:0.8rem;border-top:1px solid #eee;">
+        <div style="margin-top:0.8rem;padding-top:0.8rem;border-top:1px solid #E8E0D8;">
             <p style="font-size:0.75rem;color:#6B5744;">💡 ${t('dashboard.share_hint','각 페이지는 링크로 공유 가능합니다')}</p>
         </div>
     </div>`;

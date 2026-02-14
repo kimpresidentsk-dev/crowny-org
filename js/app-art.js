@@ -597,7 +597,7 @@ function _renderArtCard(art) {
     return `
         <div onclick="viewArtwork('${art.id}')" class="art-gallery-card" style="position:relative;background:#FFF8F0;border-radius:10px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:transform .2s" onmouseenter="this.style.transform='translateY(-3px)'" onmouseleave="this.style.transform=''">
             ${badges}
-            <div style="width:100%;height:170px;overflow:hidden;background:#f0f0f0">
+            <div style="width:100%;height:170px;overflow:hidden;background:#F7F3ED">
                 <img src="${imgSrc}" style="width:100%;height:100%;object-fit:cover" alt="${art.title}" loading="lazy">
             </div>
             <div style="padding:.6rem">
@@ -730,7 +730,7 @@ async function viewArtwork(artId) {
         modal.innerHTML = `
             <div style="background:#FFF8F0;border-radius:12px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;position:relative">
                 <button onclick="document.getElementById('art-modal').remove()" style="position:absolute;top:10px;right:12px;background:rgba(0,0,0,.5);color:#E8D5C4;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.1rem;z-index:1">✕</button>
-                <img src="${imgSrc}" style="width:100%;border-radius:12px 12px 0 0;max-height:50vh;object-fit:contain;background:#f0f0f0">
+                <img src="${imgSrc}" style="width:100%;border-radius:12px 12px 0 0;max-height:50vh;object-fit:contain;background:#F7F3ED">
                 <div style="padding:1.2rem">
                     <h3 style="margin-bottom:.5rem">${art.title}</h3>
                     <div style="font-size:.85rem;color:var(--accent);margin-bottom:.8rem">
@@ -1413,7 +1413,7 @@ async function _loadMyReservations(container) {
                     <div style="display:flex;flex-direction:column;gap:.3rem">
                         ${r.status === 'reserved' && !isExpired ? `
                             <button onclick="completeReservation('${doc.id}')" style="background:#4CAF50;color:#E8D5C4;border:none;padding:.4rem .6rem;border-radius:6px;cursor:pointer;font-size:.75rem;font-weight:600">💰 잔금</button>
-                            <button onclick="cancelReservation('${doc.id}')" style="background:none;border:1px solid #ccc;padding:.3rem .5rem;border-radius:6px;cursor:pointer;font-size:.7rem;color:#6B5744">취소</button>
+                            <button onclick="cancelReservation('${doc.id}')" style="background:none;border:1px solid #E8E0D8;padding:.3rem .5rem;border-radius:6px;cursor:pointer;font-size:.7rem;color:#6B5744">취소</button>
                         ` : ''}
                     </div>
                 </div>`;

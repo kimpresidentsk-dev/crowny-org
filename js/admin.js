@@ -232,7 +232,7 @@ function normalizeToArray(val) {
 function buildCheckboxGrid(name, options, selectedArr) {
     return options.map(o => {
         const checked = selectedArr.includes(o.v) ? 'checked' : '';
-        return `<label style="display:inline-flex;align-items:center;gap:0.2rem;padding:0.25rem 0.5rem;background:${checked ? '#e3f2fd' : '#f5f5f5'};border-radius:6px;cursor:pointer;font-size:0.78rem;border:1px solid ${checked ? '#90caf9' : '#ddd'};transition:all 0.15s;">
+        return `<label style="display:inline-flex;align-items:center;gap:0.2rem;padding:0.25rem 0.5rem;background:${checked ? '#e3f2fd' : '#F7F3ED'};border-radius:6px;cursor:pointer;font-size:0.78rem;border:1px solid ${checked ? '#90caf9' : '#E8E0D8'};transition:all 0.15s;">
             <input type="checkbox" name="${name}" value="${o.v}" ${checked} style="margin:0;accent-color:#1565c0;"> ${o.l}
         </label>`;
     }).join('');
@@ -280,7 +280,7 @@ async function showAdminEditModal(userId, userData) {
             
             <div style="margin-bottom:1rem;">
                 <label style="font-size:0.8rem;color:#6B5744;display:block;margin-bottom:0.3rem;">${t('admin.admin_level','관리자 레벨')}</label>
-                <select id="edit-admin-level" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;">${levelOptions}</select>
+                <select id="edit-admin-level" style="width:100%;padding:0.6rem;border:1px solid #E8E0D8;border-radius:8px;font-size:0.9rem;">${levelOptions}</select>
             </div>
             
             <div style="margin-bottom:1rem;">
@@ -307,17 +307,17 @@ async function showAdminEditModal(userId, userData) {
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:1rem;">
                 <div>
                     <label style="font-size:0.8rem;color:#6B5744;display:block;margin-bottom:0.3rem;">📅 시작일</label>
-                    <input type="date" id="edit-admin-start" value="${startStr}" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;">
+                    <input type="date" id="edit-admin-start" value="${startStr}" style="width:100%;padding:0.6rem;border:1px solid #E8E0D8;border-radius:8px;box-sizing:border-box;">
                 </div>
                 <div>
                     <label style="font-size:0.8rem;color:#6B5744;display:block;margin-bottom:0.3rem;">📅 종료일 (비우면 무기한)</label>
-                    <input type="date" id="edit-admin-end" value="${endStr}" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;">
+                    <input type="date" id="edit-admin-end" value="${endStr}" style="width:100%;padding:0.6rem;border:1px solid #E8E0D8;border-radius:8px;box-sizing:border-box;">
                 </div>
             </div>
             
             <div style="display:flex;gap:0.5rem;">
                 <button id="edit-admin-save" style="flex:1;padding:0.7rem;background:#9C27B0;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:700;">${t('common.save','저장')}</button>
-                <button id="edit-admin-cancel" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;">${t('common.cancel','취소')}</button>
+                <button id="edit-admin-cancel" style="flex:1;padding:0.7rem;border:1px solid #E8E0D8;border-radius:8px;cursor:pointer;background:#FFF8F0;">${t('common.cancel','취소')}</button>
             </div>
         </div>`;
     
@@ -328,7 +328,7 @@ async function showAdminEditModal(userId, userData) {
         cb.addEventListener('change', () => {
             const lbl = cb.closest('label');
             if (cb.checked) { lbl.style.background = '#e3f2fd'; lbl.style.borderColor = '#90caf9'; }
-            else { lbl.style.background = '#f5f5f5'; lbl.style.borderColor = '#ddd'; }
+            else { lbl.style.background = '#F7F3ED'; lbl.style.borderColor = '#E8E0D8'; }
         });
     });
     
@@ -1181,7 +1181,7 @@ async function loadTokenList() {
     
     let html = '<div style="display:grid; gap:0.4rem;">';
     for (const [key, info] of Object.entries(OFFCHAIN_TOKEN_REGISTRY)) {
-        const badge = info.isDefault ? '<span style="font-size:0.6rem; background:#eee; padding:1px 4px; border-radius:2px;">기본</span>' : '<span style="font-size:0.6rem; background:#e3f2fd; padding:1px 4px; border-radius:2px;">커스텀</span>';
+        const badge = info.isDefault ? '<span style="font-size:0.6rem; background:#E8E0D8; padding:1px 4px; border-radius:2px;">기본</span>' : '<span style="font-size:0.6rem; background:#e3f2fd; padding:1px 4px; border-radius:2px;">커스텀</span>';
         html += `
             <div style="display:flex; justify-content:space-between; align-items:center; padding:0.4rem 0.6rem; background:var(--bg); border-radius:4px; border-left:3px solid ${info.color};">
                 <span style="font-size:0.82rem;">${info.icon} <strong>${info.name}</strong> ${info.fullName} ${badge}</span>
@@ -1408,7 +1408,7 @@ async function adminLoadOffchainTxLog() {
             const toLabel = tx.toEmail === 'ADMIN' ? '🔐 관리자' : (tx.toEmail || '--');
             const amountSign = (tx.amount >= 0) ? '+' : '';
             
-            html += `<div style="padding:0.5rem; border-bottom:1px solid #eee; font-size:0.78rem;">
+            html += `<div style="padding:0.5rem; border-bottom:1px solid #E8E0D8; font-size:0.78rem;">
                 <div style="display:flex; justify-content:space-between;">
                     <span style="color:${color}; font-weight:700;">${label}</span>
                     <span style="color:var(--accent);">${time}</span>
@@ -1460,7 +1460,7 @@ async function adminLoadGivingPool() {
         logs.forEach(doc => {
             const log = doc.data();
             const time = log.timestamp?.toDate ? log.timestamp.toDate().toLocaleString('ko-KR') : '--';
-            html += `<div style="padding:0.4rem; border-bottom:1px solid #eee; font-size:0.78rem;">
+            html += `<div style="padding:0.4rem; border-bottom:1px solid #E8E0D8; font-size:0.78rem;">
                 <span style="color:#00897b; font-weight:600;">+${(log.givingAmount||0).toLocaleString()}</span>
                 <span style="color:var(--accent);"> from ${log.email||'--'}</span>
                 <span style="color:#6B5744; float:right;">${time}</span>
@@ -3032,7 +3032,7 @@ async function loadCouponList() {
         if (snap.empty) { listEl.innerHTML = '<p style="color:#6B5744;">생성된 쿠폰이 없습니다</p>'; return; }
 
         const tokenNames = { crtd: 'CRTD', crac: 'CRAC', crgc: 'CRGC', creb: 'CREB' };
-        let html = '<table style="width:100%; border-collapse:collapse; font-size:0.8rem;"><tr style="background:#f5f5f5;"><th style="padding:0.5rem; text-align:left;">쿠폰</th><th>토큰</th><th>수량</th><th>사용</th><th>상태</th><th>관리</th></tr>';
+        let html = '<table style="width:100%; border-collapse:collapse; font-size:0.8rem;"><tr style="background:#F7F3ED;"><th style="padding:0.5rem; text-align:left;">쿠폰</th><th>토큰</th><th>수량</th><th>사용</th><th>상태</th><th>관리</th></tr>';
 
         snap.forEach(doc => {
             const c = doc.data();
@@ -3041,7 +3041,7 @@ async function loadCouponList() {
             const statusColor = c.enabled ? '#2e7d32' : '#c62828';
             const statusText = c.enabled ? '활성' : '비활성';
             const couponName = c.name || c.code;
-            html += `<tr style="border-bottom:1px solid #eee;">
+            html += `<tr style="border-bottom:1px solid #E8E0D8;">
                 <td style="padding:0.5rem;">
                     <div style="font-weight:700;">${couponName}</div>
                     <div style="font-size:0.7rem; color:#6B5744; font-family:monospace;">코드: ${c.code}</div>
@@ -3130,14 +3130,14 @@ async function viewCouponLog(couponId, code) {
 
 function renderCouponLog(snap, listEl, code) {
     let html = `<p style="font-weight:700; margin-bottom:0.5rem;">📜 "${code}" 사용 로그 (${snap.size}건)</p>`;
-    html += '<table style="width:100%; border-collapse:collapse; font-size:0.75rem;"><tr style="background:#f5f5f5;"><th style="padding:0.4rem;">일시</th><th>사용자</th><th>수량</th></tr>';
+    html += '<table style="width:100%; border-collapse:collapse; font-size:0.75rem;"><tr style="background:#F7F3ED;"><th style="padding:0.4rem;">일시</th><th>사용자</th><th>수량</th></tr>';
     snap.forEach(doc => {
         const d = doc.data();
         const date = d.usedAt ? (d.usedAt.toDate ? d.usedAt.toDate() : new Date(d.usedAt)) : null;
         const dateStr = date ? date.toLocaleString('ko-KR') : '-';
         const user = d.userEmail || d.userId || '-';
         const amt = d.amount ? d.amount.toLocaleString() : '-';
-        html += `<tr style="border-bottom:1px solid #eee;"><td style="padding:0.4rem; text-align:center;">${dateStr}</td><td style="text-align:center;">${user}</td><td style="text-align:center;">${amt}</td></tr>`;
+        html += `<tr style="border-bottom:1px solid #E8E0D8;"><td style="padding:0.4rem; text-align:center;">${dateStr}</td><td style="text-align:center;">${user}</td><td style="text-align:center;">${amt}</td></tr>`;
     });
     html += '</table>';
     listEl.innerHTML = html;
@@ -3194,7 +3194,7 @@ async function loadSuperAdminWallets() {
             const isActive = activeWallet === type;
             const exists = !!data;
             return `
-                <div style="background:${isActive ? `linear-gradient(135deg,${color}15,${color}08)` : 'white'};padding:1.2rem;border-radius:12px;border:2px solid ${isActive ? color : '#eee'};position:relative;">
+                <div style="background:${isActive ? `linear-gradient(135deg,${color}15,${color}08)` : 'white'};padding:1.2rem;border-radius:12px;border:2px solid ${isActive ? color : '#E8E0D8'};position:relative;">
                     ${isActive ? `<span style="position:absolute;top:8px;right:8px;background:${color};color:#FFF8F0;padding:2px 8px;border-radius:10px;font-size:0.65rem;font-weight:700;">활성</span>` : ''}
                     <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.8rem;">
                         <span style="font-size:1.5rem;">${icon}</span>
@@ -3283,24 +3283,24 @@ async function showInternalTransfer(fromType) {
             
             <div style="margin-bottom:0.8rem;">
                 <label style="font-size:0.8rem;color:#6B5744;">받는 계좌</label>
-                <select id="transfer-to" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;">
+                <select id="transfer-to" style="width:100%;padding:0.6rem;border:1px solid #E8E0D8;border-radius:8px;">
                     ${targets.map(t => `<option value="${t}">${labels[t]}</option>`).join('')}
                 </select>
             </div>
             <div style="margin-bottom:0.8rem;">
                 <label style="font-size:0.8rem;color:#6B5744;">토큰</label>
-                <input type="text" id="transfer-token" placeholder="예: crtd" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;">
+                <input type="text" id="transfer-token" placeholder="예: crtd" style="width:100%;padding:0.6rem;border:1px solid #E8E0D8;border-radius:8px;box-sizing:border-box;">
             </div>
             <div style="margin-bottom:1rem;">
                 <label style="font-size:0.8rem;color:#6B5744;">수량</label>
-                <input type="number" id="transfer-amount" min="1" placeholder="0" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;">
+                <input type="number" id="transfer-amount" min="1" placeholder="0" style="width:100%;padding:0.6rem;border:1px solid #E8E0D8;border-radius:8px;box-sizing:border-box;">
             </div>
             
             ${fromType === 'original' ? '<p style="font-size:0.75rem;color:#FF6D00;margin-bottom:0.8rem;">⚠️ 오리지널 계좌 출금: 2단계 확인 필요</p>' : ''}
             
             <div style="display:flex;gap:0.5rem;">
                 <button id="transfer-submit" style="flex:1;padding:0.7rem;background:#1565C0;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:700;">💸 이체</button>
-                <button id="transfer-cancel" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;">취소</button>
+                <button id="transfer-cancel" style="flex:1;padding:0.7rem;border:1px solid #E8E0D8;border-radius:8px;cursor:pointer;background:#FFF8F0;">취소</button>
             </div>
         </div>`;
     
@@ -3385,7 +3385,7 @@ async function loadSuperWalletLog() {
         logs.forEach(doc => {
             const d = doc.data();
             const time = d.timestamp?.toDate ? d.timestamp.toDate().toLocaleString('ko-KR') : '--';
-            html += `<div style="padding:0.5rem;border-bottom:1px solid #eee;font-size:0.8rem;">
+            html += `<div style="padding:0.5rem;border-bottom:1px solid #E8E0D8;font-size:0.8rem;">
                 <div style="display:flex;justify-content:space-between;">
                     <span><strong>${d.amount?.toLocaleString()} ${(d.token||'').toUpperCase()}</strong> ${labels[d.fromWallet]||d.fromWallet} → ${labels[d.toWallet]||d.toWallet}</span>
                     <span style="color:#6B5744;font-size:0.72rem;">${time}</span>
@@ -3683,8 +3683,8 @@ async function loadAdminPendingProducts() {
             const dateStr = p.createdAt?.toDate ? p.createdAt.toDate().toLocaleDateString('ko-KR') : '';
             c.innerHTML += `<div style="background:var(--bg);padding:0.8rem;border-radius:8px;margin-bottom:0.5rem;border-left:4px solid #ff9800;">
                 <div style="display:flex;gap:0.8rem;align-items:center;">
-                    <div style="width:60px;height:60px;border-radius:8px;overflow:hidden;background:#f0f0f0;flex-shrink:0;">
-                        ${thumb ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover;">` : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#ccc;">🛒</div>'}
+                    <div style="width:60px;height:60px;border-radius:8px;overflow:hidden;background:#F7F3ED;flex-shrink:0;">
+                        ${thumb ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover;">` : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#E8E0D8;">🛒</div>'}
                     </div>
                     <div style="flex:1;">
                         <div style="font-weight:700;">${p.title}</div>
@@ -3815,9 +3815,9 @@ async function loadRewardSettingsTab() {
     const tiersHTML = (rs.signupTiers || []).map((tier, i) => `
         <div style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.4rem;" data-tier-idx="${i}">
             <span style="font-size:0.8rem;white-space:nowrap;">~</span>
-            <input type="number" class="rw-tier-max" value="${tier.maxUsers}" min="1" style="width:100px;padding:0.4rem;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;" placeholder="${t('admin.rw_max_users','최대 가입자 수')}">
+            <input type="number" class="rw-tier-max" value="${tier.maxUsers}" min="1" style="width:100px;padding:0.4rem;border:1px solid #E8E0D8;border-radius:6px;font-size:0.85rem;" placeholder="${t('admin.rw_max_users','최대 가입자 수')}">
             <span style="font-size:0.8rem;">${t('admin.rw_users','명')}</span>
-            <input type="number" class="rw-tier-amt" value="${tier.amount}" min="0" step="0.1" style="width:80px;padding:0.4rem;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;" placeholder="CRTD">
+            <input type="number" class="rw-tier-amt" value="${tier.amount}" min="0" step="0.1" style="width:80px;padding:0.4rem;border:1px solid #E8E0D8;border-radius:6px;font-size:0.85rem;" placeholder="CRTD">
             <span style="font-size:0.8rem;">CRTD</span>
             <button onclick="this.parentElement.remove()" style="background:#f44336;color:#FFF8F0;border:none;border-radius:4px;padding:0.2rem 0.5rem;cursor:pointer;font-size:0.75rem;">✕</button>
         </div>
@@ -3826,8 +3826,8 @@ async function loadRewardSettingsTab() {
     const logsHTML = logs.length === 0 ? `<p style="color:#6B5744;font-size:0.85rem;">${t('admin.rw_no_logs','지급 내역 없음')}</p>` :
         `<div style="max-height:300px;overflow-y:auto;">
         <table style="width:100%;font-size:0.8rem;border-collapse:collapse;">
-            <tr style="background:#f0f0f0;"><th style="padding:0.4rem;text-align:left;">UID</th><th>유형</th><th>금액</th><th>날짜</th></tr>
-            ${logs.map(l => `<tr style="border-bottom:1px solid #eee;">
+            <tr style="background:#F7F3ED;"><th style="padding:0.4rem;text-align:left;">UID</th><th>유형</th><th>금액</th><th>날짜</th></tr>
+            ${logs.map(l => `<tr style="border-bottom:1px solid #E8E0D8;">
                 <td style="padding:0.4rem;font-family:monospace;font-size:0.7rem;">${(l.uid||'').slice(0,12)}…</td>
                 <td style="text-align:center;">${l.type === 'signup' ? '🆕 가입' : '🤝 초대'}</td>
                 <td style="text-align:center;font-weight:600;">${l.amount} CRTD</td>
@@ -3850,7 +3850,7 @@ async function loadRewardSettingsTab() {
             </div>
             <p style="font-size:0.75rem;color:#6B5744;margin-bottom:0.5rem;">${t('admin.rw_signup_desc','가입 순번에 따라 CRTD를 지급합니다.')}</p>
             <div id="rw-tiers-container">${tiersHTML}</div>
-            <button onclick="addRewardTier()" style="background:#eee;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.8rem;margin-top:0.3rem;">+ ${t('admin.rw_add_tier','구간 추가')}</button>
+            <button onclick="addRewardTier()" style="background:#E8E0D8;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.8rem;margin-top:0.3rem;">+ ${t('admin.rw_add_tier','구간 추가')}</button>
         </div>
 
         <!-- 초대 리워드 -->
@@ -3865,11 +3865,11 @@ async function loadRewardSettingsTab() {
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
                 <div>
                     <label style="font-size:0.8rem;">${t('admin.rw_invite_amount','초대 1건당 (CRTD)')}</label>
-                    <input type="number" id="rw-invite-amount" value="${rs.inviteAmount}" min="0" step="0.1" style="width:100%;padding:0.4rem;border:1px solid #ddd;border-radius:6px;">
+                    <input type="number" id="rw-invite-amount" value="${rs.inviteAmount}" min="0" step="0.1" style="width:100%;padding:0.4rem;border:1px solid #E8E0D8;border-radius:6px;">
                 </div>
                 <div>
                     <label style="font-size:0.8rem;">${t('admin.rw_invite_max','1인 한도 (CRTD)')}</label>
-                    <input type="number" id="rw-invite-max" value="${rs.inviteMaxPerUser}" min="0" style="width:100%;padding:0.4rem;border:1px solid #ddd;border-radius:6px;">
+                    <input type="number" id="rw-invite-max" value="${rs.inviteMaxPerUser}" min="0" style="width:100%;padding:0.4rem;border:1px solid #E8E0D8;border-radius:6px;">
                 </div>
             </div>
         </div>
@@ -3879,11 +3879,11 @@ async function loadRewardSettingsTab() {
             <h4 style="margin-bottom:0.5rem;">🔑 ${t('admin.rw_social_keys','소셜 공유 설정')}</h4>
             <div style="margin-bottom:0.5rem;">
                 <label style="font-size:0.8rem;">💛 ${t('admin.rw_kakao_key','카카오 앱 키 (JavaScript)')}</label>
-                <input type="text" id="rw-kakao-key" value="${is.kakaoAppKey || ''}" placeholder="카카오 JavaScript 앱 키" style="width:100%;padding:0.4rem;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;">
+                <input type="text" id="rw-kakao-key" value="${is.kakaoAppKey || ''}" placeholder="카카오 JavaScript 앱 키" style="width:100%;padding:0.4rem;border:1px solid #E8E0D8;border-radius:6px;font-size:0.85rem;">
             </div>
             <div>
                 <label style="font-size:0.8rem;">📘 ${t('admin.rw_fb_id','페이스북 앱 ID')}</label>
-                <input type="text" id="rw-fb-id" value="${is.facebookAppId || ''}" placeholder="Facebook App ID" style="width:100%;padding:0.4rem;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;">
+                <input type="text" id="rw-fb-id" value="${is.facebookAppId || ''}" placeholder="Facebook App ID" style="width:100%;padding:0.4rem;border:1px solid #E8E0D8;border-radius:6px;font-size:0.85rem;">
             </div>
         </div>
 
@@ -3904,9 +3904,9 @@ function addRewardTier() {
     div.style.cssText = 'display:flex;gap:0.5rem;align-items:center;margin-bottom:0.4rem;';
     div.innerHTML = `
         <span style="font-size:0.8rem;white-space:nowrap;">~</span>
-        <input type="number" class="rw-tier-max" value="" min="1" style="width:100px;padding:0.4rem;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;" placeholder="최대 가입자">
+        <input type="number" class="rw-tier-max" value="" min="1" style="width:100px;padding:0.4rem;border:1px solid #E8E0D8;border-radius:6px;font-size:0.85rem;" placeholder="최대 가입자">
         <span style="font-size:0.8rem;">명</span>
-        <input type="number" class="rw-tier-amt" value="" min="0" step="0.1" style="width:80px;padding:0.4rem;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;" placeholder="CRTD">
+        <input type="number" class="rw-tier-amt" value="" min="0" step="0.1" style="width:80px;padding:0.4rem;border:1px solid #E8E0D8;border-radius:6px;font-size:0.85rem;" placeholder="CRTD">
         <span style="font-size:0.8rem;">CRTD</span>
         <button onclick="this.parentElement.remove()" style="background:#f44336;color:#FFF8F0;border:none;border-radius:4px;padding:0.2rem 0.5rem;cursor:pointer;font-size:0.75rem;">✕</button>
     `;

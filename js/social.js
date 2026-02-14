@@ -112,7 +112,7 @@ async function showProfileEdit() {
                 <input type="text" id="profile-edit-status" value="${data.statusMessage || ''}" placeholder="${t('social.status_msg','상태 메시지')}" maxlength="50" style="width:100%;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;font-size:0.95rem;box-sizing:border-box;">
             </div>
             <p style="font-size:0.75rem; color:var(--text-muted,#6B5744);">${t('auth.email','이메일')}: ${data.email}</p>
-            <div style="margin-top:0.8rem; padding-top:0.8rem; border-top:1px solid #eee; display:grid; gap:0.5rem;">
+            <div style="margin-top:0.8rem; padding-top:0.8rem; border-top:1px solid #E8E0D8; display:grid; gap:0.5rem;">
                 <p style="font-size:0.8rem; font-weight:600; color:var(--text,#3D2B1F); margin-bottom:0.2rem;">${t('social.login_method','🔐 로그인 방법')}</p>
                 ${currentUser && currentUser.providerData.some(p => p.providerId === 'google.com') ? `
                 <p style="font-size:0.75rem; color:#4CAF50;">${t('social.google_linked','✅ Google 계정 연동됨')}</p>` : `
@@ -754,7 +754,7 @@ async function openChat(chatId, otherId) {
                     if (msgType === 'voice') {
                         content += `<div class="voice-msg-player" style="display:flex;align-items:center;gap:0.5rem;padding:0.3rem;">
                             <button onclick="toggleVoicePlay(this,'${msg.mediaUrl}')" style="background:none;border:none;cursor:pointer;font-size:1.2rem;">▶️</button>
-                            <div style="flex:1;height:4px;background:#ddd;border-radius:2px;"><div class="voice-progress" style="width:0%;height:100%;background:#3D2B1F;border-radius:2px;transition:width 0.1s;"></div></div>
+                            <div style="flex:1;height:4px;background:#E8E0D8;border-radius:2px;"><div class="voice-progress" style="width:0%;height:100%;background:#3D2B1F;border-radius:2px;transition:width 0.1s;"></div></div>
                             <span style="font-size:0.7rem;color:var(--text-muted,#6B5744);">${msg.duration ? msg.duration + 's' : ''}</span>
                         </div>`;
                     }
@@ -846,7 +846,7 @@ async function openChat(chatId, otherId) {
                         ontouchstart="msgTouchStart('${msgId}')" ontouchend="msgTouchEnd()" ontouchmove="msgTouchEnd()">
                         ${!isMine ? `<div style="font-size:0.7rem;color:var(--accent);margin-bottom:0.15rem;">${senderInfo.nickname}</div>` : ''}
                         ${actionsHTML}
-                        <div style="background:${isMine ? 'var(--text)' : '#f0f0f0'};color:${isMine ? 'white' : 'var(--text)'};padding:0.6rem 0.8rem;border-radius:${isMine ? '12px 12px 0 12px' : '12px 12px 12px 0'};word-break:break-word;font-size:0.9rem;line-height:1.4;">${content}</div>
+                        <div style="background:${isMine ? 'var(--text)' : '#F7F3ED'};color:${isMine ? 'white' : 'var(--text)'};padding:0.6rem 0.8rem;border-radius:${isMine ? '12px 12px 0 12px' : '12px 12px 12px 0'};word-break:break-word;font-size:0.9rem;line-height:1.4;">${content}</div>
                         ${reactionsHTML}
                         <div class="msg-time" style="${isMine ? 'justify-content:flex-end;' : ''}">${msg.encrypted ? '🔒 ' : ''}${formatMsgTime(timestamp)}${expiryHTML}${readReceipt}</div>
                     </div>`;
@@ -1044,7 +1044,7 @@ function showAttachMenu() {
         const btn = document.createElement('button');
         btn.innerHTML = `<div style="font-size:1.3rem;">${item.icon}</div><div style="font-size:0.65rem;">${item.label}</div>`;
         btn.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:2px;padding:0.5rem 0.8rem;border:none;background:none;cursor:pointer;border-radius:8px;';
-        btn.onmouseenter = () => btn.style.background = '#f0f0f0';
+        btn.onmouseenter = () => btn.style.background = '#F7F3ED';
         btn.onmouseleave = () => btn.style.background = 'none';
         btn.onclick = () => { menu.remove(); item.fn(); };
         menu.appendChild(btn);
@@ -1197,7 +1197,7 @@ async function forwardMessage(msgId) {
             if (otherId) { const info = await getUserDisplayInfo(otherId); name = info.nickname; }
         }
         if (!name) continue;
-        listHTML += `<div style="padding:0.6rem;border-bottom:1px solid var(--border,#E8E0D8);cursor:pointer;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background=''" onclick="executeForward('${doc.id}',${JSON.stringify(JSON.stringify(msg.text||''))},${JSON.stringify(JSON.stringify(msg.senderId||''))});this.closest('[style*=position]').remove();">${name}</div>`;
+        listHTML += `<div style="padding:0.6rem;border-bottom:1px solid var(--border,#E8E0D8);cursor:pointer;" onmouseover="this.style.background='#F7F3ED'" onmouseout="this.style.background=''" onclick="executeForward('${doc.id}',${JSON.stringify(JSON.stringify(msg.text||''))},${JSON.stringify(JSON.stringify(msg.senderId||''))});this.closest('[style*=position]').remove();">${name}</div>`;
     }
     overlay.innerHTML = `<div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:400px;width:100%;max-height:60vh;overflow-y:auto;">
         <h3 style="margin-bottom:1rem;">↗️ 전달할 채팅방 선택</h3>
@@ -1277,7 +1277,7 @@ function showStickerTab() {
     const stickers = ['😀','😂','🥰','😎','🤔','😱','🥺','👍','❤️','🔥','🎉','💯','🙏','✨','💪','🎵'];
     const content = document.getElementById('sticker-gif-content');
     content.innerHTML = `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;">${stickers.map(s =>
-        `<button onclick="sendStickerMessage('${s}')" style="font-size:2.5rem;padding:0.8rem;border:none;background:none;cursor:pointer;border-radius:8px;transition:background 0.15s;" onmouseenter="this.style.background='#f0f0f0'" onmouseleave="this.style.background='none'">${s}</button>`
+        `<button onclick="sendStickerMessage('${s}')" style="font-size:2.5rem;padding:0.8rem;border:none;background:none;cursor:pointer;border-radius:8px;transition:background 0.15s;" onmouseenter="this.style.background='#F7F3ED'" onmouseleave="this.style.background='none'">${s}</button>`
     ).join('')}</div>`;
 }
 
@@ -1372,7 +1372,7 @@ async function shareServiceItem(type) {
             const price = d.price ? ` — ${d.price}` : '';
             const img = d.imageUrl || d.imageData || d.thumbnailUrl || '';
             listHTML += `<div style="display:flex;align-items:center;gap:0.6rem;padding:0.6rem;border-bottom:1px solid var(--border,#E8E0D8);cursor:pointer;" onclick="sendShareCard('${type}','${doc.id}',${JSON.stringify(name)},${JSON.stringify(img)},${JSON.stringify(d.price||'')});this.closest('[style*=position]').remove();">
-                ${img ? `<img src="${img}" style="width:40px;height:40px;border-radius:6px;object-fit:cover;">` : '<div style="width:40px;height:40px;border-radius:6px;background:#eee;display:flex;align-items:center;justify-content:center;">📦</div>'}
+                ${img ? `<img src="${img}" style="width:40px;height:40px;border-radius:6px;object-fit:cover;">` : '<div style="width:40px;height:40px;border-radius:6px;background:#E8E0D8;display:flex;align-items:center;justify-content:center;">📦</div>'}
                 <div style="flex:1;min-width:0;"><div style="font-size:0.85rem;font-weight:600;">${name}</div><div style="font-size:0.75rem;color:var(--text-muted,#6B5744);">${price}</div></div>
             </div>`;
         });
@@ -1908,7 +1908,7 @@ async function showServiceLinkModal() {
         <p style="font-size:0.85rem;color:var(--text-muted,#6B5744);margin-bottom:1rem;">게시물에 연결할 서비스를 선택하세요</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1rem;">
             ${Object.entries(SERVICE_LINK_CONFIG).map(([type, cfg]) => `
-                <button onclick="selectServiceType('${type}')" style="padding:0.8rem;border:2px solid var(--border,#E8E0D8);border-radius:12px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;font-weight:600;text-align:center;transition:all 0.2s;" onmouseover="this.style.borderColor='${cfg.color}';this.style.background='${cfg.color}11'" onmouseout="this.style.borderColor='#eee';this.style.background='white'">
+                <button onclick="selectServiceType('${type}')" style="padding:0.8rem;border:2px solid var(--border,#E8E0D8);border-radius:12px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;font-weight:600;text-align:center;transition:all 0.2s;" onmouseover="this.style.borderColor='${cfg.color}';this.style.background='${cfg.color}11'" onmouseout="this.style.borderColor='#E8E0D8';this.style.background='white'">
                     ${cfg.action}
                 </button>
             `).join('')}
@@ -2021,9 +2021,9 @@ function openVideoEditor() {
                 <label style="font-size:0.8rem;color:var(--text-muted,#6B5744);">필터</label>
                 <div style="display:flex;gap:0.5rem;margin-top:0.3rem;">
                     <button onclick="setVideoFilter('none')" class="vfilter-btn active" style="padding:0.3rem 0.6rem;border:2px solid #3D2B1F;border-radius:8px;font-size:0.75rem;cursor:pointer;background:var(--bg-card,#3D2B1F);">원본</button>
-                    <button onclick="setVideoFilter('grayscale(100%)')" class="vfilter-btn" style="padding:0.3rem 0.6rem;border:2px solid #ddd;border-radius:8px;font-size:0.75rem;cursor:pointer;background:var(--bg-card,#3D2B1F);">흑백</button>
-                    <button onclick="setVideoFilter('sepia(40%) saturate(1.4)')" class="vfilter-btn" style="padding:0.3rem 0.6rem;border:2px solid #ddd;border-radius:8px;font-size:0.75rem;cursor:pointer;background:var(--bg-card,#3D2B1F);">따뜻한</button>
-                    <button onclick="setVideoFilter('saturate(0.8) hue-rotate(20deg)')" class="vfilter-btn" style="padding:0.3rem 0.6rem;border:2px solid #ddd;border-radius:8px;font-size:0.75rem;cursor:pointer;background:var(--bg-card,#3D2B1F);">시원한</button>
+                    <button onclick="setVideoFilter('grayscale(100%)')" class="vfilter-btn" style="padding:0.3rem 0.6rem;border:2px solid #E8E0D8;border-radius:8px;font-size:0.75rem;cursor:pointer;background:var(--bg-card,#3D2B1F);">흑백</button>
+                    <button onclick="setVideoFilter('sepia(40%) saturate(1.4)')" class="vfilter-btn" style="padding:0.3rem 0.6rem;border:2px solid #E8E0D8;border-radius:8px;font-size:0.75rem;cursor:pointer;background:var(--bg-card,#3D2B1F);">따뜻한</button>
+                    <button onclick="setVideoFilter('saturate(0.8) hue-rotate(20deg)')" class="vfilter-btn" style="padding:0.3rem 0.6rem;border:2px solid #E8E0D8;border-radius:8px;font-size:0.75rem;cursor:pointer;background:var(--bg-card,#3D2B1F);">시원한</button>
                 </div>
             </div>
             <!-- Text overlay -->
@@ -2072,7 +2072,7 @@ function setVideoFilter(filter) {
     _videoEditorState.filter = filter;
     const v = document.getElementById('editor-video');
     if (v) v.style.filter = filter;
-    document.querySelectorAll('.vfilter-btn').forEach(b => { b.classList.remove('active'); b.style.borderColor = '#ddd'; });
+    document.querySelectorAll('.vfilter-btn').forEach(b => { b.classList.remove('active'); b.style.borderColor = '#E8E0D8'; });
     event.target.classList.add('active');
     event.target.style.borderColor = '#3D2B1F';
 }
@@ -2845,7 +2845,7 @@ async function showFollowList(uid, type) {
             html += `<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0;border-bottom:1px solid var(--border,#E8E0D8);">
                 <div onclick="showFullProfile('${doc.id}')" style="cursor:pointer;">${avatarHTML(info.photoURL, info.nickname, 36)}</div>
                 <span style="flex:1;font-size:0.9rem;font-weight:600;cursor:pointer;" onclick="showFullProfile('${doc.id}')">${info.nickname}</span>
-                ${doc.id !== currentUser?.uid ? `<button onclick="followUser('${doc.id}');this.textContent='${amFollowingThis ? '팔로우' : '팔로잉 ✓'}'" style="padding:0.3rem 0.6rem;border:${amFollowingThis ? 'none' : '1px solid #ddd'};border-radius:6px;background:${amFollowingThis ? '#0095f6' : 'white'};color:${amFollowingThis ? 'white' : 'var(--text)'};font-size:0.8rem;cursor:pointer;">${amFollowingThis ? '팔로잉' : '팔로우'}</button>` : ''}
+                ${doc.id !== currentUser?.uid ? `<button onclick="followUser('${doc.id}');this.textContent='${amFollowingThis ? '팔로우' : '팔로잉 ✓'}'" style="padding:0.3rem 0.6rem;border:${amFollowingThis ? 'none' : '1px solid #E8E0D8'};border-radius:6px;background:${amFollowingThis ? '#0095f6' : 'white'};color:${amFollowingThis ? 'white' : 'var(--text)'};font-size:0.8rem;cursor:pointer;">${amFollowingThis ? '팔로잉' : '팔로우'}</button>` : ''}
             </div>`;
         }
 

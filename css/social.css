@@ -385,7 +385,7 @@
 /* Scroll rows */
 .book-scroll-row { scrollbar-width: thin; -webkit-overflow-scrolling: touch; }
 .book-scroll-row::-webkit-scrollbar { height: 4px; }
-.book-scroll-row::-webkit-scrollbar-thumb { background: #ccc; border-radius: 2px; }
+.book-scroll-row::-webkit-scrollbar-thumb { background: #E8E0D8; border-radius: 2px; }
 
 /* Snow effect */
 @keyframes snowfall {

@@ -4,28 +4,28 @@ const BRAIN = (() => {
     // ── 1단계: 4가지 기질 (블루/옐로우/레드/그린) ──
     const TEMPERAMENTS = {
         blue: {
-            name: '블루 💙', color: '#2196F3', gradient: 'linear-gradient(135deg,#1565C0,#42A5F5)',
+            name: '블루 💙', color: '#8B6914', gradient: 'linear-gradient(135deg,#8B6914,#F0C060)',
             traits: ['완벽주의자', '충성인'],
             desc: '질서와 원칙을 중시하며, 신뢰할 수 있고 꼼꼼합니다. 깊은 사고력과 분석력이 강점입니다.',
             strengths: ['분석력', '신뢰성', '꼼꼼함', '계획성'],
             growth: '때로는 완벽하지 않아도 괜찮다는 것을 받아들이세요.'
         },
         yellow: {
-            name: '옐로우 💛', color: '#FFC107', gradient: 'linear-gradient(135deg,#F57F17,#FFCA28)',
+            name: '옐로우 💛', color: '#8B6914', gradient: 'linear-gradient(135deg,#8B6914,#F0C060)',
             traits: ['예술가', '사려깊은 자', '낙천가'],
             desc: '창의적이고 긍정적이며, 사람들에게 기쁨과 영감을 줍니다. 감성과 직관이 뛰어납니다.',
             strengths: ['창의력', '공감력', '긍정성', '직관력'],
             growth: '에너지를 분산시키지 말고 하나에 집중하는 연습을 해보세요.'
         },
         red: {
-            name: '레드 ❤️', color: '#F44336', gradient: 'linear-gradient(135deg,#C62828,#EF5350)',
+            name: '레드 ❤️', color: '#8B6914', gradient: 'linear-gradient(135deg,#8B6914,#6B5744)',
             traits: ['성취가', '지도자'],
             desc: '목표 지향적이고 결단력이 있으며, 팀을 이끄는 리더십이 있습니다. 실행력이 탁월합니다.',
             strengths: ['리더십', '결단력', '실행력', '추진력'],
             growth: '다른 사람의 속도와 감정을 존중하는 연습이 필요합니다.'
         },
         green: {
-            name: '그린 💚', color: '#4CAF50', gradient: 'linear-gradient(135deg,#2E7D32,#66BB6A)',
+            name: '그린 💚', color: '#8B6914', gradient: 'linear-gradient(135deg,#8B6914,#6B5744)',
             traits: ['평화주의자', '사색가'],
             desc: '조화와 평화를 추구하며, 깊은 사색과 통찰력이 있습니다. 균형 잡힌 시각을 가지고 있습니다.',
             strengths: ['통찰력', '조화', '인내심', '중재력'],
@@ -165,7 +165,7 @@ const BRAIN = (() => {
                     </div>
                 </div>
 
-                <div onclick="BRAIN.startStage(2)" style="background:linear-gradient(135deg,#f093fb,#f5576c);padding:1.2rem;border-radius:12px;color:'#FFF8F0';cursor:pointer;">
+                <div onclick="BRAIN.startStage(2)" style="background:linear-gradient(135deg,#8B6914,#6B5744);padding:1.2rem;border-radius:12px;color:'#FFF8F0';cursor:pointer;">
                     <div style="display:flex;justify-content:space-between;align-items:center;">
                         <div>
                             <div style="font-size:0.7rem;opacity:0.8;">STAGE 2</div>
@@ -176,7 +176,7 @@ const BRAIN = (() => {
                     </div>
                 </div>
 
-                <div onclick="BRAIN.startStage(3)" style="background:linear-gradient(135deg,#4facfe,#00f2fe);padding:1.2rem;border-radius:12px;color:'#FFF8F0';cursor:pointer;">
+                <div onclick="BRAIN.startStage(3)" style="background:linear-gradient(135deg,#8B6914,#6B5744);padding:1.2rem;border-radius:12px;color:'#FFF8F0';cursor:pointer;">
                     <div style="display:flex;justify-content:space-between;align-items:center;">
                         <div>
                             <div style="font-size:0.7rem;opacity:0.8;">STAGE 3</div>
@@ -328,7 +328,7 @@ const BRAIN = (() => {
 
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
                 <button onclick="BRAIN.startStage(2)" style="padding:0.8rem;border:none;border-radius:10px;background:linear-gradient(135deg,#f093fb,#f5576c);color:'#FFF8F0';font-weight:700;cursor:pointer;">🔮 2단계 진행</button>
-                <button onclick="BRAIN.init()" style="padding:0.8rem;border:none;border-radius:10px;background:var(--card-bg,#F7F3ED);border:1px solid #ddd;cursor:pointer;font-weight:600;">← 돌아가기</button>
+                <button onclick="BRAIN.init()" style="padding:0.8rem;border:none;border-radius:10px;background:var(--card-bg,#F7F3ED);border:1px solid #E8E0D8;cursor:pointer;font-weight:600;">← 돌아가기</button>
             </div>
         `;
     }

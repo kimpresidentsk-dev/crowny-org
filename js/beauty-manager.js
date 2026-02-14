@@ -41,11 +41,11 @@ const BEAUTY = (() => {
         container.innerHTML = `
             <!-- 요약 카드 -->
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:1.5rem;">
-                <div style="background:linear-gradient(135deg,#ff6b9d,#c44569);padding:1rem;border-radius:12px;color:#FFF8F0;text-align:center;">
+                <div style="background:linear-gradient(135deg,#8B6914,#6B5744);padding:1rem;border-radius:12px;color:#FFF8F0;text-align:center;">
                     <div style="font-size:2rem;font-weight:800;">${photoCount}</div>
                     <div style="font-size:0.8rem;opacity:0.9;">📸 촬영 기록</div>
                 </div>
-                <div style="background:linear-gradient(135deg,#6c5ce7,#a29bfe);padding:1rem;border-radius:12px;color:#FFF8F0;text-align:center;">
+                <div style="background:linear-gradient(135deg,#8B6914,#F0C060);padding:1rem;border-radius:12px;color:#FFF8F0;text-align:center;">
                     <div style="font-size:2rem;font-weight:800;">${latestAnalysis ? '📊' : '—'}</div>
                     <div style="font-size:0.8rem;opacity:0.9;">${latestAnalysis ? '최근 분석 있음' : '분석 대기'}</div>
                 </div>
@@ -416,7 +416,7 @@ JSON만 출력하세요.`;
                             <span>${metricsKo[key] || key}</span>
                             <span style="font-weight:700;color:${colors[key] || '#6B5744'};">${val}점</span>
                         </div>
-                        <div style="background:#f0f0f0;border-radius:10px;height:8px;overflow:hidden;">
+                        <div style="background:#F7F3ED;border-radius:10px;height:8px;overflow:hidden;">
                             <div style="background:${colors[key] || '#E91E63'};height:100%;width:${val}%;border-radius:10px;transition:width 0.5s;"></div>
                         </div>
                     </div>
@@ -483,7 +483,7 @@ JSON만 출력하세요.`;
                         return `
                             <div style="display:flex;align-items:center;gap:0.8rem;">
                                 <div style="width:50px;text-align:center;font-size:0.7rem;color:var(--accent);">${date}</div>
-                                <div style="flex:1;background:#f5f5f5;border-radius:8px;padding:0.5rem;display:flex;justify-content:space-between;align-items:center;">
+                                <div style="flex:1;background:#F7F3ED;border-radius:8px;padding:0.5rem;display:flex;justify-content:space-between;align-items:center;">
                                     <span style="font-weight:700;">${a.skinType || '—'}</span>
                                     <div style="text-align:right;">
                                         <span style="font-weight:700;">${overall}점</span>
@@ -528,7 +528,7 @@ JSON만 출력하세요.`;
                 const d = doc.data();
                 const date = d.createdAt?.toDate ? d.createdAt.toDate().toLocaleDateString('ko-KR') : '';
                 return `
-                    <div style="border:1px solid #ddd;border-radius:8px;padding:0.8rem;margin-bottom:0.5rem;">
+                    <div style="border:1px solid #E8E0D8;border-radius:8px;padding:0.8rem;margin-bottom:0.5rem;">
                         <div style="display:flex;justify-content:space-between;align-items:center;">
                             <strong>${d.userNickname || d.userId}</strong>
                             <span style="font-size:0.75rem;color:#6B5744;">${date} · 📸 ${d.photoCount}장</span>
@@ -557,7 +557,7 @@ JSON만 출력하세요.`;
             <div style="background:#FFF8F0;border-radius:16px;max-width:500px;width:100%;max-height:85vh;overflow-y:auto;padding:1.5rem;">
                 <h3>📊 피부 분석 입력</h3>
                 <div style="display:grid;gap:0.6rem;margin-top:1rem;">
-                    <select id="admin-skin-type" style="padding:0.5rem;border:1px solid #ddd;border-radius:6px;">
+                    <select id="admin-skin-type" style="padding:0.5rem;border:1px solid #E8E0D8;border-radius:6px;">
                         ${SKIN_TYPES.map(t => `<option value="${t}">${t}</option>`).join('')}
                     </select>
                     ${METRICS.map(m => `
@@ -567,9 +567,9 @@ JSON만 출력하세요.`;
                             <span style="width:30px;text-align:right;font-size:0.8rem;">50</span>
                         </div>
                     `).join('')}
-                    <textarea id="admin-summary" placeholder="요약 코멘트" rows="2" style="padding:0.5rem;border:1px solid #ddd;border-radius:6px;"></textarea>
-                    <textarea id="admin-advice" placeholder="관리 조언" rows="2" style="padding:0.5rem;border:1px solid #ddd;border-radius:6px;"></textarea>
-                    <input type="text" id="admin-recommended" placeholder="추천 제품/서비스" style="padding:0.5rem;border:1px solid #ddd;border-radius:6px;">
+                    <textarea id="admin-summary" placeholder="요약 코멘트" rows="2" style="padding:0.5rem;border:1px solid #E8E0D8;border-radius:6px;"></textarea>
+                    <textarea id="admin-advice" placeholder="관리 조언" rows="2" style="padding:0.5rem;border:1px solid #E8E0D8;border-radius:6px;"></textarea>
+                    <input type="text" id="admin-recommended" placeholder="추천 제품/서비스" style="padding:0.5rem;border:1px solid #E8E0D8;border-radius:6px;">
                     <button onclick="BEAUTY.submitAdminAnalysis('${requestId}','${userId}')" 
                         style="padding:0.8rem;border:none;border-radius:8px;background:#4CAF50;color:#FFF8F0;font-weight:700;cursor:pointer;">
                         ✅ 분석 결과 저장

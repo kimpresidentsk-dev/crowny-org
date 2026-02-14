@@ -526,7 +526,7 @@
     border: 2px solid #FFF8F0;
 }
 .online-dot.online { background: #4CAF50; }
-.online-dot.offline { background: #ccc; }
+.online-dot.offline { background: #E8E0D8; }
 
 /* Message time */
 .msg-time {

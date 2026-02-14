@@ -62,7 +62,7 @@
     font-size: 0.95rem;
 }
 .care-btn-med {
-    background: linear-gradient(135deg, #4CAF50, #388E3C);
+    background: linear-gradient(135deg, #8B6914, #6B5744);
     color: #FFF8F0;
     padding: 0.8rem 1.5rem;
     font-size: 1.1rem;
@@ -73,7 +73,7 @@
 
 /* SOS Button */
 .care-sos-btn {
-    background: linear-gradient(135deg, #e53935, #b71c1c);
+    background: linear-gradient(135deg, #8B6914, #6B5744);
     color: #FFF8F0;
     border: none;
     border-radius: 50%;
@@ -82,7 +82,7 @@
     font-size: 2rem;
     font-weight: 900;
     cursor: pointer;
-    box-shadow: 0 4px 20px rgba(229,57,53,0.4);
+    box-shadow: 0 4px 20px rgba(139,105,20,0.4);
     transition: transform 0.15s, box-shadow 0.15s;
     animation: care-sos-pulse 2s infinite;
 }
@@ -90,8 +90,8 @@
     transform: scale(0.9);
 }
 @keyframes care-sos-pulse {
-    0%, 100% { box-shadow: 0 4px 20px rgba(229,57,53,0.4); }
-    50% { box-shadow: 0 4px 40px rgba(229,57,53,0.7); }
+    0%, 100% { box-shadow: 0 4px 20px rgba(139,105,20,0.4); }
+    50% { box-shadow: 0 4px 40px rgba(139,105,20,0.7); }
 }
 
 /* Quick Replies */
@@ -434,11 +434,11 @@
     margin-top: 0.2rem;
 }
 .sos-119 {
-    background: linear-gradient(135deg, #e53935, #b71c1c);
+    background: linear-gradient(135deg, #8B6914, #6B5744);
     color: #FFF8F0;
 }
 .sos-112 {
-    background: linear-gradient(135deg, #1565c0, #0d47a1);
+    background: linear-gradient(135deg, #3D2B1F, #6B5744);
     color: #FFF8F0;
 }
 .sos-ec-card {
@@ -476,7 +476,7 @@
     display: block;
     width: 100%;
     padding: 1.2rem;
-    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+    background: linear-gradient(135deg, #8B6914, #6B5744);
     color: #FFF8F0;
     border: none;
     border-radius: 16px;

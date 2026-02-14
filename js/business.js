@@ -130,12 +130,12 @@
                 ${data.country ? `<span style="font-size:0.7rem;padding:0.2rem 0.6rem;background:var(--bg,#FFF8F0);border-radius:10px;">${data.country}</span>` : ''}
             </div>
             <p style="font-size:0.9rem;line-height:1.7;margin-bottom:1.5rem;white-space:pre-wrap;">${data.description || ''}</p>
-            <div style="background:#f0f0f0;border-radius:6px;height:10px;overflow:hidden;margin-bottom:0.5rem;">
+            <div style="background:#F7F3ED;border-radius:6px;height:10px;overflow:hidden;margin-bottom:0.5rem;">
                 <div style="height:100%;background:${progress >= 100 ? '#4CAF50' : '#8B6914'};width:${progress}%;border-radius:6px;"></div>
             </div>
             <p style="font-size:0.85rem;margin-bottom:1rem;"><strong>${(data.raised||0).toLocaleString()}</strong> / ${(data.goal||0).toLocaleString()} CRTD (${progress}%)</p>
             <button onclick="donateToCampaign('${id}')" class="btn-primary" style="width:100%;padding:0.8rem;">💝 후원하기</button>
-            <button onclick="document.getElementById('campaign-detail-modal').style.display='none'" style="width:100%;padding:0.6rem;margin-top:0.5rem;background:none;border:1px solid #ccc;border-radius:8px;cursor:pointer;">닫기</button>`;
+            <button onclick="document.getElementById('campaign-detail-modal').style.display='none'" style="width:100%;padding:0.6rem;margin-top:0.5rem;background:none;border:1px solid #E8E0D8;border-radius:8px;cursor:pointer;">닫기</button>`;
         modal.style.display = 'flex';
     };
 

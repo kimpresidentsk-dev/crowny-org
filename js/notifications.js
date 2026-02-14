@@ -338,7 +338,7 @@ function openNotifSettings() {
             `).join('')}
         </div>
         <div style="display:flex;gap:0.5rem;margin-top:1rem;">
-            <button onclick="document.getElementById('notif-settings-modal').remove()" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;">취소</button>
+            <button onclick="document.getElementById('notif-settings-modal').remove()" style="flex:1;padding:0.7rem;border:1px solid #E8E0D8;border-radius:8px;cursor:pointer;background:#FFF8F0;">취소</button>
             <button onclick="saveNotificationSettings();document.getElementById('notif-settings-modal').remove()" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#3D2B1F;color:#FFF8F0;font-weight:700;">저장</button>
         </div>
     </div>`;

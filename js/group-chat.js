@@ -192,12 +192,12 @@ async function openGroupChat(chatId) {
                 }
                 if (msgType === 'video') content += `<video src="${msg.mediaUrl}" controls style="max-width:240px;border-radius:8px;display:block;margin-bottom:0.3rem;" preload="metadata"></video>`;
                 if (msgType === 'file') content += `<a href="${msg.mediaUrl}" target="_blank" download="${msg.fileName||'file'}" style="display:flex;align-items:center;gap:0.4rem;padding:0.4rem 0.6rem;background:rgba(0,0,0,0.05);border-radius:8px;text-decoration:none;color:inherit;"><span>📄</span>${msg.fileName||'파일'}</a>`;
-                if (msgType === 'voice') content += `<div style="display:flex;align-items:center;gap:0.5rem;"><button onclick="toggleVoicePlay(this,'${msg.mediaUrl}')" style="background:none;border:none;cursor:pointer;font-size:1.2rem;">▶️</button><div style="flex:1;height:4px;background:#ddd;border-radius:2px;"><div class="voice-progress" style="width:0%;height:100%;background:#3D2B1F;border-radius:2px;"></div></div><span style="font-size:0.7rem;color:#6B5744;">${msg.duration||''}s</span></div>`;
+                if (msgType === 'voice') content += `<div style="display:flex;align-items:center;gap:0.5rem;"><button onclick="toggleVoicePlay(this,'${msg.mediaUrl}')" style="background:none;border:none;cursor:pointer;font-size:1.2rem;">▶️</button><div style="flex:1;height:4px;background:#E8E0D8;border-radius:2px;"><div class="voice-progress" style="width:0%;height:100%;background:#3D2B1F;border-radius:2px;"></div></div><span style="font-size:0.7rem;color:#6B5744;">${msg.duration||''}s</span></div>`;
                 if (msgType === 'sticker') content += `<span style="font-size:3rem;">${msg.text}</span>`;
                 else if (msgType === 'gif') content += `<img src="${msg.mediaUrl}" style="max-width:200px;border-radius:8px;" loading="lazy">`;
                 else if (msgType === 'share_card' && msg.shareCard) {
                     const sc = msg.shareCard;
-                    content += `<div style="border:1px solid #eee;border-radius:10px;overflow:hidden;cursor:pointer;max-width:220px;">${sc.imageUrl ? `<img src="${sc.imageUrl}" style="width:100%;height:100px;object-fit:cover;">` : ''}<div style="padding:0.4rem 0.6rem;"><div style="font-size:0.8rem;font-weight:600;">${sc.name}</div>${sc.price ? `<div style="font-size:0.75rem;color:#e65100;">${sc.price}</div>` : ''}</div></div>`;
+                    content += `<div style="border:1px solid #E8E0D8;border-radius:10px;overflow:hidden;cursor:pointer;max-width:220px;">${sc.imageUrl ? `<img src="${sc.imageUrl}" style="width:100%;height:100px;object-fit:cover;">` : ''}<div style="padding:0.4rem 0.6rem;"><div style="font-size:0.8rem;font-weight:600;">${sc.name}</div>${sc.price ? `<div style="font-size:0.75rem;color:#e65100;">${sc.price}</div>` : ''}</div></div>`;
                 }
                 if (msg.tokenAmount) {
                     content += `<div style="background:linear-gradient(135deg,#8B6914,#FFA000);color:#3D2B1F;padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
@@ -208,7 +208,7 @@ async function openGroupChat(chatId) {
                     ${!isMine ? avatarHTML(senderInfo.photoURL, senderInfo.nickname, 28) : ''}
                     <div style="max-width:70%;">
                         ${!isMine ? `<div style="font-size:0.7rem;color:var(--accent);margin-bottom:0.15rem;">${senderInfo.nickname}</div>` : ''}
-                        <div style="background:${isMine ? 'var(--text)' : '#f0f0f0'};color:${isMine ? 'white' : 'var(--text)'};padding:0.6rem 0.8rem;border-radius:${isMine ? '12px 12px 0 12px' : '12px 12px 12px 0'};word-break:break-word;font-size:0.9rem;line-height:1.4;">${content}</div>
+                        <div style="background:${isMine ? 'var(--text)' : '#F7F3ED'};color:${isMine ? 'white' : 'var(--text)'};padding:0.6rem 0.8rem;border-radius:${isMine ? '12px 12px 0 12px' : '12px 12px 12px 0'};word-break:break-word;font-size:0.9rem;line-height:1.4;">${content}</div>
                     </div>`;
                 messagesDiv.appendChild(msgEl);
             }
