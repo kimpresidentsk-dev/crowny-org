@@ -249,6 +249,7 @@
             </button>
         </div>`;
         document.body.appendChild(modal);
+        if (window.lucide) lucide.createIcons();
     }
 
     // ========== 초대 해시 감지 ==========

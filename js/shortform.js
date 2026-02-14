@@ -118,6 +118,7 @@
             </div>
         </div>`;
         document.body.appendChild(modal);
+        if (window.lucide) lucide.createIcons();
 
         // Bind file input
         const fileInput = modal.querySelector('#sf-file');
