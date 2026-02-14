@@ -226,20 +226,20 @@ async function loadDashboard() {
 
 const ALL_PAGES = [
     { id:'dashboard', icon:'<i data-lucide="bar-chart-3"></i>', label:'DASHBOARD' },
-    { id:'today', icon:'🏠', label:'TODAY' },
-    { id:'messenger', icon:'💬', label:'MESSENGER' },
+    { id:'today', icon:'<i data-lucide="home"></i>', label:'TODAY' },
+    { id:'messenger', icon:'<i data-lucide="message-circle"></i>', label:'MESSENGER' },
     { id:'social', icon:'<i data-lucide="camera"></i>', label:'SOCIAL' },
     { id:'wallet', icon:'<i data-lucide="coins"></i>', label:'WALLET' },
     { id:'prop-trading', icon:'<i data-lucide="trending-up"></i>', label:'PROP TRADING' },
-    { id:'credit', icon:'💳', label:'CREDIT' },
+    { id:'credit', icon:'<i data-lucide="credit-card"></i>', label:'CREDIT' },
     { id:'mall', icon:'<i data-lucide="shopping-cart"></i>', label:'MALL' },
-    { id:'art', icon:'🎨', label:'ART' },
-    { id:'books', icon:'📚', label:'BOOKS' },
-    { id:'artist', icon:'🌟', label:'ARTIST' },
-    { id:'energy', icon:'⚡', label:'ENERGY' },
-    { id:'business', icon:'🏢', label:'BUSINESS' },
-    { id:'fundraise', icon:'heart', label:'FUNDRAISE' },
-    { id:'settings', icon:'⚙️', label:'SETTINGS' },
+    { id:'art', icon:'<i data-lucide="palette"></i>', label:'ART' },
+    { id:'books', icon:'<i data-lucide="book-open"></i>', label:'BOOKS' },
+    { id:'artist', icon:'<i data-lucide="star"></i>', label:'ARTIST' },
+    { id:'energy', icon:'<i data-lucide="zap"></i>', label:'ENERGY' },
+    { id:'business', icon:'<i data-lucide="building"></i>', label:'BUSINESS' },
+    { id:'fundraise', icon:'<i data-lucide="heart"></i>', label:'FUNDRAISE' },
+    { id:'settings', icon:'<i data-lucide="settings"></i>', label:'SETTINGS' },
 ];
 
 const DEFAULT_SHORTCUTS = ['prop-trading','messenger','social','wallet'];
