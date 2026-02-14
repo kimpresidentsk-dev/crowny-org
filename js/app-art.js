@@ -1413,7 +1413,7 @@ async function _loadMyReservations(container) {
                     <div style="display:flex;flex-direction:column;gap:.3rem">
                         ${r.status === 'reserved' && !isExpired ? `
                             <button onclick="completeReservation('${doc.id}')" style="background:#4CAF50;color:#E8D5C4;border:none;padding:.4rem .6rem;border-radius:6px;cursor:pointer;font-size:.75rem;font-weight:600">💰 잔금</button>
-                            <button onclick="cancelReservation('${doc.id}')" style="background:none;border:1px solid #ccc;padding:.3rem .5rem;border-radius:6px;cursor:pointer;font-size:.7rem;color:#999">취소</button>
+                            <button onclick="cancelReservation('${doc.id}')" style="background:none;border:1px solid #ccc;padding:.3rem .5rem;border-radius:6px;cursor:pointer;font-size:.7rem;color:#6B5744">취소</button>
                         ` : ''}
                     </div>
                 </div>`;

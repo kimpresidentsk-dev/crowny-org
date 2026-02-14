@@ -147,14 +147,14 @@
                 <button onclick="login()" class="btn-primary" data-i18n="auth.login">로그인</button>
                 <div style="display:flex; align-items:center; gap:0.5rem; margin:1rem 0;">
                     <hr style="flex:1; border:none; border-top:1px solid #ddd;">
-                    <span style="color:#888; font-size:0.85rem;" data-i18n="common.or">또는</span>
+                    <span style="color:#6B5744; font-size:0.85rem;" data-i18n="common.or">또는</span>
                     <hr style="flex:1; border:none; border-top:1px solid #ddd;">
                 </div>
                 <button onclick="loginWithGoogle()" class="btn-google" style="background:#FFF8F0; color:#3D2B1F; border:1px solid #ddd; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-size:0.95rem; display:flex; align-items:center; justify-content:center; gap:0.5rem;">
                     <img loading="lazy" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width:18px; height:18px;" data-i18n="auth.google_login"> Google로 로그인
                 </button>
                 <p style="margin-top:1rem;" data-i18n-html="auth.no_account_link">계정이 없으신가요? <a href="#" onclick="showSignup()">회원가입</a></p>
-                <p><a href="#" onclick="resetPassword()" style="font-size:0.85rem; color:#888;" data-i18n="auth.forgot_password">비밀번호를 잊으셨나요?</a></p>
+                <p><a href="#" onclick="resetPassword()" style="font-size:0.85rem; color:#6B5744;" data-i18n="auth.forgot_password">비밀번호를 잊으셨나요?</a></p>
             </div>
             
             <div id="signup-form" class="auth-form" style="display:none;">
@@ -165,7 +165,7 @@
                 <button onclick="signup()" class="btn-primary" data-i18n="auth.signup_btn">가입하기</button>
                 <div style="display:flex; align-items:center; gap:0.5rem; margin:1rem 0;">
                     <hr style="flex:1; border:none; border-top:1px solid #ddd;">
-                    <span style="color:#888; font-size:0.85rem;">또는</span>
+                    <span style="color:#6B5744; font-size:0.85rem;">또는</span>
                     <hr style="flex:1; border:none; border-top:1px solid #ddd;">
                 </div>
                 <button onclick="loginWithGoogle()" class="btn-google" style="background:#FFF8F0; color:#3D2B1F; border:1px solid #ddd; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-size:0.95rem; display:flex; align-items:center; justify-content:center; gap:0.5rem;">
@@ -177,9 +177,9 @@
             <!-- 이메일 인증 안내 -->
             <div id="verify-email-form" class="auth-form" style="display:none;">
                 <h3 data-i18n="auth.email_verify">📧 이메일 인증</h3>
-                <p style="color:#666; margin-bottom:1rem;" data-i18n-html="auth.email_verify_desc">가입하신 이메일로 인증 링크를 보냈습니다.<br>인증 후 아래 버튼을 눌러주세요.</p>
+                <p style="color:#6B5744; margin-bottom:1rem;" data-i18n-html="auth.email_verify_desc">가입하신 이메일로 인증 링크를 보냈습니다.<br>인증 후 아래 버튼을 눌러주세요.</p>
                 <button onclick="checkEmailVerified()" class="btn-primary" data-i18n="auth.verify_done">✅ 인증 완료 확인</button>
-                <button onclick="resendVerification()" style="background:none; border:1px solid #ddd; padding:0.5rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.5rem; color:#666;" data-i18n="auth.resend_verify">인증 메일 재발송</button>
+                <button onclick="resendVerification()" style="background:none; border:1px solid #ddd; padding:0.5rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.5rem; color:#6B5744;" data-i18n="auth.resend_verify">인증 메일 재발송</button>
             </div>
         </div>
     </div>
@@ -385,7 +385,7 @@
                             <div style="display:flex; align-items:center; gap:0.5rem;">
                                 <span id="wallet-address" style="font-family:'Consolas',monospace; font-size:1rem; font-weight:700; color:#3D2B1F;"></span>
                             </div>
-                            <p id="wallet-address-full" style="font-family:'Consolas',monospace; font-size:0.7rem; color:#999; margin-top:0.3rem; word-break:break-all;"></p>
+                            <p id="wallet-address-full" style="font-family:'Consolas',monospace; font-size:0.7rem; color:#6B5744; margin-top:0.3rem; word-break:break-all;"></p>
                         </div>
                         <div style="display:flex; gap:0.3rem; flex-wrap:wrap;">
                             <button onclick="copyAddress()" style="background:#f5f5f5; border:none; padding:0.4rem; border-radius:8px; cursor:pointer; font-size:0.85rem; min-width:32px;" title="주소 복사" data-i18n-title="wallet.copy_address"><i data-lucide="copy"></i></button>
@@ -687,15 +687,15 @@
                     <div id="reply-preview-bar" style="display:none;" class="reply-preview-bar">
                         <div class="reply-preview-content">
                             <span id="reply-preview-name" style="font-weight:700;font-size:0.75rem;color:#3D2B1F;"></span>
-                            <span id="reply-preview-text" style="font-size:0.8rem;color:#666;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+                            <span id="reply-preview-text" style="font-size:0.8rem;color:#6B5744;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
                         </div>
-                        <button onclick="cancelReply()" style="background:none;border:none;cursor:pointer;font-size:1rem;color:#999;">✕</button>
+                        <button onclick="cancelReply()" style="background:none;border:none;cursor:pointer;font-size:1rem;color:#6B5744;">✕</button>
                     </div>
                     <!-- Pinned message banner -->
                     <div id="pinned-message-banner" style="display:none;" class="pinned-message-banner">
                         <span style="font-size:0.75rem;">📌</span>
                         <span id="pinned-message-text" style="flex:1;font-size:0.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;" onclick="scrollToPinnedMessage()"></span>
-                        <button onclick="document.getElementById('pinned-message-banner').style.display='none'" style="background:none;border:none;cursor:pointer;font-size:0.8rem;color:#999;">✕</button>
+                        <button onclick="document.getElementById('pinned-message-banner').style.display='none'" style="background:none;border:none;cursor:pointer;font-size:0.8rem;color:#6B5744;">✕</button>
                     </div>
                     <div class="chat-input" id="chat-input-area" style="display:none;">
                         <button onclick="showAttachMenu()" class="btn-send-token" title="파일 첨부" style="background:transparent;border:none;color:#6B5744;padding:0.5rem;border-radius:50%;cursor:pointer;font-size:1.2rem;">📎</button>
@@ -1477,20 +1477,20 @@
                     <!-- MA 세팅 패널 -->
                     <div id="ma-settings" style="display:none; padding:8px 10px; background:#F7F3ED; border-radius:8px; margin-bottom:4px;">
                         <span style="color:#00ff88; font-size:0.7rem; font-weight:700;">📈 이동평균선</span>
-                        <label style="float:right; font-size:0.65rem; color:#888; cursor:pointer;"><input type="checkbox" id="nq-ma-label-show" onchange="applyMASettings()" style="margin:0 2px 0 0; vertical-align:middle;"> 이름표시</label>
+                        <label style="float:right; font-size:0.65rem; color:#6B5744; cursor:pointer;"><input type="checkbox" id="nq-ma-label-show" onchange="applyMASettings()" style="margin:0 2px 0 0; vertical-align:middle;"> 이름표시</label>
                         <div style="display:flex; flex-wrap:wrap; gap:4px; align-items:center; margin-top:4px;">
                             <input type="checkbox" id="nq-ma1-show" checked onchange="applyMASettings()" style="margin:0;">
-                            <select id="nq-ma1-type" onchange="applyMASettings()" style="background:#6B5744; color:#aaa; border:1px solid #3D2B1F; border-radius:3px; padding:1px 2px; font-size:0.65rem;"><option value="SMA">SMA</option><option value="EMA">EMA</option></select>
+                            <select id="nq-ma1-type" onchange="applyMASettings()" style="background:#6B5744; color:#6B5744; border:1px solid #3D2B1F; border-radius:3px; padding:1px 2px; font-size:0.65rem;"><option value="SMA">SMA</option><option value="EMA">EMA</option></select>
                             <input type="number" id="nq-ma1-period" value="5" style="width:32px; background:#6B5744; color:#FFF8F0; border:1px solid #3D2B1F; border-radius:3px; padding:1px 3px; font-size:0.7rem; text-align:center;">
                             <input type="color" id="nq-ma1-color" value="#ffeb3b" onchange="applyMASettings()" style="width:20px; height:20px; border:none; cursor:pointer; padding:0;">
                             <span style="margin-left:2px;"></span>
                             <input type="checkbox" id="nq-ma2-show" checked onchange="applyMASettings()" style="margin:0;">
-                            <select id="nq-ma2-type" onchange="applyMASettings()" style="background:#6B5744; color:#aaa; border:1px solid #3D2B1F; border-radius:3px; padding:1px 2px; font-size:0.65rem;"><option value="SMA">SMA</option><option value="EMA">EMA</option></select>
+                            <select id="nq-ma2-type" onchange="applyMASettings()" style="background:#6B5744; color:#6B5744; border:1px solid #3D2B1F; border-radius:3px; padding:1px 2px; font-size:0.65rem;"><option value="SMA">SMA</option><option value="EMA">EMA</option></select>
                             <input type="number" id="nq-ma2-period" value="20" style="width:32px; background:#6B5744; color:#FFF8F0; border:1px solid #3D2B1F; border-radius:3px; padding:1px 3px; font-size:0.7rem; text-align:center;">
                             <input type="color" id="nq-ma2-color" value="#FFA500" onchange="applyMASettings()" style="width:20px; height:20px; border:none; cursor:pointer; padding:0;">
                             <span style="margin-left:2px;"></span>
                             <input type="checkbox" id="nq-ma3-show" checked onchange="applyMASettings()" style="margin:0;">
-                            <select id="nq-ma3-type" onchange="applyMASettings()" style="background:#6B5744; color:#aaa; border:1px solid #3D2B1F; border-radius:3px; padding:1px 2px; font-size:0.65rem;"><option value="SMA">SMA</option><option value="EMA">EMA</option></select>
+                            <select id="nq-ma3-type" onchange="applyMASettings()" style="background:#6B5744; color:#6B5744; border:1px solid #3D2B1F; border-radius:3px; padding:1px 2px; font-size:0.65rem;"><option value="SMA">SMA</option><option value="EMA">EMA</option></select>
                             <input type="number" id="nq-ma3-period" value="60" style="width:32px; background:#6B5744; color:#FFF8F0; border:1px solid #3D2B1F; border-radius:3px; padding:1px 3px; font-size:0.7rem; text-align:center;">
                             <input type="color" id="nq-ma3-color" value="#FF3333" onchange="applyMASettings()" style="width:20px; height:20px; border:none; cursor:pointer; padding:0;">
                         </div>
@@ -1501,28 +1501,28 @@
                     <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; padding:8px 10px; background:#6B5744; border-radius:8px; margin-bottom:4px; gap:6px;">
                         <div>
                             <div style="display:flex; align-items:baseline; gap:8px;">
-                                <span id="chart-symbol-label" style="color:#888; font-size:0.7rem;">MNQ 1분봉</span>
+                                <span id="chart-symbol-label" style="color:#6B5744; font-size:0.7rem;">MNQ 1분봉</span>
                                 <span id="live-clock" style="font-size:0.75rem; color:#00ff88;">--:--:--</span>
                             </div>
                             <div id="live-price" style="font-size:1.4rem; font-weight:700; color:#00ff88;">--</div>
                         </div>
                         <div style="display:flex; gap:12px;">
                             <div style="text-align:center;">
-                                <span style="color:#888; font-size:0.65rem;">BID</span>
+                                <span style="color:#6B5744; font-size:0.65rem;">BID</span>
                                 <div id="live-bid" style="color:#26a69a; font-weight:600; font-size:0.85rem;">--</div>
                             </div>
                             <div style="text-align:center;">
-                                <span style="color:#888; font-size:0.65rem;">ASK</span>
+                                <span style="color:#6B5744; font-size:0.65rem;">ASK</span>
                                 <div id="live-ask" style="color:#ef5350; font-weight:600; font-size:0.85rem;">--</div>
                             </div>
                             <div style="text-align:center;">
-                                <span style="color:#888; font-size:0.65rem;">SPREAD</span>
+                                <span style="color:#6B5744; font-size:0.65rem;">SPREAD</span>
                                 <div id="live-spread" style="color:#ffab40; font-weight:600; font-size:0.85rem;">--</div>
                             </div>
                         </div>
                         <div style="text-align:right;">
                             <span id="live-status-dot" style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#ff4444; margin-right:4px;"></span>
-                            <span id="live-status-text" style="color:#888; font-size:0.65rem;" data-i18n="trading.connecting">연결 중...</span>
+                            <span id="live-status-text" style="color:#6B5744; font-size:0.65rem;" data-i18n="trading.connecting">연결 중...</span>
                         </div>
                     </div>
                     
@@ -1533,11 +1533,11 @@
                     <div style="display:flex; align-items:center; gap:8px; padding:6px 8px; background:#3D2B1F; border-radius:6px; margin-top:4px; font-size:0.75rem;">
                         <span style="color:#ff4444; font-weight:600;">SL</span>
                         <input type="number" id="stop-loss-points" value="50" step="5" min="1" style="width:50px; background:#0f0f23; color:#ff4444; border:1px solid #3D2B1F; border-radius:3px; padding:3px 5px; text-align:center; font-size:0.8rem;">
-                        <span style="color:#888;">pt</span>
+                        <span style="color:#6B5744;">pt</span>
                         <span style="color:#555;">|</span>
                         <span style="color:#00cc00; font-weight:600;">TP</span>
                         <input type="number" id="take-profit-points" value="100" step="5" min="1" style="width:50px; background:#0f0f23; color:#00cc00; border:1px solid #3D2B1F; border-radius:3px; padding:3px 5px; text-align:center; font-size:0.8rem;">
-                        <span style="color:#888;">pt</span>
+                        <span style="color:#6B5744;">pt</span>
                         <span style="color:#555;">|</span>
                         <label style="display:flex; align-items:center; gap:3px; cursor:pointer;">
                             <input type="checkbox" id="use-trailing-stop" style="accent-color:#ff9800;">
@@ -1554,27 +1554,27 @@
                     
                     <!-- 실시간 손익 -->
                     <div id="live-pnl-bar" style="text-align:center; padding:8px; margin-top:8px; background:#6B5744; border-radius:8px; display:none;">
-                        <span style="color:#888; font-size:0.75rem;" data-i18n="trading.live_pnl">실시간 손익</span>
+                        <span style="color:#6B5744; font-size:0.75rem;" data-i18n="trading.live_pnl">실시간 손익</span>
                         <div style="display:flex; justify-content:center; align-items:baseline; gap:12px;">
-                            <div id="live-pnl" style="font-size:1.3rem; font-weight:700; color:#888;">$0.00</div>
-                            <div id="live-crtd-est" style="font-size:0.85rem; font-weight:600; color:#888;">💎0 CRTD</div>
+                            <div id="live-pnl" style="font-size:1.3rem; font-weight:700; color:#6B5744;">$0.00</div>
+                            <div id="live-crtd-est" style="font-size:0.85rem; font-weight:600; color:#6B5744;">💎0 CRTD</div>
                         </div>
                     </div>
                     
                     <!-- 🤖 멘토 패널 -->
                     <div id="mentor-settings-bar" style="margin-top:8px; display:flex; gap:6px; justify-content:flex-end; align-items:center;">
-                        <label style="font-size:0.65rem; color:#888; display:flex; align-items:center; gap:3px; cursor:pointer;">
+                        <label style="font-size:0.65rem; color:#6B5744; display:flex; align-items:center; gap:3px; cursor:pointer;">
                             <input type="checkbox" id="mentor-toggle-panel" checked onchange="toggleMentorSetting('panel')" style="width:14px;height:14px;accent-color:#C9A84C;" data-i18n="trading.mentor_bot"> 멘토봇
                         </label>
-                        <label style="font-size:0.65rem; color:#888; display:flex; align-items:center; gap:3px; cursor:pointer;">
+                        <label style="font-size:0.65rem; color:#6B5744; display:flex; align-items:center; gap:3px; cursor:pointer;">
                             <input type="checkbox" id="mentor-toggle-comment" checked onchange="toggleMentorSetting('comment')" style="width:14px;height:14px;accent-color:#C9A84C;" data-i18n="trading.mentor_comment"> 안내멘트
                         </label>
-                        <label style="font-size:0.65rem; color:#888; display:flex; align-items:center; gap:3px; cursor:pointer;">
+                        <label style="font-size:0.65rem; color:#6B5744; display:flex; align-items:center; gap:3px; cursor:pointer;">
                             <input type="checkbox" id="mentor-toggle-notif" checked onchange="toggleMentorSetting('notif')" style="width:14px;height:14px;accent-color:#C9A84C;" data-i18n="trading.mentor_notif"> 알림
                         </label>
                     </div>
                     <div id="mentor-panel" style="margin-top:4px; padding:8px; background:#F7F3ED; border-radius:8px;">
-                        <div style="color:#888; font-size:0.7rem; text-align:center; padding:8px;" data-i18n="mentor.loading">🤖 멘토 분석 로딩 중...</div>
+                        <div style="color:#6B5744; font-size:0.7rem; text-align:center; padding:8px;" data-i18n="mentor.loading">🤖 멘토 분석 로딩 중...</div>
                     </div>
                 </div>
                 
@@ -1903,7 +1903,7 @@
                                 <label style="font-size:0.75rem; color:var(--accent); margin-bottom:0.2rem; display:block;">에디션 수량</label>
                                 <input type="number" id="art-edition-count" value="10" min="1" max="10000" style="padding:0.6rem; border:1px solid var(--border); border-radius:6px; width:100%;">
                             </div>
-                            <div style="font-size:0.72rem; color:#666; line-height:1.5;">
+                            <div style="font-size:0.72rem; color:#6B5744; line-height:1.5;">
                                 ⛓ Polygon 네트워크 · MetaMask 필요<br>
                                 📌 이미지는 IPFS에 영구 저장됩니다<br>
                                 💰 로열티: 2차 판매 시 작가에게 자동 지급
@@ -2094,7 +2094,7 @@
     <div id="confirm-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(61,43,31,0.6); z-index:99997; align-items:center; justify-content:center; padding:1rem;">
         <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; max-width:400px; width:100%;">
             <h3 id="confirm-title" style="margin-bottom:0.8rem;"></h3>
-            <p id="confirm-message" style="color:#666; margin-bottom:1.2rem; white-space:pre-line;"></p>
+            <p id="confirm-message" style="color:#6B5744; margin-bottom:1.2rem; white-space:pre-line;"></p>
             <div style="display:flex; gap:0.5rem;">
                 <button id="confirm-cancel" onclick="closeConfirmModal(false)" style="flex:1; padding:0.7rem; border:1px solid #ddd; border-radius:8px; cursor:pointer; background:#FFF8F0;" data-i18n="common.cancel">취소</button>
                 <button id="confirm-ok" onclick="closeConfirmModal(true)" style="flex:1; padding:0.7rem; border:none; border-radius:8px; cursor:pointer; background:#3D2B1F; color:#FFF8F0; font-weight:700;" data-i18n="common.confirm">확인</button>
@@ -2309,7 +2309,7 @@
                 <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('social');setTimeout(()=>{const t=document.getElementById('post-text');if(t){t.focus();t.scrollIntoView({behavior:'smooth',block:'center'})}},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:var(--text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;">📸 소셜 게시물</button>
                 <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('reels');setTimeout(()=>{if(typeof SHORTFORM!=='undefined'&&SHORTFORM.openUpload)SHORTFORM.openUpload()},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:var(--text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;">🎬 숏폼 영상</button>
                 <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('social');setTimeout(()=>{if(typeof openStoryUpload==='function')openStoryUpload()},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:var(--text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;">📖 스토리</button>
-                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();" style="width:100%;padding:14px 16px;border:none;background:none;color:#888;font-size:0.95rem;cursor:pointer;text-align:left;">취소</button>
+                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();" style="width:100%;padding:14px 16px;border:none;background:none;color:#6B5744;font-size:0.95rem;cursor:pointer;text-align:left;">취소</button>
             </div>`;
         document.body.appendChild(overlay);
         document.body.appendChild(sheet);

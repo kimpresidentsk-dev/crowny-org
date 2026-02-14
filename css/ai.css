@@ -15,7 +15,7 @@
 
 .ai-msg { display:flex; gap:0.5rem; align-items:flex-end; }
 .ai-msg-user { flex-direction:row-reverse; }
-.ai-avatar { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,#8B6914,#ff8c00); display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
+.ai-avatar { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,#8B6914,#F0C060); display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
 .panel-avatar-img { width:40px; height:40px; border-radius:50%; object-fit:cover; }
 .ai-bubble { max-width:80%; padding:0.7rem 1rem; border-radius:16px; font-size:0.9rem; line-height:1.5; word-break:break-word; }
 .ai-bubble-user { background:#8B6914; color:#FFF8F08F0; border-bottom-right-radius:4px; }
@@ -115,5 +115,5 @@
 .tutor-opt-btn.tutor-opt-selected { background:#00BCD4; color:#FFF8F0; border-color:#00BCD4; }
 .tutor-custom-input { width:100%; margin-top:0.5rem; padding:0.6rem 0.8rem; border:1px solid var(--border,#333); border-radius:10px; background:var(--card-bg,#3D2B1F); color:var(--text,#3D2B1F); font-size:0.85rem; outline:none; box-sizing:border-box; }
 .tutor-custom-input:focus { border-color:#00BCD4; }
-.tutor-save-btn { width:100%; padding:0.9rem; border:none; border-radius:12px; background:linear-gradient(135deg,#00BCD4,#0097A7); color:#FFF8F0; font-size:1rem; font-weight:700; cursor:pointer; margin-top:1rem; transition:opacity 0.2s; }
+.tutor-save-btn { width:100%; padding:0.9rem; border:none; border-radius:12px; background:linear-gradient(135deg,#8B6914,#6B5744); color:#FFF8F0; font-size:1rem; font-weight:700; cursor:pointer; margin-top:1rem; transition:opacity 0.2s; }
 .tutor-save-btn:hover { opacity:0.9; }
