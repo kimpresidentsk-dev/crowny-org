@@ -634,12 +634,17 @@ function showMaticDeposit() {
             </div>
             <p style="font-size:0.75rem;color:#c62828;margin-bottom:1rem;">${t('wallet.matic_deposit_warning', '⚠️ 반드시 <strong>Polygon 네트워크</strong>로 전송하세요!<br>다른 네트워크(ETH 등)로 보내면 복구 불가합니다.')}</p>
             <div style="display:flex;gap:0.5rem;">
-                <button onclick="navigator.clipboard&&navigator.clipboard.writeText('${addr}').then(()=>showToast(t('wallet.address_copied','주소 복사됨'),'success'))" style="flex:1;padding:0.7rem;background:#3D2B1F;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:700;display:flex;align-items:center;justify-content:center;gap:0.3rem;"><i data-lucide="copy" style="width:16px;height:16px;"></i>${t('wallet.copy_address', '주소 복사')}</button>
+                <button onclick="navigator.clipboard&&navigator.clipboard.writeText('${addr}').then(()=>showToast(t('wallet.address_copied','주소 복사됨'),'success'))" style="flex:1;padding:0.7rem;background:#3D2B1F;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:700;display:flex;align-items:center;justify-content:center;gap:0.3rem;"><i data-lucide="copy" style="width:16px;height:16px;"></i>주소 복사</button>
                 <button onclick="this.closest('div[style*=fixed]').remove()" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">${t('common.close', '닫기')}</button>
             </div>
         </div>`;
     overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
     document.body.appendChild(overlay);
+    
+    // Initialize Lucide icons for the new content
+    if (typeof lucide !== 'undefined') {
+        setTimeout(() => lucide.createIcons(), 10);
+    }
 }
 
 // MATIC 송금

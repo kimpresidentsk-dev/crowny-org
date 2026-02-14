@@ -377,8 +377,8 @@ a:not(.nav-item) {
     line-height: 1;
 }
 .bottom-tab-item.create-btn .tab-icon {
-    background: linear-gradient(135deg, var(--gold, #FFD700), #e6c040);
-    color: #000;
+    background: linear-gradient(135deg, #3D2B1F, #2A1F15);
+    color: #FFF8F0;
     width: 36px;
     height: 36px;
     border-radius: 10px;

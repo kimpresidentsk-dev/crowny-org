@@ -69,7 +69,7 @@
   "today.send_token": "✅ 메신저로 <strong>토큰 전송</strong> 가능",
   "wallet.title": "💰 MY WALLET",
   "wallet.my_wallets": "📂 내 지갑",
-  "wallet.add_wallet": "➕ 지갑 추가",
+  "wallet.add_wallet": "지갑 추가",
   "wallet.synced": "● 동기화됨",
   "wallet.copy_address": "주소 복사",
   "wallet.rename": "지갑 이름 변경",
