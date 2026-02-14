@@ -728,7 +728,7 @@ ${lang !== 'ko' ? `언어: ${langNames[lang] || lang}로 답변하세요.` : ''}
 
     function getBotBadge(userId) {
         for (const [key, char] of Object.entries(BOT_CHARACTERS)) {
-            if (char.uid === userId) return `<span style="background:linear-gradient(135deg,#D4AF37,#F0C060);color:#1a1a2e;font-size:0.6rem;padding:0.1rem 0.4rem;border-radius:10px;font-weight:700;margin-left:0.3rem;">AI ${char.emoji}</span>`;
+            if (char.uid === userId) return `<span style="background:linear-gradient(135deg,#D4AF37,#F0C060);color:#3D2B1F;font-size:0.6rem;padding:0.1rem 0.4rem;border-radius:10px;font-weight:700;margin-left:0.3rem;">AI ${char.emoji}</span>`;
         }
         return '';
     }

@@ -2992,17 +2992,17 @@ input:checked + .notif-toggle-slider::before {
 /* ===== DARK MODE ===== */
 [data-theme="dark"] {
     --primary: #0d0d1a;
-    --primary-light: #1a1a2e;
+    --primary-light: #F7F3ED;
     --gold: #3D2B1F;
     --gold-dark: #B8860B;
-    --cream: #1a1a2e;
+    --cream: #F7F3ED;
     --bg: #0d0d1a;
     --text: #e0e0e0;
     --text-light: #aaa;
     --border: #333;
     --accent: #888;
-    --white: #16213e;
-    --card-bg: #16213e;
+    --white: #3D2B1F;
+    --card-bg: #3D2B1F;
 }
 [data-theme="dark"] body { background: var(--bg); color: var(--text); }
 [data-theme="dark"] .sidebar { background: #3D2B1F; border-color: var(--border); }
@@ -3918,7 +3918,7 @@ input, textarea, select {
     left: 0;
     right: 0;
     background: var(--bg-card, #3D2B1F);
-    border-top: 1px solid var(--border, #2a2a3e);
+    border-top: 1px solid var(--border, #E8E0D8);
     z-index: 999;
     padding-bottom: env(safe-area-inset-bottom);
 }
@@ -4548,7 +4548,7 @@ label { color: var(--dark-muted) !important; }
 .notif-toast, .toast-message {
     background: var(--bg-card, #3D2B1F) !important;
     color: var(--text, #f0f0f0) !important;
-    border: 1px solid var(--border, #2a2a3e) !important;
+    border: 1px solid var(--border, #E8E0D8) !important;
     border-radius: 12px !important;
     box-shadow: 0 4px 16px rgba(61,43,31,0.4) !important;
     font-size: 0.9rem !important;
@@ -4556,7 +4556,7 @@ label { color: var(--dark-muted) !important; }
 
 /* Loading spinner - gold */
 .loading-spinner, .spinner {
-    border-color: var(--border, #2a2a3e) !important;
+    border-color: var(--border, #E8E0D8) !important;
     border-top-color: var(--gold, #8B6914) !important;
 }
 
@@ -4580,7 +4580,7 @@ input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="
 textarea, select {
     background: var(--bg-card-alt, #1e1e3a) !important;
     color: var(--text, #f0f0f0) !important;
-    border-color: var(--border, #2a2a3e) !important;
+    border-color: var(--border, #E8E0D8) !important;
 }
 input:focus, textarea:focus, select:focus {
     border-color: var(--gold, #8B6914) !important;
@@ -4601,14 +4601,14 @@ input:focus, textarea:focus, select:focus {
 .menu-toggle {
     background: var(--bg-card, #3D2B1F) !important;
     color: var(--text, #f0f0f0) !important;
-    border-color: var(--border, #2a2a3e) !important;
+    border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Unified secondary buttons */
 .btn-secondary {
     background: var(--bg-card-alt, #1e1e3a) !important;
     color: var(--text, #f0f0f0) !important;
-    border-color: var(--border, #2a2a3e) !important;
+    border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Profile modals dark */
@@ -4622,7 +4622,7 @@ input:focus, textarea:focus, select:focus {
 #add-contact-modal input {
     background: var(--bg-card-alt, #1e1e3a) !important;
     color: var(--text, #f0f0f0) !important;
-    border-color: var(--border, #2a2a3e) !important;
+    border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Service card hover gold */
@@ -4644,7 +4644,7 @@ input:focus, textarea:focus, select:focus {
 .settings-btn {
     background: var(--bg-card-alt, #1e1e3a) !important;
     color: var(--text, #f0f0f0) !important;
-    border-color: var(--border, #2a2a3e) !important;
+    border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Comment bottom sheet dark */
@@ -4656,7 +4656,7 @@ input:focus, textarea:focus, select:focus {
 /* Link preview dark */
 .link-preview-card {
     background: var(--bg-card-alt, #1e1e3a) !important;
-    border-color: var(--border, #2a2a3e) !important;
+    border-color: var(--border, #E8E0D8) !important;
     color: var(--text, #f0f0f0) !important;
 }
 
@@ -4665,13 +4665,13 @@ input:focus, textarea:focus, select:focus {
 .trading-header, .balance-item {
     background: var(--bg-card, #3D2B1F) !important;
     color: var(--text, #f0f0f0) !important;
-    border-color: var(--border, #2a2a3e) !important;
+    border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Social post dropdown dark */
 .post-dropdown-menu {
     background: var(--bg-card, #3D2B1F) !important;
-    border-color: var(--border, #2a2a3e) !important;
+    border-color: var(--border, #E8E0D8) !important;
 }
 .post-dropdown-menu div:hover {
     background: var(--bg-card-alt, #1e1e3a) !important;
@@ -4680,27 +4680,27 @@ input:focus, textarea:focus, select:focus {
 /* Reaction picker dark */
 .reaction-picker-popup {
     background: var(--bg-card, #3D2B1F) !important;
-    border-color: var(--border, #2a2a3e) !important;
+    border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Sticker/GIF panel dark */
 .sticker-gif-panel {
     background: var(--bg-card, #3D2B1F) !important;
-    border-color: var(--border, #2a2a3e) !important;
+    border-color: var(--border, #E8E0D8) !important;
     color: var(--text, #f0f0f0) !important;
 }
 
 /* Attach menu dark */
 .attach-menu-popup {
     background: var(--bg-card, #3D2B1F) !important;
-    border-color: var(--border, #2a2a3e) !important;
+    border-color: var(--border, #E8E0D8) !important;
     color: var(--text, #f0f0f0) !important;
 }
 
 /* Chat menu dark */
 .chat-menu-dropdown {
     background: var(--bg-card, #3D2B1F) !important;
-    border-color: var(--border, #2a2a3e) !important;
+    border-color: var(--border, #E8E0D8) !important;
 }
 .chat-menu-item {
     color: var(--text, #f0f0f0) !important;
@@ -4711,20 +4711,20 @@ input:focus, textarea:focus, select:focus {
 
 /* Friend request item dark */
 .friend-request-item {
-    border-color: var(--border, #2a2a3e) !important;
+    border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Group info panel dark */
 .group-info-panel {
     background: var(--bg-card, #3D2B1F) !important;
     color: var(--text, #f0f0f0) !important;
-    border-color: var(--border, #2a2a3e) !important;
+    border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Msg bubble colors fix for dark */
 .msg-actions-bar {
     background: var(--bg-card, #3D2B1F) !important;
-    border-color: var(--border, #2a2a3e) !important;
+    border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Reply preview bar dark */
@@ -4745,14 +4745,14 @@ input:focus, textarea:focus, select:focus {
 .dash-shortcut-btn {
     background: var(--bg-card-alt, #1e1e3a) !important;
     color: var(--text, #f0f0f0) !important;
-    border-color: var(--border, #2a2a3e) !important;
+    border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Tab buttons dark */
 .tab-btn {
     background: var(--bg-card-alt, #1e1e3a) !important;
     color: var(--text, #f0f0f0) !important;
-    border-color: var(--border, #2a2a3e) !important;
+    border-color: var(--border, #E8E0D8) !important;
 }
 .tab-btn.active {
     background: var(--gold, #8B6914) !important;
@@ -4763,11 +4763,11 @@ input:focus, textarea:focus, select:focus {
 /* Scrollbar dark */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: var(--bg, #0a0a1a); }
-::-webkit-scrollbar-thumb { background: var(--border, #2a2a3e); border-radius: 2px; }
+::-webkit-scrollbar-thumb { background: var(--border, #E8E0D8); border-radius: 2px; }
 
 /* Contact/chat item border dark */
 .contact-item, .chat-item {
-    border-color: var(--border, #2a2a3e) !important;
+    border-color: var(--border, #E8E0D8) !important;
 }
 
 /* System message dark */
@@ -4779,7 +4779,7 @@ input:focus, textarea:focus, select:focus {
 /* AI Assistant dark */
 .ai-input-bar {
     background: var(--bg-card, #3D2B1F) !important;
-    border-color: var(--border, #2a2a3e) !important;
+    border-color: var(--border, #E8E0D8) !important;
 }
 .ai-bubble-bot {
     background: var(--bg-card-alt, #1e1e3a) !important;
@@ -4788,7 +4788,7 @@ input:focus, textarea:focus, select:focus {
 .ai-quick-card {
     background: var(--bg-card-alt, #1e1e3a) !important;
     color: var(--text, #f0f0f0) !important;
-    border-color: var(--border, #2a2a3e) !important;
+    border-color: var(--border, #E8E0D8) !important;
 }
 
 /* Date separator dark */
@@ -4805,7 +4805,7 @@ input:focus, textarea:focus, select:focus {
 /* Msg reaction chip dark */
 .msg-reaction-chip {
     background: var(--bg-card-alt, #1e1e3a) !important;
-    border-color: var(--border, #2a2a3e) !important;
+    border-color: var(--border, #E8E0D8) !important;
     color: var(--text, #f0f0f0) !important;
 }
 

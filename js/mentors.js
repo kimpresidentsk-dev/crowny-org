@@ -184,7 +184,7 @@ function getCloses(candles) { return candles.map(c => c.close); }
 
 const mentors = {
     kps: {
-        name: 'KPS', icon: '👑', avatar: 'img/mentor-kps.jpg', style: '보수적', color: '#FFD700',
+        name: 'KPS', icon: '👑', avatar: 'img/mentor-kps.jpg', style: '보수적', color: '#8B6914',
         desc: '추세 추종 · EMA 크로스오버',
         analyze(candles, livePrice) {
             if (candles.length < 60) return { signal: 'wait', confidence: 0, message: '데이터 수집 중...', reason: '캔들 부족' };

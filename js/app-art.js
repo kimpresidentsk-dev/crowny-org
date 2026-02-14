@@ -673,7 +673,7 @@ async function viewArtwork(artId) {
             const scanUrl = `https://polygonscan.com/token/${art.nftContract}?a=${art.nftTokenId}`;
             const ipfsUrl = art.ipfsImageUri ? ipfsToHttp(art.ipfsImageUri) : null;
             nftInfoHtml = `
-                <div style="background:linear-gradient(135deg,#667eea,#764ba2);padding:.8rem;border-radius:8px;margin-bottom:1rem;color:#fff">
+                <div style="background:linear-gradient(135deg,#8B6914,#6B5744);padding:.8rem;border-radius:8px;margin-bottom:1rem;color:#fff">
                     <div style="font-weight:700;margin-bottom:.4rem">🔗 NFT 인증</div>
                     <div style="font-size:.78rem;display:grid;gap:.2rem">
                         <div>타입: ${typeLabel}</div>
@@ -715,7 +715,7 @@ async function viewArtwork(artId) {
         if (isOwner) {
             actionHtml = '<div style="display:flex;gap:.5rem;flex-wrap:wrap">';
             if (!art.isNFT) {
-                actionHtml += `<button onclick="mintExistingArtwork('${artId}')" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;padding:.6rem 1.2rem;border-radius:6px;cursor:pointer;font-size:.85rem;flex:1">🔗 NFT 민팅</button>`;
+                actionHtml += `<button onclick="mintExistingArtwork('${artId}')" style="background:linear-gradient(135deg,#8B6914,#6B5744);color:#fff;border:none;padding:.6rem 1.2rem;border-radius:6px;cursor:pointer;font-size:.85rem;flex:1">🔗 NFT 민팅</button>`;
             }
             actionHtml += `<button onclick="deleteArtwork('${artId}')" style="background:#cc0000;color:#fff;border:none;padding:.6rem 1.2rem;border-radius:6px;cursor:pointer;font-size:.85rem">삭제</button></div>`;
         }
@@ -1543,7 +1543,7 @@ async function viewArtistProfile(artistId) {
         modal.innerHTML = `
             <div style="background:#fff;border-radius:12px;max-width:400px;width:100%;padding:1.5rem">
                 <div style="text-align:center;margin-bottom:1rem">
-                    <div style="width:60px;height:60px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:50%;margin:0 auto .5rem;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#fff">${nickname.charAt(0).toUpperCase()}</div>
+                    <div style="width:60px;height:60px;background:linear-gradient(135deg,#8B6914,#6B5744);border-radius:50%;margin:0 auto .5rem;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#fff">${nickname.charAt(0).toUpperCase()}</div>
                     <h3>${nickname} ${profile.verified ? '✅' : ''}</h3>
                     <div style="font-size:.85rem;color:#8B2BE2;margin-top:.3rem">⭐ 아티스트 가중치: ${weight}x</div>
                     ${profile.bio ? `<p style="font-size:.85rem;color:var(--accent);margin-top:.3rem">${profile.bio}</p>` : ''}

@@ -74,7 +74,7 @@ ${text}`;
         btn.className = 'translate-btn';
         btn.innerHTML = '🌐';
         btn.title = '번역 / Translate';
-        btn.style.cssText = 'background:none;border:1px solid var(--border,#2a2a3e);border-radius:6px;padding:0.2rem 0.5rem;cursor:pointer;font-size:0.85rem;opacity:0.7;transition:opacity 0.2s;';
+        btn.style.cssText = 'background:none;border:1px solid var(--border,#E8E0D8);border-radius:6px;padding:0.2rem 0.5rem;cursor:pointer;font-size:0.85rem;opacity:0.7;transition:opacity 0.2s;';
         btn.onmouseenter = () => btn.style.opacity = '1';
         btn.onmouseleave = () => btn.style.opacity = '0.7';
 

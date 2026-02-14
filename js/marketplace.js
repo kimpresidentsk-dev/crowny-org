@@ -26,7 +26,7 @@ const MALL_CATEGORIES = {
 
 function renderStars(rating, size='0.85rem') {
     let s = '';
-    for (let i = 1; i <= 5; i++) s += `<span style="color:${i <= Math.round(rating) ? '#FFD700' : '#ddd'}; font-size:${size};">★</span>`;
+    for (let i = 1; i <= 5; i++) s += `<span style="color:${i <= Math.round(rating) ? '#8B6914' : '#ddd'}; font-size:${size};">★</span>`;
     return s;
 }
 
@@ -154,7 +154,7 @@ async function renderProductDetail(id) {
                     const pct = revSnap.size > 0 ? Math.round(dist[i-1] / revSnap.size * 100) : 0;
                     distHtml += `<div style="display:flex;align-items:center;gap:0.3rem;font-size:0.75rem;">
                         <span>${i}★</span>
-                        <div style="flex:1;background:#e0e0e0;height:6px;border-radius:3px;"><div style="background:#FFD700;height:100%;border-radius:3px;width:${pct}%;"></div></div>
+                        <div style="flex:1;background:#e0e0e0;height:6px;border-radius:3px;"><div style="background:#8B6914;height:100%;border-radius:3px;width:${pct}%;"></div></div>
                         <span style="color:var(--accent);min-width:28px;text-align:right;">${dist[i-1]}</span>
                     </div>`;
                 }
@@ -163,7 +163,7 @@ async function renderProductDetail(id) {
                     <h4 style="margin-bottom:0.8rem;">📝 리뷰 (${revSnap.size})</h4>
                     <div style="display:flex;gap:1.5rem;align-items:center;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid #eee;">
                         <div style="text-align:center;">
-                            <div style="font-size:2rem;font-weight:800;color:#FFD700;">${avgR}</div>
+                            <div style="font-size:2rem;font-weight:800;color:#8B6914;">${avgR}</div>
                             <div>${renderStars(parseFloat(avgR),'1rem')}</div>
                             <div style="font-size:0.75rem;color:var(--accent);">${revSnap.size}개 리뷰</div>
                         </div>
@@ -271,7 +271,7 @@ async function writeReview(productId) {
             <h3 style="margin-bottom:1rem;">⭐ 리뷰 작성</h3>
             <div style="text-align:center; margin-bottom:1rem;">
                 <div id="review-stars" style="font-size:2rem; cursor:pointer;">
-                    ${[1,2,3,4,5].map(i => `<span data-star="${i}" style="color:#FFD700;">★</span>`).join('')}
+                    ${[1,2,3,4,5].map(i => `<span data-star="${i}" style="color:#8B6914;">★</span>`).join('')}
                 </div>
                 <div id="review-rating-label" style="font-size:0.85rem; color:var(--accent);">5점</div>
             </div>
@@ -293,7 +293,7 @@ async function writeReview(productId) {
             span.onclick = () => {
                 selectedRating = parseInt(span.dataset.star);
                 overlay.querySelectorAll('#review-stars span').forEach((s, i) => {
-                    s.style.color = i < selectedRating ? '#FFD700' : '#ddd';
+                    s.style.color = i < selectedRating ? '#8B6914' : '#ddd';
                 });
                 overlay.querySelector('#review-rating-label').textContent = selectedRating + '점';
             };
@@ -1280,7 +1280,7 @@ async function loadCreditScoreBreakdown() {
                 <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem; background:#fce4ec; border-radius:6px;">
                     <span>💯 상환율</span><span style="font-weight:700;">${repayRate}% → +${repayScore}점</span>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.8rem; background:linear-gradient(135deg,#1a1a2e,#16213e); border-radius:8px; color:white; margin-top:0.3rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.8rem; background:linear-gradient(135deg,#3D2B1F,#3D2B1F); border-radius:8px; color:white; margin-top:0.3rem;">
                     <span style="font-size:1rem;">🏆 총 크레딧 점수</span>
                     <span style="font-size:1.5rem; font-weight:800; color:${totalScore >= 700 ? '#4CAF50' : totalScore >= 500 ? '#ff9800' : '#ff4444'};">${totalScore}</span>
                 </div>

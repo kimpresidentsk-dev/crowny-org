@@ -18,7 +18,7 @@ async function loadExploreTab() {
         html += `<div style="margin-bottom:1rem;">
             <div style="display:flex;gap:0.5rem;">
                 <input type="text" id="explore-search-input" placeholder="🔍 사용자, 해시태그, 게시물 검색..." value="${_exploreSearchQuery}" style="flex:1;padding:0.7rem 1rem;border:1px solid var(--border);border-radius:12px;font-size:0.9rem;outline:none;" onkeypress="if(event.key==='Enter')runExploreSearch()">
-                <button onclick="runExploreSearch()" style="padding:0.7rem 1rem;border:none;border-radius:12px;background:#1a1a2e;color:white;cursor:pointer;font-weight:600;">검색</button>
+                <button onclick="runExploreSearch()" style="padding:0.7rem 1rem;border:none;border-radius:12px;background:#3D2B1F;color:white;cursor:pointer;font-weight:600;">검색</button>
             </div>
         </div>`;
 
@@ -27,7 +27,7 @@ async function loadExploreTab() {
             ${['all','photo','video','service'].map(f => {
                 const labels = { all:'전체', photo:'📸 사진', video:'🎬 영상', service:'🔗 서비스' };
                 const active = _exploreFilter === f;
-                return `<button onclick="setExploreFilter('${f}')" style="padding:0.4rem 0.8rem;border:1px solid ${active ? '#1a1a2e' : 'var(--border)'};border-radius:20px;background:${active ? '#1a1a2e' : 'white'};color:${active ? 'white' : 'var(--text)'};font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap;">${labels[f]}</button>`;
+                return `<button onclick="setExploreFilter('${f}')" style="padding:0.4rem 0.8rem;border:1px solid ${active ? '#3D2B1F' : 'var(--border)'};border-radius:20px;background:${active ? '#3D2B1F' : 'white'};color:${active ? 'white' : 'var(--text)'};font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap;">${labels[f]}</button>`;
             }).join('')}
         </div>`;
 
@@ -187,7 +187,7 @@ async function loadExploreGrid() {
                 thumb = `<img src="${post.imageUrl}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;" loading="lazy">`;
             } else {
                 // Text only
-                thumb = `<div style="width:100%;aspect-ratio:1;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;padding:0.5rem;"><span style="color:white;font-size:0.7rem;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;">${(post.text || '').substring(0, 80)}</span></div>`;
+                thumb = `<div style="width:100%;aspect-ratio:1;background:linear-gradient(135deg,#8B6914,#6B5744);display:flex;align-items:center;justify-content:center;padding:0.5rem;"><span style="color:white;font-size:0.7rem;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;">${(post.text || '').substring(0, 80)}</span></div>`;
             }
 
             gridHTML += `<div onclick="scrollToPostOrOpen('${post.id}')" style="cursor:pointer;position:relative;overflow:hidden;">

@@ -25,7 +25,7 @@
             snap.forEach(doc => {
                 const d = doc.data();
                 const card = document.createElement('div');
-                card.style.cssText = 'background:var(--bg-card,#3D2B1F);border:1px solid var(--border,#2a2a3e);border-radius:12px;padding:1.2rem;cursor:pointer;transition:transform 0.2s;';
+                card.style.cssText = 'background:var(--bg-card,#3D2B1F);border:1px solid var(--border,#E8E0D8);border-radius:12px;padding:1.2rem;cursor:pointer;transition:transform 0.2s;';
                 card.onmouseenter = () => card.style.transform = 'translateY(-2px)';
                 card.onmouseleave = () => card.style.transform = '';
                 card.innerHTML = `
@@ -86,7 +86,7 @@
 
                 const progress = d.goal ? Math.min(100, Math.round((d.raised || 0) / d.goal * 100)) : 0;
                 const card = document.createElement('div');
-                card.style.cssText = 'background:var(--bg-card,#3D2B1F);border:1px solid var(--border,#2a2a3e);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s;';
+                card.style.cssText = 'background:var(--bg-card,#3D2B1F);border:1px solid var(--border,#E8E0D8);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s;';
                 card.onmouseenter = () => card.style.transform = 'translateY(-2px)';
                 card.onmouseleave = () => card.style.transform = '';
                 card.onclick = () => showCampaignDetail(doc.id, d);

@@ -79,7 +79,7 @@ const BEAUTY = (() => {
                 <h3 style="margin:0 0 0.8rem 0;font-size:1rem;">🔬 피부 분석 받기</h3>
                 <div style="display:grid;gap:0.5rem;">
                     <button onclick="BEAUTY.requestExpertAnalysis()" 
-                        style="width:100%;padding:0.8rem;border:none;border-radius:10px;background:linear-gradient(135deg,#D4AF37,#F0C060);color:#1a1a2e;font-weight:700;cursor:pointer;font-size:0.85rem;">
+                        style="width:100%;padding:0.8rem;border:none;border-radius:10px;background:linear-gradient(135deg,#D4AF37,#F0C060);color:#3D2B1F;font-weight:700;cursor:pointer;font-size:0.85rem;">
                         👩‍⚕️ 전문가에게 분석 받기
                     </button>
                     <button onclick="BEAUTY.requestAIAnalysis()" 

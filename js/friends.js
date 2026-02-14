@@ -141,7 +141,7 @@ async function loadFriendRequests() {
                 ${avatarHTML(info.photoURL, info.nickname, 36)}
                 <span style="flex:1;font-size:0.85rem;font-weight:600;">${info.nickname}</span>
                 <button onclick="acceptFriendRequest('${doc.id}','${req.from}')" class="btn-primary" style="padding:0.3rem 0.6rem;font-size:0.75rem;border-radius:6px;">수락</button>
-                <button onclick="rejectFriendRequest('${doc.id}')" style="padding:0.3rem 0.6rem;font-size:0.75rem;border-radius:6px;border:1px solid var(--border,#2a2a3e);background:var(--bg-card,#1a1a2e);cursor:pointer;">거절</button>
+                <button onclick="rejectFriendRequest('${doc.id}')" style="padding:0.3rem 0.6rem;font-size:0.75rem;border-radius:6px;border:1px solid var(--border,#E8E0D8);background:var(--bg-card,#3D2B1F);cursor:pointer;">거절</button>
             </div>`;
         }
         container.innerHTML = html;
@@ -157,10 +157,10 @@ async function showFriendSearchModal() {
     overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     overlay.innerHTML = `
-    <div style="background:var(--bg-card,#1a1a2e);padding:1.5rem;border-radius:16px;max-width:420px;width:100%;max-height:80vh;overflow-y:auto;">
+    <div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:420px;width:100%;max-height:80vh;overflow-y:auto;">
         <h3 style="margin-bottom:1rem;">👥 ${t('friends.search', '친구 찾기')}</h3>
         <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
-            <input type="text" id="friend-search-input" placeholder="${t('friends.search_placeholder', '닉네임 또는 이메일로 검색')}" style="flex:1;padding:0.7rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;font-size:0.9rem;">
+            <input type="text" id="friend-search-input" placeholder="${t('friends.search_placeholder', '닉네임 또는 이메일로 검색')}" style="flex:1;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;font-size:0.9rem;">
             <button onclick="searchFriends()" class="btn-primary" style="padding:0.7rem 1rem;border-radius:8px;font-size:0.85rem;">🔍</button>
         </div>
         <div id="friend-search-results"></div>
@@ -285,13 +285,13 @@ async function showUserProfile(uid) {
         overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
         overlay.innerHTML = `
-        <div style="background:var(--bg-card,#1a1a2e);padding:1.5rem;border-radius:16px;max-width:400px;width:100%;">
+        <div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:400px;width:100%;">
             <div style="text-align:center;margin-bottom:1rem;">
                 ${avatarHTML(info.photoURL, info.nickname, 80)}
                 <h3 style="margin-top:0.5rem;margin-bottom:0.2rem;">${info.nickname}</h3>
                 ${info.statusMessage ? `<p style="font-size:0.85rem;color:var(--text-muted,#888);">${info.statusMessage}</p>` : ''}
             </div>
-            <div style="display:flex;justify-content:space-around;text-align:center;margin-bottom:1rem;padding:0.8rem 0;border-top:1px solid #eee;border-bottom:1px solid var(--border,#2a2a3e);">
+            <div style="display:flex;justify-content:space-around;text-align:center;margin-bottom:1rem;padding:0.8rem 0;border-top:1px solid #eee;border-bottom:1px solid var(--border,#E8E0D8);">
                 <div><div style="font-weight:700;font-size:1.1rem;">${postCount}</div><div style="font-size:0.75rem;color:var(--text-muted,#888);">게시물</div></div>
                 <div><div style="font-weight:700;font-size:1.1rem;">${friendCount}</div><div style="font-size:0.75rem;color:var(--text-muted,#888);">친구</div></div>
                 <div><div style="font-weight:700;font-size:1.1rem;">${followCounts.followers}</div><div style="font-size:0.75rem;color:var(--text-muted,#888);">팔로워</div></div>
@@ -300,11 +300,11 @@ async function showUserProfile(uid) {
             ${!isMe ? `
             <div style="display:flex;gap:0.5rem;">
                 <button onclick="followUser('${uid}');document.getElementById('user-profile-modal')?.remove();" class="btn-primary" style="flex:1;padding:0.6rem;border-radius:8px;font-size:0.85rem;">${amFollowing ? '팔로잉 ✓' : '팔로우'}</button>
-                ${!amFriend ? `<button onclick="sendFriendRequest('${uid}');document.getElementById('user-profile-modal')?.remove();" style="flex:1;padding:0.6rem;border-radius:8px;font-size:0.85rem;border:1px solid var(--border,#2a2a3e);background:var(--bg-card,#1a1a2e);cursor:pointer;">친구 추가</button>` : `<span style="flex:1;display:flex;align-items:center;justify-content:center;font-size:0.85rem;color:#4CAF50;">✅ 친구</span>`}
-                <button onclick="startChatFromProfile('${uid}');document.getElementById('user-profile-modal')?.remove();" style="flex:1;padding:0.6rem;border-radius:8px;font-size:0.85rem;border:1px solid var(--border,#2a2a3e);background:var(--bg-card,#1a1a2e);cursor:pointer;">💬 메시지</button>
+                ${!amFriend ? `<button onclick="sendFriendRequest('${uid}');document.getElementById('user-profile-modal')?.remove();" style="flex:1;padding:0.6rem;border-radius:8px;font-size:0.85rem;border:1px solid var(--border,#E8E0D8);background:var(--bg-card,#3D2B1F);cursor:pointer;">친구 추가</button>` : `<span style="flex:1;display:flex;align-items:center;justify-content:center;font-size:0.85rem;color:#4CAF50;">✅ 친구</span>`}
+                <button onclick="startChatFromProfile('${uid}');document.getElementById('user-profile-modal')?.remove();" style="flex:1;padding:0.6rem;border-radius:8px;font-size:0.85rem;border:1px solid var(--border,#E8E0D8);background:var(--bg-card,#3D2B1F);cursor:pointer;">💬 메시지</button>
             </div>
             ` : ''}
-            <button onclick="document.getElementById('user-profile-modal')?.remove()" style="width:100%;margin-top:0.8rem;padding:0.6rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;background:var(--bg-card,#1a1a2e);cursor:pointer;">${t('common.close', '닫기')}</button>
+            <button onclick="document.getElementById('user-profile-modal')?.remove()" style="width:100%;margin-top:0.8rem;padding:0.6rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;background:var(--bg-card,#3D2B1F);cursor:pointer;">${t('common.close', '닫기')}</button>
         </div>`;
         document.body.appendChild(overlay);
     } catch (e) {

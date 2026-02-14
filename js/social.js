@@ -105,28 +105,28 @@ async function showProfileEdit() {
         <div style="display:grid; gap:0.8rem;">
             <div>
                 <label style="font-size:0.8rem; color:var(--text-muted,#888);">${t('auth.nickname_title','닉네임')}</label>
-                <input type="text" id="profile-edit-nickname" value="${data.nickname || ''}" placeholder="${t('auth.nickname_title','닉네임')}" style="width:100%;padding:0.7rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;font-size:0.95rem;box-sizing:border-box;">
+                <input type="text" id="profile-edit-nickname" value="${data.nickname || ''}" placeholder="${t('auth.nickname_title','닉네임')}" style="width:100%;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;font-size:0.95rem;box-sizing:border-box;">
             </div>
             <div>
                 <label style="font-size:0.8rem; color:var(--text-muted,#888);">${t('social.status_msg','상태 메시지')}</label>
-                <input type="text" id="profile-edit-status" value="${data.statusMessage || ''}" placeholder="${t('social.status_msg','상태 메시지')}" maxlength="50" style="width:100%;padding:0.7rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;font-size:0.95rem;box-sizing:border-box;">
+                <input type="text" id="profile-edit-status" value="${data.statusMessage || ''}" placeholder="${t('social.status_msg','상태 메시지')}" maxlength="50" style="width:100%;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;font-size:0.95rem;box-sizing:border-box;">
             </div>
             <p style="font-size:0.75rem; color:var(--text-muted,#888);">${t('auth.email','이메일')}: ${data.email}</p>
             <div style="margin-top:0.8rem; padding-top:0.8rem; border-top:1px solid #eee; display:grid; gap:0.5rem;">
                 <p style="font-size:0.8rem; font-weight:600; color:var(--text,#f0f0f0); margin-bottom:0.2rem;">${t('social.login_method','🔐 로그인 방법')}</p>
                 ${currentUser && currentUser.providerData.some(p => p.providerId === 'google.com') ? `
                 <p style="font-size:0.75rem; color:#4CAF50;">${t('social.google_linked','✅ Google 계정 연동됨')}</p>` : `
-                <button onclick="linkGoogleAccount(); document.getElementById('profile-edit-modal').remove();" style="width:100%;padding:0.7rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:0.5rem;">
+                <button onclick="linkGoogleAccount(); document.getElementById('profile-edit-modal').remove();" style="width:100%;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:0.5rem;">
                     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width:16px;height:16px;"> ${t('social.link_google','Google 계정 연동')}
                 </button>`}
                 ${currentUser && currentUser.providerData.some(p => p.providerId === 'password') ? `
                 <p style="font-size:0.75rem; color:#4CAF50;">${t('social.pw_login_set','✅ 이메일/비밀번호 로그인 설정됨')}</p>
-                <button onclick="changePasswordFromProfile()" style="width:100%;padding:0.7rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">${t('auth.change_pw','🔑 비밀번호 변경')}</button>` : `
-                <button onclick="setupPasswordFromProfile()" style="width:100%;padding:0.7rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">${t('social.setup_pw','🔑 비밀번호 설정 (이메일 로그인 추가)')}</button>`}
+                <button onclick="changePasswordFromProfile()" style="width:100%;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">${t('auth.change_pw','🔑 비밀번호 변경')}</button>` : `
+                <button onclick="setupPasswordFromProfile()" style="width:100%;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">${t('social.setup_pw','🔑 비밀번호 설정 (이메일 로그인 추가)')}</button>`}
             </div>
         </div>
         <div style="display:flex;gap:0.5rem;margin-top:1rem;">
-            <button onclick="document.getElementById('profile-edit-modal').remove()" style="flex:1;padding:0.7rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">${t('common.cancel','취소')}</button>
+            <button onclick="document.getElementById('profile-edit-modal').remove()" style="flex:1;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">${t('common.cancel','취소')}</button>
             <button onclick="saveProfile()" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:var(--gold,#D4AF37);color:#000;font-weight:700;">${t('common.save','저장')}</button>
         </div>
     </div>`;
@@ -325,12 +325,12 @@ async function showAddContactModal() {
     <div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:420px;width:100%;">
         <h3 style="margin-bottom:1rem;">${t('social.add_contact','➕ 연락처 추가')}</h3>
         <div style="display:flex;gap:0.5rem;margin-bottom:0.8rem;">
-            <input type="text" id="contact-search-input" placeholder="${t('social.search_email_nick','이메일 또는 닉네임 검색')}" style="flex:1;padding:0.7rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;font-size:0.9rem;">
+            <input type="text" id="contact-search-input" placeholder="${t('social.search_email_nick','이메일 또는 닉네임 검색')}" style="flex:1;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;font-size:0.9rem;">
             <button onclick="searchContactUsers()" style="padding:0.7rem 1rem;border:none;border-radius:8px;background:var(--gold,#D4AF37);color:#000;font-weight:600;cursor:pointer;">${t('social.search','검색')}</button>
         </div>
         <div id="contact-search-results" style="max-height:300px;overflow-y:auto;"></div>
         <div style="margin-top:1rem;text-align:right;">
-            <button onclick="document.getElementById('add-contact-modal').remove()" style="padding:0.5rem 1rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">${t('common.cancel','취소')}</button>
+            <button onclick="document.getElementById('add-contact-modal').remove()" style="padding:0.5rem 1rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">${t('common.cancel','취소')}</button>
         </div>
     </div>`;
     document.body.appendChild(overlay);
@@ -372,7 +372,7 @@ async function searchContactUsers() {
             const data = doc.data();
             const nick = data.nickname || data.email?.split('@')[0] || '사용자';
             const el = document.createElement('div');
-            el.style.cssText = 'display:flex;align-items:center;gap:0.8rem;padding:0.7rem;border-bottom:1px solid var(--border,#2a2a3e);';
+            el.style.cssText = 'display:flex;align-items:center;gap:0.8rem;padding:0.7rem;border-bottom:1px solid var(--border,#E8E0D8);';
             el.innerHTML = `
                 ${avatarHTML(data.photoURL, nick, 40)}
                 <div style="flex:1;min-width:0;">
@@ -763,7 +763,7 @@ async function openChat(chatId, otherId) {
                     } else if (msgType === 'share_card' && msg.shareCard) {
                         const sc = msg.shareCard;
                         const pageMap = { product: 'mall', artist: 'artist', campaign: 'fundraise', art: 'art' };
-                        content += `<div onclick="showPage('${pageMap[sc.itemType]||sc.itemType}')" style="border:1px solid var(--border,#2a2a3e);border-radius:10px;overflow:hidden;cursor:pointer;margin-bottom:0.3rem;max-width:220px;">
+                        content += `<div onclick="showPage('${pageMap[sc.itemType]||sc.itemType}')" style="border:1px solid var(--border,#E8E0D8);border-radius:10px;overflow:hidden;cursor:pointer;margin-bottom:0.3rem;max-width:220px;">
                             ${sc.imageUrl ? `<img src="${sc.imageUrl}" style="width:100%;height:100px;object-fit:cover;">` : ''}
                             <div style="padding:0.4rem 0.6rem;"><div style="font-size:0.8rem;font-weight:600;">${sc.name}</div>${sc.price ? `<div style="font-size:0.75rem;color:#e65100;">${sc.price}</div>` : ''}<div style="font-size:0.7rem;color:#0066cc;margin-top:0.2rem;">🛒 보기</div></div></div>`;
                     } else if (msgType === 'transfer') {
@@ -1029,7 +1029,7 @@ function showAttachMenu() {
     document.querySelectorAll('.attach-menu-popup').forEach(el => el.remove());
     const menu = document.createElement('div');
     menu.className = 'attach-menu-popup';
-    menu.style.cssText = 'position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--bg-card,#3D2B1F);border:1px solid var(--border,#2a2a3e);border-radius:12px;padding:0.5rem;box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:9999;display:flex;gap:0.3rem;';
+    menu.style.cssText = 'position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--bg-card,#3D2B1F);border:1px solid var(--border,#E8E0D8);border-radius:12px;padding:0.5rem;box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:9999;display:flex;gap:0.3rem;';
     const items = [
         { icon: '📷', label: '사진', fn: () => sendMediaFile('image') },
         { icon: '🎬', label: '영상', fn: () => sendMediaFile('video') },
@@ -1195,12 +1195,12 @@ async function forwardMessage(msgId) {
             if (otherId) { const info = await getUserDisplayInfo(otherId); name = info.nickname; }
         }
         if (!name) continue;
-        listHTML += `<div style="padding:0.6rem;border-bottom:1px solid var(--border,#2a2a3e);cursor:pointer;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background=''" onclick="executeForward('${doc.id}',${JSON.stringify(JSON.stringify(msg.text||''))},${JSON.stringify(JSON.stringify(msg.senderId||''))});this.closest('[style*=position]').remove();">${name}</div>`;
+        listHTML += `<div style="padding:0.6rem;border-bottom:1px solid var(--border,#E8E0D8);cursor:pointer;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background=''" onclick="executeForward('${doc.id}',${JSON.stringify(JSON.stringify(msg.text||''))},${JSON.stringify(JSON.stringify(msg.senderId||''))});this.closest('[style*=position]').remove();">${name}</div>`;
     }
     overlay.innerHTML = `<div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:400px;width:100%;max-height:60vh;overflow-y:auto;">
         <h3 style="margin-bottom:1rem;">↗️ 전달할 채팅방 선택</h3>
         ${listHTML || '<p style="color:var(--text-muted,#888);text-align:center;">전달 가능한 채팅방이 없습니다</p>'}
-        <button onclick="this.closest('[style*=position]').remove()" style="width:100%;margin-top:1rem;padding:0.5rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">취소</button>
+        <button onclick="this.closest('[style*=position]').remove()" style="width:100%;margin-top:1rem;padding:0.5rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">취소</button>
     </div>`;
     document.body.appendChild(overlay);
 }
@@ -1252,9 +1252,9 @@ function showStickerGifPanel() {
     document.querySelectorAll('.sticker-gif-panel').forEach(el => el.remove());
     const panel = document.createElement('div');
     panel.className = 'sticker-gif-panel';
-    panel.style.cssText = 'position:fixed;bottom:60px;left:50%;transform:translateX(-50%);width:340px;max-width:90vw;background:var(--bg-card,#3D2B1F);border:1px solid var(--border,#2a2a3e);border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:9999;overflow:hidden;';
+    panel.style.cssText = 'position:fixed;bottom:60px;left:50%;transform:translateX(-50%);width:340px;max-width:90vw;background:var(--bg-card,#3D2B1F);border:1px solid var(--border,#E8E0D8);border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:9999;overflow:hidden;';
     panel.innerHTML = `
-        <div style="display:flex;border-bottom:1px solid var(--border,#2a2a3e);">
+        <div style="display:flex;border-bottom:1px solid var(--border,#E8E0D8);">
             <button onclick="showStickerTab()" class="sticker-tab-btn active" style="flex:1;padding:0.6rem;border:none;background:var(--bg-card,#3D2B1F);cursor:pointer;font-weight:600;border-bottom:2px solid #333;">😊 스티커</button>
             <button onclick="showGifTab()" class="sticker-tab-btn" style="flex:1;padding:0.6rem;border:none;background:var(--bg-card,#3D2B1F);cursor:pointer;font-weight:600;border-bottom:2px solid transparent;">GIF</button>
         </div>
@@ -1286,7 +1286,7 @@ function showGifTab() {
     const content = document.getElementById('sticker-gif-content');
     content.innerHTML = `
         <div style="display:flex;gap:0.3rem;margin-bottom:0.5rem;">
-            <input type="text" id="gif-search-input" placeholder="GIF 검색..." style="flex:1;padding:0.5rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;font-size:0.85rem;" onkeypress="if(event.key==='Enter')searchGifs()">
+            <input type="text" id="gif-search-input" placeholder="GIF 검색..." style="flex:1;padding:0.5rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;font-size:0.85rem;" onkeypress="if(event.key==='Enter')searchGifs()">
             <button onclick="searchGifs()" style="padding:0.5rem 0.8rem;border:none;border-radius:8px;background:#333;color:white;cursor:pointer;">검색</button>
         </div>
         <div id="gif-results" style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.3rem;"></div>
@@ -1343,12 +1343,12 @@ async function showShareItemModal() {
     <div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:420px;width:100%;">
         <h3 style="margin-bottom:1rem;">🔗 공유하기</h3>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-            <button onclick="this.closest('[style*=position]').remove();shareServiceItem('product')" style="padding:0.8rem;border:2px solid var(--border,#2a2a3e);border-radius:12px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">🛒 상품</button>
-            <button onclick="this.closest('[style*=position]').remove();shareServiceItem('artist')" style="padding:0.8rem;border:2px solid var(--border,#2a2a3e);border-radius:12px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">💖 아티스트</button>
-            <button onclick="this.closest('[style*=position]').remove();shareServiceItem('campaign')" style="padding:0.8rem;border:2px solid var(--border,#2a2a3e);border-radius:12px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">💝 캠페인</button>
-            <button onclick="this.closest('[style*=position]').remove();shareServiceItem('art')" style="padding:0.8rem;border:2px solid var(--border,#2a2a3e);border-radius:12px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">🎨 작품</button>
+            <button onclick="this.closest('[style*=position]').remove();shareServiceItem('product')" style="padding:0.8rem;border:2px solid var(--border,#E8E0D8);border-radius:12px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">🛒 상품</button>
+            <button onclick="this.closest('[style*=position]').remove();shareServiceItem('artist')" style="padding:0.8rem;border:2px solid var(--border,#E8E0D8);border-radius:12px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">💖 아티스트</button>
+            <button onclick="this.closest('[style*=position]').remove();shareServiceItem('campaign')" style="padding:0.8rem;border:2px solid var(--border,#E8E0D8);border-radius:12px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">💝 캠페인</button>
+            <button onclick="this.closest('[style*=position]').remove();shareServiceItem('art')" style="padding:0.8rem;border:2px solid var(--border,#E8E0D8);border-radius:12px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;">🎨 작품</button>
         </div>
-        <button onclick="this.closest('[style*=position]').remove()" style="width:100%;margin-top:1rem;padding:0.5rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">취소</button>
+        <button onclick="this.closest('[style*=position]').remove()" style="width:100%;margin-top:1rem;padding:0.5rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">취소</button>
     </div>`;
     document.body.appendChild(overlay);
 }
@@ -1369,14 +1369,14 @@ async function shareServiceItem(type) {
             const name = d[cfg.name] || doc.id;
             const price = d.price ? ` — ${d.price}` : '';
             const img = d.imageUrl || d.imageData || d.thumbnailUrl || '';
-            listHTML += `<div style="display:flex;align-items:center;gap:0.6rem;padding:0.6rem;border-bottom:1px solid var(--border,#2a2a3e);cursor:pointer;" onclick="sendShareCard('${type}','${doc.id}',${JSON.stringify(name)},${JSON.stringify(img)},${JSON.stringify(d.price||'')});this.closest('[style*=position]').remove();">
+            listHTML += `<div style="display:flex;align-items:center;gap:0.6rem;padding:0.6rem;border-bottom:1px solid var(--border,#E8E0D8);cursor:pointer;" onclick="sendShareCard('${type}','${doc.id}',${JSON.stringify(name)},${JSON.stringify(img)},${JSON.stringify(d.price||'')});this.closest('[style*=position]').remove();">
                 ${img ? `<img src="${img}" style="width:40px;height:40px;border-radius:6px;object-fit:cover;">` : '<div style="width:40px;height:40px;border-radius:6px;background:#eee;display:flex;align-items:center;justify-content:center;">📦</div>'}
                 <div style="flex:1;min-width:0;"><div style="font-size:0.85rem;font-weight:600;">${name}</div><div style="font-size:0.75rem;color:var(--text-muted,#888);">${price}</div></div>
             </div>`;
         });
         overlay.innerHTML = `<div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:420px;width:100%;max-height:60vh;overflow-y:auto;">
             <h3 style="margin-bottom:1rem;">선택하세요</h3>${listHTML}
-            <button onclick="this.closest('[style*=position]').remove()" style="width:100%;margin-top:1rem;padding:0.5rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">취소</button>
+            <button onclick="this.closest('[style*=position]').remove()" style="width:100%;margin-top:1rem;padding:0.5rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">취소</button>
         </div>`;
         document.body.appendChild(overlay);
     } catch (e) { showToast('로드 실패', 'error'); }
@@ -1482,7 +1482,7 @@ function showReactionPicker(msgId) {
     const emojis = ['👍','❤️','😂','😮','😢','🔥'];
     const picker = document.createElement('div');
     picker.className = 'reaction-picker-popup';
-    picker.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--bg-card,#3D2B1F);border:1px solid var(--border,#2a2a3e);border-radius:24px;padding:6px 10px;box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:9999;display:flex;gap:4px;';
+    picker.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--bg-card,#3D2B1F);border:1px solid var(--border,#E8E0D8);border-radius:24px;padding:6px 10px;box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:9999;display:flex;gap:4px;';
     emojis.forEach(emoji => {
         const btn = document.createElement('button');
         btn.textContent = emoji;
@@ -1906,20 +1906,20 @@ async function showServiceLinkModal() {
         <p style="font-size:0.85rem;color:var(--text-muted,#888);margin-bottom:1rem;">게시물에 연결할 서비스를 선택하세요</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1rem;">
             ${Object.entries(SERVICE_LINK_CONFIG).map(([type, cfg]) => `
-                <button onclick="selectServiceType('${type}')" style="padding:0.8rem;border:2px solid var(--border,#2a2a3e);border-radius:12px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;font-weight:600;text-align:center;transition:all 0.2s;" onmouseover="this.style.borderColor='${cfg.color}';this.style.background='${cfg.color}11'" onmouseout="this.style.borderColor='#eee';this.style.background='white'">
+                <button onclick="selectServiceType('${type}')" style="padding:0.8rem;border:2px solid var(--border,#E8E0D8);border-radius:12px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;font-weight:600;text-align:center;transition:all 0.2s;" onmouseover="this.style.borderColor='${cfg.color}';this.style.background='${cfg.color}11'" onmouseout="this.style.borderColor='#eee';this.style.background='white'">
                     ${cfg.action}
                 </button>
             `).join('')}
         </div>
         <div id="service-link-search" style="display:none;">
             <div style="display:flex;gap:0.5rem;margin-bottom:0.8rem;">
-                <input type="text" id="service-link-query" placeholder="검색..." style="flex:1;padding:0.6rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;font-size:0.9rem;">
+                <input type="text" id="service-link-query" placeholder="검색..." style="flex:1;padding:0.6rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;font-size:0.9rem;">
                 <button onclick="searchServiceItems()" style="padding:0.6rem 1rem;border:none;border-radius:8px;background:var(--gold,#D4AF37);color:#000;cursor:pointer;">검색</button>
             </div>
             <div id="service-link-results" style="max-height:250px;overflow-y:auto;"></div>
         </div>
         <div style="margin-top:1rem;text-align:right;">
-            <button onclick="document.getElementById('service-link-modal').remove()" style="padding:0.5rem 1rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">취소</button>
+            <button onclick="document.getElementById('service-link-modal').remove()" style="padding:0.5rem 1rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">취소</button>
         </div>
     </div>`;
     document.body.appendChild(overlay);
@@ -1961,7 +1961,7 @@ async function searchServiceItems() {
             const data = doc.data();
             const name = data[cfg.nameField] || doc.id;
             const el = document.createElement('div');
-            el.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:0.6rem;border-bottom:1px solid var(--border,#2a2a3e);cursor:pointer;';
+            el.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:0.6rem;border-bottom:1px solid var(--border,#E8E0D8);cursor:pointer;';
             el.onmouseover = () => el.style.background = '#f9f9f9';
             el.onmouseout = () => el.style.background = 'white';
             el.innerHTML = `<span style="font-size:0.9rem;">${name}</span><button style="padding:0.3rem 0.6rem;border:none;border-radius:6px;background:${cfg.color};color:white;font-size:0.8rem;cursor:pointer;">선택</button>`;
@@ -2027,16 +2027,16 @@ function openVideoEditor() {
             <!-- Text overlay -->
             <div style="margin-bottom:0.8rem;">
                 <label style="font-size:0.8rem;color:var(--text-muted,#888);">텍스트 오버레이</label>
-                <input type="text" id="editor-text-input" placeholder="텍스트 입력" maxlength="50" style="width:100%;padding:0.5rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;font-size:0.85rem;margin-top:0.3rem;box-sizing:border-box;" oninput="updateTextOverlay()">
+                <input type="text" id="editor-text-input" placeholder="텍스트 입력" maxlength="50" style="width:100%;padding:0.5rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;font-size:0.85rem;margin-top:0.3rem;box-sizing:border-box;" oninput="updateTextOverlay()">
                 <div style="display:flex;gap:0.5rem;margin-top:0.3rem;align-items:center;">
-                    <select id="editor-text-pos" style="padding:0.3rem;border:1px solid var(--border,#2a2a3e);border-radius:6px;font-size:0.8rem;" onchange="updateTextOverlay()">
+                    <select id="editor-text-pos" style="padding:0.3rem;border:1px solid var(--border,#E8E0D8);border-radius:6px;font-size:0.8rem;" onchange="updateTextOverlay()">
                         <option value="top">상단</option><option value="center">중앙</option><option value="bottom" selected>하단</option>
                     </select>
                     <input type="color" id="editor-text-color" value="#ffffff" style="width:30px;height:30px;border:none;cursor:pointer;" onchange="updateTextOverlay()">
                 </div>
             </div>
             <div style="display:flex;gap:0.5rem;">
-                <button onclick="document.getElementById('video-editor-modal').remove()" style="flex:1;padding:0.6rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">취소</button>
+                <button onclick="document.getElementById('video-editor-modal').remove()" style="flex:1;padding:0.6rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">취소</button>
                 <button onclick="applyVideoEdits()" style="flex:1;padding:0.6rem;border:none;border-radius:8px;cursor:pointer;background:var(--gold,#D4AF37);color:#000;font-weight:700;">✅ 적용</button>
             </div>
         </div>
@@ -2526,7 +2526,7 @@ async function openChannel(channelId) {
             <div style="width:32px;height:32px;border-radius:50%;background:#e3f2fd;display:flex;align-items:center;justify-content:center;">📢</div>
             <div><strong>${ch.name}</strong><div style="font-size:0.7rem;color:var(--accent);">${ch.subscribers?.length || 0} 구독자</div></div>
             ${!isSub ? `<button onclick="subscribeChannel('${channelId}')" style="margin-left:0.5rem;padding:0.3rem 0.6rem;border:none;border-radius:6px;background:#0066cc;color:white;font-size:0.75rem;cursor:pointer;">구독</button>` :
-                `<button onclick="unsubscribeChannel('${channelId}')" style="margin-left:0.5rem;padding:0.3rem 0.6rem;border:1px solid var(--border,#2a2a3e);border-radius:6px;background:var(--bg-card,#3D2B1F);font-size:0.75rem;cursor:pointer;">구독취소</button>`}
+                `<button onclick="unsubscribeChannel('${channelId}')" style="margin-left:0.5rem;padding:0.3rem 0.6rem;border:1px solid var(--border,#E8E0D8);border-radius:6px;background:var(--bg-card,#3D2B1F);font-size:0.75rem;cursor:pointer;">구독취소</button>`}
         </div>`;
     document.getElementById('chat-header-actions').style.display = 'flex';
     document.getElementById('chat-input-area').style.display = isOwner ? 'flex' : 'none';
@@ -2840,7 +2840,7 @@ async function showFollowList(uid, type) {
         for (const doc of snap.docs) {
             const info = await getUserDisplayInfo(doc.id);
             const amFollowingThis = currentUser ? await isFollowing(doc.id) : false;
-            html += `<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0;border-bottom:1px solid var(--border,#2a2a3e);">
+            html += `<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0;border-bottom:1px solid var(--border,#E8E0D8);">
                 <div onclick="showFullProfile('${doc.id}')" style="cursor:pointer;">${avatarHTML(info.photoURL, info.nickname, 36)}</div>
                 <span style="flex:1;font-size:0.9rem;font-weight:600;cursor:pointer;" onclick="showFullProfile('${doc.id}')">${info.nickname}</span>
                 ${doc.id !== currentUser?.uid ? `<button onclick="followUser('${doc.id}');this.textContent='${amFollowingThis ? '팔로우' : '팔로잉 ✓'}'" style="padding:0.3rem 0.6rem;border:${amFollowingThis ? 'none' : '1px solid #ddd'};border-radius:6px;background:${amFollowingThis ? '#0095f6' : 'white'};color:${amFollowingThis ? 'white' : 'var(--text)'};font-size:0.8rem;cursor:pointer;">${amFollowingThis ? '팔로잉' : '팔로우'}</button>` : ''}
@@ -2853,7 +2853,7 @@ async function showFollowList(uid, type) {
         modal.innerHTML = `<div style="background:var(--bg-card,#3D2B1F);padding:1.2rem;border-radius:16px;max-width:380px;width:100%;max-height:70vh;overflow-y:auto;">
             <h4 style="margin-bottom:0.8rem;">${type === 'followers' ? '팔로워' : '팔로잉'} ${snap.size}명</h4>
             ${html}
-            <button onclick="this.parentElement.parentElement.remove()" style="width:100%;margin-top:0.8rem;padding:0.6rem;border:1px solid var(--border,#2a2a3e);border-radius:8px;background:var(--bg-card,#3D2B1F);cursor:pointer;">닫기</button>
+            <button onclick="this.parentElement.parentElement.remove()" style="width:100%;margin-top:0.8rem;padding:0.6rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;background:var(--bg-card,#3D2B1F);cursor:pointer;">닫기</button>
         </div>`;
         document.body.appendChild(modal);
     } catch (e) { showToast('목록 로드 실패', 'error'); }
