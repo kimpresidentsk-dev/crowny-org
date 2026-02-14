@@ -180,7 +180,7 @@ function showPromptModal(title, message, defaultValue, isPassword) {
                 <input type="${inputType}" id="prompt-modal-input" value="${defaultValue || ''}" style="width:100%;padding:0.7rem;border:1px solid #E8E0D8;border-radius:8px;font-size:1rem;box-sizing:border-box;margin-bottom:1rem;background:#F7F3ED;color:#3D2B1F;">
                 <div style="display:flex;gap:0.5rem;">
                     <button id="prompt-cancel" style="flex:1;padding:0.7rem;border:1px solid #E8E0D8;border-radius:8px;cursor:pointer;background:#F7F3ED;color:#3D2B1F;">${t('common.cancel', '취소')}</button>
-                    <button id="prompt-ok" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#8B6914;color:#FFF8F0;font-weight:700;">${t('common.confirm', '확인')}</button>
+                    <button id="prompt-ok" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#3D2B1F;color:#FFF8F0;font-weight:700;">${t('common.confirm', '확인')}</button>
                 </div>
             </div>`;
         document.body.appendChild(overlay);
