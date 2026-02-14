@@ -78,7 +78,7 @@ const SUPER_ADMIN_EMAIL = 'kim.president.sk@gmail.com';
 const ADMIN_EMAIL = SUPER_ADMIN_EMAIL; // 하위 호환
 
 const ADMIN_LEVELS = {
-    6: { name: t('admin.level.super','수퍼관리자'), icon: '👑', color: '#FFD700' },
+    6: { name: t('admin.level.super','수퍼관리자'), icon: '👑', color: '#8B6914' },
     5: { name: t('admin.level.country','국가관리자'), icon: '🌍', color: '#9C27B0' },
     4: { name: t('admin.level.business','사업관리자'), icon: '💼', color: '#2196F3' },
     3: { name: t('admin.level.service','서비스관리자'), icon: '🔧', color: '#FF9800' },
@@ -968,8 +968,8 @@ function switchAdminTab(tabId) {
     
     const btn = document.getElementById(`admin-tab-btn-${tabId}`);
     if (btn) {
-        btn.style.background = '#1a1a2e';
-        btn.style.color = 'white';
+        btn.style.background = '#3D2B1F';
+        btn.style.color = '#FFF8F0';
     }
     
     activeAdminTab = tabId;
