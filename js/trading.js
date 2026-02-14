@@ -379,7 +379,7 @@ function updateCRTDDisplay() {
             <span>${t('trading.withdrawn','기인출')}: ${totalWithdrawn}</span>
         </div>
         ${withdrawable >= cfg.withdrawUnit ? `
-        <button onclick="withdrawCRTD()" style="width:100%; margin-top:0.4rem; padding:0.5rem; background:linear-gradient(135deg,#00cc66,#009944); color:white; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.85rem;">
+        <button onclick="withdrawCRTD()" style="width:100%; margin-top:0.4rem; padding:0.5rem; background:#8B6914; color:#FFF8F0; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.85rem;">
             💎 ${withdrawable} CRTD ${t('trading.withdraw_btn','인출')}
         </button>` : ''}
     `;
@@ -569,7 +569,7 @@ function renderChartTabs() {
     chartTabs.forEach(tab => {
         const active = tab.id === activeTabId;
         const btn = document.createElement('button');
-        btn.style.cssText = `background:${active?'#0066cc':'#16213e'}; color:${active?'#fff':'#888'}; border:1px solid ${active?'#0066cc':'#333'}; border-radius:4px; padding:5px 10px; font-size:0.72rem; cursor:pointer; white-space:nowrap; font-weight:${active?'700':'400'};`;
+        btn.style.cssText = `background:${active?'#3D2B1F':'#E8E0D8'}; color:${active?'#FFF8F0':'#6B5744'}; border:1px solid ${active?'#3D2B1F':'#E8E0D8'}; border-radius:4px; padding:5px 10px; font-size:0.72rem; cursor:pointer; white-space:nowrap; font-weight:${active?'700':'400'};`;
         const icon = tab.chartType === 'tick' ? '📊' : '⏱';
         const label = tab.chartType === 'tick' ? `${tab.tickCount}T` : `${(tab.interval||60)/60}분`;
         btn.innerHTML = `${tab.symbol} ${icon}${label}${chartTabs.length > 1 ? ` <span class="tab-close" style="margin-left:4px;color:${active?'#ffaaaa':'#666'};font-size:0.65rem;cursor:pointer;">✕</span>` : ''}`;
@@ -579,7 +579,7 @@ function renderChartTabs() {
         bar.appendChild(btn);
     });
     const addBtn = document.createElement('button');
-    addBtn.style.cssText = 'background:#16213e; color:#00ff88; border:1px solid #333; border-radius:4px; padding:5px 8px; font-size:0.8rem; cursor:pointer;';
+    addBtn.style.cssText = 'background:#E8E0D8; color:#3D2B1F; border:1px solid #E8E0D8; border-radius:4px; padding:5px 8px; font-size:0.8rem; cursor:pointer;';
     addBtn.textContent = '+';
     addBtn.onclick = addChartTab;
     bar.appendChild(addBtn);
@@ -720,7 +720,7 @@ async function initTradingViewChart() {
         const chart = LightweightCharts.createChart(container, {
             width: container.clientWidth,
             height: chartHeight,
-            layout: { background: { color: '#0a0a0a' }, textColor: '#999', fontFamily: "'Consolas','Monaco',monospace", fontSize: 11 },
+            layout: { background: { color: '#FFF8F0' }, textColor: '#3D2B1F', fontFamily: "'Consolas','Monaco',monospace", fontSize: 11 },
             grid: { vertLines: { color: '#1a1a2a', style: 1 }, horzLines: { color: '#1a1a2a', style: 1 } },
             crosshair: {
                 mode: LightweightCharts.CrosshairMode.Normal,
@@ -1816,7 +1816,7 @@ function updateOpenPositions() {
         let slTPHTML = `
             <div style="display:flex; gap:4px; margin-top:6px; font-size:0.8rem; flex-wrap:wrap; align-items:center;">
                 <span style="color:#ff4444;">SL:</span>
-                <button onclick="adjustSLTP(${actualIndex},'sl',-0.25)" style="background:#333; color:#ff4444; border:none; border-radius:3px; padding:1px 6px; cursor:pointer; font-size:0.75rem;">−</button>
+                <button onclick="adjustSLTP(${actualIndex},'sl',-0.25)" style="background:#6B5744; color:#FFF8F0; border:none; border-radius:3px; padding:1px 6px; cursor:pointer; font-size:0.75rem;">−</button>
                 <span id="sl-val-${actualIndex}" style="color:#ff4444; font-weight:700; min-width:60px; text-align:center; cursor:pointer;" onclick="editSLTP(${actualIndex},'sl')">${trade.stopLoss ? trade.stopLoss.toFixed(2) : '없음'}</span>
                 <button onclick="adjustSLTP(${actualIndex},'sl',+0.25)" style="background:#333; color:#ff4444; border:none; border-radius:3px; padding:1px 6px; cursor:pointer; font-size:0.75rem;">+</button>
                 <span style="margin-left:6px; color:#00cc00;">TP:</span>

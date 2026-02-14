@@ -96,7 +96,7 @@
                 <div id="sf-service-search" style="display:none;margin-top:0.5rem;">
                     <div style="display:flex;gap:0.4rem;">
                         <input type="text" id="sf-svc-query" placeholder="${t('shortform.search_item','항목 검색...')}" style="flex:1;padding:0.4rem;border:1px solid var(--border);border-radius:8px;font-size:0.85rem;">
-                        <button onclick="SHORTFORM._searchService()" style="padding:0.4rem 0.8rem;border:none;border-radius:8px;background:var(--accent,#1a1a2e);color:white;cursor:pointer;font-size:0.85rem;">검색</button>
+                        <button onclick="SHORTFORM._searchService()" style="padding:0.4rem 0.8rem;border:none;border-radius:8px;background:var(--accent,#8B6914);color:#FFF8F0;cursor:pointer;font-size:0.85rem;">검색</button>
                     </div>
                     <div id="sf-svc-results" style="max-height:150px;overflow-y:auto;margin-top:0.3rem;"></div>
                 </div>
@@ -106,7 +106,7 @@
             <!-- progress -->
             <div id="sf-progress" style="display:none;margin-bottom:0.8rem;">
                 <div style="background:var(--border,#eee);border-radius:8px;height:6px;overflow:hidden;">
-                    <div id="sf-progress-bar" style="height:100%;background:linear-gradient(90deg,#4CAF50,#2196F3);width:0%;transition:width 0.3s;"></div>
+                    <div id="sf-progress-bar" style="height:100%;background:#8B6914;width:0%;transition:width 0.3s;"></div>
                 </div>
                 <div id="sf-progress-text" style="font-size:0.75rem;color:#888;margin-top:0.2rem;text-align:center;">0%</div>
             </div>
@@ -114,7 +114,7 @@
             <!-- actions -->
             <div style="display:flex;gap:0.5rem;justify-content:flex-end;">
                 <button onclick="document.getElementById('shortform-upload-modal').remove()" style="padding:0.6rem 1rem;border:1px solid var(--border,#ccc);border-radius:8px;cursor:pointer;background:transparent;color:var(--text);">${t('common.cancel','취소')}</button>
-                <button id="sf-submit-btn" onclick="SHORTFORM._doUpload()" style="padding:0.6rem 1.2rem;border:none;border-radius:8px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;cursor:pointer;font-weight:600;" disabled>${t('shortform.upload','업로드')}</button>
+                <button id="sf-submit-btn" onclick="SHORTFORM._doUpload()" style="padding:0.6rem 1.2rem;border:none;border-radius:8px;background:#3D2B1F;color:#FFF8F0;cursor:pointer;font-weight:600;" disabled>${t('shortform.upload','업로드')}</button>
             </div>
         </div>`;
         document.body.appendChild(modal);
@@ -378,7 +378,7 @@
             if (lastDoc) q = q.startAfter(lastDoc);
             const snap = await q.get();
             if (snap.empty && reelsData.length === 0) {
-                document.getElementById('reels-container').innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:80vh;color:var(--text-muted,#888);"><div style="font-size:3rem;margin-bottom:1rem;">🎬</div><p>${t('shortform.no_videos','아직 영상이 없습니다')}</p><button onclick="SHORTFORM.openUpload()" style="margin-top:1rem;padding:0.6rem 1.2rem;border:none;border-radius:8px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;cursor:pointer;font-weight:600;">${t('shortform.first_upload','첫 영상 올리기')}</button></div>`;
+                document.getElementById('reels-container').innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:80vh;color:var(--text-muted,#888);"><div style="font-size:3rem;margin-bottom:1rem;">🎬</div><p>${t('shortform.no_videos','아직 영상이 없습니다')}</p><button onclick="SHORTFORM.openUpload()" style="margin-top:1rem;padding:0.6rem 1.2rem;border:none;border-radius:8px;background:#3D2B1F;color:#FFF8F0;cursor:pointer;font-weight:600;">${t('shortform.first_upload','첫 영상 올리기')}</button></div>`;
                 loading = false; return;
             }
             const newItems = [];
@@ -490,7 +490,7 @@
         const isLiked = reel.likedBy && currentUser && reel.likedBy.includes(currentUser.uid);
 
         container.innerHTML = `
-        <div class="reel-slide" style="position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#000;">
+        <div class="reel-slide" style="position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#FFF8F0;">
             <video id="reel-video" src="${reel.videoUrl}" style="max-width:100%;max-height:100%;object-fit:contain;${filterStyle}" playsinline loop ${reelsMuted?'muted':''} autoplay
                 ${reel.trimStart ? `data-trim-start="${reel.trimStart}"` : ''} ${reel.trimEnd ? `data-trim-end="${reel.trimEnd}"` : ''}></video>
             ${textHTML}
@@ -602,7 +602,7 @@
         overlay.id = 'reel-comments-overlay';
         overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:99998;display:flex;align-items:flex-end;justify-content:center;';
         overlay.innerHTML = `
-            <div id="reel-comments-sheet" style="width:100%;max-width:500px;max-height:70vh;background:var(--dark-card,#1e1e3a);border-radius:16px 16px 0 0;display:flex;flex-direction:column;overflow:hidden;">
+            <div id="reel-comments-sheet" style="width:100%;max-width:500px;max-height:70vh;background:var(--dark-card,#F7F3ED);border-radius:16px 16px 0 0;display:flex;flex-direction:column;overflow:hidden;">
                 <div style="padding:12px 16px;border-bottom:1px solid var(--dark-border,#2a2a4a);display:flex;align-items:center;justify-content:space-between;">
                     <h4 style="margin:0;font-size:1rem;">💬 ${t('shortform.comments','댓글')}</h4>
                     <button onclick="document.getElementById('reel-comments-overlay').remove()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--text);">✕</button>

@@ -147,7 +147,7 @@ function showPromptModal(title, message, defaultValue, isPassword) {
     return new Promise((resolve) => {
         const inputType = isPassword ? 'password' : 'text';
         const overlay = document.createElement('div');
-        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.innerHTML = `
             <div style="background:white;padding:1.5rem;border-radius:12px;max-width:400px;width:100%;">
                 <h3 style="margin-bottom:0.8rem;">${title}</h3>
@@ -155,7 +155,7 @@ function showPromptModal(title, message, defaultValue, isPassword) {
                 <input type="${inputType}" id="prompt-modal-input" value="${defaultValue || ''}" style="width:100%;padding:0.7rem;border:1px solid #ddd;border-radius:8px;font-size:1rem;box-sizing:border-box;margin-bottom:1rem;">
                 <div style="display:flex;gap:0.5rem;">
                     <button id="prompt-cancel" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">${t('common.cancel', '취소')}</button>
-                    <button id="prompt-ok" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#1a1a2e;color:white;font-weight:700;">${t('common.confirm', '확인')}</button>
+                    <button id="prompt-ok" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#3D2B1F;color:#FFF8F0;font-weight:700;">${t('common.confirm', '확인')}</button>
                 </div>
             </div>`;
         document.body.appendChild(overlay);
@@ -172,14 +172,14 @@ function showPromptModal(title, message, defaultValue, isPassword) {
 function showConfirmModal(title, message) {
     return new Promise((resolve) => {
         const overlay = document.createElement('div');
-        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.innerHTML = `
             <div style="background:var(--card,white);padding:1.5rem;border-radius:12px;max-width:420px;width:100%;color:var(--text,#222);">
                 <h3 style="margin-bottom:0.8rem;">${title}</h3>
                 <p style="color:var(--text-muted,#666);margin-bottom:1.2rem;white-space:pre-line;font-size:0.9rem;line-height:1.5;max-height:50vh;overflow-y:auto;">${message}</p>
                 <div style="display:flex;gap:0.5rem;">
                     <button id="confirm-cancel" style="flex:1;padding:0.7rem;border:1px solid var(--border,#ddd);border-radius:8px;cursor:pointer;background:transparent;color:var(--text,#333);font-size:0.95rem;">${t('common.cancel', '취소')}</button>
-                    <button id="confirm-ok" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#1a1a2e;color:white;font-weight:700;font-size:0.95rem;">${t('common.confirm', '확인')}</button>
+                    <button id="confirm-ok" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#3D2B1F;color:#FFF8F0;font-weight:700;font-size:0.95rem;">${t('common.confirm', '확인')}</button>
                 </div>
             </div>`;
         document.body.appendChild(overlay);
