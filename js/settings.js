@@ -204,10 +204,7 @@ function toggleTheme() {
 
 // Init theme on load
 function initTheme() {
-    let theme = localStorage.getItem('crowny-theme');
-    if (!theme) {
-        theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
+    let theme = localStorage.getItem('crowny-theme') || 'light';
     document.documentElement.setAttribute('data-theme', theme);
 }
 
