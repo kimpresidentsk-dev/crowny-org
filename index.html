@@ -331,7 +331,7 @@
                     <span class="icon"><i data-lucide="activity" style="width:32px;height:32px;color:#3D2B1F;stroke-width:1.5;"></i></span>
                     <h3>MOVEMENT</h3>
                 </div>
-                <div class="service-card" data-feature="ai_assistant" onclick="showPage('ai-assistant')" style="border:2px solid var(--gold, #D4AF37);">
+                <div class="service-card" data-feature="ai_assistant" onclick="showPage('ai-assistant')" style="border:2px solid var(--gold, #8B6914);">
                     <span class="icon"><i data-lucide="crown" style="width:32px;height:32px;color:#3D2B1F;stroke-width:1.5;"></i></span>
                     <h3>CROWNY PANEL</h3>
                 </div>
@@ -686,7 +686,7 @@
                     <!-- Reply preview bar -->
                     <div id="reply-preview-bar" style="display:none;" class="reply-preview-bar">
                         <div class="reply-preview-content">
-                            <span id="reply-preview-name" style="font-weight:700;font-size:0.75rem;color:#0066cc;"></span>
+                            <span id="reply-preview-name" style="font-weight:700;font-size:0.75rem;color:#3D2B1F;"></span>
                             <span id="reply-preview-text" style="font-size:0.8rem;color:#666;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
                         </div>
                         <button onclick="cancelReply()" style="background:none;border:none;cursor:pointer;font-size:1rem;color:#999;">✕</button>
@@ -720,7 +720,7 @@
 
         <section id="social" class="page">
             <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;">
-                <h2 style="margin:0;font-size:1.5rem;font-weight:800;color:var(--dark-gold,#D4AF37);" data-i18n="social.title">Crowny</h2>
+                <h2 style="margin:0;font-size:1.5rem;font-weight:800;color:var(--dark-gold,#8B6914);" data-i18n="social.title">Crowny</h2>
                 <div style="display:flex;gap:12px;">
                     <button onclick="SHORTFORM.openUpload()" style="background:none;border:none;cursor:pointer;font-size:1.3rem;color:var(--dark-text,#3D2B1F);">➕</button>
                     <button onclick="showPage('messenger')" style="background:none;border:none;cursor:pointer;font-size:1.3rem;color:var(--dark-text,#3D2B1F);">💬</button>
@@ -887,7 +887,7 @@
                 <div style="display:flex; gap:0.4rem; align-items:center;">
                     <button onclick="showPage('buyer-orders'); loadBuyerOrders();" style="background:none; border:1px solid #4CAF50; color:#4CAF50; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem;">📋</button>
                     <button onclick="showPage('wishlist'); loadWishlist();" style="background:none; border:1px solid #e91e63; color:#e91e63; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem;">❤️</button>
-                    <button onclick="showPage('cart'); loadCart();" style="background:none; border:1px solid #0066cc; color:#0066cc; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem; position:relative;">🛒 <span id="cart-badge" style="display:none; position:absolute; top:-6px; right:-6px; background:#e53935; color:#FFF8F0; font-size:0.6rem; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;">0</span></button>
+                    <button onclick="showPage('cart'); loadCart();" style="background:none; border:1px solid #3D2B1F; color:#3D2B1F; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem; position:relative;">🛒 <span id="cart-badge" style="display:none; position:absolute; top:-6px; right:-6px; background:#e53935; color:#FFF8F0; font-size:0.6rem; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;">0</span></button>
                     <button onclick="showPage('my-shop'); loadMyShopDashboard();" style="background:none; border:1px solid #ff9800; color:#ff9800; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem;">🏪</button>
                     <button class="admin-register-btn" id="mall-register-btn" onclick="openRegisterModal('mall')" data-i18n="mall.register">➕ 상품 등록</button>
                 </div>
@@ -946,8 +946,8 @@
                     <div style="grid-column:1/-1;">
                         <label style="font-size:0.7rem; color:var(--accent);">가격 범위: <span id="mall-price-range-label">0 ~ ∞ CRGC</span></label>
                         <div style="display:flex;gap:0.5rem;align-items:center;margin-top:0.3rem;">
-                            <input type="range" id="mall-filter-price-min" min="0" max="10000" step="100" value="0" oninput="updatePriceRangeLabel()" style="flex:1;accent-color:#0066cc;">
-                            <input type="range" id="mall-filter-price-max" min="0" max="10000" step="100" value="10000" oninput="updatePriceRangeLabel()" style="flex:1;accent-color:#0066cc;">
+                            <input type="range" id="mall-filter-price-min" min="0" max="10000" step="100" value="0" oninput="updatePriceRangeLabel()" style="flex:1;accent-color:#3D2B1F;">
+                            <input type="range" id="mall-filter-price-max" min="0" max="10000" step="100" value="10000" oninput="updatePriceRangeLabel()" style="flex:1;accent-color:#3D2B1F;">
                         </div>
                     </div>
                     <div>
@@ -965,7 +965,7 @@
                     </div>
                 </div>
                 <div style="display:flex; gap:0.5rem; margin-top:0.8rem;">
-                    <button onclick="applyMallFilters()" style="flex:1; background:#0066cc; color:#FFF8F0; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight:600;">적용</button>
+                    <button onclick="applyMallFilters()" style="flex:1; background:#3D2B1F; color:#FFF8F0; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight:600;">적용</button>
                     <button onclick="resetMallFilters()" style="flex:1; background:#eee; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; font-size:0.8rem;">초기화</button>
                 </div>
             </div>
@@ -1033,9 +1033,9 @@
                 <div id="cart-summary" style="display:none; background:#FFF8F0; padding:1rem; border-radius:12px; box-shadow:0 2px 8px rgba(61,43,31,0.08);">
                     <div style="display:flex; justify-content:space-between; font-size:1.1rem; font-weight:700; margin-bottom:1rem;">
                         <span>총 결제 금액</span>
-                        <span id="cart-total" style="color:#0066cc;">0 CRGC</span>
+                        <span id="cart-total" style="color:#3D2B1F;">0 CRGC</span>
                     </div>
-                    <button onclick="checkoutCart()" style="background:#0066cc; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; width:100%; font-size:1rem;">💳 일괄 결제</button>
+                    <button onclick="checkoutCart()" style="background:#3D2B1F; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; width:100%; font-size:1rem;">💳 일괄 결제</button>
                 </div>
             </div>
         </section>
@@ -1374,7 +1374,7 @@
                 <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">
                     <div style="flex:1; min-width:100px; background:var(--bg); padding:0.8rem; border-radius:8px; text-align:center;">
                         <div style="font-size:0.75rem; color:var(--accent);" data-i18n="credit.score">크레딧 점수</div>
-                        <div id="credit-score" style="font-size:1.8rem; font-weight:700; color:#0066cc;">--</div>
+                        <div id="credit-score" style="font-size:1.8rem; font-weight:700; color:#3D2B1F;">--</div>
                     </div>
                     <div style="flex:1; min-width:100px; background:var(--bg); padding:0.8rem; border-radius:8px; text-align:center;">
                         <div style="font-size:0.75rem; color:var(--accent);" data-i18n="credit.active_loans">활성 대출</div>
@@ -1547,7 +1547,7 @@
                     
                     <!-- BUY / SELL / CLOSE -->
                     <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-top:4px; padding:0 4px;">
-                        <button id="btn-chart-buy" onclick="quickChartTrade('BUY')" style="background:#0066cc; color:#FFF8F0; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">📈 BUY</button>
+                        <button id="btn-chart-buy" onclick="quickChartTrade('BUY')" style="background:#3D2B1F; color:#FFF8F0; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">📈 BUY</button>
                         <button id="btn-chart-sell" onclick="quickChartTrade('SELL')" style="background:#cc0000; color:#FFF8F0; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">📉 SELL</button>
                         <button onclick="closeAllPositions(getActiveTabSymbol())" style="background:#555; color:#FFF8F0; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.9rem;">✕ CLOSE</button>
                     </div>
@@ -1665,7 +1665,7 @@
                     
                     <!-- Buy/Sell Buttons -->
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">
-                        <button id="btn-buy" onclick="executeFuturesTrade('BUY')" style="background:#0066cc; color:#FFF8F0; padding:1.2rem; border:none; border-radius:6px; cursor:pointer; font-size:1.1rem; font-weight:bold;">
+                        <button id="btn-buy" onclick="executeFuturesTrade('BUY')" style="background:#3D2B1F; color:#FFF8F0; padding:1.2rem; border:none; border-radius:6px; cursor:pointer; font-size:1.1rem; font-weight:bold;">
                             📈 BUY
                         </button>
                         <button id="btn-sell" onclick="executeFuturesTrade('SELL')" style="background:#cc0000; color:#FFF8F0; padding:1.2rem; border:none; border-radius:6px; cursor:pointer; font-size:1.1rem; font-weight:bold;">
@@ -1715,7 +1715,7 @@
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                 <h2 style="margin:0;" data-i18n="care.title">💝 크라우니케어</h2>
             </div>
-            <div class="section-banner" style="background:linear-gradient(135deg, #D4AF37, #B8860B);">
+            <div class="section-banner" style="background:linear-gradient(135deg, #8B6914, #B8860B);">
                 <h3 data-i18n="care.banner_title">💝 크라우니케어 — 약자 돌봄 플랫폼</h3>
                 <p data-i18n="care.banner_desc">어르신 돌봄 · 가족 연결 · 약 복용 알림 · 건강 기록 · SOS 긴급 호출 · 이웃 네트워크</p>
             </div>
@@ -2085,7 +2085,7 @@
     <!-- 로딩 오버레이 -->
     <div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(61,43,31,0.5); z-index:99998; align-items:center; justify-content:center;">
         <div style="background:#FFF8F0; padding:2rem; border-radius:12px; text-align:center;">
-            <div style="width:40px; height:40px; border:4px solid #ddd; border-top:4px solid #0066cc; border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 1rem;"></div>
+            <div style="width:40px; height:40px; border:4px solid #ddd; border-top:4px solid #3D2B1F; border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 1rem;"></div>
             <p id="loading-text" style="color:#333;" data-i18n="common.processing">처리 중...</p>
         </div>
     </div>
@@ -2097,7 +2097,7 @@
             <p id="confirm-message" style="color:#666; margin-bottom:1.2rem; white-space:pre-line;"></p>
             <div style="display:flex; gap:0.5rem;">
                 <button id="confirm-cancel" onclick="closeConfirmModal(false)" style="flex:1; padding:0.7rem; border:1px solid #ddd; border-radius:8px; cursor:pointer; background:#FFF8F0;" data-i18n="common.cancel">취소</button>
-                <button id="confirm-ok" onclick="closeConfirmModal(true)" style="flex:1; padding:0.7rem; border:none; border-radius:8px; cursor:pointer; background:#0066cc; color:#FFF8F0; font-weight:700;" data-i18n="common.confirm">확인</button>
+                <button id="confirm-ok" onclick="closeConfirmModal(true)" style="flex:1; padding:0.7rem; border:none; border-radius:8px; cursor:pointer; background:#3D2B1F; color:#FFF8F0; font-weight:700;" data-i18n="common.confirm">확인</button>
             </div>
         </div>
     </div>

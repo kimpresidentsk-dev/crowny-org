@@ -125,7 +125,7 @@ function _renderBookCard(b) {
         <div style="padding:0.5rem;">
             <div style="font-weight:600;font-size:0.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${b.title}</div>
             <div style="font-size:0.7rem;color:var(--accent);">${b.author || '저자 미상'}</div>
-            <div style="font-weight:700;color:#0066cc;font-size:0.85rem;margin-top:0.2rem;">${price > 0 ? price + ' CRGC' : '무료'}</div>
+            <div style="font-weight:700;color:#3D2B1F;font-size:0.85rem;margin-top:0.2rem;">${price > 0 ? price + ' CRGC' : '무료'}</div>
             ${b.edition === 'limited' && supply > 0 ? `<div style="font-size:0.65rem;color:#888;">${sold}/${supply}</div>` : ''}
         </div>
     </div>`;
@@ -202,7 +202,7 @@ async function viewBookDetailV2(id) {
         <div style="padding:1.5rem;">
             <h2 style="margin:0 0 0.3rem;">${b.title}</h2>
             <p style="color:var(--accent);font-size:0.9rem;margin:0 0 0.5rem;">${b.author || '저자 미상'} · ${BOOK_GENRES[b.genre] || ''} · ${chapterCount}챕터</p>
-            <p style="font-size:1.2rem;font-weight:700;color:#0066cc;margin:0.5rem 0;">${price > 0 ? price + ' CRGC' : '무료'}</p>
+            <p style="font-size:1.2rem;font-weight:700;color:#3D2B1F;margin:0.5rem 0;">${price > 0 ? price + ' CRGC' : '무료'}</p>
             ${editionNumber ? `<p style="font-size:0.8rem;color:#888;margin:0;">📖 내 에디션: #${editionNumber} of ${supply || '∞'}</p>` : ''}
             ${b.description ? `<p style="font-size:0.9rem;margin:0.8rem 0;line-height:1.6;color:#555;">${b.description}</p>` : ''}
             
@@ -216,7 +216,7 @@ async function viewBookDetailV2(id) {
             
             <div style="display:flex;gap:0.5rem;margin-top:1rem;">
                 ${userOwns || isOwner || price <= 0 ? `<button onclick="openBookReader('${id}');document.getElementById('book-detail-modal-v2')?.remove();" style="flex:1;background:#4CAF50;color:#FFF8F0;border:none;padding:0.8rem;border-radius:8px;cursor:pointer;font-weight:700;">📖 읽기</button>` : ''}
-                ${!userOwns && !isOwner && price > 0 && !isSoldOut ? `<button onclick="buyBookV2('${id}');document.getElementById('book-detail-modal-v2')?.remove();" style="flex:1;background:#0066cc;color:#FFF8F0;border:none;padding:0.8rem;border-radius:8px;cursor:pointer;font-weight:700;">🛒 구매 (${price} CRGC)</button>` : ''}
+                ${!userOwns && !isOwner && price > 0 && !isSoldOut ? `<button onclick="buyBookV2('${id}');document.getElementById('book-detail-modal-v2')?.remove();" style="flex:1;background:#3D2B1F;color:#FFF8F0;border:none;padding:0.8rem;border-radius:8px;cursor:pointer;font-weight:700;">🛒 구매 (${price} CRGC)</button>` : ''}
                 ${isSoldOut && !userOwns ? '<button disabled style="flex:1;background:#ccc;color:#666;border:none;padding:0.8rem;border-radius:8px;font-weight:700;">매진</button>' : ''}
                 <button onclick="addToReadingList('${id}')" style="background:#ff9800;color:#FFF8F0;border:none;padding:0.8rem;border-radius:8px;cursor:pointer;font-weight:700;">📚</button>
             </div>
@@ -360,7 +360,7 @@ function _renderBookCreator() {
 
     const steps = ['기본 정보', '챕터/씬', '미리보기', '발행'];
     const stepBar = `<div style="display:flex;gap:0;border-bottom:2px solid #eee;">
-        ${steps.map((s, i) => `<div style="flex:1;text-align:center;padding:0.8rem 0.3rem;font-size:0.8rem;font-weight:${d.step === i + 1 ? '700' : '400'};color:${d.step === i + 1 ? '#0066cc' : '#aaa'};border-bottom:${d.step === i + 1 ? '2px solid #0066cc' : 'none'};cursor:pointer;" onclick="_bookCreatorData.step=${i + 1};_renderBookCreator();">${i + 1}. ${s}</div>`).join('')}
+        ${steps.map((s, i) => `<div style="flex:1;text-align:center;padding:0.8rem 0.3rem;font-size:0.8rem;font-weight:${d.step === i + 1 ? '700' : '400'};color:${d.step === i + 1 ? '#3D2B1F' : '#aaa'};border-bottom:${d.step === i + 1 ? '2px solid #3D2B1F' : 'none'};cursor:pointer;" onclick="_bookCreatorData.step=${i + 1};_renderBookCreator();">${i + 1}. ${s}</div>`).join('')}
     </div>`;
 
     let content = '';
@@ -431,7 +431,7 @@ function _renderCreatorStep1() {
         
         <div style="display:flex;justify-content:flex-end;gap:0.5rem;margin-top:1rem;">
             <button onclick="_saveBookDraft()" style="padding:0.7rem 1.5rem;border:1px solid var(--border);background:#FFF8F0;border-radius:8px;cursor:pointer;">💾 임시저장</button>
-            <button onclick="_bookCreatorData.step=2;_renderBookCreator();" style="padding:0.7rem 1.5rem;background:#0066cc;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;">다음 →</button>
+            <button onclick="_bookCreatorData.step=2;_renderBookCreator();" style="padding:0.7rem 1.5rem;background:#3D2B1F;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;">다음 →</button>
         </div>
     </div>`;
 }
@@ -488,7 +488,7 @@ function _renderCreatorStep2() {
         <button onclick="_bookCreatorData.step=1;_renderBookCreator();" style="padding:0.7rem 1.5rem;border:1px solid var(--border);background:#FFF8F0;border-radius:8px;cursor:pointer;">← 이전</button>
         <div style="display:flex;gap:0.5rem;">
             <button onclick="_saveBookDraft()" style="padding:0.7rem 1.5rem;border:1px solid var(--border);background:#FFF8F0;border-radius:8px;cursor:pointer;">💾 임시저장</button>
-            <button onclick="_bookCreatorData.step=3;_renderBookCreator();" style="padding:0.7rem 1.5rem;background:#0066cc;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;">미리보기 →</button>
+            <button onclick="_bookCreatorData.step=3;_renderBookCreator();" style="padding:0.7rem 1.5rem;background:#3D2B1F;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;">미리보기 →</button>
         </div>
     </div></div>`;
     return html;
@@ -509,7 +509,7 @@ function _renderCreatorStep3() {
         </div>
         <div style="display:flex;justify-content:space-between;margin-top:1rem;">
             <button onclick="_bookCreatorData.step=2;_renderBookCreator();" style="padding:0.7rem 1.5rem;border:1px solid var(--border);background:#FFF8F0;border-radius:8px;cursor:pointer;">← 이전</button>
-            <button onclick="_bookCreatorData.step=4;_renderBookCreator();" style="padding:0.7rem 1.5rem;background:#0066cc;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;">발행 설정 →</button>
+            <button onclick="_bookCreatorData.step=4;_renderBookCreator();" style="padding:0.7rem 1.5rem;background:#3D2B1F;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;">발행 설정 →</button>
         </div>
     </div>`;
 }
@@ -796,7 +796,7 @@ function _renderBookReader() {
         <div style="background:rgba(0,0,0,0.3);padding:0.8rem 1rem;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
             <button onclick="_navigateScene(-1)" style="background:${s.currentScene > 0 ? '#333' : '#222'};color:${s.currentScene > 0 ? 'white' : '#555'};border:none;padding:0.5rem 1.5rem;border-radius:8px;cursor:pointer;" ${s.currentScene <= 0 ? 'disabled' : ''}>← 이전</button>
             <span style="color:#888;font-size:0.8rem;">${s.currentScene + 1} / ${s.allScenes.length}</span>
-            <button onclick="_navigateScene(1)" style="background:${s.currentScene < s.allScenes.length - 1 ? '#0066cc' : '#222'};color:${s.currentScene < s.allScenes.length - 1 ? 'white' : '#555'};border:none;padding:0.5rem 1.5rem;border-radius:8px;cursor:pointer;" ${s.currentScene >= s.allScenes.length - 1 ? 'disabled' : ''}>다음 →</button>
+            <button onclick="_navigateScene(1)" style="background:${s.currentScene < s.allScenes.length - 1 ? '#3D2B1F' : '#222'};color:${s.currentScene < s.allScenes.length - 1 ? 'white' : '#555'};border:none;padding:0.5rem 1.5rem;border-radius:8px;cursor:pointer;" ${s.currentScene >= s.allScenes.length - 1 ? 'disabled' : ''}>다음 →</button>
         </div>
     `;
     document.body.appendChild(modal);
@@ -894,7 +894,7 @@ function _showTreasureModal(reward) {
     m.innerHTML = `<div style="background:#FFF8F0;border-radius:20px;padding:2rem;text-align:center;max-width:300px;animation:bounceIn 0.5s;">
         <div style="font-size:4rem;">🎉</div>
         <h2 style="margin:0.5rem 0;">보물 발견!</h2>
-        <p style="color:#0066cc;font-size:1.5rem;font-weight:700;">${reward} CRGC 획득!</p>
+        <p style="color:#3D2B1F;font-size:1.5rem;font-weight:700;">${reward} CRGC 획득!</p>
         <p style="color:var(--accent);font-size:0.85rem;">숨겨진 보물을 찾으셨습니다!</p>
     </div>`;
     document.body.appendChild(m);
@@ -1132,7 +1132,7 @@ async function showMyLibrary() {
         <button onclick="document.getElementById('my-library-modal')?.remove()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">&times;</button>
     </div>
     <div style="display:flex;border-bottom:1px solid #eee;">
-        <button onclick="_showLibraryTab('purchased')" class="lib-tab active" style="flex:1;padding:0.8rem;border:none;background:#FFF8F0;cursor:pointer;font-weight:700;border-bottom:2px solid #0066cc;">📖 구매한 책</button>
+        <button onclick="_showLibraryTab('purchased')" class="lib-tab active" style="flex:1;padding:0.8rem;border:none;background:#FFF8F0;cursor:pointer;font-weight:700;border-bottom:2px solid #3D2B1F;">📖 구매한 책</button>
         <button onclick="_showLibraryTab('wishlist')" class="lib-tab" style="flex:1;padding:0.8rem;border:none;background:#FFF8F0;cursor:pointer;">💝 위시리스트</button>
         <button onclick="_showLibraryTab('treasures')" class="lib-tab" style="flex:1;padding:0.8rem;border:none;background:#FFF8F0;cursor:pointer;">🎯 보물</button>
         <button onclick="_showLibraryTab('translations')" class="lib-tab" style="flex:1;padding:0.8rem;border:none;background:#FFF8F0;cursor:pointer;">🌍 번역</button>
@@ -1146,7 +1146,7 @@ async function showMyLibrary() {
 function _showLibraryTab(tab) {
     document.querySelectorAll('.lib-tab').forEach(t => { t.style.fontWeight = '400'; t.style.borderBottom = 'none'; });
     event.target.style.fontWeight = '700';
-    event.target.style.borderBottom = '2px solid #0066cc';
+    event.target.style.borderBottom = '2px solid #3D2B1F';
 
     if (tab === 'purchased') _loadLibraryPurchased();
     else if (tab === 'wishlist') _loadLibraryWishlist();

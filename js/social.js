@@ -98,7 +98,7 @@ async function showProfileEdit() {
         <div style="text-align:center; margin-bottom:1rem;">
             <div id="profile-preview-avatar" style="display:inline-block;">${avatarHTML(data.photoURL, data.nickname, 80)}</div>
             <div style="margin-top:0.5rem;">
-                <label for="profile-photo-input" style="color:#0066cc; cursor:pointer; font-size:0.85rem; font-weight:600;">${t('social.change_photo','📷 사진 변경')}</label>
+                <label for="profile-photo-input" style="color:#3D2B1F; cursor:pointer; font-size:0.85rem; font-weight:600;">${t('social.change_photo','📷 사진 변경')}</label>
                 <input type="file" id="profile-photo-input" accept="image/*" style="display:none;" onchange="previewProfilePhoto(this)">
             </div>
         </div>
@@ -127,7 +127,7 @@ async function showProfileEdit() {
         </div>
         <div style="display:flex;gap:0.5rem;margin-top:1rem;">
             <button onclick="document.getElementById('profile-edit-modal').remove()" style="flex:1;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">${t('common.cancel','취소')}</button>
-            <button onclick="saveProfile()" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:var(--gold,#D4AF37);color:#000;font-weight:700;">${t('common.save','저장')}</button>
+            <button onclick="saveProfile()" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:var(--gold,#8B6914);color:#000;font-weight:700;">${t('common.save','저장')}</button>
         </div>
     </div>`;
     document.body.appendChild(overlay);
@@ -326,7 +326,7 @@ async function showAddContactModal() {
         <h3 style="margin-bottom:1rem;">${t('social.add_contact','➕ 연락처 추가')}</h3>
         <div style="display:flex;gap:0.5rem;margin-bottom:0.8rem;">
             <input type="text" id="contact-search-input" placeholder="${t('social.search_email_nick','이메일 또는 닉네임 검색')}" style="flex:1;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;font-size:0.9rem;">
-            <button onclick="searchContactUsers()" style="padding:0.7rem 1rem;border:none;border-radius:8px;background:var(--gold,#D4AF37);color:#000;font-weight:600;cursor:pointer;">${t('social.search','검색')}</button>
+            <button onclick="searchContactUsers()" style="padding:0.7rem 1rem;border:none;border-radius:8px;background:var(--gold,#8B6914);color:#000;font-weight:600;cursor:pointer;">${t('social.search','검색')}</button>
         </div>
         <div id="contact-search-results" style="max-height:300px;overflow-y:auto;"></div>
         <div style="margin-top:1rem;text-align:right;">
@@ -379,7 +379,7 @@ async function searchContactUsers() {
                     <strong style="font-size:0.9rem;">${nick}</strong> ${onlineDotHTML(data.isOnline)}
                     <p style="font-size:0.75rem;color:var(--text-muted,#6B5744);margin:0;">${data.email || ''}</p>
                 </div>
-                <button onclick="addContactFromSearch('${uid}','${(data.email||'').replace(/'/g,"\\'")}','${nick.replace(/'/g,"\\'")}')" style="padding:0.4rem 0.8rem;border:none;border-radius:6px;background:var(--gold,#D4AF37);color:#000;font-size:0.8rem;cursor:pointer;">추가</button>`;
+                <button onclick="addContactFromSearch('${uid}','${(data.email||'').replace(/'/g,"\\'")}','${nick.replace(/'/g,"\\'")}')" style="padding:0.4rem 0.8rem;border:none;border-radius:6px;background:var(--gold,#8B6914);color:#000;font-size:0.8rem;cursor:pointer;">추가</button>`;
             resultsDiv.appendChild(el);
         }
     } catch (e) {
@@ -727,8 +727,8 @@ async function openChat(chatId, otherId) {
                 } else {
                     // Reply quote
                     if (msg.replyTo) {
-                        content += `<div class="msg-reply-quote" style="border-left:3px solid #0066cc;padding:0.2rem 0.5rem;margin-bottom:0.3rem;background:rgba(0,102,204,0.05);border-radius:0 6px 6px 0;font-size:0.75rem;color:var(--text-muted,#6B5744);cursor:pointer;" onclick="document.querySelector('[data-msg-id=\\'${msg.replyTo.messageId}\\']')?.scrollIntoView({behavior:'smooth',block:'center'})">
-                            <div style="font-weight:600;color:#0066cc;font-size:0.7rem;">답장</div>
+                        content += `<div class="msg-reply-quote" style="border-left:3px solid #3D2B1F;padding:0.2rem 0.5rem;margin-bottom:0.3rem;background:rgba(0,102,204,0.05);border-radius:0 6px 6px 0;font-size:0.75rem;color:var(--text-muted,#6B5744);cursor:pointer;" onclick="document.querySelector('[data-msg-id=\\'${msg.replyTo.messageId}\\']')?.scrollIntoView({behavior:'smooth',block:'center'})">
+                            <div style="font-weight:600;color:#3D2B1F;font-size:0.7rem;">답장</div>
                             ${(msg.replyTo.text || '미디어').substring(0, 60)}</div>`;
                     }
                     // Forwarded label
@@ -752,7 +752,7 @@ async function openChat(chatId, otherId) {
                     if (msgType === 'voice') {
                         content += `<div class="voice-msg-player" style="display:flex;align-items:center;gap:0.5rem;padding:0.3rem;">
                             <button onclick="toggleVoicePlay(this,'${msg.mediaUrl}')" style="background:none;border:none;cursor:pointer;font-size:1.2rem;">▶️</button>
-                            <div style="flex:1;height:4px;background:#ddd;border-radius:2px;"><div class="voice-progress" style="width:0%;height:100%;background:#0066cc;border-radius:2px;transition:width 0.1s;"></div></div>
+                            <div style="flex:1;height:4px;background:#ddd;border-radius:2px;"><div class="voice-progress" style="width:0%;height:100%;background:#3D2B1F;border-radius:2px;transition:width 0.1s;"></div></div>
                             <span style="font-size:0.7rem;color:var(--text-muted,#6B5744);">${msg.duration ? msg.duration + 's' : ''}</span>
                         </div>`;
                     }
@@ -765,7 +765,7 @@ async function openChat(chatId, otherId) {
                         const pageMap = { product: 'mall', artist: 'artist', campaign: 'fundraise', art: 'art' };
                         content += `<div onclick="showPage('${pageMap[sc.itemType]||sc.itemType}')" style="border:1px solid var(--border,#E8E0D8);border-radius:10px;overflow:hidden;cursor:pointer;margin-bottom:0.3rem;max-width:220px;">
                             ${sc.imageUrl ? `<img src="${sc.imageUrl}" style="width:100%;height:100px;object-fit:cover;">` : ''}
-                            <div style="padding:0.4rem 0.6rem;"><div style="font-size:0.8rem;font-weight:600;">${sc.name}</div>${sc.price ? `<div style="font-size:0.75rem;color:#e65100;">${sc.price}</div>` : ''}<div style="font-size:0.7rem;color:#0066cc;margin-top:0.2rem;">🛒 보기</div></div></div>`;
+                            <div style="padding:0.4rem 0.6rem;"><div style="font-size:0.8rem;font-weight:600;">${sc.name}</div>${sc.price ? `<div style="font-size:0.75rem;color:#e65100;">${sc.price}</div>` : ''}<div style="font-size:0.7rem;color:#3D2B1F;margin-top:0.2rem;">🛒 보기</div></div></div>`;
                     } else if (msgType === 'transfer') {
                         content += `<div style="background:linear-gradient(135deg,#8B6914,#FFA000);color:var(--text,#3D2B1F);padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
                     }
@@ -1842,7 +1842,7 @@ async function editPost(postId) {
             <textarea id="edit-post-text" style="width:100%;min-height:120px;padding:0.8rem;border:1px solid var(--border,#E8E0D8);border-radius:10px;font-size:0.95rem;resize:vertical;background:var(--card-bg,#3D2B1F);color:var(--text,#FFF8F0);box-sizing:border-box;">${data.text || ''}</textarea>
             <div style="display:flex;gap:0.5rem;justify-content:flex-end;margin-top:1rem;">
                 <button onclick="this.closest('.modal-overlay').remove();" style="padding:0.6rem 1.2rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;background:none;color:var(--text,#3D2B1F);cursor:pointer;">취소</button>
-                <button onclick="saveEditPost('${postId}');" style="padding:0.6rem 1.2rem;border:none;border-radius:8px;background:#D4AF37;color:#000;font-weight:600;cursor:pointer;">저장</button>
+                <button onclick="saveEditPost('${postId}');" style="padding:0.6rem 1.2rem;border:none;border-radius:8px;background:#8B6914;color:#000;font-weight:600;cursor:pointer;">저장</button>
             </div>
         </div>`;
         document.body.appendChild(overlay);
@@ -1888,7 +1888,7 @@ let _pendingServiceLink = null;
 const SERVICE_LINK_CONFIG = {
     artist:   { action: '💖 후원하기', color: '#E91E63', collection: 'artists', nameField: 'name', nav: (id) => { showPage('artist'); viewArtistDetail(id); } },
     campaign: { action: '💝 모금하기', color: '#4CAF50', collection: 'campaigns', nameField: 'title', nav: (id) => { showPage('fundraise'); showCampaignDetail(id); } },
-    business: { action: '💰 투자하기', color: '#0066cc', collection: 'businesses', nameField: 'name', nav: (id) => { showPage('business'); viewBusinessDetail(id); } },
+    business: { action: '💰 투자하기', color: '#3D2B1F', collection: 'businesses', nameField: 'name', nav: (id) => { showPage('business'); viewBusinessDetail(id); } },
     art:      { action: '🎨 작품 구매', color: '#9C27B0', collection: 'artworks', nameField: 'title', nav: (id) => showPage('art') },
     book:     { action: '📚 책 구매', color: '#FF9800', collection: 'books', nameField: 'title', nav: (id) => showPage('books') },
     product:  { action: '🛒 상품 구매', color: '#2196F3', collection: 'products', nameField: 'name', nav: (id) => { showPage('product-detail'); renderProductDetail(id); } }
@@ -1914,7 +1914,7 @@ async function showServiceLinkModal() {
         <div id="service-link-search" style="display:none;">
             <div style="display:flex;gap:0.5rem;margin-bottom:0.8rem;">
                 <input type="text" id="service-link-query" placeholder="검색..." style="flex:1;padding:0.6rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;font-size:0.9rem;">
-                <button onclick="searchServiceItems()" style="padding:0.6rem 1rem;border:none;border-radius:8px;background:var(--gold,#D4AF37);color:#000;cursor:pointer;">검색</button>
+                <button onclick="searchServiceItems()" style="padding:0.6rem 1rem;border:none;border-radius:8px;background:var(--gold,#8B6914);color:#000;cursor:pointer;">검색</button>
             </div>
             <div id="service-link-results" style="max-height:250px;overflow-y:auto;"></div>
         </div>
@@ -2037,7 +2037,7 @@ function openVideoEditor() {
             </div>
             <div style="display:flex;gap:0.5rem;">
                 <button onclick="document.getElementById('video-editor-modal').remove()" style="flex:1;padding:0.6rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">취소</button>
-                <button onclick="applyVideoEdits()" style="flex:1;padding:0.6rem;border:none;border-radius:8px;cursor:pointer;background:var(--gold,#D4AF37);color:#000;font-weight:700;">✅ 적용</button>
+                <button onclick="applyVideoEdits()" style="flex:1;padding:0.6rem;border:none;border-radius:8px;cursor:pointer;background:var(--gold,#8B6914);color:#000;font-weight:700;">✅ 적용</button>
             </div>
         </div>
     </div>`;
@@ -2525,7 +2525,7 @@ async function openChannel(channelId) {
         <div style="display:flex;align-items:center;gap:0.5rem;">
             <div style="width:32px;height:32px;border-radius:50%;background:#e3f2fd;display:flex;align-items:center;justify-content:center;">📢</div>
             <div><strong>${ch.name}</strong><div style="font-size:0.7rem;color:var(--accent);">${ch.subscribers?.length || 0} 구독자</div></div>
-            ${!isSub ? `<button onclick="subscribeChannel('${channelId}')" style="margin-left:0.5rem;padding:0.3rem 0.6rem;border:none;border-radius:6px;background:#0066cc;color:#FFF8F0;font-size:0.75rem;cursor:pointer;">구독</button>` :
+            ${!isSub ? `<button onclick="subscribeChannel('${channelId}')" style="margin-left:0.5rem;padding:0.3rem 0.6rem;border:none;border-radius:6px;background:#3D2B1F;color:#FFF8F0;font-size:0.75rem;cursor:pointer;">구독</button>` :
                 `<button onclick="unsubscribeChannel('${channelId}')" style="margin-left:0.5rem;padding:0.3rem 0.6rem;border:1px solid var(--border,#E8E0D8);border-radius:6px;background:var(--bg-card,#3D2B1F);font-size:0.75rem;cursor:pointer;">구독취소</button>`}
         </div>`;
     document.getElementById('chat-header-actions').style.display = 'flex';
@@ -2614,7 +2614,7 @@ async function showSocialNotifications() {
             return;
         }
 
-        let html = '<div style="display:flex;justify-content:flex-end;margin-bottom:0.5rem;"><button onclick="markAllSocialNotifsRead()" style="background:none;border:none;color:#0066cc;font-size:0.8rem;cursor:pointer;font-weight:600;">모두 읽음</button></div>';
+        let html = '<div style="display:flex;justify-content:flex-end;margin-bottom:0.5rem;"><button onclick="markAllSocialNotifsRead()" style="background:none;border:none;color:#3D2B1F;font-size:0.8rem;cursor:pointer;font-weight:600;">모두 읽음</button></div>';
         for (const doc of snap.docs) {
             const n = doc.data();
             const isRead = n.read;
@@ -2654,7 +2654,7 @@ async function handleSocialNotifClick(docId, type, targetId, fromUid) {
         setSocialFilter('all');
         setTimeout(() => {
             const el = document.querySelector(`[data-post-id="${targetId}"]`);
-            if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.style.boxShadow = '0 0 0 3px #0066cc'; setTimeout(() => el.style.boxShadow = '', 3000); }
+            if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.style.boxShadow = '0 0 0 3px #3D2B1F'; setTimeout(() => el.style.boxShadow = '', 3000); }
         }, 500);
     } else if (type === 'story_reply' && fromUid) {
         showPage('messenger');
@@ -2964,7 +2964,7 @@ async function loadCommentsWithReplies(postId) {
         replyDiv.style.cssText = 'display:none;margin-left:2rem;margin-top:0.3rem;';
         replyDiv.innerHTML = `<div style="display:flex;gap:0.4rem;align-items:center;">
             <input type="text" placeholder="답글..." style="flex:1;padding:0.3rem 0.6rem;border:none;border-bottom:1px solid var(--border);font-size:0.8rem;outline:none;" onkeypress="if(event.key==='Enter')addReply('${postId}','${c.id}',this)">
-            <button onclick="addReply('${postId}','${c.id}',this.previousElementSibling)" style="background:none;border:none;color:#0066cc;font-weight:700;cursor:pointer;font-size:0.8rem;">게시</button>
+            <button onclick="addReply('${postId}','${c.id}',this.previousElementSibling)" style="background:none;border:none;color:#3D2B1F;font-weight:700;cursor:pointer;font-size:0.8rem;">게시</button>
         </div>`;
         el.appendChild(replyDiv);
 

@@ -140,7 +140,7 @@ async function loadRecommendedUsers() {
                         </div>
                         <div style="font-size:0.8rem;font-weight:600;margin-top:0.3rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${nickname}</div>
                         <div style="font-size:0.7rem;color:var(--accent);">팔로워 ${u.followers}</div>
-                        <button onclick="followUser('${u.uid}');this.textContent='팔로잉 ✓';this.disabled=true;" style="margin-top:0.4rem;padding:0.3rem 0.6rem;border:none;border-radius:6px;background:#0066cc;color:#FFF8F0;font-size:0.75rem;cursor:pointer;font-weight:600;">팔로우</button>
+                        <button onclick="followUser('${u.uid}');this.textContent='팔로잉 ✓';this.disabled=true;" style="margin-top:0.4rem;padding:0.3rem 0.6rem;border:none;border-radius:6px;background:#3D2B1F;color:#FFF8F0;font-size:0.75rem;cursor:pointer;font-weight:600;">팔로우</button>
                     </div>`;
                 }).join('')}
             </div>`;
@@ -213,7 +213,7 @@ function scrollToPostOrOpen(postId) {
         const el = document.querySelector(`[data-post-id="${postId}"]`);
         if (el) {
             el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            el.style.boxShadow = '0 0 0 3px #0066cc';
+            el.style.boxShadow = '0 0 0 3px #3D2B1F';
             setTimeout(() => el.style.boxShadow = '', 3000);
         }
     }, 500);
@@ -252,7 +252,7 @@ async function runExploreSearch() {
             const hashPosts = await db.collection('posts').where('hashtags', 'array-contains', tag).limit(5).get();
             if (!hashPosts.empty) {
                 html += `<div style="font-weight:700;font-size:0.85rem;margin:0.6rem 0 0.4rem;">🏷 #${tag} (${hashPosts.size}개 게시물)</div>`;
-                html += `<button onclick="filterByHashtag('${tag}');showExploreTab(false)" style="padding:0.4rem 0.8rem;border:none;border-radius:8px;background:#0066cc;color:#FFF8F0;font-size:0.8rem;cursor:pointer;">게시물 보기</button>`;
+                html += `<button onclick="filterByHashtag('${tag}');showExploreTab(false)" style="padding:0.4rem 0.8rem;border:none;border-radius:8px;background:#3D2B1F;color:#FFF8F0;font-size:0.8rem;cursor:pointer;">게시물 보기</button>`;
             }
         }
 

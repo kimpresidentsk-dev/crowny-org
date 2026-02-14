@@ -234,7 +234,7 @@
                         <p style="font-size:0.75rem;color:#888;">${t('invite.successful', '초대 성공')}</p>
                     </div>
                     <div>
-                        <p style="font-size:1.5rem;font-weight:800;color:#D4AF37;">${earnedCRTD.toFixed(1)}</p>
+                        <p style="font-size:1.5rem;font-weight:800;color:#8B6914;">${earnedCRTD.toFixed(1)}</p>
                         <p style="font-size:0.75rem;color:#888;">${t('invite.earned_crtd', '획득 CRTD')}</p>
                     </div>
                 </div>
@@ -244,7 +244,7 @@
             </div>
 
             <button onclick="document.getElementById('invite-modal').remove(); showPage('dashboard');" 
-                style="width:100%;margin-top:1rem;padding:0.8rem;border:none;border-radius:10px;background:linear-gradient(135deg,#D4AF37,#F0C060);color:#3D2B1F;font-weight:700;cursor:pointer;font-size:0.85rem;">
+                style="width:100%;margin-top:1rem;padding:0.8rem;border:none;border-radius:10px;background:linear-gradient(135deg,#8B6914,#F0C060);color:#3D2B1F;font-weight:700;cursor:pointer;font-size:0.85rem;">
                 ⭐ ${t('invite.manage_referral', '소개자 프로그램 관리')}
             </button>
         </div>`;

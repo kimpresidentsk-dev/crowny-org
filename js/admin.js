@@ -2253,7 +2253,7 @@ async function loadAdminParticipants() {
                     const initial = p.initialBalance || 100000;
                     const current = p.currentBalance || 100000;
                     const pnl = current - initial;
-                    const pnlColor = pnl >= 0 ? '#0066cc' : '#cc0000';
+                    const pnlColor = pnl >= 0 ? '#3D2B1F' : '#cc0000';
                     const isSuspended = p.adminSuspended || false;
                     const isLocked = p.dailyLocked || false;
                     
@@ -2262,7 +2262,7 @@ async function loadAdminParticipants() {
                     else if (isLocked) statusBadge = '🔒 일일 제한';
                     
                     html += `
-                        <div style="background:var(--bg); padding:0.8rem; border-radius:6px; margin-bottom:0.5rem; border-left:3px solid ${isSuspended ? '#cc0000' : '#0066cc'};">
+                        <div style="background:var(--bg); padding:0.8rem; border-radius:6px; margin-bottom:0.5rem; border-left:3px solid ${isSuspended ? '#cc0000' : '#3D2B1F'};">
                             <div style="display:flex; justify-content:space-between; align-items:start; flex-wrap:wrap; gap:0.5rem;">
                                 <div>
                                     <strong style="font-size:0.9rem;">${p.email || p.userId || '알 수 없음'}</strong>
@@ -2273,7 +2273,7 @@ async function loadAdminParticipants() {
                                         포지션: ${openTrades.length}개
                                     </div>
                                     <div style="font-size:0.75rem; color:var(--accent); margin-top:0.2rem;">
-                                        일일 PnL: <span style="color:${(p.dailyPnL || 0) < 0 ? '#cc0000' : '#0066cc'}">$${(p.dailyPnL || 0).toFixed(2)}</span> / 
+                                        일일 PnL: <span style="color:${(p.dailyPnL || 0) < 0 ? '#cc0000' : '#3D2B1F'}">$${(p.dailyPnL || 0).toFixed(2)}</span> / 
                                         일일한도: <span style="font-weight:700;">$${p.dailyLossLimit || 500}</span> · 
                                         청산한도: <span style="font-weight:700;">$${(p.maxDrawdown || 3000).toLocaleString()}</span>
                                         ${p.copyAccounts > 1 ? ` · <span style="color:#FF6D00; font-weight:700;">카피: ${p.copyAccounts}계정</span>` : ''}
@@ -2435,7 +2435,7 @@ async function loadPropTrading() {
                 tierHTML += `
                     <div style="background:var(--bg); padding:0.8rem; border-radius:8px; text-align:center; border:1px solid var(--border);">
                         <div style="font-size:1.3rem; font-weight:800; color:#8B2BE2;">${key}군</div>
-                        <div style="font-size:1.4rem; font-weight:700; color:#0066cc; margin:0.3rem 0;">${t.deposit} CRTD</div>
+                        <div style="font-size:1.4rem; font-weight:700; color:#3D2B1F; margin:0.3rem 0;">${t.deposit} CRTD</div>
                         <div style="font-size:0.75rem; color:var(--accent); line-height:1.6;">
                             💰 $${(t.account||100000).toLocaleString()} 계좌<br>
                             💀 -$${(t.liquidation||3000).toLocaleString()} 청산<br>
@@ -2453,7 +2453,7 @@ async function loadPropTrading() {
             if (tierKeys.length === 0) {
                 tierHTML = `
                     <div style="background:var(--bg); padding:0.8rem; border-radius:8px; text-align:center;">
-                        <div style="font-size:1.2rem; font-weight:700; color:#0066cc;">${ch.entryFeeCRTD || 100} CRTD</div>
+                        <div style="font-size:1.2rem; font-weight:700; color:#3D2B1F;">${ch.entryFeeCRTD || 100} CRTD</div>
                         <button onclick="joinChallenge('${doc.id}','A')" class="btn-primary" style="width:100%; margin-top:0.5rem; padding:0.7rem;">
                             🚀 참가
                         </button>

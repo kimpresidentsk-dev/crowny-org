@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (/[0-9]/.test(pw)) score++;
             if (/[^A-Za-z0-9]/.test(pw)) score++;
             const labels = [t('auth.pw_weak','약함 🔴'), t('auth.pw_normal','보통 🟡'), t('auth.pw_good','좋음 🟢'), t('auth.pw_strong','강함 💪')];
-            const colors = ['#cc0000', '#ff9800', '#4CAF50', '#0066cc'];
+            const colors = ['#cc0000', '#ff9800', '#4CAF50', '#3D2B1F'];
             el.textContent = labels[Math.min(score, 3)];
             el.style.color = colors[Math.min(score, 3)];
         });

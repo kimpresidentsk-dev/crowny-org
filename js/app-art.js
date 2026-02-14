@@ -582,7 +582,7 @@ function _renderArtCard(art) {
     if (art.saleType === 'fixed' || art.basePrice > 0) {
         const effectivePrice = art.price || _calcEffectivePrice(art.basePrice || 0, art.artistWeight || 1);
         const weightInfo = (art.artistWeight && art.artistWeight > 1) ? ` <span style="font-size:0.6rem;color:var(--accent)">(${art.artistWeight}x)</span>` : '';
-        priceLabel = `<span style="color:#0066cc;font-weight:700">${effectivePrice} ${art.priceToken || 'CRAC'}${weightInfo}</span>`;
+        priceLabel = `<span style="color:#3D2B1F;font-weight:700">${effectivePrice} ${art.priceToken || 'CRAC'}${weightInfo}</span>`;
     } else if (art.saleType === 'auction') {
         const endMs = art.auctionEnd?.seconds ? art.auctionEnd.seconds * 1000 : art.auctionEnd;
         const ended = endMs && new Date(endMs) < new Date();
@@ -655,7 +655,7 @@ async function viewArtwork(artId) {
                     <div style="background:#f0f7ff;padding:.6rem;border-radius:8px;margin-bottom:.8rem;font-size:.82rem">
                         <div>💰 ${t('art.base_price','기본가')}: <strong>${art.basePrice} ${art.priceToken || 'CRAC'}</strong></div>
                         <div>⭐ ${t('art.weight','가중치')}: <strong>${artistWeight}x</strong></div>
-                        <div style="font-size:.95rem;font-weight:700;margin-top:.3rem;color:#0066cc">= ${effectivePrice} ${art.priceToken || 'CRAC'}</div>
+                        <div style="font-size:.95rem;font-weight:700;margin-top:.3rem;color:#3D2B1F">= ${effectivePrice} ${art.priceToken || 'CRAC'}</div>
                     </div>`;
             } else {
                 priceInfoHtml = `
@@ -696,7 +696,7 @@ async function viewArtwork(artId) {
             } else {
                 actionHtml = `
                     <div style="display:flex;gap:.5rem">
-                        <button onclick="buyArtwork('${artId}')" style="background:#0066cc;color:#fff;border:none;padding:.8rem 1.5rem;border-radius:8px;cursor:pointer;font-weight:700;flex:1">💰 ${effectivePrice} ${art.priceToken || 'CRAC'} 구매</button>
+                        <button onclick="buyArtwork('${artId}')" style="background:#3D2B1F;color:#fff;border:none;padding:.8rem 1.5rem;border-radius:8px;cursor:pointer;font-weight:700;flex:1">💰 ${effectivePrice} ${art.priceToken || 'CRAC'} 구매</button>
                         <button onclick="reserveArtwork('${artId}')" style="background:#ff9800;color:#fff;border:none;padding:.8rem 1rem;border-radius:8px;cursor:pointer;font-weight:700">📅 예약</button>
                     </div>
                     <p style="font-size:.7rem;color:var(--accent);margin-top:.3rem;text-align:center">📅 예약: 보증금 ${Math.ceil(effectivePrice / 10)} ${art.priceToken || 'CRAC'} (1/10) · 1년 내 잔금 결제</p>`;

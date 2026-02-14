@@ -104,10 +104,10 @@ async function loadMallProducts() {
                     <div style="padding:0.6rem;">
                         <div style="font-weight:600; font-size:0.85rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${displayTitle}</div>
                         <div style="font-size:0.7rem; color:var(--accent);">${MALL_CATEGORIES[p.category] || p.category || ''} · <a onclick="event.stopPropagation(); viewStore('${p.sellerId}')" style="cursor:pointer; text-decoration:underline; color:var(--accent);">${p.sellerNickname || p.sellerEmail || t('mall.seller','판매자')}</a></div>
-                        <div style="font-weight:700; color:#0066cc; margin-top:0.3rem;">${p.price} CRGC</div>
+                        <div style="font-weight:700; color:#3D2B1F; margin-top:0.3rem;">${p.price} CRGC</div>
                         <div style="font-size:0.7rem; color:var(--accent);">재고: ${p.stock - (p.sold||0)}개</div>
                         ${ratingHtml}
-                        <button onclick="event.stopPropagation(); addToCart('${p.id}')" style="width:100%; margin-top:0.4rem; background:#0066cc; color:#FFF8F0; border:none; padding:0.35rem; border-radius:5px; cursor:pointer; font-size:0.75rem; font-weight:600;">🛒 담기</button>
+                        <button onclick="event.stopPropagation(); addToCart('${p.id}')" style="width:100%; margin-top:0.4rem; background:#3D2B1F; color:#FFF8F0; border:none; padding:0.35rem; border-radius:5px; cursor:pointer; font-size:0.75rem; font-weight:600;">🛒 담기</button>
                     </div>
                 </div>`;
         });
@@ -216,7 +216,7 @@ async function renderProductDetail(id) {
                     ${images.map((img, i) => `<img src="${img}" style="width:100%; max-height:50vh; object-fit:contain; flex-shrink:0; scroll-snap-align:start;" data-idx="${i}">`).join('')}
                 </div>
                 <div style="text-align:center; padding:0.4rem;">
-                    ${images.map((_, i) => `<span class="pd-dot" data-idx="${i}" style="display:inline-block; width:8px; height:8px; border-radius:50%; background:${i===0?'#0066cc':'#ccc'}; margin:0 3px; cursor:pointer;"></span>`).join('')}
+                    ${images.map((_, i) => `<span class="pd-dot" data-idx="${i}" style="display:inline-block; width:8px; height:8px; border-radius:50%; background:${i===0?'#3D2B1F':'#ccc'}; margin:0 3px; cursor:pointer;"></span>`).join('')}
                 </div>
                 <button onclick="scrollPdGallery(-1)" style="position:absolute; left:4px; top:45%; background:rgba(0,0,0,0.4); color:#FFF8F0; border:none; border-radius:50%; width:32px; height:32px; cursor:pointer; font-size:1rem;">‹</button>
                 <button onclick="scrollPdGallery(1)" style="position:absolute; right:4px; top:45%; background:rgba(0,0,0,0.4); color:#FFF8F0; border:none; border-radius:50%; width:32px; height:32px; cursor:pointer; font-size:1rem;">›</button>
@@ -232,7 +232,7 @@ async function renderProductDetail(id) {
         }
 
         // Seller link
-        const sellerLink = p.sellerNickname || p.sellerEmail ? `<a onclick="viewStore('${p.sellerId}')" style="cursor:pointer; text-decoration:underline; color:#0066cc;">판매자: ${p.sellerNickname||p.sellerEmail}</a>` : '';
+        const sellerLink = p.sellerNickname || p.sellerEmail ? `<a onclick="viewStore('${p.sellerId}')" style="cursor:pointer; text-decoration:underline; color:#3D2B1F;">판매자: ${p.sellerNickname||p.sellerEmail}</a>` : '';
 
         c.innerHTML = `
             <button onclick="showPage('mall')" style="background:none; border:none; font-size:1rem; cursor:pointer; margin-bottom:0.8rem; color:var(--accent);">← 목록으로</button>
@@ -245,12 +245,12 @@ async function renderProductDetail(id) {
                 <p style="color:var(--accent); font-size:0.85rem; margin:0.5rem 0;">${[MALL_CATEGORIES[p.category], sellerLink].filter(Boolean).join(' · ')}</p>
                 ${ratingDisplay}
                 ${p.description ? `<p style="font-size:0.95rem; margin:1rem 0; line-height:1.6; color:#444;">${p.description}</p>` : ''}
-                <div style="font-size:1.4rem; font-weight:700; color:#0066cc; margin:1rem 0;">${p.price} CRGC</div>
+                <div style="font-size:1.4rem; font-weight:700; color:#3D2B1F; margin:1rem 0;">${p.price} CRGC</div>
                 <div style="font-size:0.85rem; color:var(--accent); margin-bottom:1rem;">재고: ${remaining}개 · 판매: ${p.sold||0}개</div>
                 ${!isOwner && remaining > 0 ? `
                 <div style="display:flex; gap:0.5rem;">
-                    <button onclick="buyProduct('${id}', this)" style="flex:2; background:#0066cc; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; font-size:1rem;">🛒 바로 구매</button>
-                    <button onclick="addToCart('${id}')" style="flex:1; background:#FFF8F0; color:#0066cc; border:2px solid #0066cc; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">담기</button>
+                    <button onclick="buyProduct('${id}', this)" style="flex:2; background:#3D2B1F; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; font-size:1rem;">🛒 바로 구매</button>
+                    <button onclick="addToCart('${id}')" style="flex:1; background:#FFF8F0; color:#3D2B1F; border:2px solid #3D2B1F; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">담기</button>
                 </div>` : ''}
                 ${remaining <= 0 ? '<p style="color:#cc0000; font-weight:700; text-align:center; font-size:1.1rem; margin:1rem 0;">품절</p>' : ''}
                 ${reviewBtnHtml}
@@ -1066,7 +1066,7 @@ async function loadBooksList() {
                 ${x.imageData ? `<img src="${x.imageData}" loading="lazy" style="width:100%; height:100%; object-fit:contain;">` : `<div style="height:100%; display:flex; align-items:center; justify-content:center; font-size:3rem;">${GENRES[x.genre]||'📚'}</div>`}</div>
                 <div style="padding:0.5rem;"><div style="font-weight:600; font-size:0.8rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${x.title}</div>
                 <div style="font-size:0.7rem; color:var(--accent);">${x.author||'저자 미상'}</div>
-                <div style="font-weight:700; color:#0066cc; font-size:0.85rem; margin-top:0.2rem;">${x.price>0 ? x.price+' CRGC' : '무료'}</div></div></div>`; });
+                <div style="font-weight:700; color:#3D2B1F; font-size:0.85rem; margin-top:0.2rem;">${x.price>0 ? x.price+' CRGC' : '무료'}</div></div></div>`; });
     } catch (e) { c.innerHTML = e.message; }
 }
 
@@ -1331,7 +1331,7 @@ async function viewBusinessDetail(id) {
                     <div style="font-weight:700;">${avgRating} ${stars}</div>
                 </div>
             </div>
-            ${b.ownerId !== currentUser?.uid ? `<button onclick="investBusiness('${id}')" style="background:#0066cc; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; width:100%; margin-bottom:0.5rem;">💰 투자하기</button>` : ''}
+            ${b.ownerId !== currentUser?.uid ? `<button onclick="investBusiness('${id}')" style="background:#3D2B1F; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; width:100%; margin-bottom:0.5rem;">💰 투자하기</button>` : ''}
             <button onclick="document.getElementById('biz-detail-modal').remove()" style="background:#eee; border:none; padding:0.6rem; border-radius:8px; cursor:pointer; width:100%;">닫기</button>
         </div></div>`;
     document.body.appendChild(modal);
@@ -1453,10 +1453,10 @@ async function viewBookDetail(id) {
         <div style="padding:1.2rem;">
             <h3>${b.title}</h3>
             <p style="color:var(--accent); font-size:0.85rem; margin:0.3rem 0;">${b.author || '저자 미상'} · ${GENRES[b.genre] || ''} · 판매 ${b.sold || 0}부</p>
-            <p style="font-size:1.1rem; font-weight:700; color:#0066cc; margin:0.5rem 0;">${b.price > 0 ? b.price + ' CRGC' : '무료'}</p>
+            <p style="font-size:1.1rem; font-weight:700; color:#3D2B1F; margin:0.5rem 0;">${b.price > 0 ? b.price + ' CRGC' : '무료'}</p>
             ${b.description ? `<p style="font-size:0.9rem; margin:0.8rem 0; line-height:1.6;">${b.description}</p>` : ''}
             <div style="display:flex; gap:0.5rem; margin-top:1rem;">
-                ${!isOwner && b.price > 0 ? `<button onclick="buyBook('${id}'); document.getElementById('book-detail-modal').remove();" style="flex:1; background:#0066cc; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">🛒 구매하기</button>` : ''}
+                ${!isOwner && b.price > 0 ? `<button onclick="buyBook('${id}'); document.getElementById('book-detail-modal').remove();" style="flex:1; background:#3D2B1F; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">🛒 구매하기</button>` : ''}
                 ${!isOwner && b.price <= 0 ? `<button onclick="showToast('📖 무료 열람!', 'info'); document.getElementById('book-detail-modal').remove();" style="flex:1; background:#4CAF50; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">📖 무료 읽기</button>` : ''}
                 <button onclick="addToReadingList('${id}')" style="flex:1; background:#ff9800; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">📚 읽고 싶은 책</button>
             </div>
@@ -1575,7 +1575,7 @@ async function loadPumasiList() {
         c.innerHTML = '';
         docs.forEach(d => { const x = d.data(); const pct = Math.min(100, Math.round((x.raised/x.amount)*100));
             c.innerHTML += `<div style="background:#FFF8F0; padding:1rem; border-radius:8px; margin-bottom:0.5rem;">
-                <div style="display:flex; justify-content:space-between;"><strong>${x.requesterNickname || x.requesterEmail}</strong><span style="color:#0066cc; font-weight:700;">${x.amount} CRTD</span></div>
+                <div style="display:flex; justify-content:space-between;"><strong>${x.requesterNickname || x.requesterEmail}</strong><span style="color:#3D2B1F; font-weight:700;">${x.amount} CRTD</span></div>
                 ${x.targetNickname ? `<p style="font-size:0.8rem; color:#E91E63; margin:0.2rem 0;">→ 대상: ${x.targetNickname || x.targetEmail}</p>` : '<p style="font-size:0.8rem; color:var(--accent); margin:0.2rem 0;">공동체 전체 공개</p>'}
                 <p style="font-size:0.85rem; color:var(--accent); margin:0.3rem 0;">${x.reason}</p>
                 <div style="background:#e0e0e0; height:6px; border-radius:3px; margin:0.5rem 0;"><div style="background:#4CAF50; height:100%; border-radius:3px; width:${pct}%;"></div></div>
@@ -1843,7 +1843,7 @@ function filterMallBrand(brand) {
     const activeCard = document.querySelector(`.mall-brand-card[data-brand="all"]`);
     if (activeCard) {
         activeCard.classList.add('active');
-        activeCard.style.outline = '2px solid var(--gold, #D4AF37)';
+        activeCard.style.outline = '2px solid var(--gold, #8B6914)';
     }
     document.querySelectorAll('.mall-brand-card:not(.active)').forEach(c => c.style.opacity = '0.6');
     
@@ -2143,7 +2143,7 @@ async function loadCart() {
     try {
         const snap = await db.collection('users').doc(currentUser.uid).collection('cart').orderBy('addedAt','desc').get();
         if (snap.empty) {
-            c.innerHTML = '<div style="text-align:center; padding:3rem; color:var(--accent);"><div style="font-size:3rem; margin-bottom:1rem;">🛒</div><p>장바구니가 비어있습니다</p><button onclick="showPage(\'mall\')" style="margin-top:1rem; background:#0066cc; color:#FFF8F0; border:none; padding:0.7rem 1.5rem; border-radius:8px; cursor:pointer;">쇼핑하러 가기</button></div>';
+            c.innerHTML = '<div style="text-align:center; padding:3rem; color:var(--accent);"><div style="font-size:3rem; margin-bottom:1rem;">🛒</div><p>장바구니가 비어있습니다</p><button onclick="showPage(\'mall\')" style="margin-top:1rem; background:#3D2B1F; color:#FFF8F0; border:none; padding:0.7rem 1.5rem; border-radius:8px; cursor:pointer;">쇼핑하러 가기</button></div>';
             if(summary) summary.style.display='none';
             return;
         }
@@ -2159,7 +2159,7 @@ async function loadCart() {
                 </div>
                 <div style="flex:1; min-width:0;">
                     <div style="font-weight:600; font-size:0.85rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.title}</div>
-                    <div style="color:#0066cc; font-weight:700; font-size:0.85rem;">${item.price} CRGC</div>
+                    <div style="color:#3D2B1F; font-weight:700; font-size:0.85rem;">${item.price} CRGC</div>
                     <div style="display:flex; align-items:center; gap:0.5rem; margin-top:0.3rem;">
                         <button onclick="updateCartQty('${d.id}', -1)" style="width:26px; height:26px; border:1px solid #ddd; border-radius:4px; background:#FFF8F0; cursor:pointer; font-size:0.9rem;">−</button>
                         <span style="font-weight:600; min-width:20px; text-align:center;">${item.qty || 1}</span>
@@ -2321,10 +2321,10 @@ async function loadWishlist() {
                 </div>
                 <div style="flex:1; min-width:0;">
                     <div style="font-weight:600; font-size:0.85rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.title}</div>
-                    <div style="color:#0066cc; font-weight:700; font-size:0.85rem;">${item.price} CRGC</div>
+                    <div style="color:#3D2B1F; font-weight:700; font-size:0.85rem;">${item.price} CRGC</div>
                 </div>
                 <div style="display:flex; flex-direction:column; gap:0.3rem;">
-                    <button onclick="event.stopPropagation(); addToCart('${item.productId}')" style="background:#0066cc; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.75rem;">🛒 담기</button>
+                    <button onclick="event.stopPropagation(); addToCart('${item.productId}')" style="background:#3D2B1F; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.75rem;">🛒 담기</button>
                     <button onclick="event.stopPropagation(); toggleWishlist('${item.productId}'); setTimeout(loadWishlist, 500);" style="background:none; border:1px solid #e91e63; color:#e91e63; padding:0.3rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.75rem;">🗑️</button>
                 </div>
             </div>`;
@@ -2341,7 +2341,7 @@ function scrollPdGallery(dir) {
     g.scrollBy({ left: dir * w, behavior: 'smooth' });
     setTimeout(() => {
         const idx = Math.round(g.scrollLeft / w);
-        document.querySelectorAll('.pd-dot').forEach(d => d.style.background = parseInt(d.dataset.idx) === idx ? '#0066cc' : '#ccc');
+        document.querySelectorAll('.pd-dot').forEach(d => d.style.background = parseInt(d.dataset.idx) === idx ? '#3D2B1F' : '#ccc');
     }, 350);
 }
 
@@ -2377,7 +2377,7 @@ async function renderStorePage(sellerId) {
                 <div style="height:130px; overflow:hidden; background:#f0f0f0;">${thumb ? `<img src="${thumb}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:#ccc;">🛒</div>`}</div>
                 <div style="padding:0.5rem;">
                     <div style="font-weight:600; font-size:0.8rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.title}</div>
-                    <div style="font-weight:700; color:#0066cc; font-size:0.85rem;">${p.price} CRGC</div>
+                    <div style="font-weight:700; color:#3D2B1F; font-size:0.85rem;">${p.price} CRGC</div>
                 </div>
             </div>`;
         });
@@ -2436,7 +2436,7 @@ async function showStoreSettingsModal() {
                 <label style="font-size:0.8rem; color:var(--accent);">스토어 이미지</label>
                 <input type="file" id="store-set-image" accept="image/*" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
             </div>
-            <button onclick="saveStoreSettings()" style="background:#0066cc; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">💾 저장</button>
+            <button onclick="saveStoreSettings()" style="background:#3D2B1F; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">💾 저장</button>
             <button onclick="document.getElementById('store-settings-modal').remove()" style="background:#eee; border:none; padding:0.6rem; border-radius:8px; cursor:pointer;">닫기</button>
         </div>
     </div>`;
@@ -2529,7 +2529,7 @@ async function loadMyShopDashboard() {
             
             <!-- 매출 통계 -->
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.8rem; margin-bottom:1.5rem;">
-                <div style="background:linear-gradient(135deg,#0066cc,#004d99); color:#FFF8F0; padding:1rem; border-radius:12px; text-align:center;">
+                <div style="background:linear-gradient(135deg,#3D2B1F,#004d99); color:#FFF8F0; padding:1rem; border-radius:12px; text-align:center;">
                     <div style="font-size:0.7rem; opacity:0.8;">총 매출</div>
                     <div style="font-size:1.3rem; font-weight:700;">${totalRevenue} CRGC</div>
                 </div>
@@ -2544,7 +2544,7 @@ async function loadMyShopDashboard() {
             </div>
             
             <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
-                <button onclick="viewStore('${currentUser.uid}')" style="background:#0066cc; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem;">🏪 내 스토어 보기</button>
+                <button onclick="viewStore('${currentUser.uid}')" style="background:#3D2B1F; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem;">🏪 내 스토어 보기</button>
                 <button onclick="showStoreSettingsModal()" style="background:#ff9800; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem;">⚙️ 스토어 설정</button>
             </div>
             
@@ -2575,7 +2575,7 @@ async function editProductModal(id) {
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
 
     const images = (p.images && p.images.length > 0) ? p.images : (p.imageData ? [p.imageData] : []);
-    const imgPreview = images.map((img, i) => `<img src="${img}" style="width:50px; height:50px; object-fit:cover; border-radius:4px; border:${i===0?'2px solid #0066cc':'1px solid #ddd'};">`).join('');
+    const imgPreview = images.map((img, i) => `<img src="${img}" style="width:50px; height:50px; object-fit:cover; border-radius:4px; border:${i===0?'2px solid #3D2B1F':'1px solid #ddd'};">`).join('');
 
     overlay.innerHTML = `<div style="background:#FFF8F0; border-radius:12px; max-width:450px; width:100%; max-height:90vh; overflow-y:auto; padding:1.5rem;">
         <h3 style="margin-bottom:1rem;">✏️ 상품 수정</h3>
@@ -2606,7 +2606,7 @@ async function editProductModal(id) {
                 <label style="font-size:0.8rem; color:var(--accent);">새 이미지 (최대 5장, 선택 시 교체)</label>
                 <input type="file" id="ep-images" accept="image/*" multiple style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
             </div>
-            <button onclick="saveEditProduct('${id}')" style="background:#0066cc; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">💾 저장</button>
+            <button onclick="saveEditProduct('${id}')" style="background:#3D2B1F; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">💾 저장</button>
             <button onclick="document.getElementById('edit-product-modal').remove()" style="background:#eee; border:none; padding:0.6rem; border-radius:8px; cursor:pointer;">닫기</button>
         </div>
     </div>`;
@@ -2686,7 +2686,7 @@ async function showShippingModal() {
                 </div>
                 <div style="display:flex; gap:0.5rem; margin-top:1rem;">
                     <button id="ship-cancel" style="flex:1; padding:0.7rem; border:1px solid #ddd; border-radius:8px; cursor:pointer; background:#FFF8F0;">취소</button>
-                    <button id="ship-ok" style="flex:1; padding:0.7rem; border:none; border-radius:8px; cursor:pointer; background:#0066cc; color:#FFF8F0; font-weight:700;">확인</button>
+                    <button id="ship-ok" style="flex:1; padding:0.7rem; border:none; border-radius:8px; cursor:pointer; background:#3D2B1F; color:#FFF8F0; font-weight:700;">확인</button>
                 </div>
             </div>`;
         document.body.appendChild(overlay);
@@ -2726,7 +2726,7 @@ document.addEventListener('DOMContentLoaded', () => {
             for (let i = 0; i < Math.min(files.length, 5); i++) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    preview.innerHTML += `<div style="width:50px; height:50px; border-radius:6px; overflow:hidden; border:${i===0?'2px solid #0066cc':'1px solid #ddd'};">
+                    preview.innerHTML += `<div style="width:50px; height:50px; border-radius:6px; overflow:hidden; border:${i===0?'2px solid #3D2B1F':'1px solid #ddd'};">
                         <img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;">
                     </div>`;
                 };
@@ -2775,7 +2775,7 @@ async function loadBuyerOrders() {
                 <div style="flex:1;min-width:0;">
                     <div style="font-weight:600;font-size:0.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${o.productTitle}</div>
                     <div style="font-size:0.75rem;color:var(--accent);">${dateStr} · ${o.qty||1}개</div>
-                    <div style="font-weight:700;color:#0066cc;font-size:0.85rem;">${o.amount} CRGC</div>
+                    <div style="font-weight:700;color:#3D2B1F;font-size:0.85rem;">${o.amount} CRGC</div>
                 </div>
                 <span style="background:${statusColor}15;color:${statusColor};font-size:0.75rem;font-weight:700;padding:0.3rem 0.6rem;border-radius:12px;white-space:nowrap;">${statusLabel}</span>
             </div>`;
@@ -2885,7 +2885,7 @@ async function showOrderDetail(orderId) {
             </div>` : ''}
             ${returnBtnHtml}
             ${reviewBtnHtml}
-            <button onclick="viewProduct('${o.productId}'); document.getElementById('order-detail-modal').remove();" style="background:#0066cc;color:#FFF8F0;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;width:100%;font-weight:600;">🛒 상품 보기</button>
+            <button onclick="viewProduct('${o.productId}'); document.getElementById('order-detail-modal').remove();" style="background:#3D2B1F;color:#FFF8F0;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;width:100%;font-weight:600;">🛒 상품 보기</button>
         </div>`;
         document.body.appendChild(overlay);
     } catch(e) { showToast('주문 상세 로드 실패: '+e.message, 'error'); }
@@ -3065,7 +3065,7 @@ async function renderBrandLanding(brand) {
                 <div style="height:130px;overflow:hidden;background:#f0f0f0;">${thumb ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover;">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:#ccc;">🛒</div>`}</div>
                 <div style="padding:0.5rem;">
                     <div style="font-weight:600;font-size:0.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.title}</div>
-                    <div style="font-weight:700;color:#0066cc;font-size:0.85rem;">${p.price} CRGC</div>
+                    <div style="font-weight:700;color:#3D2B1F;font-size:0.85rem;">${p.price} CRGC</div>
                     ${p.avgRating ? `<div>${renderStars(p.avgRating,'0.65rem')}</div>` : ''}
                 </div>
             </div>`;

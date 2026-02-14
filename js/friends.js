@@ -344,7 +344,7 @@ function parseLinkPreviews(text) {
     for (const url of urls) {
         const escapedUrl = escapeHtml(url);
         // Make URL clickable
-        processedText = processedText.replace(escapedUrl, `<a href="${escapedUrl}" target="_blank" rel="noopener" style="color:#0066cc;text-decoration:none;">${escapedUrl}</a>`);
+        processedText = processedText.replace(escapedUrl, `<a href="${escapedUrl}" target="_blank" rel="noopener" style="color:#3D2B1F;text-decoration:none;">${escapedUrl}</a>`);
         
         const ytMatch = url.match(YOUTUBE_REGEX);
         if (ytMatch) {
@@ -400,9 +400,9 @@ function escapeHtml(str) {
 function parseHashtagsAndMentions(text) {
     if (!text) return text;
     // #hashtag
-    text = text.replace(/#([\wㄱ-ㅎㅏ-ㅣ가-힣]+)/g, '<a href="#" onclick="filterByHashtag(\'$1\');return false;" style="color:#0066cc;font-weight:600;">#$1</a>');
+    text = text.replace(/#([\wㄱ-ㅎㅏ-ㅣ가-힣]+)/g, '<a href="#" onclick="filterByHashtag(\'$1\');return false;" style="color:#3D2B1F;font-weight:600;">#$1</a>');
     // @mention
-    text = text.replace(/@([\wㄱ-ㅎㅏ-ㅣ가-힣]+)/g, '<span style="color:#0066cc;font-weight:600;cursor:pointer;" onclick="searchAndShowProfile(\'$1\')">@$1</span>');
+    text = text.replace(/@([\wㄱ-ㅎㅏ-ㅣ가-힣]+)/g, '<span style="color:#3D2B1F;font-weight:600;cursor:pointer;" onclick="searchAndShowProfile(\'$1\')">@$1</span>');
     return text;
 }
 
@@ -486,7 +486,7 @@ function scrollToPost(postId) {
     const el = document.getElementById(`post-${postId}`);
     if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        el.style.boxShadow = '0 0 0 3px #0066cc';
+        el.style.boxShadow = '0 0 0 3px #3D2B1F';
         setTimeout(() => el.style.boxShadow = '', 3000);
     }
 }
