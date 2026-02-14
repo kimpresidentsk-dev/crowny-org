@@ -1,7 +1,17 @@
-// ===== dashboard.js v1.0 - 대시보드 페이지 =====
+// ===== dashboard.js v1.1 - 대시보드 페이지 (방어적 로딩 + 안정화) =====
+
+// Firebase 쿼리 타임아웃 헬퍼
+async function withTimeout(promise, timeoutMs = 5000) {
+    return Promise.race([
+        promise,
+        new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Timeout')), timeoutMs)
+        )
+    ]);
+}
 
 async function loadDashboard() {
-    console.log('[Dashboard] 로딩 시작');
+    console.log('[Dashboard] 로딩 시작 v1.1');
     console.log('[Dashboard] currentUser:', currentUser ? currentUser.email : 'null');
     console.log('[Dashboard] userWallet:', !!window.userWallet);
     console.log('[Dashboard] db:', !!window.db);
@@ -11,9 +21,9 @@ async function loadDashboard() {
         console.warn('[Dashboard] currentUser 없음 - 로딩 중단');
         const container = document.getElementById('dashboard-content');
         if (container) {
-            container.innerHTML = `<div style="text-align:center;padding:2rem;color:#d32f2f;">
-                <h3>로그인이 필요합니다</h3>
-                <button onclick="document.getElementById('auth-modal').style.display='flex'" style="background:#8B6914;color:#FFF8F0;border:none;padding:0.8rem 1.5rem;border-radius:6px;margin-top:1rem;cursor:pointer;">로그인</button>
+            container.innerHTML = `<div style="text-align:center;padding:2rem;color:#3D2B1F;">
+                <h3 style="color:#3D2B1F;">로그인이 필요합니다</h3>
+                <button onclick="document.getElementById('auth-modal').style.display='flex'" style="background:#3D2B1F;color:#FFF8F0;border:none;padding:0.8rem 1.5rem;border-radius:6px;margin-top:1rem;cursor:pointer;">로그인</button>
             </div>`;
         }
         return;
@@ -28,6 +38,21 @@ async function loadDashboard() {
     // 초기 로딩 표시
     container.innerHTML = `<p style="text-align:center;padding:2rem;color:#3D2B1F;"><i data-lucide="loader" style="width:16px;height:16px;display:inline-block;vertical-align:middle;animation:spin 1s linear infinite;"></i> 대시보드 로딩 중...</p>`;
     if (window.lucide) lucide.createIcons();
+    
+    // 데이터 수집 변수들 (기본값으로 초기화)
+    let userData = {};
+    let nickname = 'Guest';
+    let photoURL = '';
+    let recentTx = [];
+    let recentOrders = [];
+    let recentSocial = [];
+    let totalUsers = '—';
+    let totalTx = '—';
+    
+    // 토큰 잔고 (항상 표시 가능하도록)
+    const offchain = (userWallet && userWallet.offchainBalances) || {};
+    const onchain = (userWallet && userWallet.balances) || { crny: 0, fnc: 0, crfn: 0 };
+    console.log('[Dashboard] 토큰 잔고 준비됨:', { offchain, onchain });
     
     try {
     // 1. Welcome + Avatar
