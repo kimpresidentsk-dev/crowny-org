@@ -28,7 +28,7 @@
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     
     <!-- CSS Modules (organized by section) -->
-    <link rel="stylesheet" href="css/base.css?v=22.1">
+    <link rel="stylesheet" href="css/base.css?v=20260215-001">
     <link rel="stylesheet" href="css/home.css?v=22.0">
     <link rel="stylesheet" href="css/wallet.css?v=22.0">
     <link rel="stylesheet" href="css/social.css?v=22.0">
@@ -41,6 +41,39 @@
     <link rel="stylesheet" href="css/dark.css?v=22.0">
     <link rel="stylesheet" href="css/mobile.css?v=22.0">
     <!-- <link rel="stylesheet" href="style.css?v=22.0"> OLD: kept as backup -->
+    
+    <!-- 🔧 HOTFIX: 로그인 폼 스타일 강제 적용 -->
+    <style>
+        .btn-primary {
+            background: #8B6914 !important;
+            color: #FFF8F0 !important;
+            border: none !important;
+            padding: 1rem 2rem !important;
+            border-radius: 6px !important;
+            font-size: 1rem !important;
+            cursor: pointer !important;
+            font-weight: 600 !important;
+            transition: all 0.2s !important;
+        }
+        .btn-primary:hover {
+            background: #C9A84C !important;
+            color: #FFF8F0 !important;
+        }
+        .auth-form .input {
+            width: 100% !important;
+            margin-bottom: 1rem !important;
+            color: #3D2B1F !important;
+            background: #FFF8F0 !important;
+            font-size: 1rem !important;
+            padding: 1rem !important;
+            border: 1px solid #E8E0D8 !important;
+            border-radius: 6px !important;
+        }
+        .auth-form .input::placeholder {
+            color: #6B5744 !important;
+            opacity: 0.9 !important;
+        }
+    </style>
     
     <!-- Firebase SDK -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-app-compat.min.js"></script>
