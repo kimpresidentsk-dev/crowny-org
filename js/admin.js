@@ -55,7 +55,7 @@ async function adminMintTokens() {
         timestamp: new Date()
     });
     
-    showToast(`✅ ${amount} ${token} 발급 완료!`, 'success');
+    showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${amount} ${token} 발급 완료!`, 'success');
     
     if (document.getElementById('admin-recipient')) {
         document.getElementById('admin-recipient').value = '';
@@ -78,14 +78,14 @@ const SUPER_ADMIN_EMAIL = 'kim.president.sk@gmail.com';
 const ADMIN_EMAIL = SUPER_ADMIN_EMAIL; // 하위 호환
 
 const ADMIN_LEVELS = {
-    6: { name: t('admin.level.super','수퍼관리자'), icon: '👑', color: '#8B6914' },
-    5: { name: t('admin.level.country','국가관리자'), icon: '🌍', color: '#8B6914' },
-    4: { name: t('admin.level.business','사업관리자'), icon: '💼', color: '#5B7B8C' },
-    3: { name: t('admin.level.service','서비스관리자'), icon: '🔧', color: '#FF9800' },
-    2: { name: t('admin.level.ops','운영관리자'), icon: '📝', color: '#6B8F3C' },
-    1: { name: t('admin.level.cs','CS관리자'), icon: '💬', color: '#607D8B' },
-    0: { name: t('admin.level.member','정회원'), icon: '⭐', color: '#795548' },
-    '-1': { name: t('admin.level.basic','일반회원'), icon: '👤', color: '#9E9E9E' }
+    6: { name: t('admin.level.super','수퍼관리자'), icon: '<i data-lucide="crown" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', color: '#8B6914' },
+    5: { name: t('admin.level.country','국가관리자'), icon: '<i data-lucide="globe" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', color: '#8B6914' },
+    4: { name: t('admin.level.business','사업관리자'), icon: '<i data-lucide="briefcase" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', color: '#5B7B8C' },
+    3: { name: t('admin.level.service','서비스관리자'), icon: '<i data-lucide="wrench" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', color: '#FF9800' },
+    2: { name: t('admin.level.ops','운영관리자'), icon: '<i data-lucide="file-text" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', color: '#6B8F3C' },
+    1: { name: t('admin.level.cs','CS관리자'), icon: '<i data-lucide="message-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', color: '#607D8B' },
+    0: { name: t('admin.level.member','정회원'), icon: '<i data-lucide="star" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', color: '#795548' },
+    '-1': { name: t('admin.level.basic','일반회원'), icon: '<i data-lucide="user" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', color: '#9E9E9E' }
 };
 
 // 현재 사용자 레벨 캐시
@@ -149,7 +149,7 @@ async function setUserAdminLevel(targetEmail, level) {
     const maxAppointLevel = isSuperAdmin() ? 5 : currentUserLevel - 1;
     
     if (level > maxAppointLevel) {
-        showToast(`⛔ 권한 부족 — 최대 임명: Lv${maxAppointLevel}, 요청: Lv${level}`, 'error');
+        showToast(`<i data-lucide="octagon" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 권한 부족 — 최대 임명: Lv${maxAppointLevel}, 요청: Lv${level}`, 'error');
         return;
     }
     
@@ -160,7 +160,7 @@ async function setUserAdminLevel(targetEmail, level) {
         if (users.empty) { showToast('사용자를 찾을 수 없습니다: ' + targetEmail, 'error'); return; }
         const targetLevel = users.docs[0].data().adminLevel ?? -1;
         if (targetLevel >= currentUserLevel) {
-            showToast(`⛔ 동급 이상 관리자는 변경할 수 없습니다 (대상: Lv${targetLevel})`, 'error');
+            showToast(`<i data-lucide="octagon" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 동급 이상 관리자는 변경할 수 없습니다 (대상: Lv${targetLevel})`, 'error');
             return;
         }
     }
@@ -213,7 +213,7 @@ async function setUserAdminLevel(targetEmail, level) {
             timestamp: new Date()
         });
         
-        showToast(`✅ ${targetEmail} → ${info.icon} ${info.name} (Lv${level})`, 'success');
+        showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${targetEmail} → ${info.icon} ${info.name} (Lv${level})`, 'success');
         loadAdminUserList();
     } catch (error) {
         showToast('권한 변경 실패: ' + error.message, 'error');
@@ -256,7 +256,7 @@ async function showAdminEditModal(userId, userData) {
         {v:'KR',l:'🇰🇷 한국'},{v:'US',l:'🇺🇸 미국'},{v:'JP',l:'🇯🇵 일본'},{v:'CN',l:'🇨🇳 중국'},{v:'VN',l:'🇻🇳 베트남'},{v:'TH',l:'🇹🇭 태국'},{v:'PH',l:'🇵🇭 필리핀'},{v:'ID',l:'🇮🇩 인도네시아'},{v:'MY',l:'🇲🇾 말레이시아'},{v:'SG',l:'🇸🇬 싱가포르'},{v:'AU',l:'🇦🇺 호주'},{v:'UK',l:'🇬🇧 영국'},{v:'DE',l:'🇩🇪 독일'},{v:'FR',l:'🇫🇷 프랑스'},{v:'CA',l:'🇨🇦 캐나다'},{v:'OTHER',l:'기타'}
     ];
     const businesses = [
-        {v:'trading',l:'📊 트레이딩'},{v:'marketplace',l:'🛒 마켓플레이스'},{v:'energy',l:'🌱 에너지'},{v:'art',l:'🎭 아트/NFT'},{v:'fundraise',l:'💰 펀드레이즈'},{v:'credit',l:'💳 크레딧'},{v:'social',l:'💬 소셜'},{v:'messenger',l:'📨 메신저'},{v:'beauty',l:'💄 뷰티'},{v:'sound',l:'🎵 음향'},{v:'it',l:'💻 IT'},{v:'fnb',l:'🍽️ F&B'},{v:'edu',l:'📚 교육'},{v:'health',l:'🏥 헬스'}
+        {v:'trading',l:'<i data-lucide="bar-chart-3" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 트레이딩'},{v:'marketplace',l:'<i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 마켓플레이스'},{v:'energy',l:'<i data-lucide="sprout" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 에너지'},{v:'art',l:'<i data-lucide="theater" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 아트/NFT'},{v:'fundraise',l:'<i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 펀드레이즈'},{v:'credit',l:'<i data-lucide="credit-card" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 크레딧'},{v:'social',l:'<i data-lucide="message-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 소셜'},{v:'messenger',l:'<i data-lucide="mail" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 메신저'},{v:'beauty',l:'<i data-lucide="sparkles" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 뷰티'},{v:'sound',l:'<i data-lucide="music" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 음향'},{v:'it',l:'<i data-lucide="laptop" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> IT'},{v:'fnb',l:'<i data-lucide="utensils" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> F&B'},{v:'edu',l:'<i data-lucide="book" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 교육'},{v:'health',l:'<i data-lucide="heart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 헬스'}
     ];
     const services = [
         {v:'prop-trading',l:'프랍 트레이딩'},{v:'mall',l:'Mall'},{v:'art-gallery',l:'Art'},{v:'nft-mint',l:'NFT'},{v:'energy-invest',l:'Energy'},{v:'fundraise-campaign',l:'Fundraise'},{v:'p2p-credit',l:'Credit'},{v:'social',l:'Social'},{v:'books',l:'도서'},{v:'business',l:'비즈니스'},{v:'trading',l:'Trading'}
@@ -284,21 +284,21 @@ async function showAdminEditModal(userId, userData) {
             </div>
             
             <div style="margin-bottom:1rem;">
-                <label style="font-size:0.8rem;color:#6B5744;display:block;margin-bottom:0.4rem;">🌍 담당 국가 <span style="font-size:0.7rem;color:#6B5744;">(다중 선택)</span></label>
+                <label style="font-size:0.8rem;color:#6B5744;display:block;margin-bottom:0.4rem;"><i data-lucide="globe" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 담당 국가 <span style="font-size:0.7rem;color:#6B5744;">(다중 선택)</span></label>
                 <div id="edit-admin-country-grid" style="display:flex;flex-wrap:wrap;gap:0.3rem;">
                     ${buildCheckboxGrid('adminCountry', countries, curCountry)}
                 </div>
             </div>
             
             <div style="margin-bottom:1rem;">
-                <label style="font-size:0.8rem;color:#6B5744;display:block;margin-bottom:0.4rem;">💼 담당 사업 <span style="font-size:0.7rem;color:#6B5744;">(다중 선택)</span></label>
+                <label style="font-size:0.8rem;color:#6B5744;display:block;margin-bottom:0.4rem;"><i data-lucide="briefcase" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 담당 사업 <span style="font-size:0.7rem;color:#6B5744;">(다중 선택)</span></label>
                 <div id="edit-admin-business-grid" style="display:flex;flex-wrap:wrap;gap:0.3rem;">
                     ${buildCheckboxGrid('adminBusiness', businesses, curBusiness)}
                 </div>
             </div>
             
             <div style="margin-bottom:1rem;">
-                <label style="font-size:0.8rem;color:#6B5744;display:block;margin-bottom:0.4rem;">🔧 담당 서비스 <span style="font-size:0.7rem;color:#6B5744;">(다중 선택)</span></label>
+                <label style="font-size:0.8rem;color:#6B5744;display:block;margin-bottom:0.4rem;"><i data-lucide="wrench" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 담당 서비스 <span style="font-size:0.7rem;color:#6B5744;">(다중 선택)</span></label>
                 <div id="edit-admin-service-grid" style="display:flex;flex-wrap:wrap;gap:0.3rem;">
                     ${buildCheckboxGrid('adminService', services, curService)}
                 </div>
@@ -386,7 +386,7 @@ async function showAdminEditModal(userId, userData) {
             const cLabel = countryArr.length ? countryArr.join(',') : t('common.all','전체');
             const bLabel = businessArr.length ? businessArr.join(',') : t('common.all','전체');
             const sLabel = serviceArr.length ? serviceArr.join(',') : t('common.all','전체');
-            showToast(`✅ ${userData.email} → ${info.icon} Lv${newLevel} (${cLabel}/${bLabel}/${sLabel})`, 'success');
+            showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${userData.email} → ${info.icon} Lv${newLevel} (${cLabel}/${bLabel}/${sLabel})`, 'success');
             loadAdminUserList();
         } catch (e) {
             showToast(t('admin.settings_fail','설정 실패: ') + e.message, 'error');
@@ -406,7 +406,7 @@ async function checkAdminQuota(level) {
         const current = await db.collection('users').where('adminLevel', '==', level).get();
         
         if (current.size >= maxTotal) {
-            showToast(`⛔ Lv${level} 쿼터 초과\n\n최대: ${maxTotal}명\n현재: ${current.size}명\n\n수퍼관리자에게 쿼터 증가를 요청하세요.`, 'error');
+            showToast(`<i data-lucide="octagon" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> Lv${level} 쿼터 초과\n\n최대: ${maxTotal}명\n현재: ${current.size}명\n\n수퍼관리자에게 쿼터 증가를 요청하세요.`, 'error');
             return false;
         }
         return true;
@@ -433,7 +433,7 @@ async function checkPersonalQuota(level) {
             .get();
         
         if (myAppointed.size >= perAdmin) {
-            showToast(`⛔ 개인 임명 쿼터 초과\n\nLv${level} 최대 임명: ${perAdmin}명\n이미 임명: ${myAppointed.size}명`, 'error');
+            showToast(`<i data-lucide="octagon" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 개인 임명 쿼터 초과\n\nLv${level} 최대 임명: ${perAdmin}명\n이미 임명: ${myAppointed.size}명`, 'error');
             return false;
         }
         return true;
@@ -461,7 +461,7 @@ async function saveAdminQuotas() {
     
     try {
         await db.collection('admin_config').doc('settings').set({ quotas }, { merge: true });
-        showToast('✅ 관리자 쿼터 저장 완료', 'success');
+        showToast('<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 관리자 쿼터 저장 완료', 'success');
         loadAdminUserList();
     } catch (e) {
         showToast('저장 실패: ' + e.message, 'info');
@@ -526,7 +526,7 @@ async function generateReferralCode() {
         
         const displayNick = (nickname || '').trim() || userData.nickname || '';
         const display = displayNick ? `${displayNick} (${code})` : code;
-        showToast(`✅ 소개 코드 생성: ${display}`, 'success');
+        showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 소개 코드 생성: ${display}`, 'success');
         const codeEl = document.getElementById('my-referral-code');
         if (codeEl) codeEl.textContent = code;
         if (typeof loadReferralInfo === 'function') loadReferralInfo();
@@ -665,7 +665,7 @@ async function saveReferralRewardConfig() {
             adminUid: currentUser.uid,
             timestamp: new Date()
         });
-        showToast('✅ 소개자 보상 수치 저장 완료', 'success');
+        showToast('<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 소개자 보상 수치 저장 완료', 'success');
     } catch (e) {
         showToast('저장 실패: ' + e.message, 'error');
     }
@@ -757,7 +757,7 @@ async function adminForceCloseAll(targetUserId, targetParticipantId, challengeId
         return;
     }
     
-    if (!window.confirm('⚠️ 관리자 강제 청산\n\n이 사용자의 모든 포지션을 강제 청산합니다.\n진행하시겠습니까?')) return;
+    if (!window.confirm('<i data-lucide="alert-triangle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 관리자 강제 청산\n\n이 사용자의 모든 포지션을 강제 청산합니다.\n진행하시겠습니까?')) return;
     
     try {
         const docRef = db.collection('prop_challenges').doc(challengeId)
@@ -805,7 +805,7 @@ async function adminForceCloseAll(targetUserId, targetParticipantId, challengeId
             timestamp: new Date()
         });
         
-        showToast(`✅ 강제 청산 완료!\n손익: $${totalPnL.toFixed(2)}`, 'success');
+        showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 강제 청산 완료!\n손익: $${totalPnL.toFixed(2)}`, 'success');
     } catch (error) {
         showToast('강제 청산 실패: ' + error.message, 'info');
     }
@@ -841,7 +841,7 @@ async function adminSuspendTrading(targetParticipantId, challengeId, reason) {
             timestamp: new Date()
         });
         
-        showToast(`✅ ${t('admin.suspended','거래 중단 처리 완료')}\n${t('admin.reason','사유')}: ${suspendReason}`, 'success');
+        showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${t('admin.suspended','거래 중단 처리 완료')}\n${t('admin.reason','사유')}: ${suspendReason}`, 'success');
     } catch (error) {
         showToast('중단 처리 실패: ' + error.message, 'info');
     }
@@ -873,7 +873,7 @@ async function adminResumeTrading(targetParticipantId, challengeId) {
             timestamp: new Date()
         });
         
-        showToast(t('admin.resumed','✅ 거래 중단 해제 완료'), 'success');
+        showToast(t('admin.resumed','<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 거래 중단 해제 완료'), 'success');
         loadAdminParticipants(); // 새로고침
     } catch (error) {
         showToast('해제 실패: ' + error.message, 'info');
@@ -885,21 +885,21 @@ async function adminResumeTrading(targetParticipantId, challengeId) {
 // 관리자 탭 메뉴 시스템 — 권한 매트릭스
 // ═══════════════════════════════════════════════════════
 const ADMIN_TAB_CONFIG = [
-    { id: 'dashboard', icon: '📈', label: t('admin.tab.dashboard','대시보드'), minLevel: 3 },
-    { id: 'offchain',  icon: '🔥', label: t('admin.tab.offchain','오프체인'),  minLevel: 2 },
-    { id: 'wallet',    icon: '💰', label: t('admin.tab.onchain','온체인'),    minLevel: 4 },
-    { id: 'challenge', icon: '📊', label: t('admin.tab.challenge','챌린지'),    minLevel: 3 },
-    { id: 'users',     icon: '👥', label: t('admin.tab.users','관리자'),    minLevel: 3 },
-    { id: 'giving',    icon: '🎁', label: t('admin.tab.giving','기부풀'),    minLevel: 3 },
-    { id: 'referral',  icon: '⭐', label: t('admin.tab.referral','소개자'),    minLevel: 6 },
+    { id: 'dashboard', icon: '<i data-lucide="trending-up" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: t('admin.tab.dashboard','대시보드'), minLevel: 3 },
+    { id: 'offchain',  icon: '<i data-lucide="flame" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: t('admin.tab.offchain','오프체인'),  minLevel: 2 },
+    { id: 'wallet',    icon: '<i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: t('admin.tab.onchain','온체인'),    minLevel: 4 },
+    { id: 'challenge', icon: '<i data-lucide="bar-chart-3" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: t('admin.tab.challenge','챌린지'),    minLevel: 3 },
+    { id: 'users',     icon: '<i data-lucide="users" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: t('admin.tab.users','관리자'),    minLevel: 3 },
+    { id: 'giving',    icon: '<i data-lucide="gift" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: t('admin.tab.giving','기부풀'),    minLevel: 3 },
+    { id: 'referral',  icon: '<i data-lucide="star" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: t('admin.tab.referral','소개자'),    minLevel: 6 },
     { id: 'rate',      icon: '⚖️', label: t('admin.tab.rate','비율'),      minLevel: 6 },
-    { id: 'log',       icon: '📋', label: t('admin.tab.log','로그'),      minLevel: 3 },
-    { id: 'coupon',    icon: '🎟️', label: t('admin.tab.coupon','쿠폰'),      minLevel: 3 },
-    { id: 'products',  icon: '📦', label: t('admin.tab.products','상품승인'),  minLevel: 2 },
-    { id: 'superwall', icon: '🏦', label: t('admin.tab.superwall','계좌관리'),  minLevel: 6 },
-    { id: 'rewards',   icon: '🎁', label: t('admin.tab.rewards','리워드'),    minLevel: 3 },
-    { id: 'ai',        icon: '👑', label: t('admin.tab.ai','크라우니 패널 설정'),     minLevel: 6 },
-    { id: 'features',  icon: '🔧', label: t('admin.tab.features','기능 관리'),   minLevel: 5 }
+    { id: 'log',       icon: '<i data-lucide="clipboard-list" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: t('admin.tab.log','로그'),      minLevel: 3 },
+    { id: 'coupon',    icon: '<i data-lucide="ticket" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: t('admin.tab.coupon','쿠폰'),      minLevel: 3 },
+    { id: 'products',  icon: '<i data-lucide="package" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: t('admin.tab.products','상품승인'),  minLevel: 2 },
+    { id: 'superwall', icon: '<i data-lucide="building-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: t('admin.tab.superwall','계좌관리'),  minLevel: 6 },
+    { id: 'rewards',   icon: '<i data-lucide="gift" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: t('admin.tab.rewards','리워드'),    minLevel: 3 },
+    { id: 'ai',        icon: '<i data-lucide="crown" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: t('admin.tab.ai','크라우니 패널 설정'),     minLevel: 6 },
+    { id: 'features',  icon: '<i data-lucide="wrench" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: t('admin.tab.features','기능 관리'),   minLevel: 5 }
 ];
 
 let activeAdminTab = null;
@@ -1022,7 +1022,7 @@ async function adminLookupOffchain() {
         for (const [key, val] of Object.entries(off)) {
             if (!OFFCHAIN_TOKENS_LIST.includes(key) && val > 0) {
                 total += val;
-                balHTML += `<div>🪙 ${key.toUpperCase()}: <strong>${val.toLocaleString()}</strong></div>`;
+                balHTML += `<div><i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${key.toUpperCase()}: <strong>${val.toLocaleString()}</strong></div>`;
             }
         }
         
@@ -1041,7 +1041,7 @@ async function adminLookupOffchain() {
 
 // 포인트 발행 (민팅) — ★ 수퍼관리자(레벨 6) 전용
 async function adminMintOffchain() {
-    if (!hasLevel(6)) { showToast(t('admin.super_only_mint','⛔ 수퍼관리자만 토큰을 발행할 수 있습니다'), 'error'); return; }
+    if (!hasLevel(6)) { showToast(t('admin.super_only_mint','<i data-lucide="octagon" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 수퍼관리자만 토큰을 발행할 수 있습니다'), 'error'); return; }
     
     const email = document.getElementById('admin-off-mint-email').value.trim();
     const tokenKey = document.getElementById('admin-off-mint-token').value;
@@ -1059,7 +1059,7 @@ async function adminMintOffchain() {
         const off = data.offchainBalances || {};
         const curBal = off[tokenKey] || 0;
         
-        if (!confirm(`📈 포인트 발행\n\n대상: ${email}\n토큰: ${tokenKey.toUpperCase()}\n수량: +${amount.toLocaleString()}\n사유: ${reason}\n\n현재 잔액: ${curBal.toLocaleString()} → ${(curBal + amount).toLocaleString()}`)) return;
+        if (!confirm(`<i data-lucide="trending-up" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 포인트 발행\n\n대상: ${email}\n토큰: ${tokenKey.toUpperCase()}\n수량: +${amount.toLocaleString()}\n사유: ${reason}\n\n현재 잔액: ${curBal.toLocaleString()} → ${(curBal + amount).toLocaleString()}`)) return;
         
         await targetDoc.ref.update({
             [`offchainBalances.${tokenKey}`]: curBal + amount
@@ -1083,7 +1083,7 @@ async function adminMintOffchain() {
             timestamp: new Date()
         });
         
-        showToast(`✅ ${amount.toLocaleString()} ${tokenKey.toUpperCase()} 발행 → ${email}`, 'success');
+        showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${amount.toLocaleString()} ${tokenKey.toUpperCase()} 발행 → ${email}`, 'success');
         document.getElementById('admin-off-mint-email').value = '';
         document.getElementById('admin-off-mint-amount').value = '100';
         document.getElementById('admin-off-mint-reason').value = '';
@@ -1094,7 +1094,7 @@ async function adminMintOffchain() {
 
 // 포인트 차감 (소각) — ★ 수퍼관리자(레벨 6) 전용
 async function adminBurnOffchain() {
-    if (!hasLevel(6)) { showToast(t('admin.super_only_burn','⛔ 수퍼관리자만 토큰을 차감할 수 있습니다'), 'error'); return; }
+    if (!hasLevel(6)) { showToast(t('admin.super_only_burn','<i data-lucide="octagon" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 수퍼관리자만 토큰을 차감할 수 있습니다'), 'error'); return; }
     
     const email = document.getElementById('admin-off-burn-email').value.trim();
     const tokenKey = document.getElementById('admin-off-burn-token').value;
@@ -1113,11 +1113,11 @@ async function adminBurnOffchain() {
         const curBal = off[tokenKey] || 0;
         
         if (amount > curBal) {
-            showToast(`❌ 잔액 부족!\n${email}의 ${tokenKey.toUpperCase()}: ${curBal.toLocaleString()} pt\n차감 요청: ${amount.toLocaleString()} pt`, 'error');
+            showToast(`<i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 잔액 부족!\n${email}의 ${tokenKey.toUpperCase()}: ${curBal.toLocaleString()} pt\n차감 요청: ${amount.toLocaleString()} pt`, 'error');
             return;
         }
         
-        if (!confirm(`📉 포인트 차감\n\n대상: ${email}\n토큰: ${tokenKey.toUpperCase()}\n수량: -${amount.toLocaleString()}\n사유: ${reason}\n\n현재 잔액: ${curBal.toLocaleString()} → ${(curBal - amount).toLocaleString()}`)) return;
+        if (!confirm(`<i data-lucide="trending-down" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 포인트 차감\n\n대상: ${email}\n토큰: ${tokenKey.toUpperCase()}\n수량: -${amount.toLocaleString()}\n사유: ${reason}\n\n현재 잔액: ${curBal.toLocaleString()} → ${(curBal - amount).toLocaleString()}`)) return;
         
         await targetDoc.ref.update({
             [`offchainBalances.${tokenKey}`]: curBal - amount
@@ -1139,7 +1139,7 @@ async function adminBurnOffchain() {
             timestamp: new Date()
         });
         
-        showToast(`✅ ${amount.toLocaleString()} ${tokenKey.toUpperCase()} 차감 ← ${email}`, 'success');
+        showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${amount.toLocaleString()} ${tokenKey.toUpperCase()} 차감 ← ${email}`, 'success');
         document.getElementById('admin-off-burn-email').value = '';
         document.getElementById('admin-off-burn-amount').value = '100';
         document.getElementById('admin-off-burn-reason').value = '';
@@ -1194,12 +1194,12 @@ async function loadTokenList() {
 
 // ★ 새 토큰 생성
 async function createCustomToken() {
-    if (!isSuperAdmin()) { showToast('⛔ 수퍼관리자만 토큰을 생성할 수 있습니다', 'error'); return; }
+    if (!isSuperAdmin()) { showToast('<i data-lucide="octagon" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 수퍼관리자만 토큰을 생성할 수 있습니다', 'error'); return; }
     
     const key = (document.getElementById('new-token-key').value || '').trim().toLowerCase();
     const name = (document.getElementById('new-token-name').value || '').trim().toUpperCase();
     const fullName = (document.getElementById('new-token-fullname').value || '').trim();
-    const icon = (document.getElementById('new-token-icon').value || '').trim() || '🪙';
+    const icon = (document.getElementById('new-token-icon').value || '').trim() || '<i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>';
     const color = document.getElementById('new-token-color').value || '#6B5744';
     
     if (!key || !name) { showToast('토큰 KEY와 이름은 필수입니다', 'info'); return; }
@@ -1209,7 +1209,7 @@ async function createCustomToken() {
     
     const tokenData = { name, fullName, icon, color, isDefault: false, createdBy: currentUser.email, createdAt: new Date().toISOString() };
     
-    if (!confirm(`🪙 새 오프체인 토큰 생성\n\nKEY: ${key}\n이름: ${icon} ${name}\n설명: ${fullName}\n\n생성하시겠습니까?`)) return;
+    if (!confirm(`<i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 새 오프체인 토큰 생성\n\nKEY: ${key}\n이름: ${icon} ${name}\n설명: ${fullName}\n\n생성하시겠습니까?`)) return;
     
     try {
         // Firestore에 저장
@@ -1228,7 +1228,7 @@ async function createCustomToken() {
             tokenKey: key, tokenName: name, timestamp: new Date()
         });
         
-        showToast(`✅ ${icon} ${name} (${key}) 토큰 생성 완료!`, 'success');
+        showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${icon} ${name} (${key}) 토큰 생성 완료!`, 'success');
         
         // UI 업데이트
         document.getElementById('new-token-key').value = '';
@@ -1247,7 +1247,7 @@ async function deleteCustomToken(key) {
     const info = OFFCHAIN_TOKEN_REGISTRY[key];
     if (!info || info.isDefault) { showToast('기본 토큰은 삭제할 수 없습니다', 'info'); return; }
     
-    if (!confirm(`⚠️ ${info.icon} ${info.name} (${key}) 삭제\n\n이미 배포된 잔액은 유지되지만, 새 발행/거래가 불가합니다.\n삭제하시겠습니까?`)) return;
+    if (!confirm(`<i data-lucide="alert-triangle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${info.icon} ${info.name} (${key}) 삭제\n\n이미 배포된 잔액은 유지되지만, 새 발행/거래가 불가합니다.\n삭제하시겠습니까?`)) return;
     
     try {
         await db.collection('admin_config').doc('tokens').update({
@@ -1263,7 +1263,7 @@ async function deleteCustomToken(key) {
             tokenKey: key, tokenName: info.name, timestamp: new Date()
         });
         
-        showToast(`✅ ${info.icon} ${info.name} 삭제 완료`, 'success');
+        showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${info.icon} ${info.name} 삭제 완료`, 'success');
         refreshAllTokenDropdowns();
         loadTokenList();
     } catch (e) {
@@ -1273,7 +1273,7 @@ async function deleteCustomToken(key) {
 
 // ★ 일괄 배포 (여러 사용자에게 한번에)
 async function adminBatchDistribute() {
-    if (!hasLevel(6)) { showToast('⛔ 수퍼관리자만 일괄 배포할 수 있습니다', 'error'); return; }
+    if (!hasLevel(6)) { showToast('<i data-lucide="octagon" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 수퍼관리자만 일괄 배포할 수 있습니다', 'error'); return; }
     
     const tokenKey = document.getElementById('admin-dist-token').value;
     const amount = parseInt(document.getElementById('admin-dist-amount').value);
@@ -1291,7 +1291,7 @@ async function adminBatchDistribute() {
     const ti = getTokenInfo(tokenKey);
     const totalAmount = amount * emails.length;
     
-    if (!confirm(`📦 일괄 배포\n\n${ti.icon} ${ti.name}: ${amount.toLocaleString()} × ${emails.length}명\n총 발행: ${totalAmount.toLocaleString()}\n사유: ${reason}\n\n대상:\n${emails.slice(0, 5).join('\n')}${emails.length > 5 ? `\n... 외 ${emails.length - 5}명` : ''}\n\n실행하시겠습니까?`)) return;
+    if (!confirm(`<i data-lucide="package" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 일괄 배포\n\n${ti.icon} ${ti.name}: ${amount.toLocaleString()} × ${emails.length}명\n총 발행: ${totalAmount.toLocaleString()}\n사유: ${reason}\n\n대상:\n${emails.slice(0, 5).join('\n')}${emails.length > 5 ? `\n... 외 ${emails.length - 5}명` : ''}\n\n실행하시겠습니까?`)) return;
     
     const resultEl = document.getElementById('admin-dist-result');
     resultEl.innerHTML = '<p style="color:var(--accent);">배포 중...</p>';
@@ -1338,7 +1338,7 @@ async function adminBatchDistribute() {
     
     resultEl.innerHTML = `
         <div style="padding:0.6rem; border-radius:6px; ${fail > 0 ? 'background:#F7F3ED; border:1px solid #ffcc80;' : 'background:#F7F3ED; border:1px solid #a5d6a7;'}">
-            <strong>✅ ${success}명 성공</strong>${fail > 0 ? ` / ❌ ${fail}명 실패` : ''}
+            <strong><i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${success}명 성공</strong>${fail > 0 ? ` / <i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${fail}명 실패` : ''}
             <div style="font-size:0.78rem; margin-top:0.3rem;">총 발행: ${(amount * success).toLocaleString()} ${ti.name}</div>
             ${failList.length > 0 ? `<div style="font-size:0.72rem; color:#c62828; margin-top:0.3rem;">실패: ${failList.join(', ')}</div>` : ''}
         </div>`;
@@ -1348,7 +1348,7 @@ async function adminBatchDistribute() {
 
 // ★ 전체 회원 배포
 async function adminDistributeToAll() {
-    if (!hasLevel(6)) { showToast('⛔ 수퍼관리자만 가능합니다', 'error'); return; }
+    if (!hasLevel(6)) { showToast('<i data-lucide="octagon" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 수퍼관리자만 가능합니다', 'error'); return; }
     
     const tokenKey = document.getElementById('admin-dist-token').value;
     const amount = parseInt(document.getElementById('admin-dist-amount').value);
@@ -1362,7 +1362,7 @@ async function adminDistributeToAll() {
     const allUsers = await db.collection('users').get();
     const count = allUsers.size;
     
-    if (!confirm(`⚠️ 전체 회원 배포\n\n${ti.icon} ${ti.name}: ${amount.toLocaleString()} × ${count}명\n총 발행: ${(amount * count).toLocaleString()}\n\n정말 전체 ${count}명에게 배포하시겠습니까?`)) return;
+    if (!confirm(`<i data-lucide="alert-triangle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 전체 회원 배포\n\n${ti.icon} ${ti.name}: ${amount.toLocaleString()} × ${count}명\n총 발행: ${(amount * count).toLocaleString()}\n\n정말 전체 ${count}명에게 배포하시겠습니까?`)) return;
     
     // 이메일 목록 추출 → 기존 배치 함수 활용
     const emails = [];
@@ -1389,8 +1389,8 @@ async function adminLoadOffchainTxLog() {
         
         const typeLabels = {
             'transfer': '전송', 'earn': '적립', 'spend': '사용',
-            'admin_mint': '📈발행', 'admin_burn': '📉차감',
-            'swap_offchain': '🔄환전'
+            'admin_mint': '<i data-lucide="trending-up" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>발행', 'admin_burn': '<i data-lucide="trending-down" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>차감',
+            'swap_offchain': '<i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>환전'
         };
         const typeColors = {
             'admin_mint': '#2e7d32', 'admin_burn': '#c62828',
@@ -1404,8 +1404,8 @@ async function adminLoadOffchainTxLog() {
             const time = tx.timestamp?.toDate ? tx.timestamp.toDate().toLocaleString('ko-KR') : '--';
             const label = typeLabels[tx.type] || tx.type;
             const color = typeColors[tx.type] || '#6B5744';
-            const fromLabel = tx.fromEmail === 'ADMIN' ? '🔐 관리자' : (tx.fromEmail || '--');
-            const toLabel = tx.toEmail === 'ADMIN' ? '🔐 관리자' : (tx.toEmail || '--');
+            const fromLabel = tx.fromEmail === 'ADMIN' ? '<i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 관리자' : (tx.fromEmail || '--');
+            const toLabel = tx.toEmail === 'ADMIN' ? '<i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 관리자' : (tx.toEmail || '--');
             const amountSign = (tx.amount >= 0) ? '+' : '';
             
             html += `<div style="padding:0.5rem; border-bottom:1px solid #E8E0D8; font-size:0.78rem;">
@@ -1442,7 +1442,7 @@ async function adminLoadGivingPool() {
             const updated = pool.lastUpdated?.toDate ? pool.lastUpdated.toDate().toLocaleString('ko-KR') : '--';
             infoEl.innerHTML = `
                 <div style="text-align:center;">
-                    <div style="font-size:0.8rem; color:var(--accent);">🎁 글로벌 기부풀 잔액</div>
+                    <div style="font-size:0.8rem; color:var(--accent);"><i data-lucide="gift" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 글로벌 기부풀 잔액</div>
                     <div style="font-size:2rem; font-weight:800; color:#6B8F3C;">${(pool.totalAmount||0).toLocaleString()} <span style="font-size:0.9rem;">CRGC pt</span></div>
                     <div style="font-size:0.75rem; color:var(--accent);">≈ ${((pool.totalAmount||0)/100).toFixed(2)} CRNY · 최종: ${updated}</div>
                 </div>`;
@@ -1487,7 +1487,7 @@ async function adminDistributeGivingPool() {
         const poolBal = poolDoc.exists ? (poolDoc.data().totalAmount || 0) : 0;
         
         if (amount > poolBal) {
-            showToast(`❌ 기부풀 잔액 부족!\n현재: ${poolBal.toLocaleString()} pt\n요청: ${amount.toLocaleString()} pt`, 'error');
+            showToast(`<i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 기부풀 잔액 부족!\n현재: ${poolBal.toLocaleString()} pt\n요청: ${amount.toLocaleString()} pt`, 'error');
             return;
         }
         
@@ -1495,7 +1495,7 @@ async function adminDistributeGivingPool() {
         const users = await db.collection('users').where('email', '==', email).get();
         if (users.empty) { showToast('사용자 없음: ' + email, 'error'); return; }
         
-        if (!confirm(`🎁 기부풀 분배\n\n대상: ${email}\n수량: ${amount.toLocaleString()} CRGC pt\n기부풀 잔액: ${poolBal.toLocaleString()} → ${(poolBal - amount).toLocaleString()}`)) return;
+        if (!confirm(`<i data-lucide="gift" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 기부풀 분배\n\n대상: ${email}\n수량: ${amount.toLocaleString()} CRGC pt\n기부풀 잔액: ${poolBal.toLocaleString()} → ${(poolBal - amount).toLocaleString()}`)) return;
         
         const targetDoc = users.docs[0];
         const off = targetDoc.data().offchainBalances || {};
@@ -1526,7 +1526,7 @@ async function adminDistributeGivingPool() {
             targetEmail: email, amount, timestamp: new Date()
         });
         
-        showToast(`✅ ${amount.toLocaleString()} CRGC 기부풀에서 ${email}에게 분배 완료`, 'success');
+        showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${amount.toLocaleString()} CRGC 기부풀에서 ${email}에게 분배 완료`, 'success');
         adminLoadGivingPool();
     } catch (e) {
         showToast('분배 실패: ' + e.message, 'info');
@@ -1579,7 +1579,7 @@ async function loadAdminUserList() {
                         }).join('')}
                     </tbody>
                 </table>
-                <button onclick="saveAdminQuotas()" style="margin-top:0.5rem; background:#C4841D; color:#FFF8F0; border:none; padding:0.4rem 1rem; border-radius:4px; cursor:pointer; font-size:0.8rem;">💾 쿼터 저장</button>
+                <button onclick="saveAdminQuotas()" style="margin-top:0.5rem; background:#C4841D; color:#FFF8F0; border:none; padding:0.4rem 1rem; border-radius:4px; cursor:pointer; font-size:0.8rem;"><i data-lucide="save" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 쿼터 저장</button>
             </div>`;
         }
         
@@ -1641,7 +1641,7 @@ async function loadAdminUserList() {
                 const end = u.adminEndDate.toDate ? u.adminEndDate.toDate() : new Date(u.adminEndDate);
                 const isExpired = end < new Date();
                 periodText = isExpired 
-                    ? `<span style="font-size:0.6rem;color:#c62828;font-weight:700;">⏰ 만료됨</span>`
+                    ? `<span style="font-size:0.6rem;color:#c62828;font-weight:700;"><i data-lucide="clock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 만료됨</span>`
                     : `<span style="font-size:0.6rem;color:#6B5744;">~${end.toLocaleDateString('ko-KR')}</span>`;
             }
             
@@ -1667,7 +1667,7 @@ async function loadAdminUserList() {
         }
         
         container.innerHTML = quotaHTML + appointHTML + `
-            <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">👥 관리자 · 회원 목록 (${allUsers.length}명)</h4>
+            <h4 style="font-size:0.85rem; margin-bottom:0.5rem;"><i data-lucide="users" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 관리자 · 회원 목록 (${allUsers.length}명)</h4>
             ${userHTML}
         `;
     } catch (error) {
@@ -1706,7 +1706,7 @@ async function adminAdjustDailyLimit(participantId, challengeId) {
             timestamp: new Date()
         });
         
-        showToast(`✅ 일일 한도 $${currentLimit} → $${newLimit} 변경 완료`, 'success');
+        showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 일일 한도 $${currentLimit} → $${newLimit} 변경 완료`, 'success');
         loadAdminParticipants();
     } catch (error) {
         showToast('변경 실패: ' + error.message, 'info');
@@ -1725,8 +1725,8 @@ async function adminUnlockTrading(participantId, challengeId) {
         if (!doc.exists) { showToast('참가자를 찾을 수 없습니다', 'error'); return; }
         const data = doc.data();
         const email = data.email || data.userId || participantId;
-        const locked = data.dailyLocked ? '🔒 잠금 상태' : '🔓 정상';
-        const suspended = data.adminSuspended ? '⛔ 정지됨' : '활동중';
+        const locked = data.dailyLocked ? '<i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 잠금 상태' : '<i data-lucide="unlock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 정상';
+        const suspended = data.adminSuspended ? '<i data-lucide="octagon" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 정지됨' : '활동중';
         
         if (!confirm(`[${email}]\n상태: ${locked} / ${suspended}\n일일 PnL: $${(data.dailyPnL||0).toFixed(2)}\n\n잠금 해제 + PnL 초기화?`)) return;
         
@@ -1747,7 +1747,7 @@ async function adminUnlockTrading(participantId, challengeId) {
             timestamp: new Date()
         });
         
-        showToast('✅ 거래 잠금 해제 + 일일 PnL 초기화 완료', 'success');
+        showToast('<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 거래 잠금 해제 + 일일 PnL 초기화 완료', 'success');
         loadAdminParticipants();
     } catch (error) {
         showToast('해제 실패: ' + error.message, 'info');
@@ -1787,7 +1787,7 @@ async function adminAdjustBalance(participantId, challengeId) {
             timestamp: new Date()
         });
         
-        showToast(`✅ 잔액 $${currentBalance.toLocaleString()} → $${parseFloat(newBalance).toLocaleString()} 변경 완료`, 'success');
+        showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 잔액 $${currentBalance.toLocaleString()} → $${parseFloat(newBalance).toLocaleString()} 변경 완료`, 'success');
         loadAdminParticipants();
     } catch (error) {
         showToast('변경 실패: ' + error.message, 'info');
@@ -1827,7 +1827,7 @@ async function adminAdjustMaxDrawdown(participantId, challengeId) {
             timestamp: new Date()
         });
         
-        showToast(`✅ 청산 한도 -$${currentDD.toLocaleString()} → -$${parseFloat(newDD).toLocaleString()} 변경 완료`, 'success');
+        showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 청산 한도 -$${currentDD.toLocaleString()} → -$${parseFloat(newDD).toLocaleString()} 변경 완료`, 'success');
         loadAdminParticipants();
     } catch (error) {
         showToast('변경 실패: ' + error.message, 'info');
@@ -1867,7 +1867,7 @@ async function adminAdjustCopyAccounts(participantId, challengeId) {
             timestamp: new Date()
         });
         
-        showToast(`✅ 카피 계정 ${currentCopy} → ${val} 변경 완료\n(실효 계약수 = 입력계약 × ${val})`, 'success');
+        showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 카피 계정 ${currentCopy} → ${val} 변경 완료\n(실효 계약수 = 입력계약 × ${val})`, 'success');
         loadAdminParticipants();
     } catch (error) {
         showToast('변경 실패: ' + error.message, 'info');
@@ -1909,7 +1909,7 @@ async function adminAdjustTradingTier(participantId, challengeId) {
             timestamp: new Date()
         });
         
-        showToast(`✅ 거래 티어 변경 완료\nMNQ: ${currentTier.MNQ||0} → ${newTier.MNQ}\nNQ: ${currentTier.NQ||0} → ${newTier.NQ}`, 'success');
+        showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 거래 티어 변경 완료\nMNQ: ${currentTier.MNQ||0} → ${newTier.MNQ}\nNQ: ${currentTier.NQ||0} → ${newTier.NQ}`, 'success');
         loadAdminParticipants();
     } catch (error) {
         showToast('변경 실패: ' + error.message, 'info');
@@ -1949,7 +1949,7 @@ async function adminLoadDeletedWallets() {
                             <div style="font-size:0.72rem;color:#6B5744;font-family:monospace;">${w.walletAddress || '--'}</div>
                             <div style="font-size:0.68rem;color:#c62828;">삭제: ${deletedAt}</div>
                         </div>
-                        ${hasLevel(4) ? `<button onclick="adminRestoreWallet('${userDoc.id}','${wDoc.id}')" style="background:#6B8F3C;color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;font-size:0.7rem;">♻️ 복구</button>` : ''}
+                        ${hasLevel(4) ? `<button onclick="adminRestoreWallet('${userDoc.id}','${wDoc.id}')" style="background:#6B8F3C;color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;font-size:0.7rem;"><i data-lucide="rotate-ccw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 복구</button>` : ''}
                     </div>
                 </div>`;
             }
@@ -1978,7 +1978,7 @@ async function adminRestoreWallet(userId, walletId) {
             adminLevel: currentUserLevel, targetUserId: userId, walletId,
             timestamp: new Date()
         });
-        showToast('✅ 지갑 복구 완료', 'success');
+        showToast('<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 지갑 복구 완료', 'success');
         adminLoadDeletedWallets();
     } catch (e) {
         showToast('복구 실패: ' + e.message, 'error');
@@ -1991,7 +1991,7 @@ async function loadAdminWallet() {
     const container = document.getElementById('admin-wallet-info');
     if (!container) { console.error('admin-wallet-info 없음'); return; }
     
-    container.innerHTML = '<p style="color:var(--accent);">🔄 온체인 잔액 조회 중... (v4.0)</p>';
+    container.innerHTML = '<p style="color:var(--accent);"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 온체인 잔액 조회 중... (v4.0)</p>';
     
     try {
         // 1. Firestore에서 관리자 지갑 주소
@@ -2000,7 +2000,7 @@ async function loadAdminWallet() {
             .collection('wallets').limit(1).get();
         
         if (wallets.empty) {
-            container.innerHTML = '<p style="color:red;">❌ Firestore에 지갑 없음</p>';
+            container.innerHTML = '<p style="color:red;"><i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> Firestore에 지갑 없음</p>';
             return;
         }
         
@@ -2009,7 +2009,7 @@ async function loadAdminWallet() {
         console.log('🔍 Admin wallet address:', adminAddress);
         
         if (!adminAddress) {
-            container.innerHTML = '<p style="color:red;">❌ walletAddress 필드 없음</p>';
+            container.innerHTML = '<p style="color:red;"><i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> walletAddress 필드 없음</p>';
             return;
         }
         
@@ -2046,7 +2046,7 @@ async function loadAdminWallet() {
                     <strong style="font-size:1.2rem;">${maticFormatted}</strong>
                 </div>
             </div>
-            <button onclick="loadAdminWallet()" style="background:var(--accent); color:#FFF8F0; border:none; padding:0.4rem 0.8rem; border-radius:4px; cursor:pointer; font-size:0.8rem;">🔄 새로고침</button>
+            <button onclick="loadAdminWallet()" style="background:var(--accent); color:#FFF8F0; border:none; padding:0.4rem 0.8rem; border-radius:4px; cursor:pointer; font-size:0.8rem;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 새로고침</button>
         `;
         
         // 전역에 저장
@@ -2056,7 +2056,7 @@ async function loadAdminWallet() {
     } catch (error) {
         console.error('Admin wallet load error:', error);
         container.innerHTML = `<p style="color:red;">잔액 조회 실패: ${error.message}</p>
-            <button onclick="loadAdminWallet()" style="background:var(--accent); color:#FFF8F0; border:none; padding:0.4rem 0.8rem; border-radius:4px; cursor:pointer; font-size:0.8rem; margin-top:0.5rem;">🔄 다시 시도</button>`;
+            <button onclick="loadAdminWallet()" style="background:var(--accent); color:#FFF8F0; border:none; padding:0.4rem 0.8rem; border-radius:4px; cursor:pointer; font-size:0.8rem; margin-top:0.5rem;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 다시 시도</button>`;
     }
 }
 
@@ -2130,7 +2130,7 @@ async function adminSendToken() {
         const maticBalance = await web3.eth.getBalance(fromAddress);
         const maticFormatted = parseFloat(web3.utils.fromWei(maticBalance, 'ether'));
         if (maticFormatted < 0.01) {
-            showToast(`⚠️ POL(MATIC) 잔액 부족! 가스비가 필요합니다.\n보유: ${maticFormatted.toFixed(4)} POL\n최소 0.01 POL 필요`, 'error');
+            showToast(`<i data-lucide="alert-triangle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> POL(MATIC) 잔액 부족! 가스비가 필요합니다.\n보유: ${maticFormatted.toFixed(4)} POL\n최소 0.01 POL 필요`, 'error');
             return;
         }
         
@@ -2142,7 +2142,7 @@ async function adminSendToken() {
             `  (${toAddress.slice(0,6)}...${toAddress.slice(-4)})\n` +
             `토큰: ${amount} ${tokenSymbol}\n` +
             `체인: Polygon\n\n` +
-            `⚠️ 온체인 트랜잭션은 취소할 수 없습니다.\n진행하시겠습니까?`
+            `<i data-lucide="alert-triangle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 온체인 트랜잭션은 취소할 수 없습니다.\n진행하시겠습니까?`
         )) return;
         
         // 전송 진행 UI
@@ -2189,7 +2189,7 @@ async function adminSendToken() {
             timestamp: new Date()
         });
         
-        showToast(`✅ 온체인 전송 완료! ${amount} ${tokenSymbol} → ${email}`, 'success');
+        showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 온체인 전송 완료! ${amount} ${tokenSymbol} → ${email}`, 'success');
         
         document.getElementById('admin-send-email').value = '';
         document.getElementById('admin-send-amount').value = '1';
@@ -2239,7 +2239,7 @@ async function loadAdminParticipants() {
             
             html += `
                 <div style="border:1px solid var(--border); border-radius:8px; padding:1rem; margin-bottom:1rem;">
-                    <h4 style="margin-bottom:0.5rem;">📊 ${challenge.title || '챌린지'} <span style="font-size:0.75rem; color:var(--accent);">(${challengeId.slice(0,8)})</span></h4>
+                    <h4 style="margin-bottom:0.5rem;"><i data-lucide="bar-chart-3" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${challenge.title || '챌린지'} <span style="font-size:0.75rem; color:var(--accent);">(${challengeId.slice(0,8)})</span></h4>
                     <p style="font-size:0.8rem; color:var(--accent); margin-bottom:0.8rem;">참가자: ${participants.size}명</p>
             `;
             
@@ -2258,8 +2258,8 @@ async function loadAdminParticipants() {
                     const isLocked = p.dailyLocked || false;
                     
                     let statusBadge = '🟢 정상';
-                    if (isSuspended) statusBadge = '⛔ 관리자 중단';
-                    else if (isLocked) statusBadge = '🔒 일일 제한';
+                    if (isSuspended) statusBadge = '<i data-lucide="octagon" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 관리자 중단';
+                    else if (isLocked) statusBadge = '<i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 일일 제한';
                     
                     html += `
                         <div style="background:var(--bg); padding:0.8rem; border-radius:6px; margin-bottom:0.5rem; border-left:3px solid ${isSuspended ? '#cc0000' : '#3D2B1F'};">
@@ -2291,23 +2291,23 @@ async function loadAdminParticipants() {
                                     ${!isSuspended ? `
                                         <button onclick="adminSuspendTrading('${participantId}', '${challengeId}')" 
                                             style="background:#C4841D; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
-                                            ⛔ 거래 중단
+                                            <i data-lucide="octagon" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 거래 중단
                                         </button>
                                     ` : `
                                         <button onclick="adminResumeTrading('${participantId}', '${challengeId}')" 
                                             style="background:#4caf50; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
-                                            ✅ 중단 해제
+                                            <i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 중단 해제
                                         </button>
                                     `}
                                     ${isLocked ? `
                                         <button onclick="adminUnlockTrading('${participantId}', '${challengeId}')" 
                                             style="background:#5B7B8C; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
-                                            🔓 잠금 해제
+                                            <i data-lucide="unlock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 잠금 해제
                                         </button>
                                     ` : ''}
                                     <button onclick="adminAdjustDailyLimit('${participantId}', '${challengeId}')" 
                                         style="background:#607D8B; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
-                                        📊 일일한도
+                                        <i data-lucide="bar-chart-3" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 일일한도
                                     </button>
                                     <button onclick="adminAdjustMaxDrawdown('${participantId}', '${challengeId}')" 
                                         style="background:#455A64; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
@@ -2315,15 +2315,15 @@ async function loadAdminParticipants() {
                                     </button>
                                     <button onclick="adminAdjustBalance('${participantId}', '${challengeId}')" 
                                         style="background:#795548; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
-                                        💰 잔액 조정
+                                        <i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 잔액 조정
                                     </button>
                                     <button onclick="adminAdjustCopyAccounts('${participantId}', '${challengeId}')" 
                                         style="background:#C4841D; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
-                                        📋 카피계정
+                                        <i data-lucide="clipboard-list" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 카피계정
                                     </button>
                                     <button onclick="adminAdjustTradingTier('${participantId}', '${challengeId}')" 
                                         style="background:#8B6914; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
-                                        📊 거래티어
+                                        <i data-lucide="bar-chart-3" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 거래티어
                                     </button>
                                 </div>
                             </div>
@@ -2373,11 +2373,11 @@ async function loadAdminLog() {
                     actionColor = '#cc0000';
                     break;
                 case 'suspend_trading':
-                    actionText = '⛔ 거래 중단';
+                    actionText = '<i data-lucide="octagon" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 거래 중단';
                     actionColor = '#C4841D';
                     break;
                 case 'resume_trading':
-                    actionText = '✅ 중단 해제';
+                    actionText = '<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 중단 해제';
                     actionColor = '#4caf50';
                     break;
                 default:
@@ -2416,7 +2416,7 @@ async function loadPropTrading() {
         if (challenges.empty) {
             container.innerHTML = `
                 <div style="text-align:center; padding:3rem; color:var(--accent);">
-                    <p style="font-size:3rem; margin-bottom:1rem;">📊</p>
+                    <p style="font-size:3rem; margin-bottom:1rem;"><i data-lucide="bar-chart-3" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></p>
                     <p>진행 중인 챌린지가 없습니다</p>
                 </div>
             `;
@@ -2437,9 +2437,9 @@ async function loadPropTrading() {
                         <div style="font-size:1.3rem; font-weight:800; color:#8B2BE2;">${key}군</div>
                         <div style="font-size:1.4rem; font-weight:700; color:#3D2B1F; margin:0.3rem 0;">${t.deposit} CRTD</div>
                         <div style="font-size:0.75rem; color:var(--accent); line-height:1.6;">
-                            💰 $${(t.account||100000).toLocaleString()} 계좌<br>
+                            <i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> $${(t.account||100000).toLocaleString()} 계좌<br>
                             💀 -$${(t.liquidation||3000).toLocaleString()} 청산<br>
-                            📈 +$${(t.profitThreshold||1000).toLocaleString()}~ → CRTD<br>
+                            <i data-lucide="trending-up" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> +$${(t.profitThreshold||1000).toLocaleString()}~ → CRTD<br>
                             💎 ${(t.withdrawUnit||1000).toLocaleString()} 단위 인출
                         </div>
                         <button onclick="joinChallenge('${doc.id}','${key}')" class="btn-primary" style="width:100%; margin-top:0.5rem; padding:0.6rem; font-size:0.9rem;">
@@ -2472,8 +2472,8 @@ async function loadPropTrading() {
                 </div>
                 
                 <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--accent); padding-top:0.5rem; border-top:1px solid var(--border);">
-                    <span>📊 ${ch.allowedProduct || 'MNQ'} | 🔴 일일 -$${ch.dailyLossLimit || 500}</span>
-                    <span>👥 ${ch.participants || 0}명 참가중</span>
+                    <span><i data-lucide="bar-chart-3" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${ch.allowedProduct || 'MNQ'} | 🔴 일일 -$${ch.dailyLossLimit || 500}</span>
+                    <span><i data-lucide="users" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${ch.participants || 0}명 참가중</span>
                 </div>
             `;
             container.appendChild(card);
@@ -2557,7 +2557,7 @@ async function showCreateChallenge() {
                 
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">
                     <div>
-                        <label style="font-size:0.85rem; font-weight:600;">📊 상품 제한</label>
+                        <label style="font-size:0.85rem; font-weight:600;"><i data-lucide="bar-chart-3" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 상품 제한</label>
                         <select id="ch-product" style="width:100%; padding:0.6rem; border:1px solid var(--border); border-radius:6px; margin-top:0.3rem;">
                             <option value="MNQ">MNQ (마이크로) 전용</option>
                             <option value="NQ">NQ (미니) 전용</option>
@@ -2565,7 +2565,7 @@ async function showCreateChallenge() {
                         </select>
                     </div>
                     <div>
-                        <label style="font-size:0.85rem; font-weight:600;">📦 최대 계약 수</label>
+                        <label style="font-size:0.85rem; font-weight:600;"><i data-lucide="package" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 최대 계약 수</label>
                         <input type="number" id="ch-max-contracts" value="1" style="width:100%; padding:0.6rem; border:1px solid var(--border); border-radius:6px; margin-top:0.3rem;">
                     </div>
                 </div>
@@ -2576,7 +2576,7 @@ async function showCreateChallenge() {
                         <input type="number" id="ch-daily-limit" value="500" style="width:100%; padding:0.6rem; border:1px solid var(--border); border-radius:6px; margin-top:0.3rem;">
                     </div>
                     <div>
-                        <label style="font-size:0.85rem; font-weight:600;">📈 최대 동시 포지션</label>
+                        <label style="font-size:0.85rem; font-weight:600;"><i data-lucide="trending-up" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 최대 동시 포지션</label>
                         <input type="number" id="ch-max-positions" value="5" style="width:100%; padding:0.6rem; border:1px solid var(--border); border-radius:6px; margin-top:0.3rem;">
                     </div>
                 </div>
@@ -2587,7 +2587,7 @@ async function showCreateChallenge() {
                         <input type="number" id="ch-duration" value="30" style="width:100%; padding:0.6rem; border:1px solid var(--border); border-radius:6px; margin-top:0.3rem;">
                     </div>
                     <div>
-                        <label style="font-size:0.85rem; font-weight:600;">⏰ 정산</label>
+                        <label style="font-size:0.85rem; font-weight:600;"><i data-lucide="clock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 정산</label>
                         <select id="ch-settlement" style="width:100%; padding:0.6rem; border:1px solid var(--border); border-radius:6px; margin-top:0.3rem;">
                             <option value="EOD">EOD (End of Day)</option>
                             <option value="WEEKLY">주간</option>
@@ -2597,7 +2597,7 @@ async function showCreateChallenge() {
                 </div>
                 
                 <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
-                    <button onclick="submitCreateChallenge()" class="btn-primary" style="flex:1; padding:0.8rem;">✅ 챌린지 생성</button>
+                    <button onclick="submitCreateChallenge()" class="btn-primary" style="flex:1; padding:0.8rem;"><i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 챌린지 생성</button>
                     <button onclick="document.getElementById('create-challenge-form').remove()" style="flex:0.5; padding:0.8rem; background:var(--border); border:none; border-radius:6px; cursor:pointer;">취소</button>
                 </div>
             </div>
@@ -2667,7 +2667,7 @@ async function submitCreateChallenge() {
         await db.collection('prop_challenges').add(challengeData);
         
         const tierSummary = Object.entries(tiers).map(([k,v]) => `${k}군=${v.deposit}CRTD`).join(', ');
-        showToast(`✅ 챌린지 생성 완료!\n\n${name}\n티어: ${tierSummary}\n상품: ${challengeData.allowedProduct}`, 'success');
+        showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 챌린지 생성 완료!\n\n${name}\n티어: ${tierSummary}\n상품: ${challengeData.allowedProduct}`, 'success');
         
         document.getElementById('create-challenge-form')?.remove();
         loadPropTrading();
@@ -2680,11 +2680,11 @@ async function joinChallenge(challengeId, tierKey) {
     console.log('🎯 joinChallenge called:', challengeId, tierKey);
     showToast('⏳ 참가 처리 중...', 'info', 2000);
     
-    if (!currentUser) { showToast('❌ 로그인이 필요합니다', 'error'); return; }
+    if (!currentUser) { showToast('<i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 로그인이 필요합니다', 'error'); return; }
     
     try {
     const challenge = await db.collection('prop_challenges').doc(challengeId).get();
-    if (!challenge.exists) { showToast('❌ 챌린지를 찾을 수 없습니다', 'error'); return; }
+    if (!challenge.exists) { showToast('<i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 챌린지를 찾을 수 없습니다', 'error'); return; }
     const data = challenge.data();
     
     // ★ 티어 정보 로드
@@ -2695,7 +2695,7 @@ async function joinChallenge(challengeId, tierKey) {
     const existing = await db.collection('prop_challenges').doc(challengeId)
         .collection('participants').where('userId', '==', currentUser.uid).where('status', '==', 'active').get();
     if (!existing.empty) {
-        showToast('⚠️ 이미 이 챌린지에 참가 중입니다', 'warning');
+        showToast('<i data-lucide="alert-triangle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 이미 이 챌린지에 참가 중입니다', 'warning');
         return;
     }
     
@@ -2708,22 +2708,22 @@ async function joinChallenge(challengeId, tierKey) {
     console.log('🔍 joinChallenge 잔고체크:', { uid: currentUser.uid, offchain, crtdBalance, required: tier.deposit });
     
     if (crtdBalance < tier.deposit) {
-        showToast(`❌ CRTD 잔액 부족 — 필요: ${tier.deposit}, 보유: ${crtdBalance}`, 'error', 5000);
+        showToast(`<i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> CRTD 잔액 부족 — 필요: ${tier.deposit}, 보유: ${crtdBalance}`, 'error', 5000);
         return;
     }
     
     const productText = data.allowedProduct === 'BOTH' ? 'MNQ + NQ' : (data.allowedProduct || 'MNQ');
     
     const confirmMsg = 
-        `📋 ${data.name} (${tierKey}군)\n\n` +
+        `<i data-lucide="clipboard-list" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${data.name} (${tierKey}군)\n\n` +
         `💎 참가비: ${tier.deposit} CRTD\n` +
-        `💰 가상 계좌: $${tier.account.toLocaleString()}\n` +
-        `📊 상품: ${productText}\n` +
-        `📈 포지션: 최대 ${data.maxPositions || 5}개\n\n` +
+        `<i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 가상 계좌: $${tier.account.toLocaleString()}\n` +
+        `<i data-lucide="bar-chart-3" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 상품: ${productText}\n` +
+        `<i data-lucide="trending-up" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 포지션: 최대 ${data.maxPositions || 5}개\n\n` +
         `── 프랍 규칙 ──\n` +
         `💀 -$${tier.liquidation.toLocaleString()} → 계좌 청산 (${tier.deposit} CRTD 소멸)\n` +
-        `📈 +$${tier.profitThreshold.toLocaleString()} 초과분 → 1:1 CRTD 변환\n` +
-        `💰 ${tier.withdrawUnit.toLocaleString()} CRTD 단위 인출 가능\n` +
+        `<i data-lucide="trending-up" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> +$${tier.profitThreshold.toLocaleString()} 초과분 → 1:1 CRTD 변환\n` +
+        `<i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${tier.withdrawUnit.toLocaleString()} CRTD 단위 인출 가능\n` +
         `🔴 일일 한도: -$${data.dailyLossLimit || 500}\n\n` +
         `참가하시겠습니까?`;
     
@@ -2784,7 +2784,7 @@ async function joinChallenge(challengeId, tierKey) {
             timestamp: new Date()
         });
         
-        showToast(`✅ ${tierKey}군 참가 완료! ${tier.deposit} CRTD 차감`, 'success', 5000);
+        showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${tierKey}군 참가 완료! ${tier.deposit} CRTD 차감`, 'success', 5000);
         
         // [v13] 챌린지 참가 시 소개자 수수료 제거 — 회원가입 보상으로 통합
         // await distributeReferralReward(currentUser.uid, Math.floor(tier.deposit * 0.1), 'CRTD');
@@ -2794,11 +2794,11 @@ async function joinChallenge(challengeId, tierKey) {
         loadTradingDashboard();
     } catch (error) {
         console.error('Join error:', error);
-        showToast('❌ 참가 실패: ' + error.message, 'error', 5000);
+        showToast('<i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 참가 실패: ' + error.message, 'error', 5000);
     }
     } catch (outerError) {
         console.error('joinChallenge outer error:', outerError);
-        showToast('❌ 오류: ' + outerError.message, 'error', 5000);
+        showToast('<i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 오류: ' + outerError.message, 'error', 5000);
     }
 }
 
@@ -2809,7 +2809,7 @@ async function joinChallenge(challengeId, tierKey) {
 
 // ========== MALL - 쇼핑몰 ==========
 
-const MALL_CATEGORIES = { present:'💄 프레즌트', doctor:'💊 포닥터', medical:'🏥 메디컬', avls:'🎬 AVLs', solution:'🔐 프라이빗', architect:'🏗️ 아키텍트', mall:'🛒 크라우니몰', designers:'👗 디자이너스', other:'📦 기타' };
+const MALL_CATEGORIES = { present:'<i data-lucide="sparkles" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 프레즌트', doctor:'💊 포닥터', medical:'<i data-lucide="heart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 메디컬', avls:'🎬 AVLs', solution:'<i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 프라이빗', architect:'🏗️ 아키텍트', mall:'<i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 크라우니몰', designers:'👗 디자이너스', other:'<i data-lucide="package" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 기타' };
 
 async function registerProduct() {
     if (!currentUser) { showToast('로그인 필요', 'warning'); return; }
@@ -2841,7 +2841,7 @@ async function registerProduct() {
             sold: 0, status: (currentUser.email === 'kim.president.sk@gmail.com') ? 'active' : 'pending', createdAt: new Date()
         });
         
-        showToast(`🛒 "${title}" 등록 완료!`, 'success');
+        showToast(`<i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> "${title}" 등록 완료!`, 'success');
         document.getElementById('product-title').value = '';
         document.getElementById('product-desc').value = '';
         document.getElementById('product-image').value = '';
@@ -2883,7 +2883,7 @@ async function loadExchangeRate() {
                                 <div><span style="background:#F7F3ED; color:#5B7B8C; padding:0.1rem 0.4rem; border-radius:4px; font-size:0.7rem; font-weight:700;">${tokenLabel}</span> <strong>${h.oldRate} → ${h.newRate}</strong></div>
                                 <span style="color:var(--accent); font-size:0.7rem;">${date}</span>
                             </div>
-                            <div style="color:#6B5744; font-size:0.75rem; margin-top:0.2rem;">📝 ${h.reason || '-'}</div>
+                            <div style="color:#6B5744; font-size:0.75rem; margin-top:0.2rem;"><i data-lucide="file-text" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${h.reason || '-'}</div>
                             <div style="color:var(--accent); font-size:0.7rem;">${h.adminEmail}</div>
                         </div>`;
                     }).join('');
@@ -2966,7 +2966,7 @@ async function requestRateChange() {
         window.OFFCHAIN_RATES = newRates;
         window.OFFCHAIN_RATE = newRates.crtd;
         
-        showToast(`✅ ${changes.length}개 토큰 비율 변경 완료!`, 'success');
+        showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${changes.length}개 토큰 비율 변경 완료!`, 'success');
         document.getElementById('rate-change-reason').value = '';
         loadExchangeRate();
         
@@ -3011,7 +3011,7 @@ async function createCoupon() {
             description: description
         });
 
-        showToast('✅ 쿠폰 생성 완료: ' + code, 'success');
+        showToast('<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 쿠폰 생성 완료: ' + code, 'success');
         document.getElementById('coupon-name').value = '';
         document.getElementById('coupon-code').value = '';
         document.getElementById('coupon-amount').value = '';
@@ -3054,12 +3054,12 @@ async function loadCouponList() {
                     <div style="display:flex; flex-direction:column; gap:3px; align-items:center;">
                         <button onclick="toggleCoupon('${doc.id}', ${!c.enabled})" style="padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem; background:${c.enabled ? '#ffcdd2' : '#c8e6c9'}; color:${c.enabled ? '#c62828' : '#2e7d32'}; width:100%;">${c.enabled ? '비활성화' : '활성화'}</button>
                         <button onclick="viewCouponLog('${doc.id}','${c.code}')" style="padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem; background:#F7F3ED; color:#5B7B8C; width:100%;">📜 로그</button>
-                        <button onclick="deleteCoupon('${doc.id}','${c.code}')" style="padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem; background:#F7F3ED; color:#c62828; width:100%;">🗑️ 삭제</button>
+                        <button onclick="deleteCoupon('${doc.id}','${c.code}')" style="padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem; background:#F7F3ED; color:#c62828; width:100%;"><i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 삭제</button>
                     </div>
                 </td>
             </tr>`;
             if (c.description) {
-                html += `<tr><td colspan="6" style="padding:0.2rem 0.5rem; font-size:0.7rem; color:#6B5744;">📝 ${c.description} | 만료: ${expiry}</td></tr>`;
+                html += `<tr><td colspan="6" style="padding:0.2rem 0.5rem; font-size:0.7rem; color:#6B5744;"><i data-lucide="file-text" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${c.description} | 만료: ${expiry}</td></tr>`;
             }
         });
         html += '</table>';
@@ -3083,7 +3083,7 @@ async function deleteCoupon(couponId, code) {
         showConfirmModal(`쿠폰 "${code}" 를 삭제하시겠습니까?\n사용 로그는 유지됩니다.`, async () => {
             try {
                 await db.collection('coupons').doc(couponId).delete();
-                showToast('🗑️ 쿠폰 삭제 완료', 'success');
+                showToast('<i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 쿠폰 삭제 완료', 'success');
                 loadCouponList();
             } catch (e) { showToast('삭제 실패: ' + e.message, 'error'); }
         });
@@ -3091,7 +3091,7 @@ async function deleteCoupon(couponId, code) {
         if (!confirm(`쿠폰 "${code}" 를 삭제하시겠습니까?`)) return;
         try {
             await db.collection('coupons').doc(couponId).delete();
-            showToast('🗑️ 쿠폰 삭제 완료', 'success');
+            showToast('<i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 쿠폰 삭제 완료', 'success');
             loadCouponList();
         } catch (e) { showToast('삭제 실패: ' + e.message, 'error'); }
     }
@@ -3158,7 +3158,7 @@ async function loadSuperAdminWallets() {
     if (!container) return;
     
     container.style.display = 'block';
-    container.innerHTML = '<div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;"><p style="color:var(--accent);">🔄 계좌 정보 로드 중...</p></div>';
+    container.innerHTML = '<div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;"><p style="color:var(--accent);"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 계좌 정보 로드 중...</p></div>';
     
     try {
         const uid = currentUser.uid;
@@ -3206,7 +3206,7 @@ async function loadSuperAdminWallets() {
                     <div style="margin-bottom:0.8rem;">${formatBal(data)}</div>
                     <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
                         ${!exists ? `<button onclick="createSuperWallet('${type}')" style="background:#8B6914;color:#FFF8F0;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;">➕ 생성</button>` : ''}
-                        ${exists && !isActive ? `<button onclick="switchActiveWallet('${type}')" style="background:#8B6914;color:#FFF8F0;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;">🔄 활성화</button>` : ''}
+                        ${exists && !isActive ? `<button onclick="switchActiveWallet('${type}')" style="background:#8B6914;color:#FFF8F0;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 활성화</button>` : ''}
                         ${exists ? `<button onclick="showInternalTransfer('${type}')" style="background:#455a64;color:#FFF8F0;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.78rem;">↔️ 이체</button>` : ''}
                     </div>
                 </div>`;
@@ -3214,13 +3214,13 @@ async function loadSuperAdminWallets() {
         
         container.innerHTML = `
             <div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;margin-bottom:1rem;">
-                <h3 style="margin-bottom:0.3rem;">🏦 슈퍼관리자 계좌 관리</h3>
+                <h3 style="margin-bottom:0.3rem;"><i data-lucide="building-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 슈퍼관리자 계좌 관리</h3>
                 <p style="font-size:0.78rem;color:#6B5744;margin-bottom:1.2rem;">오리지널 계좌(금고)와 운영 계좌를 분리 관리합니다. 오리지널 계좌 출금 시 2단계 확인이 필요합니다.</p>
                 
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;">
-                    ${walletCard('original', '오리지널 계좌', '🔐', '#8B6914', wallets.original)}
+                    ${walletCard('original', '오리지널 계좌', '<i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', '#8B6914', wallets.original)}
                     ${walletCard('operating', '운영 계좌', '⚡', '#8B6914', wallets.operating)}
-                    ${walletCard('default', '기본 지갑', '💼', '#8B6914', wallets.default)}
+                    ${walletCard('default', '기본 지갑', '<i data-lucide="briefcase" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', '#8B6914', wallets.default)}
                 </div>
             </div>
             
@@ -3239,7 +3239,7 @@ async function loadSuperAdminWallets() {
 async function createSuperWallet(type) {
     if (!isSuperAdmin()) return;
     const labels = { original: '오리지널 계좌 (금고)', operating: '운영 계좌', default: '기본 지갑' };
-    const confirmed = await showConfirmModal('🏦 계좌 생성', `${labels[type]}을(를) 생성하시겠습니까?\n\n빈 잔액으로 생성됩니다.`);
+    const confirmed = await showConfirmModal('<i data-lucide="building-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 계좌 생성', `${labels[type]}을(를) 생성하시겠습니까?\n\n빈 잔액으로 생성됩니다.`);
     if (!confirmed) return;
     
     try {
@@ -3250,7 +3250,7 @@ async function createSuperWallet(type) {
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             createdBy: currentUser.email
         });
-        showToast(`✅ ${labels[type]} 생성 완료`, 'success');
+        showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${labels[type]} 생성 완료`, 'success');
         loadSuperAdminWallets();
     } catch (e) {
         showToast('생성 실패: ' + e.message, 'error');
@@ -3261,7 +3261,7 @@ async function switchActiveWallet(type) {
     if (!isSuperAdmin()) return;
     try {
         await db.collection('users').doc(currentUser.uid).update({ activeWallet: type });
-        showToast(`🔄 활성 계좌 → ${type}`, 'success');
+        showToast(`<i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 활성 계좌 → ${type}`, 'success');
         loadSuperAdminWallets();
     } catch (e) {
         showToast('전환 실패: ' + e.message, 'error');
@@ -3272,7 +3272,7 @@ async function showInternalTransfer(fromType) {
     if (!isSuperAdmin()) return;
     
     const targets = ['original', 'operating', 'default'].filter(t => t !== fromType);
-    const labels = { original: '🔐 오리지널', operating: '⚡ 운영', default: '💼 기본' };
+    const labels = { original: '<i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 오리지널', operating: '⚡ 운영', default: '<i data-lucide="briefcase" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 기본' };
     
     const overlay = document.createElement('div');
     overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
@@ -3296,7 +3296,7 @@ async function showInternalTransfer(fromType) {
                 <input type="number" id="transfer-amount" min="1" placeholder="0" style="width:100%;padding:0.6rem;border:1px solid #E8E0D8;border-radius:8px;box-sizing:border-box;">
             </div>
             
-            ${fromType === 'original' ? '<p style="font-size:0.75rem;color:#C4841D;margin-bottom:0.8rem;">⚠️ 오리지널 계좌 출금: 2단계 확인 필요</p>' : ''}
+            ${fromType === 'original' ? '<p style="font-size:0.75rem;color:#C4841D;margin-bottom:0.8rem;"><i data-lucide="alert-triangle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 오리지널 계좌 출금: 2단계 확인 필요</p>' : ''}
             
             <div style="display:flex;gap:0.5rem;">
                 <button id="transfer-submit" style="flex:1;padding:0.7rem;background:#8B6914;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:700;">💸 이체</button>
@@ -3322,7 +3322,7 @@ async function showInternalTransfer(fromType) {
         
         // 2-step confirm for original account
         if (fromType === 'original') {
-            const ok1 = await showConfirmModal('🔐 오리지널 계좌 출금 확인', `오리지널 계좌(금고)에서 ${amount.toLocaleString()} ${tokenKey.toUpperCase()}를 ${labels[toType]}로 이체합니다.\n\n이 작업은 관리자 로그에 기록됩니다.`);
+            const ok1 = await showConfirmModal('<i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 오리지널 계좌 출금 확인', `오리지널 계좌(금고)에서 ${amount.toLocaleString()} ${tokenKey.toUpperCase()}를 ${labels[toType]}로 이체합니다.\n\n이 작업은 관리자 로그에 기록됩니다.`);
             if (!ok1) return;
             const code = await showPromptModal('보안 확인', '"CONFIRM"을 정확히 입력하세요:', '');
             if (code !== 'CONFIRM') { showToast('확인 코드 불일치. 이체 취소됨.', 'error'); return; }
@@ -3361,7 +3361,7 @@ async function showInternalTransfer(fromType) {
             });
             
             overlay.remove();
-            showToast(`✅ ${amount.toLocaleString()} ${tokenKey.toUpperCase()} 이체 완료 (${fromType} → ${toType})`, 'success');
+            showToast(`<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${amount.toLocaleString()} ${tokenKey.toUpperCase()} 이체 완료 (${fromType} → ${toType})`, 'success');
             loadSuperAdminWallets();
         } catch (e) {
             showToast('이체 실패: ' + e.message, 'error');
@@ -3380,7 +3380,7 @@ async function loadSuperWalletLog() {
         
         if (logs.empty) { container.innerHTML = '<p style="font-size:0.8rem;color:#6B5744;">이체 내역 없음</p>'; return; }
         
-        const labels = { original: '🔐 오리지널', operating: '⚡ 운영', default: '💼 기본' };
+        const labels = { original: '<i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 오리지널', operating: '⚡ 운영', default: '<i data-lucide="briefcase" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 기본' };
         let html = '';
         logs.forEach(doc => {
             const d = doc.data();
@@ -3499,7 +3499,7 @@ async function loadAdminDashboardStats(forceRefresh = false) {
         const ordersSnap = await db.collection('orders').get();
         let mallRevenue = 0;
         ordersSnap.forEach(doc => { mallRevenue += doc.data().totalPrice || doc.data().price || 0; });
-        sections.mall = { icon: '🛒', label: 'MALL', items: [
+        sections.mall = { icon: '<i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: 'MALL', items: [
             { label: t('admin.dash.total_products','총 상품'), value: productsSnap.size },
             { label: t('admin.dash.total_orders','총 주문'), value: ordersSnap.size },
             { label: t('admin.dash.total_revenue','총 매출'), value: mallRevenue.toLocaleString() + ' pt' }
@@ -3512,7 +3512,7 @@ async function loadAdminDashboardStats(forceRefresh = false) {
             artCount = artSnap.size;
             artSnap.forEach(doc => { artSold += doc.data().sold || 0; });
         } catch(e) { console.warn("[catch]", e); }
-        sections.art = { icon: '🎭', label: 'ART', items: [
+        sections.art = { icon: '<i data-lucide="theater" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: 'ART', items: [
             { label: t('admin.dash.total_artworks','총 작품'), value: artCount },
             { label: t('admin.dash.total_art_sold','총 판매'), value: artSold }
         ]};
@@ -3524,7 +3524,7 @@ async function loadAdminDashboardStats(forceRefresh = false) {
             bookCount = bookSnap.size;
             bookSnap.forEach(doc => { bookSold += doc.data().sold || 0; });
         } catch(e) { console.warn("[catch]", e); }
-        sections.books = { icon: '📚', label: 'BOOKS', items: [
+        sections.books = { icon: '<i data-lucide="book" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: 'BOOKS', items: [
             { label: t('admin.dash.total_books','총 등록 책'), value: bookCount },
             { label: t('admin.dash.total_book_sold','총 판매'), value: bookSold }
         ]};
@@ -3538,7 +3538,7 @@ async function loadAdminDashboardStats(forceRefresh = false) {
                 totalParticipants += doc.data().participants || 0;
             }
         } catch(e) { console.warn("[catch]", e); }
-        sections.trading = { icon: '📊', label: 'TRADING', items: [
+        sections.trading = { icon: '<i data-lucide="bar-chart-3" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: 'TRADING', items: [
             { label: t('admin.dash.active_challenges','활성 챌린지'), value: activeChallenges },
             { label: t('admin.dash.participants','참가자'), value: totalParticipants }
         ]};
@@ -3555,7 +3555,7 @@ async function loadAdminDashboardStats(forceRefresh = false) {
                 if (commentCount > 500) break; // 성능 보호
             }
         } catch(e) { console.warn("[catch]", e); }
-        sections.social = { icon: '💬', label: 'SOCIAL', items: [
+        sections.social = { icon: '<i data-lucide="message-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: 'SOCIAL', items: [
             { label: t('admin.dash.total_posts','총 게시물'), value: postCount },
             { label: t('admin.dash.total_comments','총 댓글'), value: commentCount > 500 ? '500+' : commentCount }
         ]};
@@ -3596,9 +3596,9 @@ function renderDashboardStats(stats) {
     const tokenEl = el('dash-tx-by-token');
     if (tokenEl) {
         tokenEl.innerHTML = Object.entries(txByToken).map(([tk, vol]) => {
-            const info = typeof getTokenInfo === 'function' ? getTokenInfo(tk.toLowerCase()) : { icon: '🪙', color: '#6B5744' };
+            const info = typeof getTokenInfo === 'function' ? getTokenInfo(tk.toLowerCase()) : { icon: '<i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', color: '#6B5744' };
             return `<div style="background:${info.color}11; border:1px solid ${info.color}33; padding:0.5rem; border-radius:8px; text-align:center;">
-                <div style="font-size:0.7rem; color:${info.color};">${info.icon || '🪙'} ${tk}</div>
+                <div style="font-size:0.7rem; color:${info.color};">${info.icon || '<i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>'} ${tk}</div>
                 <div style="font-size:1rem; font-weight:700;">${vol.toLocaleString()}</div>
             </div>`;
         }).join('');
@@ -3675,7 +3675,7 @@ async function loadAdminPendingProducts() {
     c.innerHTML = '로딩...';
     try {
         const snap = await db.collection('products').where('status', '==', 'pending').orderBy('createdAt', 'desc').limit(50).get();
-        if (snap.empty) { c.innerHTML = '<p style="color:var(--accent);">대기 중인 상품이 없습니다 ✅</p>'; return; }
+        if (snap.empty) { c.innerHTML = '<p style="color:var(--accent);">대기 중인 상품이 없습니다 <i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></p>'; return; }
         c.innerHTML = '';
         snap.forEach(d => {
             const p = d.data();
@@ -3684,7 +3684,7 @@ async function loadAdminPendingProducts() {
             c.innerHTML += `<div style="background:var(--bg);padding:0.8rem;border-radius:8px;margin-bottom:0.5rem;border-left:4px solid #C4841D;">
                 <div style="display:flex;gap:0.8rem;align-items:center;">
                     <div style="width:60px;height:60px;border-radius:8px;overflow:hidden;background:#F7F3ED;flex-shrink:0;">
-                        ${thumb ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover;">` : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#E8E0D8;">🛒</div>'}
+                        ${thumb ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover;">` : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#E8E0D8;"><i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></div>'}
                     </div>
                     <div style="flex:1;">
                         <div style="font-weight:700;">${p.title}</div>
@@ -3693,8 +3693,8 @@ async function loadAdminPendingProducts() {
                     </div>
                 </div>
                 <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
-                    <button onclick="approveProduct('${d.id}')" style="flex:1;background:#6B8F3C;color:#FFF8F0;border:none;padding:0.5rem;border-radius:6px;cursor:pointer;font-weight:600;">✅ 승인</button>
-                    <button onclick="rejectProduct('${d.id}')" style="flex:1;background:#f44336;color:#FFF8F0;border:none;padding:0.5rem;border-radius:6px;cursor:pointer;font-weight:600;">❌ 거부</button>
+                    <button onclick="approveProduct('${d.id}')" style="flex:1;background:#6B8F3C;color:#FFF8F0;border:none;padding:0.5rem;border-radius:6px;cursor:pointer;font-weight:600;"><i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 승인</button>
+                    <button onclick="rejectProduct('${d.id}')" style="flex:1;background:#f44336;color:#FFF8F0;border:none;padding:0.5rem;border-radius:6px;cursor:pointer;font-weight:600;"><i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 거부</button>
                 </div>
             </div>`;
         });
@@ -3708,9 +3708,9 @@ async function approveProduct(productId) {
         const pDoc = await db.collection('products').doc(productId).get();
         const p = pDoc.data();
         if (typeof createNotification === 'function') {
-            await createNotification(p.sellerId, 'order_status', { message: `✅ "${p.title}" 상품이 승인되었습니다!`, link: `#page=product-detail&id=${productId}` });
+            await createNotification(p.sellerId, 'order_status', { message: `<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> "${p.title}" 상품이 승인되었습니다!`, link: `#page=product-detail&id=${productId}` });
         }
-        showToast('✅ 상품 승인 완료', 'success');
+        showToast('<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 상품 승인 완료', 'success');
         loadAdminPendingProducts();
     } catch(e) { showToast('실패: ' + e.message, 'error'); }
 }
@@ -3723,7 +3723,7 @@ async function rejectProduct(productId) {
         const pDoc = await db.collection('products').doc(productId).get();
         const p = pDoc.data();
         if (typeof createNotification === 'function') {
-            await createNotification(p.sellerId, 'order_status', { message: `❌ "${p.title}" 상품이 거부되었습니다. 사유: ${reason}`, link: '' });
+            await createNotification(p.sellerId, 'order_status', { message: `<i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> "${p.title}" 상품이 거부되었습니다. 사유: ${reason}`, link: '' });
         }
         showToast('상품 거부 완료', 'info');
         loadAdminPendingProducts();
@@ -3738,10 +3738,10 @@ async function loadAdminReports() {
     c.innerHTML = '로딩...';
     try {
         const snap = await db.collection('reports').where('status', '==', 'pending').orderBy('createdAt', 'desc').limit(50).get();
-        if (snap.empty) { c.innerHTML = '<p style="color:var(--accent);">대기 중인 신고가 없습니다 ✅</p>'; return; }
+        if (snap.empty) { c.innerHTML = '<p style="color:var(--accent);">대기 중인 신고가 없습니다 <i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></p>'; return; }
         c.innerHTML = '';
         const REPORT_REASONS = { fake: '허위상품', inappropriate: '부적절', scam: '사기의심', fraud: '사기', nondelivery: '미배송', fake_review: '허위 리뷰', spam: '스팸', other: '기타' };
-        const TARGET_TYPE_LABELS = { product: '📦 상품', review: '📝 리뷰', seller: '🏪 판매자' };
+        const TARGET_TYPE_LABELS = { product: '<i data-lucide="package" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 상품', review: '<i data-lucide="file-text" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 리뷰', seller: '🏪 판매자' };
         snap.forEach(d => {
             const r = d.data();
             const dateStr = r.createdAt?.toDate ? r.createdAt.toDate().toLocaleDateString('ko-KR') : '';
@@ -3756,7 +3756,7 @@ async function loadAdminReports() {
                 <div style="font-size:0.8rem;color:#6B5744;margin:0.3rem 0;">신고자: ${r.reporterEmail || r.reporterId?.slice(0,8)}</div>
                 ${r.detail ? `<div style="font-size:0.8rem;color:#6B5744;">상세: ${r.detail}</div>` : ''}
                 <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
-                    <button onclick="handleReport('${d.id}','confirmed')" style="flex:1;background:#f44336;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-size:0.8rem;">🗑️ 삭제조치</button>
+                    <button onclick="handleReport('${d.id}','confirmed')" style="flex:1;background:#f44336;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-size:0.8rem;"><i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 삭제조치</button>
                     <button onclick="handleReport('${d.id}','dismissed')" style="flex:1;background:#6B5744;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-size:0.8rem;">무시</button>
                 </div>
             </div>`;
@@ -3779,7 +3779,7 @@ async function handleReport(reportId, action) {
                 await db.collection('users').doc(r.targetId).update({ reportWarnings: firebase.firestore.FieldValue.increment(1), lastWarningAt: new Date() });
             }
         }
-        showToast(action === 'confirmed' ? '🗑️ 신고 확인 및 삭제 조치' : '신고 무시 처리', action === 'confirmed' ? 'warning' : 'info');
+        showToast(action === 'confirmed' ? '<i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 신고 확인 및 삭제 조치' : '신고 무시 처리', action === 'confirmed' ? 'warning' : 'info');
         loadAdminReports();
     } catch(e) { showToast('실패: ' + e.message, 'error'); }
 }
@@ -3837,7 +3837,7 @@ async function loadRewardSettingsTab() {
 
     container.innerHTML = `
     <div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;margin-bottom:1rem;">
-        <h3 style="margin-bottom:1rem;">🎁 ${t('admin.rw_title','리워드 설정')}</h3>
+        <h3 style="margin-bottom:1rem;"><i data-lucide="gift" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${t('admin.rw_title','리워드 설정')}</h3>
 
         <!-- 가입 리워드 -->
         <div style="margin-bottom:1.5rem;">
@@ -3887,12 +3887,12 @@ async function loadRewardSettingsTab() {
             </div>
         </div>
 
-        <button onclick="saveRewardSettings()" class="btn-primary" style="width:100%;padding:0.7rem;">💾 ${t('admin.rw_save','리워드 설정 저장')}</button>
+        <button onclick="saveRewardSettings()" class="btn-primary" style="width:100%;padding:0.7rem;"><i data-lucide="save" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${t('admin.rw_save','리워드 설정 저장')}</button>
     </div>
 
     <!-- 지급 내역 -->
     <div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;">
-        <h3 style="margin-bottom:1rem;">📋 ${t('admin.rw_logs','최근 리워드 지급 내역')}</h3>
+        <h3 style="margin-bottom:1rem;"><i data-lucide="clipboard-list" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${t('admin.rw_logs','최근 리워드 지급 내역')}</h3>
         ${logsHTML}
     </div>`;
 }
@@ -3952,8 +3952,20 @@ async function saveRewardSettings() {
             timestamp: new Date()
         });
 
-        showToast('✅ 리워드 설정 저장 완료', 'success');
+        showToast('<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 리워드 설정 저장 완료', 'success');
     } catch (e) {
         showToast('저장 실패: ' + e.message, 'error');
+    }
+}
+
+// ★ Lucide 아이콘 렌더링 초기화
+if (typeof lucide !== 'undefined' && lucide.createIcons) {
+    // DOM이 준비되면 아이콘 초기화
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    } else {
+        lucide.createIcons();
     }
 }
