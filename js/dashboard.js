@@ -13,24 +13,27 @@ async function withTimeout(promise, timeoutMs = 5000) {
 async function loadDashboard() {
     console.log('[Dashboard] 로딩 시작 v1.2');
     
-    // currentUser가 아직 없으면 auth 상태 대기 (최대 10초)
+    // currentUser가 아직 없으면 firebase에서 직접 가져오기
+    if (!currentUser && window.auth && auth.currentUser) {
+        currentUser = auth.currentUser;
+        console.log('[Dashboard] currentUser를 auth.currentUser에서 복구:', currentUser.email);
+    }
+    
+    // 그래도 없으면 짧게 대기 (페이지 새로고침 시 auth 복원 대기)
     if (!currentUser && window.auth) {
-        // firebase auth에서 직접 확인
-        if (auth.currentUser) {
-            currentUser = auth.currentUser;
-        } else {
-            console.log('[Dashboard] currentUser 없음 - auth 상태 대기 중...');
-            const container = document.getElementById('dashboard-content');
-            if (container) container.innerHTML = '<p style="text-align:center;padding:2rem;color:#6B5744;">로딩 중...</p>';
-            
-            await new Promise((resolve) => {
-                const timeout = setTimeout(resolve, 10000);
-                const unsub = auth.onAuthStateChanged((user) => {
-                    if (user) { currentUser = user; }
-                    clearTimeout(timeout); unsub(); resolve();
-                });
+        console.log('[Dashboard] auth 상태 대기 중...');
+        const container = document.getElementById('dashboard-content');
+        if (container) container.innerHTML = '<p style="text-align:center;padding:2rem;color:#6B5744;">로딩 중...</p>';
+        
+        const user = await new Promise((resolve) => {
+            const timeout = setTimeout(() => resolve(null), 8000);
+            const unsub = auth.onAuthStateChanged((u) => {
+                clearTimeout(timeout);
+                unsub();
+                resolve(u);
             });
-        }
+        });
+        if (user) currentUser = user;
     }
     
     if (!currentUser) {
