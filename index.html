@@ -403,8 +403,8 @@
                 </div>
 
                 <!-- 총 자산 요약 + MATIC -->
-                <div style="background:linear-gradient(135deg, #3D2B1F, #6B5744, #6B5744); color:#FFF8F0; padding:1.5rem; border-radius:16px; margin-bottom:1rem; position:relative; overflow:hidden;">
-                    <div style="position:absolute; top:-20px; right:-20px; width:100px; height:100px; background:rgba(255,248,240,0.05); border-radius:50%;"></div>
+                <div style="background:#3D2B1F; color:#E8D5C4; padding:1.5rem; border-radius:16px; margin-bottom:1rem; position:relative; overflow:hidden;">
+                    <div style="position:absolute; top:-20px; right:-20px; width:100px; height:100px; background:rgba(232,213,196,0.05); border-radius:50%;"></div>
                     <div style="display:flex; justify-content:space-between; align-items:start;">
                         <div>
                             <div style="font-size:0.7rem; opacity:0.6; text-transform:uppercase; letter-spacing:1px;" data-i18n="wallet.total_assets">Total Assets</div>
@@ -418,7 +418,7 @@
                     </div>
                     
                     <!-- MATIC 잔액 -->
-                    <div style="margin-top:1rem; padding-top:0.8rem; border-top:1px solid rgba(255,248,240,0.1); display:flex; justify-content:space-between; align-items:center;">
+                    <div style="margin-top:1rem; padding-top:0.8rem; border-top:1px solid rgba(232,213,196,0.1); display:flex; justify-content:space-between; align-items:center;">
                         <div style="display:flex; align-items:center; gap:0.5rem;">
                             <div style="width:24px; height:24px; background:linear-gradient(135deg,#8247e5,#6f3adf); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.7rem;">⟠</div>
                             <div>
@@ -427,8 +427,8 @@
                             </div>
                         </div>
                         <div style="display:flex; gap:0.4rem;">
-                            <button onclick="showMaticDeposit()" style="background:rgba(255,248,240,0.15); border:none; color:#FFF8F0; padding:0.3rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.7rem;" data-i18n="wallet.deposit">📥 입금</button>
-                            <button onclick="showMaticSend()" style="background:rgba(255,248,240,0.15); border:none; color:#FFF8F0; padding:0.3rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.7rem;" data-i18n="wallet.send">📤 송금</button>
+                            <button onclick="showMaticDeposit()" style="background:#3D2B1F; border:1px solid #6B5744; color:#E8D5C4; padding:0.3rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.7rem;" data-i18n="wallet.deposit">📥 입금</button>
+                            <button onclick="showMaticSend()" style="background:#3D2B1F; border:1px solid #6B5744; color:#E8D5C4; padding:0.3rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.7rem;" data-i18n="wallet.send">📤 송금</button>
                         </div>
                     </div>
                     
@@ -514,11 +514,11 @@
                             <strong class="token-balance" id="creb-balance">0</strong>
                         </div>
                     </div>
-                    <button onclick="showOffchainSendModal()" class="btn-action" style="margin-top:0.5rem; background:linear-gradient(135deg,#FF6D00,#E91E63);" data-i18n="wallet.send_offchain">⚡ 오프체인 포인트 전송</button>
+                    <button onclick="showOffchainSendModal()" class="btn-action" style="margin-top:0.5rem; background:#8B6914; color:#FFF8F0;" data-i18n="wallet.send_offchain">⚡ 오프체인 포인트 전송</button>
                 </div>
 
                 <!-- 🔄 온-오프 브릿지 -->
-                <div style="background:linear-gradient(135deg,#f5f5f5,#e8eaf6); padding:1rem; border-radius:10px; margin-bottom:1rem;">
+                <div style="background:#F7F3ED; padding:1rem; border-radius:10px; margin-bottom:1rem;">
                     <h4 style="margin:0 0 0.5rem; font-size:0.9rem;" data-i18n="wallet.bridge_title">🔄 온체인 ↔ 오프체인 브릿지</h4>
                     <p style="font-size:0.75rem; color:var(--accent); margin-bottom:0.8rem;" data-i18n="wallet.bridge_desc">100 오프체인 포인트 = 1 CRNY 교환 비율</p>
                     <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:0.5rem; align-items:end;">
@@ -542,7 +542,7 @@
                     </div>
                     <input type="number" id="bridge-amount" placeholder="수량" data-i18n-placeholder="placeholder.amount" oninput="updateBridgePreview()" style="width:100%; padding:0.6rem; border:1px solid var(--border); border-radius:6px; margin-top:0.5rem; box-sizing:border-box;">
                     <div id="bridge-preview" style="font-size:0.8rem; color:#1565c0; font-weight:600; margin-top:0.4rem; text-align:center;"></div>
-                    <button onclick="executeBridge()" style="width:100%; padding:0.7rem; background:linear-gradient(135deg,#1565c0,#7B1FA2); color:#FFF8F0; border:none; border-radius:8px; cursor:pointer; font-weight:700; margin-top:0.5rem;" data-i18n="wallet.bridge_exec">🔄 브릿지 실행</button>
+                    <button onclick="executeBridge()" style="width:100%; padding:0.7rem; background:#3D2B1F; color:#FFF8F0; border:none; border-radius:8px; cursor:pointer; font-weight:700; margin-top:0.5rem;" data-i18n="wallet.bridge_exec">🔄 브릿지 실행</button>
                 </div>
             </div>
 
@@ -551,7 +551,7 @@
                 <h4 style="margin:0 0 0.5rem; font-size:0.9rem;" data-i18n="wallet.coupon_title">🎟️ 쿠폰 사용</h4>
                 <div style="display:flex; gap:0.5rem;">
                     <input type="text" id="coupon-code-input" placeholder="쿠폰 코드 입력" data-i18n-placeholder="wallet.coupon_placeholder" style="flex:1; padding:0.6rem; border:1px solid var(--border); border-radius:6px; font-size:0.85rem; text-transform:uppercase;">
-                    <button onclick="redeemCoupon()" style="padding:0.6rem 1rem; background:linear-gradient(135deg,#FF6D00,#FF9800); color:#FFF8F0; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.85rem;" data-i18n="wallet.coupon_use">사용</button>
+                    <button onclick="redeemCoupon()" style="padding:0.6rem 1rem; background:#8B6914; color:#FFF8F0; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.85rem;" data-i18n="wallet.coupon_use">사용</button>
                 </div>
                 <div id="coupon-result" style="font-size:0.8rem; margin-top:0.4rem; color:#e65100;"></div>
             </div>
@@ -611,7 +611,7 @@
                     <div id="referral-pending-rewards" style="display:none;"></div>
                 </div>
                 <div style="display:flex; gap:0.5rem;">
-                    <button onclick="generateReferralCode()" class="btn-primary" style="flex:1;" data-i18n="wallet.referral_generate">📎 소개 코드 생성</button>
+                    <button onclick="generateReferralCode()" class="btn-primary" style="flex:1; background:#3D2B1F; color:#FFF8F0;" data-i18n="wallet.referral_generate">📎 소개 코드 생성</button>
                     <button onclick="copyReferralCode()" class="btn-secondary" style="flex:1;" data-i18n="wallet.referral_copy">📋 코드 복사</button>
                 </div>
             </div>
@@ -816,9 +816,9 @@
         <section id="reels" class="page" data-feature="reels">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
                 <h2 style="margin:0;" data-i18n="shortform.title">🎬 REELS</h2>
-                <button onclick="SHORTFORM.openUpload()" style="padding:0.5rem 1rem;border:none;border-radius:20px;background:linear-gradient(135deg,#667eea,#764ba2);color:#FFF8F0;cursor:pointer;font-weight:600;font-size:0.85rem;">➕ 업로드</button>
+                <button onclick="SHORTFORM.openUpload()" style="padding:0.5rem 1rem;border:none;border-radius:20px;background:#3D2B1F;color:#FFF8F0;cursor:pointer;font-weight:600;font-size:0.85rem;">➕ 업로드</button>
             </div>
-            <div id="reels-container" style="width:100%;height:calc(100vh - 120px);background:#3D2B1F;border-radius:16px;overflow:hidden;position:relative;"></div>
+            <div id="reels-container" style="width:100%;height:calc(100vh - 120px);background:#FFF8F0;border-radius:16px;overflow:hidden;position:relative;"></div>
         </section>
 
         <!-- ========== ART v2.0 - 디지털 아트 거래소 + NFT ========== -->
@@ -1230,7 +1230,7 @@
         <section id="credit" class="page" data-feature="mall">
             <h2 data-i18n="credit.title">💳 CREDIT - P2P 크레딧</h2>
             
-            <div style="background:linear-gradient(135deg, #0066cc, #004d99); padding:1.5rem; border-radius:12px; margin-bottom:1rem; color:#FFF8F0;">
+            <div style="background:#3D2B1F; padding:1.5rem; border-radius:12px; margin-bottom:1rem; color:#E8D5C4;">
                 <h3 data-i18n="credit.banner_title">🤝 형제에게 이자를 받지 않는다</h3>
                 <p style="margin-top:0.5rem; opacity:0.9; font-size:0.85rem;" data-i18n="credit.banner_desc">무이자 P2P 크레딧 · 환전 · 품앗이 대출 · 공동체 보험 · 기부 연동</p>
             </div>
@@ -1396,7 +1396,7 @@
             <h2 data-i18n="trading.title">📊 TRADING GAME</h2>
             
             <!-- 초기화 버튼 -->
-            <button id="trading-reload-btn" onclick="reloadTradingSystem()" style="margin-bottom:1rem; padding:0.6rem 1.2rem; background:linear-gradient(135deg,#333,#555); color:#FFF8F0; border:none; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600;">
+            <button id="trading-reload-btn" onclick="reloadTradingSystem()" style="margin-bottom:1rem; padding:0.6rem 1.2rem; background:#3D2B1F; color:#FFF8F0; border:none; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600;">
                 🔄 트레이딩 초기화
             </button>
             <span id="trading-reload-status" style="margin-left:0.5rem; font-size:0.8rem; color:var(--accent);"></span>
