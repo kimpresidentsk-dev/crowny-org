@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>크라우니 언어 테스트</title>
+    <style>
+        body { font-family: -apple-system, system-ui; padding: 2rem; max-width: 800px; margin: 0 auto; }
+        .test-card { background: #f8f9fa; padding: 1.5rem; margin: 1rem 0; border-radius: 8px; }
+        .lang-selector { margin: 1rem 0; padding: 1rem; background: #e9ecef; border-radius: 6px; }
+        .lang-selector select { padding: 0.5rem; font-size: 1rem; border-radius: 4px; border: 1px solid #ccc; }
+        .test-text { margin: 0.5rem 0; font-size: 1.1rem; }
+        .original { color: #6c757d; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <h1 data-i18n="common.loading">로딩 중...</h1>
+    
+    <div class="lang-selector">
+        <label>언어 선택: 
+            <select id="lang-test-selector" onchange="testLanguageChange(this.value)">
+                <option value="ko">🇰🇷 한국어</option>
+                <option value="en">🇺🇸 English</option>
+                <option value="ja">🇯🇵 日本語</option>
+                <option value="zh">🇨🇳 中文</option>
+                <option value="es">🇪🇸 Español</option>
+                <option value="fr">🇫🇷 Français</option>
+                <option value="de">🇩🇪 Deutsch</option>
+            </select>
+        </label>
+    </div>
+
+    <div class="test-card">
+        <h2>기본 텍스트 테스트</h2>
+        <div class="test-text" data-i18n="common.confirm">확인</div>
+        <div class="original">원본 키: common.confirm</div>
+        
+        <div class="test-text" data-i18n="common.save">저장</div>
+        <div class="original">원본 키: common.save</div>
+        
+        <div class="test-text" data-i18n="common.cancel">취소</div>
+        <div class="original">원본 키: common.cancel</div>
+    </div>
+
+    <div class="test-card">
+        <h2>동적 텍스트 테스트</h2>
+        <div class="test-text" id="dynamic-text">—</div>
+        <div class="original">t('common.success') + ' / ' + t('common.error')</div>
+    </div>
+
+    <div class="test-card">
+        <h2>현재 언어 정보</h2>
+        <div class="test-text">현재 언어: <span id="current-lang">—</span></div>
+        <div class="test-text">로드된 키 개수: <span id="key-count">—</span></div>
+        <div class="test-text">i18n 상태: <span id="i18n-status">—</span></div>
+    </div>
+
+    <script src="js/i18n.js"></script>
+    <script>
+        function testLanguageChange(lang) {
+            setLanguage(lang);
+        }
+
+        function updateDynamicText() {
+            const dynamicEl = document.getElementById('dynamic-text');
+            const currentLangEl = document.getElementById('current-lang');
+            const keyCountEl = document.getElementById('key-count');
+            const statusEl = document.getElementById('i18n-status');
+            
+            if (dynamicEl && typeof t === 'function') {
+                dynamicEl.textContent = t('common.success') + ' / ' + t('common.error');
+            }
+            
+            if (currentLangEl) {
+                currentLangEl.textContent = currentLang || 'unknown';
+            }
+            
+            if (keyCountEl) {
+                keyCountEl.textContent = Object.keys(langData || {}).length;
+            }
+            
+            if (statusEl) {
+                statusEl.textContent = i18nReady ? '✅ 준비완료' : '⏳ 로딩중';
+            }
+        }
+
+        // 언어 변경 이벤트 리스너
+        document.addEventListener('languageChanged', (e) => {
+            console.log('언어 변경됨:', e.detail.lang);
+            updateDynamicText();
+            document.getElementById('lang-test-selector').value = e.detail.lang;
+        });
+
+        // 초기 로드 후 업데이트
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                updateDynamicText();
+                const h1 = document.querySelector('h1');
+                if (h1) h1.textContent = '크라우니 언어 테스트 완료!';
+            }, 1000);
+        });
+
+        // 주기적 상태 업데이트
+        setInterval(updateDynamicText, 500);
+    </script>
+</body>
+</html>

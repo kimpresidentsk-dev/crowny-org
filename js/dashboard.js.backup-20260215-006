@@ -1,28 +1,23 @@
 // ===== dashboard.js v1.0 - 대시보드 페이지 =====
 
 async function loadDashboard() {
-    try {
-        console.log('[Dashboard] 로딩 시작');
-        console.log('[Dashboard] currentUser:', currentUser ? currentUser.email : 'null');
-        console.log('[Dashboard] userWallet:', !!window.userWallet);
-        console.log('[Dashboard] db:', !!window.db);
-        console.log('[Dashboard] firebase auth:', !!window.auth);
-        
-        if (!currentUser) {
-            console.warn('[Dashboard] currentUser 없음 - Emergency로 전환');
-            if (typeof window.loadDashboardEmergency === 'function') {
-                return window.loadDashboardEmergency();
-            }
-            
-            const container = document.getElementById('dashboard-content');
-            if (container) {
-                container.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--error);">
-                    <h3>로그인이 필요합니다</h3>
-                    <button onclick="document.getElementById('auth-modal').style.display='flex'" style="background:var(--gold);color:#FFF8F0;border:none;padding:0.8rem 1.5rem;border-radius:6px;margin-top:1rem;cursor:pointer;">로그인</button>
-                </div>`;
-            }
-            return;
+    console.log('[Dashboard] 로딩 시작');
+    console.log('[Dashboard] currentUser:', currentUser ? currentUser.email : 'null');
+    console.log('[Dashboard] userWallet:', !!window.userWallet);
+    console.log('[Dashboard] db:', !!window.db);
+    console.log('[Dashboard] firebase auth:', !!window.auth);
+    
+    if (!currentUser) {
+        console.warn('[Dashboard] currentUser 없음 - 로딩 중단');
+        const container = document.getElementById('dashboard-content');
+        if (container) {
+            container.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--error);">
+                <h3>로그인이 필요합니다</h3>
+                <button onclick="document.getElementById('auth-modal').style.display='flex'" style="background:var(--gold);color:#FFF8F0;border:none;padding:0.8rem 1.5rem;border-radius:6px;margin-top:1rem;cursor:pointer;">로그인</button>
+            </div>`;
         }
+        return;
+    }
     
     const container = document.getElementById('dashboard-content');
     if (!container) {
@@ -240,18 +235,6 @@ async function loadDashboard() {
     console.log('[Dashboard] 로딩 성공 완료');
     } catch(e) {
         console.error('[Dashboard] 로딩 중 에러:', e);
-        console.log('[Dashboard] Emergency 대시보드로 전환 시도...');
-        
-        // Emergency 대시보드 시도
-        if (typeof window.loadDashboardEmergency === 'function') {
-            try {
-                return window.loadDashboardEmergency();
-            } catch (emergencyError) {
-                console.error('[Dashboard] Emergency도 실패:', emergencyError);
-            }
-        }
-        
-        // Emergency도 실패하면 기본 fallback
         container.innerHTML = `<div style="text-align:center;padding:2rem;">
             <h2><i data-lucide="bar-chart-3" style="width:20px;height:20px;display:inline-block;vertical-align:middle;"></i> DASHBOARD</h2>
             <p style="margin-top:1rem;color:#3D2B1F;">환영합니다, ${currentUser?.email?.split('@')[0] || 'Guest'}님!</p>
