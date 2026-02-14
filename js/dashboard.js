@@ -187,15 +187,38 @@ async function loadDashboard() {
         console.error('[Dashboard] 로딩 중 에러:', e);
         container.innerHTML = `<div style="text-align:center;padding:2rem;">
             <h2><i data-lucide="bar-chart-3" style="width:20px;height:20px;display:inline-block;vertical-align:middle;"></i> DASHBOARD</h2>
-            <p style="margin-top:1rem;">환영합니다, ${currentUser.email?.split('@')[0] || ''}님!</p>
-            <div class="dash-shortcuts" style="margin-top:1.5rem;display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;">
-                <button onclick="showPage('wallet')" class="dash-shortcut-btn"><i data-lucide="coins" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> WALLET</button>
-                <button onclick="showPage('social')" class="dash-shortcut-btn"><i data-lucide="camera" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> SOCIAL</button>
-                <button onclick="showPage('mall')" class="dash-shortcut-btn"><i data-lucide="shopping-cart" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> MALL</button>
-                <button onclick="showPage('prop-trading')" class="dash-shortcut-btn"><i data-lucide="trending-up" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> TRADING</button>
+            <p style="margin-top:1rem;color:var(--text);">환영합니다, ${currentUser?.email?.split('@')[0] || 'Guest'}님!</p>
+            
+            <div style="background:var(--bg-card);border-radius:12px;padding:1.5rem;margin:1.5rem 0;text-align:left;">
+                <h4 style="color:var(--text);margin-bottom:1rem;"><i data-lucide="zap" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> 빠른 바로가기</h4>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;">
+                    <button onclick="showPage('wallet')" style="background:var(--bg-card-alt);border:1px solid var(--border);border-radius:8px;padding:1rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;color:var(--text);font-weight:600;font-size:0.9rem;">
+                        <i data-lucide="coins" style="width:18px;height:18px;color:var(--gold);"></i> WALLET
+                    </button>
+                    <button onclick="showPage('social')" style="background:var(--bg-card-alt);border:1px solid var(--border);border-radius:8px;padding:1rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;color:var(--text);font-weight:600;font-size:0.9rem;">
+                        <i data-lucide="camera" style="width:18px;height:18px;color:var(--gold);"></i> SOCIAL
+                    </button>
+                    <button onclick="showPage('mall')" style="background:var(--bg-card-alt);border:1px solid var(--border);border-radius:8px;padding:1rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;color:var(--text);font-weight:600;font-size:0.9rem;">
+                        <i data-lucide="shopping-cart" style="width:18px;height:18px;color:var(--gold);"></i> MALL
+                    </button>
+                    <button onclick="showPage('prop-trading')" style="background:var(--bg-card-alt);border:1px solid var(--border);border-radius:8px;padding:1rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;color:var(--text);font-weight:600;font-size:0.9rem;">
+                        <i data-lucide="trending-up" style="width:18px;height:18px;color:var(--gold);"></i> TRADING
+                    </button>
+                </div>
+            </div>
+            
+            <div style="background:linear-gradient(135deg,#3D2B1F,#6B5744);color:#FFF8F0;border-radius:12px;padding:1.2rem;margin-top:1.5rem;">
+                <h4 style="color:#8B6914;margin-bottom:0.5rem;"><i data-lucide="info" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> 대시보드 로딩 중...</h4>
+                <p style="font-size:0.85rem;opacity:0.9;">토큰 포트폴리오와 최근 활동 데이터를 불러오는 중입니다.</p>
+                <button onclick="loadDashboard()" style="background:#8B6914;color:#FFF8F0;border:none;border-radius:6px;padding:0.6rem 1.2rem;margin-top:0.8rem;cursor:pointer;font-weight:600;font-size:0.85rem;">
+                    <i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 다시 시도
+                </button>
             </div>
         </div>`;
-        console.log('[Dashboard] 에러 발생으로 fallback UI 로드됨');
+        
+        // Lucide 아이콘 렌더링 (fallback UI용)
+        if (window.lucide) lucide.createIcons();
+        console.log('[Dashboard] 에러 발생으로 개선된 fallback UI 로드됨');
     }
 }
 

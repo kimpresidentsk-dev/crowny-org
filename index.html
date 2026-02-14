@@ -94,6 +94,15 @@
             color: #6B5744 !important;
             font-weight: 500 !important;
         }
+        /* 🔧 HOTFIX: 대시보드 fallback UI 개선 */
+        #dashboard-content button[onclick*="showPage"] {
+            transition: all 0.2s !important;
+        }
+        #dashboard-content button[onclick*="showPage"]:hover {
+            background: #8B6914 !important;
+            color: #FFF8F0 !important;
+            transform: translateY(-2px) !important;
+        }
     </style>
     
     <!-- Firebase SDK -->
@@ -2247,7 +2256,7 @@
     <script src="js/mentors.js?v=21.9" defer></script>
     <script src="js/notifications.js?v=21.9"></script>
     <script src="js/app-art.js?v=21.9"></script>
-    <script src="js/dashboard.js?v=22.0" defer></script>
+    <script src="js/dashboard.js?v=20260215-004" defer></script>
     <script src="js/search.js?v=21.9" defer></script>
     <script src="js/settings.js?v=21.9" defer></script>
     <script src="js/slogans.js?v=21.9" defer></script>
