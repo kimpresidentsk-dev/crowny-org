@@ -189,7 +189,7 @@ const BRAIN = (() => {
             </div>
 
             <!-- 최근 결과 -->
-            <div id="brain-latest" style="background:var(--card-bg,white);border-radius:12px;padding:1.2rem;">
+            <div id="brain-latest" style="background:var(--card-bg,#F7F3ED);border-radius:12px;padding:1.2rem;">
                 <h3 style="margin:0 0 0.8rem 0;font-size:1rem;">📊 나의 진단 결과</h3>
                 <div id="brain-result-content">
                     ${latestResult ? renderResult(latestResult) : '<p style="text-align:center;color:var(--accent);font-size:0.85rem;padding:1rem;">아직 진단 결과가 없습니다.<br>위 단계를 선택해서 시작해보세요!</p>'}
@@ -197,7 +197,7 @@ const BRAIN = (() => {
             </div>
 
             <!-- 크라우니 지식 라이브러리 -->
-            <div style="background:var(--card-bg,white);border-radius:12px;padding:1.2rem;margin-top:1rem;">
+            <div style="background:var(--card-bg,#F7F3ED);border-radius:12px;padding:1.2rem;margin-top:1rem;">
                 <h3 style="margin:0 0 0.8rem 0;font-size:1rem;">📚 크라우니 지식 라이브러리</h3>
                 <div style="display:grid;gap:0.5rem;">
                     <div onclick="showPage('books')" style="display:flex;align-items:center;gap:0.8rem;padding:0.8rem;background:var(--bg);border-radius:10px;cursor:pointer;">
@@ -246,12 +246,12 @@ const BRAIN = (() => {
                     <div style="background:linear-gradient(90deg,#8B6914,#6B5744);height:100%;width:${progress}%;border-radius:10px;transition:width 0.3s;"></div>
                 </div>
             </div>
-            <div style="background:var(--card-bg,white);border-radius:12px;padding:1.5rem;margin-bottom:1rem;">
+            <div style="background:var(--card-bg,#F7F3ED);border-radius:12px;padding:1.5rem;margin-bottom:1rem;">
                 <h3 style="margin:0 0 1.2rem 0;font-size:1rem;line-height:1.5;">${q.q}</h3>
                 <div style="display:grid;gap:0.6rem;">
                     ${q.a.map((a, i) => `
                         <button onclick="BRAIN.answer('${a.t}')" 
-                            style="padding:0.9rem;border:2px solid var(--border,#e0e0e0);border-radius:10px;background:var(--card-bg,white);cursor:pointer;text-align:left;font-size:0.9rem;transition:all 0.2s;"
+                            style="padding:0.9rem;border:2px solid var(--border,#e0e0e0);border-radius:10px;background:var(--card-bg,#F7F3ED);cursor:pointer;text-align:left;font-size:0.9rem;transition:all 0.2s;"
                             onmouseenter="this.style.borderColor='#8B6914';this.style.background='#f0f0ff'"
                             onmouseleave="this.style.borderColor='';this.style.background=''">
                             ${a.text}
@@ -308,14 +308,14 @@ const BRAIN = (() => {
                     <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;">
                         <span style="width:60px;font-size:0.8rem;">${TEMPERAMENTS[key].name}</span>
                         <div style="flex:1;background:rgba(255,255,255,0.2);border-radius:6px;height:8px;">
-                            <div style="background:white;height:100%;width:${(val / STAGE1_QUESTIONS.length * 100).toFixed(0)}%;border-radius:6px;"></div>
+                            <div style="background:#FFF8F0;height:100%;width:${(val / STAGE1_QUESTIONS.length * 100).toFixed(0)}%;border-radius:6px;"></div>
                         </div>
                         <span style="font-size:0.8rem;width:30px;text-align:right;">${val}</span>
                     </div>
                 `).join('')}
             </div>
 
-            <div style="background:var(--card-bg,white);border-radius:12px;padding:1.2rem;margin-bottom:1rem;">
+            <div style="background:var(--card-bg,#F7F3ED);border-radius:12px;padding:1.2rem;margin-bottom:1rem;">
                 <h4 style="margin:0 0 0.5rem 0;">💪 강점</h4>
                 <div style="display:flex;flex-wrap:wrap;gap:0.4rem;">
                     ${temp.strengths.map(s => `<span style="background:#f0f0ff;padding:0.3rem 0.7rem;border-radius:20px;font-size:0.8rem;">${s}</span>`).join('')}
@@ -328,7 +328,7 @@ const BRAIN = (() => {
 
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
                 <button onclick="BRAIN.startStage(2)" style="padding:0.8rem;border:none;border-radius:10px;background:linear-gradient(135deg,#f093fb,#f5576c);color:'#FFF8F0';font-weight:700;cursor:pointer;">🔮 2단계 진행</button>
-                <button onclick="BRAIN.init()" style="padding:0.8rem;border:none;border-radius:10px;background:var(--card-bg,white);border:1px solid #ddd;cursor:pointer;font-weight:600;">← 돌아가기</button>
+                <button onclick="BRAIN.init()" style="padding:0.8rem;border:none;border-radius:10px;background:var(--card-bg,#F7F3ED);border:1px solid #ddd;cursor:pointer;font-weight:600;">← 돌아가기</button>
             </div>
         `;
     }

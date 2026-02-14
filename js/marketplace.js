@@ -93,11 +93,11 @@ async function loadMallProducts() {
         };
         items.forEach(p => {
             const thumb = getProductThumb(p);
-            const imgCount = (p.images && p.images.length > 1) ? `<span style="position:absolute; top:6px; left:6px; background:rgba(0,0,0,0.6); color:white; font-size:0.6rem; padding:0.15rem 0.4rem; border-radius:4px;">📷 ${p.images.length}</span>` : '';
+            const imgCount = (p.images && p.images.length > 1) ? `<span style="position:absolute; top:6px; left:6px; background:rgba(0,0,0,0.6); color:#FFF8F0; font-size:0.6rem; padding:0.15rem 0.4rem; border-radius:4px;">📷 ${p.images.length}</span>` : '';
             const ratingHtml = p.avgRating ? `<div style="margin-top:0.2rem;">${renderStars(p.avgRating, '0.7rem')} <span style="font-size:0.65rem; color:var(--accent);">(${p.reviewCount||0})</span></div>` : '';
             const displayTitle = searchVal ? highlightText(p.title, searchVal) : p.title;
             container.innerHTML += `
-                <div onclick="viewProduct('${p.id}')" style="background:white; border-radius:10px; overflow:hidden; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.08); position:relative;">
+                <div onclick="viewProduct('${p.id}')" style="background:#FFF8F0; border-radius:10px; overflow:hidden; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.08); position:relative;">
                     <button onclick="event.stopPropagation(); toggleWishlist('${p.id}')" style="position:absolute; top:6px; right:6px; background:rgba(255,255,255,0.85); border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; font-size:0.9rem; z-index:1;">🤍</button>
                     ${imgCount}
                     <div style="height:140px; overflow:hidden; background:#f0f0f0;">${thumb ? `<img src="${thumb}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:#ccc;">🛒</div>`}</div>
@@ -107,7 +107,7 @@ async function loadMallProducts() {
                         <div style="font-weight:700; color:#0066cc; margin-top:0.3rem;">${p.price} CRGC</div>
                         <div style="font-size:0.7rem; color:var(--accent);">재고: ${p.stock - (p.sold||0)}개</div>
                         ${ratingHtml}
-                        <button onclick="event.stopPropagation(); addToCart('${p.id}')" style="width:100%; margin-top:0.4rem; background:#0066cc; color:white; border:none; padding:0.35rem; border-radius:5px; cursor:pointer; font-size:0.75rem; font-weight:600;">🛒 담기</button>
+                        <button onclick="event.stopPropagation(); addToCart('${p.id}')" style="width:100%; margin-top:0.4rem; background:#0066cc; color:#FFF8F0; border:none; padding:0.35rem; border-radius:5px; cursor:pointer; font-size:0.75rem; font-weight:600;">🛒 담기</button>
                     </div>
                 </div>`;
         });
@@ -159,7 +159,7 @@ async function renderProductDetail(id) {
                     </div>`;
                 }
 
-                reviewsHtml = `<div style="margin-top:1.5rem; background:white; padding:1.2rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                reviewsHtml = `<div style="margin-top:1.5rem; background:#FFF8F0; padding:1.2rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
                     <h4 style="margin-bottom:0.8rem;">📝 리뷰 (${revSnap.size})</h4>
                     <div style="display:flex;gap:1.5rem;align-items:center;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid #eee;">
                         <div style="text-align:center;">
@@ -199,7 +199,7 @@ async function renderProductDetail(id) {
                 if (!myOrders.empty) {
                     const existingReview = await db.collection('product_reviews').where('productId','==',id).where('buyerId','==',currentUser.uid).limit(1).get();
                     if (existingReview.empty) {
-                        reviewBtnHtml = `<button onclick="writeReview('${id}')" style="background:#ff9800; color:white; border:none; padding:0.7rem; border-radius:8px; cursor:pointer; font-weight:600; width:100%; margin-top:0.5rem;">⭐ 리뷰 작성</button>`;
+                        reviewBtnHtml = `<button onclick="writeReview('${id}')" style="background:#ff9800; color:#FFF8F0; border:none; padding:0.7rem; border-radius:8px; cursor:pointer; font-weight:600; width:100%; margin-top:0.5rem;">⭐ 리뷰 작성</button>`;
                     }
                 }
             } catch(e) { console.warn("[catch]", e); }
@@ -218,8 +218,8 @@ async function renderProductDetail(id) {
                 <div style="text-align:center; padding:0.4rem;">
                     ${images.map((_, i) => `<span class="pd-dot" data-idx="${i}" style="display:inline-block; width:8px; height:8px; border-radius:50%; background:${i===0?'#0066cc':'#ccc'}; margin:0 3px; cursor:pointer;"></span>`).join('')}
                 </div>
-                <button onclick="scrollPdGallery(-1)" style="position:absolute; left:4px; top:45%; background:rgba(0,0,0,0.4); color:white; border:none; border-radius:50%; width:32px; height:32px; cursor:pointer; font-size:1rem;">‹</button>
-                <button onclick="scrollPdGallery(1)" style="position:absolute; right:4px; top:45%; background:rgba(0,0,0,0.4); color:white; border:none; border-radius:50%; width:32px; height:32px; cursor:pointer; font-size:1rem;">›</button>
+                <button onclick="scrollPdGallery(-1)" style="position:absolute; left:4px; top:45%; background:rgba(0,0,0,0.4); color:#FFF8F0; border:none; border-radius:50%; width:32px; height:32px; cursor:pointer; font-size:1rem;">‹</button>
+                <button onclick="scrollPdGallery(1)" style="position:absolute; right:4px; top:45%; background:rgba(0,0,0,0.4); color:#FFF8F0; border:none; border-radius:50%; width:32px; height:32px; cursor:pointer; font-size:1rem;">›</button>
             </div>`;
         } else if (images.length === 1) {
             galleryHtml = `<div style="background:#f5f5f5; border-radius:12px; overflow:hidden; margin-bottom:1rem;">
@@ -237,7 +237,7 @@ async function renderProductDetail(id) {
         c.innerHTML = `
             <button onclick="showPage('mall')" style="background:none; border:none; font-size:1rem; cursor:pointer; margin-bottom:0.8rem; color:var(--accent);">← 목록으로</button>
             ${galleryHtml}
-            <div style="background:white; padding:1.2rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <div style="background:#FFF8F0; padding:1.2rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
                 <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                     <h2 style="margin:0; flex:1;">${p.title}</h2>
                     <button onclick="toggleWishlist('${id}')" id="wish-btn-${id}" style="background:none; border:none; font-size:1.5rem; cursor:pointer; padding:0.2rem;">${isWished ? '❤️' : '🤍'}</button>
@@ -249,8 +249,8 @@ async function renderProductDetail(id) {
                 <div style="font-size:0.85rem; color:var(--accent); margin-bottom:1rem;">재고: ${remaining}개 · 판매: ${p.sold||0}개</div>
                 ${!isOwner && remaining > 0 ? `
                 <div style="display:flex; gap:0.5rem;">
-                    <button onclick="buyProduct('${id}', this)" style="flex:2; background:#0066cc; color:white; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; font-size:1rem;">🛒 바로 구매</button>
-                    <button onclick="addToCart('${id}')" style="flex:1; background:white; color:#0066cc; border:2px solid #0066cc; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">담기</button>
+                    <button onclick="buyProduct('${id}', this)" style="flex:2; background:#0066cc; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; font-size:1rem;">🛒 바로 구매</button>
+                    <button onclick="addToCart('${id}')" style="flex:1; background:#FFF8F0; color:#0066cc; border:2px solid #0066cc; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">담기</button>
                 </div>` : ''}
                 ${remaining <= 0 ? '<p style="color:#cc0000; font-weight:700; text-align:center; font-size:1.1rem; margin:1rem 0;">품절</p>' : ''}
                 ${reviewBtnHtml}
@@ -267,7 +267,7 @@ async function writeReview(productId) {
         const overlay = document.createElement('div');
         overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99998;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); resolve(); } };
-        overlay.innerHTML = `<div style="background:white;padding:1.5rem;border-radius:12px;max-width:420px;width:100%;max-height:90vh;overflow-y:auto;">
+        overlay.innerHTML = `<div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;max-width:420px;width:100%;max-height:90vh;overflow-y:auto;">
             <h3 style="margin-bottom:1rem;">⭐ 리뷰 작성</h3>
             <div style="text-align:center; margin-bottom:1rem;">
                 <div id="review-stars" style="font-size:2rem; cursor:pointer;">
@@ -282,8 +282,8 @@ async function writeReview(productId) {
                 <div id="review-photo-preview" style="margin-top:0.3rem;"></div>
             </div>
             <div style="display:flex; gap:0.5rem;">
-                <button id="review-cancel" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">취소</button>
-                <button id="review-submit" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#ff9800;color:white;font-weight:700;">등록</button>
+                <button id="review-cancel" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;">취소</button>
+                <button id="review-submit" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#ff9800;color:#FFF8F0;font-weight:700;">등록</button>
             </div>
         </div>`;
         document.body.appendChild(overlay);
@@ -439,7 +439,7 @@ async function loadMyOrders() {
             const x = d.data();
             const statusLabel = ORDER_STATUS_LABELS[x.status] || x.status;
             const statusColor = ORDER_STATUS_COLORS[x.status] || 'var(--accent)';
-            const reviewBtn = x.status === 'delivered' ? `<button onclick="event.stopPropagation(); writeReview('${x.productId}')" style="background:#ff9800; color:white; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem; margin-left:0.5rem;">⭐ 리뷰</button>` : '';
+            const reviewBtn = x.status === 'delivered' ? `<button onclick="event.stopPropagation(); writeReview('${x.productId}')" style="background:#ff9800; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem; margin-left:0.5rem;">⭐ 리뷰</button>` : '';
             c.innerHTML += `<div style="padding:0.6rem; background:var(--bg); border-radius:6px; margin-bottom:0.4rem; font-size:0.85rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
                 <div><strong>${x.productTitle}</strong> — ${x.amount} ${x.token}</div>
                 <div><span style="color:${statusColor}; font-weight:600;">${statusLabel}</span>${reviewBtn}</div>
@@ -461,9 +461,9 @@ async function loadMyProducts() {
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.3rem;">
                     <div><strong>${x.title}</strong> — ${x.price} CRGC · 판매: ${x.sold||0}/${x.stock} ${statusBadge}</div>
                     <div style="display:flex; gap:0.3rem;">
-                        <button onclick="editProduct('${d.id}')" style="background:#2196f3; color:white; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.edit_btn','✏️ 수정')}</button>
-                        <button onclick="toggleProduct('${d.id}','${x.status}')" style="background:${x.status==='active'?'#999':'#4CAF50'}; color:white; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${x.status==='active'?t('mall.deactivate','⏸ 비활성'):t('mall.activate','▶ 활성')}</button>
-                        <button onclick="deleteProduct('${d.id}')" style="background:#cc0000; color:white; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">🗑️</button>
+                        <button onclick="editProduct('${d.id}')" style="background:#2196f3; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.edit_btn','✏️ 수정')}</button>
+                        <button onclick="toggleProduct('${d.id}','${x.status}')" style="background:${x.status==='active'?'#999':'#4CAF50'}; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${x.status==='active'?t('mall.deactivate','⏸ 비활성'):t('mall.activate','▶ 활성')}</button>
+                        <button onclick="deleteProduct('${d.id}')" style="background:#cc0000; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">🗑️</button>
                     </div>
                 </div>
             </div>`;
@@ -529,8 +529,8 @@ async function loadSellerOrders() {
             const statusLabel = ORDER_STATUS_LABELS[x.status] || x.status;
             const statusColor = ORDER_STATUS_COLORS[x.status] || 'var(--accent)';
             const nextActions = [];
-            if (x.status === 'paid') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','shipping')" style="background:#2196f3; color:white; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.process_shipping','🚚 배송처리')}</button>`);
-            if (x.status === 'shipping') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','delivered')" style="background:#4CAF50; color:white; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.mark_delivered','✅ 배송완료')}</button>`);
+            if (x.status === 'paid') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','shipping')" style="background:#2196f3; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.process_shipping','🚚 배송처리')}</button>`);
+            if (x.status === 'shipping') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','delivered')" style="background:#4CAF50; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.mark_delivered','✅ 배송완료')}</button>`);
             const shipInfo = x.shippingInfo ? `<div style="font-size:0.7rem; color:#555; margin-top:0.2rem;">📦 ${x.shippingInfo.name} · ${x.shippingInfo.phone} · ${x.shippingInfo.address}${x.shippingInfo.memo ? ' · '+x.shippingInfo.memo : ''}</div>` : '';
             c.innerHTML += `<div style="padding:0.6rem; background:var(--bg); border-radius:6px; margin-bottom:0.4rem; font-size:0.85rem;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.3rem;">
@@ -630,7 +630,7 @@ async function loadCampaigns() {
             const pct = Math.min(100, Math.round((x.raised / x.goal) * 100));
             const isCreator = currentUser?.uid === x.creatorId;
             c.innerHTML += `
-                <div style="background:white; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.08); cursor:pointer;" onclick="showCampaignDetail('${d.id}')">
+                <div style="background:#FFF8F0; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.08); cursor:pointer;" onclick="showCampaignDetail('${d.id}')">
                     ${x.imageData ? `<img src="${x.imageData}" loading="lazy" style="width:100%; height:180px; object-fit:cover;">` : ''}
                     <div style="padding:1rem;">
                         <h4 style="margin-bottom:0.3rem;">${x.title}</h4>
@@ -644,8 +644,8 @@ async function loadCampaigns() {
                             <span style="color:var(--accent);">${pct}%</span>
                         </div>
                         <div style="display:flex; gap:0.5rem; margin-top:0.8rem;">
-                            <button onclick="event.stopPropagation(); donateCampaign('${d.id}')" style="background:#4CAF50; color:white; border:none; padding:0.6rem; border-radius:6px; cursor:pointer; flex:1; font-weight:700;">${t('fundraise.donate_btn','💝 기부하기')}</button>
-                            ${isCreator ? `<button onclick="event.stopPropagation(); closeCampaign('${d.id}')" style="background:#e53935; color:white; border:none; padding:0.6rem; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.8rem;">${t('fund.close','🔒 종료')}</button>` : ''}
+                            <button onclick="event.stopPropagation(); donateCampaign('${d.id}')" style="background:#4CAF50; color:#FFF8F0; border:none; padding:0.6rem; border-radius:6px; cursor:pointer; flex:1; font-weight:700;">${t('fundraise.donate_btn','💝 기부하기')}</button>
+                            ${isCreator ? `<button onclick="event.stopPropagation(); closeCampaign('${d.id}')" style="background:#e53935; color:#FFF8F0; border:none; padding:0.6rem; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.8rem;">${t('fund.close','🔒 종료')}</button>` : ''}
                         </div>
                     </div>
                 </div>`;
@@ -779,8 +779,8 @@ async function loadEnergyProjects() {
                 <div style="display:flex; justify-content:space-between; font-size:0.85rem;"><span>${xInvested}/${xGoal} CREB</span><span>${pct}%</span></div>
                 ${renderMilestones(x.milestones)}
                 <div style="display:flex; gap:0.5rem; margin-top:0.5rem;" onclick="event.stopPropagation();">
-                    <button onclick="investEnergy('${d.id}')" style="background:${catInfo.color}; color:white; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; flex:1;">${t('energy.invest_btn','☀️ 투자하기')}</button>
-                    ${isAdmin ? `<button onclick="distributeEnergyReturns('${d.id}')" style="background:#1976D2; color:white; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; flex:1; font-size:0.8rem;">${t('energy.distribute','📊 수익 배분')}</button>` : ''}
+                    <button onclick="investEnergy('${d.id}')" style="background:${catInfo.color}; color:#FFF8F0; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; flex:1;">${t('energy.invest_btn','☀️ 투자하기')}</button>
+                    ${isAdmin ? `<button onclick="distributeEnergyReturns('${d.id}')" style="background:#1976D2; color:#FFF8F0; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; flex:1; font-size:0.8rem;">${t('energy.distribute','📊 수익 배분')}</button>` : ''}
                 </div>
             </div>`; });
         if (!c.innerHTML.trim()) c.innerHTML = '<p style="color:var(--accent);">이 카테고리에 프로젝트가 없습니다.</p>';
@@ -840,7 +840,7 @@ async function openProjectDetail(projectId) {
         } catch(e) { console.warn("[catch]", e); }
 
         const modalHtml = `<div id="creb-project-modal" style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); z-index:10000; display:flex; align-items:center; justify-content:center; padding:1rem;" onclick="if(event.target===this)this.remove();">
-            <div style="background:white; border-radius:12px; max-width:550px; width:100%; max-height:90vh; overflow-y:auto; padding:1.5rem;">
+            <div style="background:#FFF8F0; border-radius:12px; max-width:550px; width:100%; max-height:90vh; overflow-y:auto; padding:1.5rem;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                     <h3 style="margin:0;">${catInfo.icon} ${xTitle}</h3>
                     <button onclick="document.getElementById('creb-project-modal').remove()" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
@@ -857,7 +857,7 @@ async function openProjectDetail(projectId) {
                 <div style="margin-top:1rem;"><h4>💬 댓글</h4>
                     <div style="display:flex; gap:0.5rem; margin-bottom:0.8rem;">
                         <input type="text" id="creb-comment-input" placeholder="질문이나 의견..." style="flex:1; padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
-                        <button onclick="postCrebComment('${projectId}')" style="background:${catInfo.color}; color:white; border:none; padding:0.5rem 1rem; border-radius:6px; cursor:pointer;">등록</button>
+                        <button onclick="postCrebComment('${projectId}')" style="background:${catInfo.color}; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:6px; cursor:pointer;">등록</button>
                     </div>
                     ${commentsHtml}
                 </div>
@@ -944,7 +944,7 @@ async function loadBusinessList() {
         const BIZ_CATS = {retail:'🏪',food:'🍽️',service:'🔧',tech:'💻',education:'📖',health:'💊',logistics:'🚚',entertainment:'🎭',other:'🏢'};
         c.innerHTML = '';
         docs.forEach(d => { const x = d.data();
-            c.innerHTML += `<div onclick="viewBusinessDetail('${d.id}')" style="background:white; padding:1rem; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.08); display:flex; gap:1rem; align-items:center; cursor:pointer;">
+            c.innerHTML += `<div onclick="viewBusinessDetail('${d.id}')" style="background:#FFF8F0; padding:1rem; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.08); display:flex; gap:1rem; align-items:center; cursor:pointer;">
                 ${x.imageData ? `<img src="${x.imageData}" loading="lazy" style="width:70px; height:70px; border-radius:8px; object-fit:cover;">` : `<div style="width:70px; height:70px; background:var(--bg); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.5rem;">${BIZ_CATS[x.category]||'🏢'}</div>`}
                 <div style="flex:1;"><h4>${x.name}</h4><p style="font-size:0.8rem; color:var(--accent);">${[BIZ_CATS[x.category], x.country, x.ownerNickname || x.ownerEmail].filter(Boolean).join(' · ')}</p>
                 ${x.description ? `<p style="font-size:0.85rem; margin-top:0.3rem;">${x.description.slice(0,80)}${x.description.length>80?'...':''}</p>` : ''}
@@ -983,12 +983,12 @@ async function loadArtistList() {
         const GENRES = {music:'🎵',dance:'💃',acting:'🎬',comedy:'😂',creator:'📹',model:'📷',dj:'🎧',other:'🌟'};
         c.innerHTML = '';
         docs.forEach(d => { const x = d.data();
-            c.innerHTML += `<div onclick="viewArtistDetail('${d.id}')" style="background:white; border-radius:10px; overflow:hidden; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.08); cursor:pointer;">
+            c.innerHTML += `<div onclick="viewArtistDetail('${d.id}')" style="background:#FFF8F0; border-radius:10px; overflow:hidden; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.08); cursor:pointer;">
                 <div style="height:160px; overflow:hidden; background:linear-gradient(135deg,#9C27B0,#E91E63);">
-                ${x.imageData ? `<img src="${x.imageData}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : `<div style="height:100%; display:flex; align-items:center; justify-content:center; font-size:3rem; color:white;">${GENRES[x.genre]||'🌟'}</div>`}</div>
+                ${x.imageData ? `<img src="${x.imageData}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : `<div style="height:100%; display:flex; align-items:center; justify-content:center; font-size:3rem; color:#FFF8F0;">${GENRES[x.genre]||'🌟'}</div>`}</div>
                 <div style="padding:0.6rem;"><div style="font-weight:700;">${x.name}</div>
                 <div style="font-size:0.75rem; color:var(--accent);">${GENRES[x.genre]||''} · 팬 ${x.fans}명</div>
-                <button onclick="event.stopPropagation(); supportArtist('${d.id}')" style="background:#E91E63; color:white; border:none; padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; margin-top:0.4rem; font-size:0.8rem;">${t('artist.support_btn','💖 후원')}</button>
+                <button onclick="event.stopPropagation(); supportArtist('${d.id}')" style="background:#E91E63; color:#FFF8F0; border:none; padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; margin-top:0.4rem; font-size:0.8rem;">${t('artist.support_btn','💖 후원')}</button>
                 </div></div>`; });
     } catch (e) { c.innerHTML = e.message; }
 }
@@ -1061,7 +1061,7 @@ async function loadBooksList() {
         const GENRES = {novel:'📕',essay:'📗',selfhelp:'📘',business:'📙',tech:'💻',poetry:'🖋️',children:'🧒',comic:'📒',other:'📚'};
         c.innerHTML = '';
         docs.forEach(d => { const x = d.data();
-            c.innerHTML += `<div onclick="viewBookDetail('${d.id}')" style="background:white; border-radius:10px; overflow:hidden; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            c.innerHTML += `<div onclick="viewBookDetail('${d.id}')" style="background:#FFF8F0; border-radius:10px; overflow:hidden; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
                 <div style="height:180px; overflow:hidden; background:#f5f0e8;">
                 ${x.imageData ? `<img src="${x.imageData}" loading="lazy" style="width:100%; height:100%; object-fit:contain;">` : `<div style="height:100%; display:flex; align-items:center; justify-content:center; font-size:3rem;">${GENRES[x.genre]||'📚'}</div>`}</div>
                 <div style="padding:0.5rem;"><div style="font-weight:600; font-size:0.8rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${x.title}</div>
@@ -1159,8 +1159,8 @@ async function loadInsuranceAdmin() {
                 </div>
                 <p style="font-size:0.85rem; color:#555; margin:0.3rem 0;">${r.reason}</p>
                 <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
-                    <button onclick="approveInsurance('${d.id}')" style="flex:1; background:#4CAF50; color:white; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; font-weight:600;">✅ 승인</button>
-                    <button onclick="rejectInsurance('${d.id}')" style="flex:1; background:#f44336; color:white; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; font-weight:600;">❌ 거절</button>
+                    <button onclick="approveInsurance('${d.id}')" style="flex:1; background:#4CAF50; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; font-weight:600;">✅ 승인</button>
+                    <button onclick="rejectInsurance('${d.id}')" style="flex:1; background:#f44336; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; font-weight:600;">❌ 거절</button>
                 </div>
             </div>`;
         });
@@ -1280,7 +1280,7 @@ async function loadCreditScoreBreakdown() {
                 <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem; background:#fce4ec; border-radius:6px;">
                     <span>💯 상환율</span><span style="font-weight:700;">${repayRate}% → +${repayScore}점</span>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.8rem; background:linear-gradient(135deg,#3D2B1F,#3D2B1F); border-radius:8px; color:white; margin-top:0.3rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.8rem; background:linear-gradient(135deg,#3D2B1F,#3D2B1F); border-radius:8px; color:#FFF8F0; margin-top:0.3rem;">
                     <span style="font-size:1rem;">🏆 총 크레딧 점수</span>
                     <span style="font-size:1.5rem; font-weight:800; color:${totalScore >= 700 ? '#4CAF50' : totalScore >= 500 ? '#ff9800' : '#ff4444'};">${totalScore}</span>
                 </div>
@@ -1310,7 +1310,7 @@ async function viewBusinessDetail(id) {
     modal.id = 'biz-detail-modal';
     modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
-    modal.innerHTML = `<div style="background:white; border-radius:12px; max-width:500px; width:100%; max-height:90vh; overflow-y:auto;">
+    modal.innerHTML = `<div style="background:#FFF8F0; border-radius:12px; max-width:500px; width:100%; max-height:90vh; overflow-y:auto;">
         ${b.imageData ? `<img src="${b.imageData}" loading="lazy" style="width:100%; border-radius:12px 12px 0 0; max-height:200px; object-fit:cover;">` : ''}
         <div style="padding:1.2rem;">
             <h3>${b.name}</h3>
@@ -1331,7 +1331,7 @@ async function viewBusinessDetail(id) {
                     <div style="font-weight:700;">${avgRating} ${stars}</div>
                 </div>
             </div>
-            ${b.ownerId !== currentUser?.uid ? `<button onclick="investBusiness('${id}')" style="background:#0066cc; color:white; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; width:100%; margin-bottom:0.5rem;">💰 투자하기</button>` : ''}
+            ${b.ownerId !== currentUser?.uid ? `<button onclick="investBusiness('${id}')" style="background:#0066cc; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; width:100%; margin-bottom:0.5rem;">💰 투자하기</button>` : ''}
             <button onclick="document.getElementById('biz-detail-modal').remove()" style="background:#eee; border:none; padding:0.6rem; border-radius:8px; cursor:pointer; width:100%;">닫기</button>
         </div></div>`;
     document.body.appendChild(modal);
@@ -1415,7 +1415,7 @@ async function viewArtistDetail(id) {
     modal.id = 'artist-detail-modal';
     modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
-    modal.innerHTML = `<div style="background:white; border-radius:12px; max-width:500px; width:100%; max-height:90vh; overflow-y:auto;">
+    modal.innerHTML = `<div style="background:#FFF8F0; border-radius:12px; max-width:500px; width:100%; max-height:90vh; overflow-y:auto;">
         <div style="height:200px; background:linear-gradient(135deg,#9C27B0,#E91E63); position:relative;">
             ${a.imageData ? `<img src="${a.imageData}" loading="lazy" style="width:100%; height:100%; object-fit:cover; border-radius:12px 12px 0 0;">` : ''}
         </div>
@@ -1427,7 +1427,7 @@ async function viewArtistDetail(id) {
                 <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">💖 최근 후원</h4>
                 ${supportHtml || '<p style="font-size:0.8rem; color:var(--accent);">후원 내역 없음</p>'}
             </div>
-            <button onclick="supportArtist('${id}'); document.getElementById('artist-detail-modal').remove();" style="background:#E91E63; color:white; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; width:100%; margin-bottom:0.5rem;">💖 후원하기</button>
+            <button onclick="supportArtist('${id}'); document.getElementById('artist-detail-modal').remove();" style="background:#E91E63; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; width:100%; margin-bottom:0.5rem;">💖 후원하기</button>
             <button onclick="document.getElementById('artist-detail-modal').remove()" style="background:#eee; border:none; padding:0.6rem; border-radius:8px; cursor:pointer; width:100%;">닫기</button>
         </div></div>`;
     document.body.appendChild(modal);
@@ -1446,7 +1446,7 @@ async function viewBookDetail(id) {
     modal.id = 'book-detail-modal';
     modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
-    modal.innerHTML = `<div style="background:white; border-radius:12px; max-width:500px; width:100%; max-height:90vh; overflow-y:auto;">
+    modal.innerHTML = `<div style="background:#FFF8F0; border-radius:12px; max-width:500px; width:100%; max-height:90vh; overflow-y:auto;">
         <div style="height:250px; background:#f5f0e8; display:flex; align-items:center; justify-content:center;">
             ${b.imageData ? `<img src="${b.imageData}" loading="lazy" style="max-width:100%; max-height:100%; object-fit:contain;">` : `<span style="font-size:4rem;">${GENRES[b.genre]?.charAt(0) || '📚'}</span>`}
         </div>
@@ -1456,9 +1456,9 @@ async function viewBookDetail(id) {
             <p style="font-size:1.1rem; font-weight:700; color:#0066cc; margin:0.5rem 0;">${b.price > 0 ? b.price + ' CRGC' : '무료'}</p>
             ${b.description ? `<p style="font-size:0.9rem; margin:0.8rem 0; line-height:1.6;">${b.description}</p>` : ''}
             <div style="display:flex; gap:0.5rem; margin-top:1rem;">
-                ${!isOwner && b.price > 0 ? `<button onclick="buyBook('${id}'); document.getElementById('book-detail-modal').remove();" style="flex:1; background:#0066cc; color:white; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">🛒 구매하기</button>` : ''}
-                ${!isOwner && b.price <= 0 ? `<button onclick="showToast('📖 무료 열람!', 'info'); document.getElementById('book-detail-modal').remove();" style="flex:1; background:#4CAF50; color:white; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">📖 무료 읽기</button>` : ''}
-                <button onclick="addToReadingList('${id}')" style="flex:1; background:#ff9800; color:white; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">📚 읽고 싶은 책</button>
+                ${!isOwner && b.price > 0 ? `<button onclick="buyBook('${id}'); document.getElementById('book-detail-modal').remove();" style="flex:1; background:#0066cc; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">🛒 구매하기</button>` : ''}
+                ${!isOwner && b.price <= 0 ? `<button onclick="showToast('📖 무료 열람!', 'info'); document.getElementById('book-detail-modal').remove();" style="flex:1; background:#4CAF50; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">📖 무료 읽기</button>` : ''}
+                <button onclick="addToReadingList('${id}')" style="flex:1; background:#ff9800; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">📚 읽고 싶은 책</button>
             </div>
             <button onclick="document.getElementById('book-detail-modal').remove()" style="background:#eee; border:none; padding:0.6rem; border-radius:8px; cursor:pointer; width:100%; margin-top:0.5rem;">닫기</button>
         </div></div>`;
@@ -1574,13 +1574,13 @@ async function loadPumasiList() {
         if (docs.empty) { c.innerHTML = '<p style="color:var(--accent);">요청이 없습니다</p>'; return; }
         c.innerHTML = '';
         docs.forEach(d => { const x = d.data(); const pct = Math.min(100, Math.round((x.raised/x.amount)*100));
-            c.innerHTML += `<div style="background:white; padding:1rem; border-radius:8px; margin-bottom:0.5rem;">
+            c.innerHTML += `<div style="background:#FFF8F0; padding:1rem; border-radius:8px; margin-bottom:0.5rem;">
                 <div style="display:flex; justify-content:space-between;"><strong>${x.requesterNickname || x.requesterEmail}</strong><span style="color:#0066cc; font-weight:700;">${x.amount} CRTD</span></div>
                 ${x.targetNickname ? `<p style="font-size:0.8rem; color:#E91E63; margin:0.2rem 0;">→ 대상: ${x.targetNickname || x.targetEmail}</p>` : '<p style="font-size:0.8rem; color:var(--accent); margin:0.2rem 0;">공동체 전체 공개</p>'}
                 <p style="font-size:0.85rem; color:var(--accent); margin:0.3rem 0;">${x.reason}</p>
                 <div style="background:#e0e0e0; height:6px; border-radius:3px; margin:0.5rem 0;"><div style="background:#4CAF50; height:100%; border-radius:3px; width:${pct}%;"></div></div>
                 <div style="display:flex; justify-content:space-between; font-size:0.8rem;"><span>${x.raised}/${x.amount} · ${x.backers}명</span><span style="color:#4CAF50;">이자 0%</span></div>
-                ${x.requesterId !== currentUser?.uid ? `<button onclick="contributePumasi('${d.id}')" style="background:#4CAF50; color:white; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.5rem;">🤝 도와주기</button>` : ''}
+                ${x.requesterId !== currentUser?.uid ? `<button onclick="contributePumasi('${d.id}')" style="background:#4CAF50; color:#FFF8F0; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.5rem;">🤝 도와주기</button>` : ''}
             </div>`; });
     } catch (e) { c.innerHTML = e.message; }
 }
@@ -1782,7 +1782,7 @@ async function loadGyeList() {
         docs.forEach(d => {
             const g = d.data();
             const isMember = g.members?.some(m => m.userId === currentUser?.uid);
-            c.innerHTML += `<div style="background:white; padding:1rem; border-radius:8px; margin-bottom:0.5rem; border-left:4px solid #FF9800;">
+            c.innerHTML += `<div style="background:#FFF8F0; padding:1rem; border-radius:8px; margin-bottom:0.5rem; border-left:4px solid #FF9800;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div>
                         <strong>🔄 ${g.name}</strong>
@@ -1793,9 +1793,9 @@ async function loadGyeList() {
                         <div style="font-size:0.75rem; color:var(--accent);">Round ${g.currentRound}</div>
                     </div>
                 </div>
-                ${!isMember && g.currentMembers < g.maxMembers ? `<button onclick="joinGye('${d.id}')" style="background:#FF9800; color:white; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.5rem; font-size:0.85rem;">🤝 참여하기</button>` : ''}
+                ${!isMember && g.currentMembers < g.maxMembers ? `<button onclick="joinGye('${d.id}')" style="background:#FF9800; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.5rem; font-size:0.85rem;">🤝 참여하기</button>` : ''}
                 ${isMember ? '<div style="text-align:center; font-size:0.8rem; color:#FF9800; margin-top:0.5rem;">✅ 참여 중</div>' : ''}
-                ${g.organizerId === currentUser?.uid && g.status === 'active' && g.currentRound < (g.members?.length || 0) ? `<button onclick="executeGyeRound('${d.id}')" style="background:#E91E63; color:white; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.3rem; font-size:0.8rem;">🔄 Round ${g.currentRound + 1} 실행</button>` : ''}
+                ${g.organizerId === currentUser?.uid && g.status === 'active' && g.currentRound < (g.members?.length || 0) ? `<button onclick="executeGyeRound('${d.id}')" style="background:#E91E63; color:#FFF8F0; border:none; padding:0.4rem; border-radius:6px; cursor:pointer; width:100%; margin-top:0.3rem; font-size:0.8rem;">🔄 Round ${g.currentRound + 1} 실행</button>` : ''}
                 ${g.status === 'recruiting' && g.currentMembers >= g.maxMembers ? '<div style="text-align:center; font-size:0.8rem; color:#999; margin-top:0.5rem;">모집 완료</div>' : ''}
             </div>`;
         });
@@ -2085,8 +2085,8 @@ async function showCampaignDetail(id) {
                 </div>
                 <div style="font-size:0.8rem; color:#2e7d32; margin-top:0.5rem;">💰 수수료 ${fee}% · 창작자 수령 ${(100 - fee).toFixed(1)}%</div>
             </div>
-            <button onclick="donateCampaign('${id}')" style="background:#4CAF50; color:white; border:none; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-weight:700; margin-bottom:0.8rem;">💝 기부하기</button>
-            ${isCreator && camp.status === 'active' ? `<button onclick="closeCampaign('${id}')" style="background:#e53935; color:white; border:none; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-weight:700; margin-bottom:1rem;">🔒 캠페인 종료 및 수령</button>` : ''}
+            <button onclick="donateCampaign('${id}')" style="background:#4CAF50; color:#FFF8F0; border:none; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-weight:700; margin-bottom:0.8rem;">💝 기부하기</button>
+            ${isCreator && camp.status === 'active' ? `<button onclick="closeCampaign('${id}')" style="background:#e53935; color:#FFF8F0; border:none; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-weight:700; margin-bottom:1rem;">🔒 캠페인 종료 및 수령</button>` : ''}
             <h4 style="margin-bottom:0.5rem;">👥 후원자 내역 (${donorDocs.size}명)</h4>
             ${donorList}`;
         
@@ -2143,7 +2143,7 @@ async function loadCart() {
     try {
         const snap = await db.collection('users').doc(currentUser.uid).collection('cart').orderBy('addedAt','desc').get();
         if (snap.empty) {
-            c.innerHTML = '<div style="text-align:center; padding:3rem; color:var(--accent);"><div style="font-size:3rem; margin-bottom:1rem;">🛒</div><p>장바구니가 비어있습니다</p><button onclick="showPage(\'mall\')" style="margin-top:1rem; background:#0066cc; color:white; border:none; padding:0.7rem 1.5rem; border-radius:8px; cursor:pointer;">쇼핑하러 가기</button></div>';
+            c.innerHTML = '<div style="text-align:center; padding:3rem; color:var(--accent);"><div style="font-size:3rem; margin-bottom:1rem;">🛒</div><p>장바구니가 비어있습니다</p><button onclick="showPage(\'mall\')" style="margin-top:1rem; background:#0066cc; color:#FFF8F0; border:none; padding:0.7rem 1.5rem; border-radius:8px; cursor:pointer;">쇼핑하러 가기</button></div>';
             if(summary) summary.style.display='none';
             return;
         }
@@ -2153,7 +2153,7 @@ async function loadCart() {
             const item = d.data();
             const subtotal = item.price * (item.qty || 1);
             total += subtotal;
-            c.innerHTML += `<div style="background:white; padding:0.8rem; border-radius:10px; margin-bottom:0.6rem; display:flex; gap:0.8rem; align-items:center; box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+            c.innerHTML += `<div style="background:#FFF8F0; padding:0.8rem; border-radius:10px; margin-bottom:0.6rem; display:flex; gap:0.8rem; align-items:center; box-shadow:0 1px 4px rgba(0,0,0,0.06);">
                 <div style="width:60px; height:60px; border-radius:8px; overflow:hidden; flex-shrink:0; background:#f0f0f0; display:flex; align-items:center; justify-content:center;">
                     ${item.imageData ? `<img src="${item.imageData}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : '<span style="font-size:1.5rem; color:#ccc;">🛒</span>'}
                 </div>
@@ -2161,9 +2161,9 @@ async function loadCart() {
                     <div style="font-weight:600; font-size:0.85rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.title}</div>
                     <div style="color:#0066cc; font-weight:700; font-size:0.85rem;">${item.price} CRGC</div>
                     <div style="display:flex; align-items:center; gap:0.5rem; margin-top:0.3rem;">
-                        <button onclick="updateCartQty('${d.id}', -1)" style="width:26px; height:26px; border:1px solid #ddd; border-radius:4px; background:white; cursor:pointer; font-size:0.9rem;">−</button>
+                        <button onclick="updateCartQty('${d.id}', -1)" style="width:26px; height:26px; border:1px solid #ddd; border-radius:4px; background:#FFF8F0; cursor:pointer; font-size:0.9rem;">−</button>
                         <span style="font-weight:600; min-width:20px; text-align:center;">${item.qty || 1}</span>
-                        <button onclick="updateCartQty('${d.id}', 1)" style="width:26px; height:26px; border:1px solid #ddd; border-radius:4px; background:white; cursor:pointer; font-size:0.9rem;">+</button>
+                        <button onclick="updateCartQty('${d.id}', 1)" style="width:26px; height:26px; border:1px solid #ddd; border-radius:4px; background:#FFF8F0; cursor:pointer; font-size:0.9rem;">+</button>
                         <button onclick="removeFromCart('${d.id}')" style="background:none; border:none; cursor:pointer; color:#cc0000; font-size:0.85rem; margin-left:auto;">🗑️</button>
                     </div>
                 </div>
@@ -2315,7 +2315,7 @@ async function loadWishlist() {
         c.innerHTML = '';
         snap.forEach(d => {
             const item = d.data();
-            c.innerHTML += `<div style="background:white; padding:0.8rem; border-radius:10px; margin-bottom:0.6rem; display:flex; gap:0.8rem; align-items:center; box-shadow:0 1px 4px rgba(0,0,0,0.06); cursor:pointer;" onclick="viewProduct('${item.productId}')">
+            c.innerHTML += `<div style="background:#FFF8F0; padding:0.8rem; border-radius:10px; margin-bottom:0.6rem; display:flex; gap:0.8rem; align-items:center; box-shadow:0 1px 4px rgba(0,0,0,0.06); cursor:pointer;" onclick="viewProduct('${item.productId}')">
                 <div style="width:60px; height:60px; border-radius:8px; overflow:hidden; flex-shrink:0; background:#f0f0f0; display:flex; align-items:center; justify-content:center;">
                     ${item.imageData ? `<img src="${item.imageData}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : '<span style="font-size:1.5rem; color:#ccc;">🛒</span>'}
                 </div>
@@ -2324,7 +2324,7 @@ async function loadWishlist() {
                     <div style="color:#0066cc; font-weight:700; font-size:0.85rem;">${item.price} CRGC</div>
                 </div>
                 <div style="display:flex; flex-direction:column; gap:0.3rem;">
-                    <button onclick="event.stopPropagation(); addToCart('${item.productId}')" style="background:#0066cc; color:white; border:none; padding:0.4rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.75rem;">🛒 담기</button>
+                    <button onclick="event.stopPropagation(); addToCart('${item.productId}')" style="background:#0066cc; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.75rem;">🛒 담기</button>
                     <button onclick="event.stopPropagation(); toggleWishlist('${item.productId}'); setTimeout(loadWishlist, 500);" style="background:none; border:1px solid #e91e63; color:#e91e63; padding:0.3rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.75rem;">🗑️</button>
                 </div>
             </div>`;
@@ -2373,7 +2373,7 @@ async function renderStorePage(sellerId) {
             const p = d.data();
             totalSold += (p.sold || 0);
             const thumb = getProductThumb(p);
-            productsHtml += `<div onclick="viewProduct('${d.id}')" style="background:white; border-radius:10px; overflow:hidden; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            productsHtml += `<div onclick="viewProduct('${d.id}')" style="background:#FFF8F0; border-radius:10px; overflow:hidden; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
                 <div style="height:130px; overflow:hidden; background:#f0f0f0;">${thumb ? `<img src="${thumb}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:#ccc;">🛒</div>`}</div>
                 <div style="padding:0.5rem;">
                     <div style="font-weight:600; font-size:0.8rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.title}</div>
@@ -2388,7 +2388,7 @@ async function renderStorePage(sellerId) {
 
         c.innerHTML = `
             <button onclick="showPage('mall')" style="background:none; border:none; font-size:1rem; cursor:pointer; margin-bottom:0.8rem; color:var(--accent);">← 목록으로</button>
-            <div style="background:white; padding:1.5rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08); margin-bottom:1rem;">
+            <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08); margin-bottom:1rem;">
                 <div style="display:flex; gap:1rem; align-items:center;">
                     <div style="width:70px; height:70px; border-radius:50%; overflow:hidden; background:#f0f0f0; flex-shrink:0; display:flex; align-items:center; justify-content:center;">
                         ${storeImage ? `<img src="${storeImage}" style="width:100%; height:100%; object-fit:cover;">` : `<span style="font-size:2rem;">🏪</span>`}
@@ -2403,7 +2403,7 @@ async function renderStorePage(sellerId) {
                         </div>
                     </div>
                 </div>
-                ${isOwner ? `<button onclick="showStoreSettingsModal()" style="margin-top:0.8rem; background:#ff9800; color:white; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600;">⚙️ 스토어 설정</button>` : (currentUser ? `<button onclick="reportSeller('${sellerId}')" style="margin-top:0.8rem; background:none; color:#cc0000; border:1px solid #cc0000; padding:0.4rem 0.8rem; border-radius:8px; cursor:pointer; font-size:0.8rem;">🚨 ${t('mall.report_seller','판매자 신고')}</button>` : '')}
+                ${isOwner ? `<button onclick="showStoreSettingsModal()" style="margin-top:0.8rem; background:#ff9800; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600;">⚙️ 스토어 설정</button>` : (currentUser ? `<button onclick="reportSeller('${sellerId}')" style="margin-top:0.8rem; background:none; color:#cc0000; border:1px solid #cc0000; padding:0.4rem 0.8rem; border-radius:8px; cursor:pointer; font-size:0.8rem;">🚨 ${t('mall.report_seller','판매자 신고')}</button>` : '')}
             </div>
             <h3 style="margin-bottom:0.8rem;">📦 상품 목록</h3>
             <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:0.8rem;">
@@ -2421,7 +2421,7 @@ async function showStoreSettingsModal() {
     overlay.id = 'store-settings-modal';
     overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
-    overlay.innerHTML = `<div style="background:white; border-radius:12px; max-width:450px; width:100%; max-height:90vh; overflow-y:auto; padding:1.5rem;">
+    overlay.innerHTML = `<div style="background:#FFF8F0; border-radius:12px; max-width:450px; width:100%; max-height:90vh; overflow-y:auto; padding:1.5rem;">
         <h3 style="margin-bottom:1rem;">⚙️ 스토어 설정</h3>
         <div style="display:grid; gap:0.8rem;">
             <div>
@@ -2436,7 +2436,7 @@ async function showStoreSettingsModal() {
                 <label style="font-size:0.8rem; color:var(--accent);">스토어 이미지</label>
                 <input type="file" id="store-set-image" accept="image/*" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
             </div>
-            <button onclick="saveStoreSettings()" style="background:#0066cc; color:white; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">💾 저장</button>
+            <button onclick="saveStoreSettings()" style="background:#0066cc; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">💾 저장</button>
             <button onclick="document.getElementById('store-settings-modal').remove()" style="background:#eee; border:none; padding:0.6rem; border-radius:8px; cursor:pointer;">닫기</button>
         </div>
     </div>`;
@@ -2494,9 +2494,9 @@ async function loadMyShopDashboard() {
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.3rem;">
                     <div><strong>${p.title}</strong> — ${p.price} CRGC · 판매 ${p.sold||0}/${p.stock} · 재고 ${remaining} ${statusBadge}</div>
                     <div style="display:flex; gap:0.3rem;">
-                        <button onclick="editProductModal('${d.id}')" style="background:#2196f3; color:white; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">✏️ 수정</button>
-                        <button onclick="toggleProduct('${d.id}','${p.status}')" style="background:${p.status==='active'?'#999':'#4CAF50'}; color:white; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${p.status==='active'?'⏸':'▶'}</button>
-                        <button onclick="deleteProduct('${d.id}')" style="background:#cc0000; color:white; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">🗑️</button>
+                        <button onclick="editProductModal('${d.id}')" style="background:#2196f3; color:#FFF8F0; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">✏️ 수정</button>
+                        <button onclick="toggleProduct('${d.id}','${p.status}')" style="background:${p.status==='active'?'#999':'#4CAF50'}; color:#FFF8F0; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${p.status==='active'?'⏸':'▶'}</button>
+                        <button onclick="deleteProduct('${d.id}')" style="background:#cc0000; color:#FFF8F0; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">🗑️</button>
                     </div>
                 </div>
             </div>`;
@@ -2509,8 +2509,8 @@ async function loadMyShopDashboard() {
             const statusLabel = ORDER_STATUS_LABELS[o.status] || o.status;
             const statusColor = ORDER_STATUS_COLORS[o.status] || 'var(--accent)';
             const nextActions = [];
-            if (o.status === 'paid') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','shipping')" style="background:#2196f3; color:white; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.7rem;">🚚 배송</button>`);
-            if (o.status === 'shipping') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','delivered')" style="background:#4CAF50; color:white; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.7rem;">✅ 완료</button>`);
+            if (o.status === 'paid') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','shipping')" style="background:#2196f3; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.7rem;">🚚 배송</button>`);
+            if (o.status === 'shipping') nextActions.push(`<button onclick="updateOrderStatus('${d.id}','delivered')" style="background:#4CAF50; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.7rem;">✅ 완료</button>`);
             const shipInfo = o.shippingInfo ? `<div style="font-size:0.65rem; color:#555;">📦 ${o.shippingInfo.name} · ${o.shippingInfo.phone} · ${o.shippingInfo.address}</div>` : '';
             ordersHtml += `<div style="padding:0.5rem; background:var(--bg); border-radius:6px; margin-bottom:0.3rem; font-size:0.8rem;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.2rem;">
@@ -2529,33 +2529,33 @@ async function loadMyShopDashboard() {
             
             <!-- 매출 통계 -->
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.8rem; margin-bottom:1.5rem;">
-                <div style="background:linear-gradient(135deg,#0066cc,#004d99); color:white; padding:1rem; border-radius:12px; text-align:center;">
+                <div style="background:linear-gradient(135deg,#0066cc,#004d99); color:#FFF8F0; padding:1rem; border-radius:12px; text-align:center;">
                     <div style="font-size:0.7rem; opacity:0.8;">총 매출</div>
                     <div style="font-size:1.3rem; font-weight:700;">${totalRevenue} CRGC</div>
                 </div>
-                <div style="background:linear-gradient(135deg,#4CAF50,#2E7D32); color:white; padding:1rem; border-radius:12px; text-align:center;">
+                <div style="background:linear-gradient(135deg,#4CAF50,#2E7D32); color:#FFF8F0; padding:1rem; border-radius:12px; text-align:center;">
                     <div style="font-size:0.7rem; opacity:0.8;">이번 달</div>
                     <div style="font-size:1.3rem; font-weight:700;">${monthlyRevenue} CRGC</div>
                 </div>
-                <div style="background:linear-gradient(135deg,#ff9800,#e65100); color:white; padding:1rem; border-radius:12px; text-align:center;">
+                <div style="background:linear-gradient(135deg,#ff9800,#e65100); color:#FFF8F0; padding:1rem; border-radius:12px; text-align:center;">
                     <div style="font-size:0.7rem; opacity:0.8;">총 주문</div>
                     <div style="font-size:1.3rem; font-weight:700;">${totalOrders}건</div>
                 </div>
             </div>
             
             <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
-                <button onclick="viewStore('${currentUser.uid}')" style="background:#0066cc; color:white; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem;">🏪 내 스토어 보기</button>
-                <button onclick="showStoreSettingsModal()" style="background:#ff9800; color:white; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem;">⚙️ 스토어 설정</button>
+                <button onclick="viewStore('${currentUser.uid}')" style="background:#0066cc; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem;">🏪 내 스토어 보기</button>
+                <button onclick="showStoreSettingsModal()" style="background:#ff9800; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem;">⚙️ 스토어 설정</button>
             </div>
             
             <!-- 내 상품 -->
-            <div style="background:white; padding:1.2rem; border-radius:12px; margin-bottom:1rem;">
+            <div style="background:#FFF8F0; padding:1.2rem; border-radius:12px; margin-bottom:1rem;">
                 <h3 style="margin-bottom:0.8rem;">📦 내 상품 (${prodDocs.size})</h3>
                 ${productsHtml || '<p style="color:var(--accent); font-size:0.85rem;">등록된 상품이 없습니다</p>'}
             </div>
             
             <!-- 받은 주문 -->
-            <div style="background:white; padding:1.2rem; border-radius:12px;">
+            <div style="background:#FFF8F0; padding:1.2rem; border-radius:12px;">
                 <h3 style="margin-bottom:0.8rem;">📬 받은 주문 (${totalOrders})</h3>
                 ${ordersHtml || '<p style="color:var(--accent); font-size:0.85rem;">받은 주문이 없습니다</p>'}
             </div>`;
@@ -2577,7 +2577,7 @@ async function editProductModal(id) {
     const images = (p.images && p.images.length > 0) ? p.images : (p.imageData ? [p.imageData] : []);
     const imgPreview = images.map((img, i) => `<img src="${img}" style="width:50px; height:50px; object-fit:cover; border-radius:4px; border:${i===0?'2px solid #0066cc':'1px solid #ddd'};">`).join('');
 
-    overlay.innerHTML = `<div style="background:white; border-radius:12px; max-width:450px; width:100%; max-height:90vh; overflow-y:auto; padding:1.5rem;">
+    overlay.innerHTML = `<div style="background:#FFF8F0; border-radius:12px; max-width:450px; width:100%; max-height:90vh; overflow-y:auto; padding:1.5rem;">
         <h3 style="margin-bottom:1rem;">✏️ 상품 수정</h3>
         <div style="display:grid; gap:0.8rem;">
             <div>
@@ -2606,7 +2606,7 @@ async function editProductModal(id) {
                 <label style="font-size:0.8rem; color:var(--accent);">새 이미지 (최대 5장, 선택 시 교체)</label>
                 <input type="file" id="ep-images" accept="image/*" multiple style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
             </div>
-            <button onclick="saveEditProduct('${id}')" style="background:#0066cc; color:white; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">💾 저장</button>
+            <button onclick="saveEditProduct('${id}')" style="background:#0066cc; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">💾 저장</button>
             <button onclick="document.getElementById('edit-product-modal').remove()" style="background:#eee; border:none; padding:0.6rem; border-radius:8px; cursor:pointer;">닫기</button>
         </div>
     </div>`;
@@ -2673,7 +2673,7 @@ async function showShippingModal() {
         const overlay = document.createElement('div');
         overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.innerHTML = `
-            <div style="background:white;padding:1.5rem;border-radius:12px;max-width:420px;width:100%;max-height:90vh;overflow-y:auto;">
+            <div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;max-width:420px;width:100%;max-height:90vh;overflow-y:auto;">
                 <h3 style="margin-bottom:1rem;">📦 배송지 정보</h3>
                 <div style="display:grid; gap:0.7rem;">
                     <input type="text" id="ship-name" placeholder="수령인 이름" value="${lastAddr.name||''}" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
@@ -2685,8 +2685,8 @@ async function showShippingModal() {
                     </label>
                 </div>
                 <div style="display:flex; gap:0.5rem; margin-top:1rem;">
-                    <button id="ship-cancel" style="flex:1; padding:0.7rem; border:1px solid #ddd; border-radius:8px; cursor:pointer; background:white;">취소</button>
-                    <button id="ship-ok" style="flex:1; padding:0.7rem; border:none; border-radius:8px; cursor:pointer; background:#0066cc; color:white; font-weight:700;">확인</button>
+                    <button id="ship-cancel" style="flex:1; padding:0.7rem; border:1px solid #ddd; border-radius:8px; cursor:pointer; background:#FFF8F0;">취소</button>
+                    <button id="ship-ok" style="flex:1; padding:0.7rem; border:none; border-radius:8px; cursor:pointer; background:#0066cc; color:#FFF8F0; font-weight:700;">확인</button>
                 </div>
             </div>`;
         document.body.appendChild(overlay);
@@ -2768,7 +2768,7 @@ async function loadBuyerOrders() {
             const statusColor = ORDER_STATUS_COLORS[o.status] || 'var(--accent)';
             const thumb = o.productImage || '';
             const dateStr = o.createdAt?.toDate ? o.createdAt.toDate().toLocaleDateString('ko-KR') : '';
-            listHtml += `<div onclick="showOrderDetail('${d.id}')" style="background:white;padding:0.8rem;border-radius:10px;margin-bottom:0.6rem;display:flex;gap:0.8rem;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,0.06);cursor:pointer;">
+            listHtml += `<div onclick="showOrderDetail('${d.id}')" style="background:#FFF8F0;padding:0.8rem;border-radius:10px;margin-bottom:0.6rem;display:flex;gap:0.8rem;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,0.06);cursor:pointer;">
                 <div style="width:60px;height:60px;border-radius:8px;overflow:hidden;flex-shrink:0;background:#f0f0f0;display:flex;align-items:center;justify-content:center;">
                     ${thumb ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover;">` : '<span style="font-size:1.5rem;color:#ccc;">🛒</span>'}
                 </div>
@@ -2842,7 +2842,7 @@ async function showOrderDetail(orderId) {
         if (o.status === 'delivered' && returnSnap.empty) {
             const deliveredAt = o.deliveredAt?.toDate ? o.deliveredAt.toDate() : (historyMap.delivered ? new Date(historyMap.delivered) : null);
             if (deliveredAt && (Date.now() - deliveredAt.getTime()) < 7 * 86400000) {
-                returnBtnHtml = `<button onclick="requestReturn('${orderId}')" style="background:#f44336;color:white;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;font-weight:600;width:100%;margin-bottom:0.5rem;">🔄 반품/환불 요청</button>`;
+                returnBtnHtml = `<button onclick="requestReturn('${orderId}')" style="background:#f44336;color:#FFF8F0;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;font-weight:600;width:100%;margin-bottom:0.5rem;">🔄 반품/환불 요청</button>`;
             }
         }
 
@@ -2851,7 +2851,7 @@ async function showOrderDetail(orderId) {
         if (o.status === 'delivered') {
             const existingReview = await db.collection('product_reviews').where('productId','==',o.productId).where('buyerId','==',currentUser.uid).limit(1).get();
             if (existingReview.empty) {
-                reviewBtnHtml = `<button onclick="writeReview('${o.productId}')" style="background:#ff9800;color:white;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;font-weight:600;width:100%;margin-bottom:0.5rem;">⭐ 리뷰 작성</button>`;
+                reviewBtnHtml = `<button onclick="writeReview('${o.productId}')" style="background:#ff9800;color:#FFF8F0;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;font-weight:600;width:100%;margin-bottom:0.5rem;">⭐ 리뷰 작성</button>`;
             }
         }
 
@@ -2859,7 +2859,7 @@ async function showOrderDetail(orderId) {
         overlay.id = 'order-detail-modal';
         overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
-        overlay.innerHTML = `<div style="background:white;border-radius:12px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;padding:1.5rem;">
+        overlay.innerHTML = `<div style="background:#FFF8F0;border-radius:12px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;padding:1.5rem;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
                 <h3 style="margin:0;">주문 상세</h3>
                 <button onclick="document.getElementById('order-detail-modal').remove()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">✕</button>
@@ -2885,7 +2885,7 @@ async function showOrderDetail(orderId) {
             </div>` : ''}
             ${returnBtnHtml}
             ${reviewBtnHtml}
-            <button onclick="viewProduct('${o.productId}'); document.getElementById('order-detail-modal').remove();" style="background:#0066cc;color:white;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;width:100%;font-weight:600;">🛒 상품 보기</button>
+            <button onclick="viewProduct('${o.productId}'); document.getElementById('order-detail-modal').remove();" style="background:#0066cc;color:#FFF8F0;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;width:100%;font-weight:600;">🛒 상품 보기</button>
         </div>`;
         document.body.appendChild(overlay);
     } catch(e) { showToast('주문 상세 로드 실패: '+e.message, 'error'); }
@@ -2898,7 +2898,7 @@ async function requestReturn(orderId) {
         const overlay = document.createElement('div');
         overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99999;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); resolve(); } };
-        overlay.innerHTML = `<div style="background:white;padding:1.5rem;border-radius:12px;max-width:420px;width:100%;">
+        overlay.innerHTML = `<div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;max-width:420px;width:100%;">
             <h3 style="margin-bottom:1rem;">🔄 반품/환불 요청</h3>
             <div style="display:grid;gap:0.8rem;">
                 <div>
@@ -2912,8 +2912,8 @@ async function requestReturn(orderId) {
                     <textarea id="return-detail" rows="3" placeholder="상세 사유를 입력하세요..." style="width:100%;padding:0.7rem;border:1px solid var(--border);border-radius:6px;resize:vertical;box-sizing:border-box;"></textarea>
                 </div>
                 <div style="display:flex;gap:0.5rem;">
-                    <button onclick="this.closest('div[style]').parentElement.parentElement.remove()" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">취소</button>
-                    <button id="return-submit" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#f44336;color:white;font-weight:700;">요청</button>
+                    <button onclick="this.closest('div[style]').parentElement.parentElement.remove()" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;">취소</button>
+                    <button id="return-submit" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#f44336;color:#FFF8F0;font-weight:700;">요청</button>
                 </div>
             </div>
         </div>`;
@@ -2964,8 +2964,8 @@ async function loadSellerReturns() {
                 </div>
                 <div style="font-size:0.8rem;color:#555;margin:0.3rem 0;">${r.buyerEmail} · ${r.reasonCategory}: ${r.reasonDetail||''}</div>
                 <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
-                    <button onclick="approveReturn('${d.id}')" style="flex:1;background:#4CAF50;color:white;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.8rem;">✅ 승인 (환불)</button>
-                    <button onclick="rejectReturn('${d.id}')" style="flex:1;background:#f44336;color:white;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.8rem;">❌ 거절</button>
+                    <button onclick="approveReturn('${d.id}')" style="flex:1;background:#4CAF50;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.8rem;">✅ 승인 (환불)</button>
+                    <button onclick="rejectReturn('${d.id}')" style="flex:1;background:#f44336;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.8rem;">❌ 거절</button>
                 </div>
             </div>`;
         });
@@ -3061,7 +3061,7 @@ async function renderBrandLanding(brand) {
 
         const renderCard = (p) => {
             const thumb = getProductThumb(p);
-            return `<div onclick="viewProduct('${p.id}')" style="background:white;border-radius:10px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.08);min-width:150px;flex-shrink:0;width:160px;">
+            return `<div onclick="viewProduct('${p.id}')" style="background:#FFF8F0;border-radius:10px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.08);min-width:150px;flex-shrink:0;width:160px;">
                 <div style="height:130px;overflow:hidden;background:#f0f0f0;">${thumb ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover;">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:#ccc;">🛒</div>`}</div>
                 <div style="padding:0.5rem;">
                     <div style="font-weight:600;font-size:0.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.title}</div>
@@ -3112,7 +3112,7 @@ async function reportProduct(productId) {
         const overlay = document.createElement('div');
         overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99998;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); resolve(); } };
-        overlay.innerHTML = `<div style="background:white;padding:1.5rem;border-radius:12px;max-width:400px;width:100%;">
+        overlay.innerHTML = `<div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;max-width:400px;width:100%;">
             <h3 style="margin-bottom:1rem;">🚨 상품 신고</h3>
             <div style="display:grid;gap:0.8rem;">
                 <select id="report-reason" style="padding:0.7rem;border:1px solid var(--border);border-radius:6px;">
@@ -3123,8 +3123,8 @@ async function reportProduct(productId) {
                 </select>
                 <textarea id="report-detail" rows="3" placeholder="상세 내용 (선택)" style="width:100%;padding:0.7rem;border:1px solid var(--border);border-radius:6px;resize:vertical;box-sizing:border-box;"></textarea>
                 <div style="display:flex;gap:0.5rem;">
-                    <button onclick="this.closest('div[style*=fixed]').remove()" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">취소</button>
-                    <button id="report-submit-btn" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#cc0000;color:white;font-weight:700;">신고</button>
+                    <button onclick="this.closest('div[style*=fixed]').remove()" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;">취소</button>
+                    <button id="report-submit-btn" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#cc0000;color:#FFF8F0;font-weight:700;">신고</button>
                 </div>
             </div>
         </div>`;
@@ -3164,7 +3164,7 @@ function _showReportModal(targetType, targetId, title) {
         const overlay = document.createElement('div');
         overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99998;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); resolve(); } };
-        overlay.innerHTML = `<div style="background:white;padding:1.5rem;border-radius:12px;max-width:400px;width:100%;">
+        overlay.innerHTML = `<div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;max-width:400px;width:100%;">
             <h3 style="margin-bottom:1rem;">🚨 ${title}</h3>
             <div style="display:grid;gap:0.8rem;">
                 <select id="report-reason-gen" style="padding:0.7rem;border:1px solid var(--border);border-radius:6px;">
@@ -3172,8 +3172,8 @@ function _showReportModal(targetType, targetId, title) {
                 </select>
                 <textarea id="report-detail-gen" rows="3" placeholder="${t('mall.report_detail_placeholder','상세 내용 (선택)')}" style="width:100%;padding:0.7rem;border:1px solid var(--border);border-radius:6px;resize:vertical;box-sizing:border-box;"></textarea>
                 <div style="display:flex;gap:0.5rem;">
-                    <button onclick="this.closest('div[style*=fixed]').remove()" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">${t('common.cancel','취소')}</button>
-                    <button id="report-submit-gen" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#cc0000;color:white;font-weight:700;">${t('mall.report_submit','신고')}</button>
+                    <button onclick="this.closest('div[style*=fixed]').remove()" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;">${t('common.cancel','취소')}</button>
+                    <button id="report-submit-gen" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#cc0000;color:#FFF8F0;font-weight:700;">${t('mall.report_submit','신고')}</button>
                 </div>
             </div>
         </div>`;
@@ -3208,7 +3208,7 @@ function initMallSearch() {
     if (!acContainer) {
         acContainer = document.createElement('div');
         acContainer.id = 'mall-autocomplete';
-        acContainer.style.cssText = 'position:absolute;top:100%;left:0;right:0;background:white;border:1px solid #ddd;border-radius:0 0 8px 8px;max-height:200px;overflow-y:auto;display:none;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,0.1);';
+        acContainer.style.cssText = 'position:absolute;top:100%;left:0;right:0;background:#FFF8F0;border:1px solid #ddd;border-radius:0 0 8px 8px;max-height:200px;overflow-y:auto;display:none;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,0.1);';
         searchInput.parentElement.style.position = 'relative';
         searchInput.parentElement.appendChild(acContainer);
     }

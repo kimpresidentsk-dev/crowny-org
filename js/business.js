@@ -34,7 +34,7 @@
                         <div style="flex:1;min-width:0;">
                             <strong style="display:block;font-size:1rem;">${d.name || '사업체'}</strong>
                             <p style="font-size:0.8rem;color:var(--accent);margin:0.2rem 0;">${d.category || ''} · ${d.country || ''}</p>
-                            <p style="font-size:0.75rem;color:var(--text-muted,#888);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${d.description || ''}</p>
+                            <p style="font-size:0.75rem;color:var(--text-muted,#6B5744);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${d.description || ''}</p>
                         </div>
                         <div style="text-align:right;flex-shrink:0;">
                             ${d.investmentGoal ? `<p style="font-size:0.7rem;color:var(--accent);">목표</p><strong style="font-size:0.9rem;">${Number(d.investmentGoal).toLocaleString()} CRTD</strong>` : ''}
@@ -98,7 +98,7 @@
                             ${d.country ? `<span style="font-size:0.65rem;padding:0.15rem 0.5rem;background:var(--bg);border-radius:10px;">${d.country}</span>` : ''}
                         </div>
                         <strong style="display:block;font-size:0.95rem;margin-bottom:0.5rem;">${d.title || '캠페인'}</strong>
-                        <p style="font-size:0.8rem;color:var(--text-muted,#888);margin-bottom:0.8rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${d.description || ''}</p>
+                        <p style="font-size:0.8rem;color:var(--text-muted,#6B5744);margin-bottom:0.8rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${d.description || ''}</p>
                         <div style="background:var(--bg,#0a0a1a);border-radius:4px;height:8px;overflow:hidden;margin-bottom:0.5rem;">
                             <div style="height:100%;background:${progress >= 100 ? '#4CAF50' : 'var(--gold,#D4AF37)'};width:${progress}%;border-radius:4px;transition:width 0.3s;"></div>
                         </div>
@@ -126,8 +126,8 @@
             ${data.imageURL ? `<img src="${data.imageURL}" style="width:100%;border-radius:8px;margin-bottom:1rem;">` : ''}
             <h3 style="margin-bottom:0.5rem;">${data.title || '캠페인'}</h3>
             <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
-                ${data.category ? `<span style="font-size:0.7rem;padding:0.2rem 0.6rem;background:var(--bg,#f0f0f0);border-radius:10px;">${data.category}</span>` : ''}
-                ${data.country ? `<span style="font-size:0.7rem;padding:0.2rem 0.6rem;background:var(--bg,#f0f0f0);border-radius:10px;">${data.country}</span>` : ''}
+                ${data.category ? `<span style="font-size:0.7rem;padding:0.2rem 0.6rem;background:var(--bg,#FFF8F0);border-radius:10px;">${data.category}</span>` : ''}
+                ${data.country ? `<span style="font-size:0.7rem;padding:0.2rem 0.6rem;background:var(--bg,#FFF8F0);border-radius:10px;">${data.country}</span>` : ''}
             </div>
             <p style="font-size:0.9rem;line-height:1.7;margin-bottom:1.5rem;white-space:pre-wrap;">${data.description || ''}</p>
             <div style="background:#f0f0f0;border-radius:6px;height:10px;overflow:hidden;margin-bottom:0.5rem;">

@@ -75,7 +75,7 @@ function avatarHTML(photoURL, nickname, size = 40) {
     const colors = ['#FF6B6B','#4ECDC4','#45B7D1','#96CEB4','#FFEAA7','#DDA0DD','#98D8C8','#F7DC6F'];
     const color = colors[(nickname || '').charCodeAt(0) % colors.length];
     const initial = (nickname || '?').charAt(0).toUpperCase();
-    return `<div style="width:${size}px; height:${size}px; border-radius:50%; background:${color}; display:flex; align-items:center; justify-content:center; font-size:${size*0.45}px; font-weight:700; color:white; flex-shrink:0;">${initial}</div>`;
+    return `<div style="width:${size}px; height:${size}px; border-radius:50%; background:${color}; display:flex; align-items:center; justify-content:center; font-size:${size*0.45}px; font-weight:700; color:#FFF8F0; flex-shrink:0;">${initial}</div>`;
 }
 
 function onlineDotHTML(isOnline) {
@@ -104,16 +104,16 @@ async function showProfileEdit() {
         </div>
         <div style="display:grid; gap:0.8rem;">
             <div>
-                <label style="font-size:0.8rem; color:var(--text-muted,#888);">${t('auth.nickname_title','닉네임')}</label>
+                <label style="font-size:0.8rem; color:var(--text-muted,#6B5744);">${t('auth.nickname_title','닉네임')}</label>
                 <input type="text" id="profile-edit-nickname" value="${data.nickname || ''}" placeholder="${t('auth.nickname_title','닉네임')}" style="width:100%;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;font-size:0.95rem;box-sizing:border-box;">
             </div>
             <div>
-                <label style="font-size:0.8rem; color:var(--text-muted,#888);">${t('social.status_msg','상태 메시지')}</label>
+                <label style="font-size:0.8rem; color:var(--text-muted,#6B5744);">${t('social.status_msg','상태 메시지')}</label>
                 <input type="text" id="profile-edit-status" value="${data.statusMessage || ''}" placeholder="${t('social.status_msg','상태 메시지')}" maxlength="50" style="width:100%;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;font-size:0.95rem;box-sizing:border-box;">
             </div>
-            <p style="font-size:0.75rem; color:var(--text-muted,#888);">${t('auth.email','이메일')}: ${data.email}</p>
+            <p style="font-size:0.75rem; color:var(--text-muted,#6B5744);">${t('auth.email','이메일')}: ${data.email}</p>
             <div style="margin-top:0.8rem; padding-top:0.8rem; border-top:1px solid #eee; display:grid; gap:0.5rem;">
-                <p style="font-size:0.8rem; font-weight:600; color:var(--text,#f0f0f0); margin-bottom:0.2rem;">${t('social.login_method','🔐 로그인 방법')}</p>
+                <p style="font-size:0.8rem; font-weight:600; color:var(--text,#3D2B1F); margin-bottom:0.2rem;">${t('social.login_method','🔐 로그인 방법')}</p>
                 ${currentUser && currentUser.providerData.some(p => p.providerId === 'google.com') ? `
                 <p style="font-size:0.75rem; color:#4CAF50;">${t('social.google_linked','✅ Google 계정 연동됨')}</p>` : `
                 <button onclick="linkGoogleAccount(); document.getElementById('profile-edit-modal').remove();" style="width:100%;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:0.5rem;">
@@ -237,7 +237,7 @@ async function loadReferralInfo() {
                         pendingHTML += `<div style="font-size:0.75rem;color:#e65100;">⏳ ${r.amount} ${(r.token||'').toUpperCase()} → ${releaseDate}</div>`;
                     });
                 }
-                pendingEl.innerHTML = pendingHTML || '<div style="font-size:0.75rem;color:var(--text-muted,#888);">대기 중인 보상 없음</div>';
+                pendingEl.innerHTML = pendingHTML || '<div style="font-size:0.75rem;color:var(--text-muted,#6B5744);">대기 중인 보상 없음</div>';
             } catch (e) {
                 pendingEl.innerHTML = '';
             }
@@ -343,7 +343,7 @@ async function showAddContactModal() {
 async function searchContactUsers() {
     const query = document.getElementById('contact-search-input').value.trim();
     const resultsDiv = document.getElementById('contact-search-results');
-    if (!query) { resultsDiv.innerHTML = `<p style="text-align:center;color:var(--text-muted,#888);font-size:0.85rem;">${t('social.enter_search','검색어를 입력하세요')}</p>`; return; }
+    if (!query) { resultsDiv.innerHTML = `<p style="text-align:center;color:var(--text-muted,#6B5744);font-size:0.85rem;">${t('social.enter_search','검색어를 입력하세요')}</p>`; return; }
 
     resultsDiv.innerHTML = '<p style="text-align:center;color:var(--accent);">🔍 검색 중...</p>';
 
@@ -363,7 +363,7 @@ async function searchContactUsers() {
 
         resultsDiv.innerHTML = '';
         if (results.size === 0) {
-            resultsDiv.innerHTML = `<p style="text-align:center;color:var(--text-muted,#888);font-size:0.85rem;">${t('social.no_results','검색 결과가 없습니다')}</p>`;
+            resultsDiv.innerHTML = `<p style="text-align:center;color:var(--text-muted,#6B5744);font-size:0.85rem;">${t('social.no_results','검색 결과가 없습니다')}</p>`;
             return;
         }
 
@@ -377,7 +377,7 @@ async function searchContactUsers() {
                 ${avatarHTML(data.photoURL, nick, 40)}
                 <div style="flex:1;min-width:0;">
                     <strong style="font-size:0.9rem;">${nick}</strong> ${onlineDotHTML(data.isOnline)}
-                    <p style="font-size:0.75rem;color:var(--text-muted,#888);margin:0;">${data.email || ''}</p>
+                    <p style="font-size:0.75rem;color:var(--text-muted,#6B5744);margin:0;">${data.email || ''}</p>
                 </div>
                 <button onclick="addContactFromSearch('${uid}','${(data.email||'').replace(/'/g,"\\'")}','${nick.replace(/'/g,"\\'")}')" style="padding:0.4rem 0.8rem;border:none;border-radius:6px;background:var(--gold,#D4AF37);color:#000;font-size:0.8rem;cursor:pointer;">추가</button>`;
             resultsDiv.appendChild(el);
@@ -727,13 +727,13 @@ async function openChat(chatId, otherId) {
                 } else {
                     // Reply quote
                     if (msg.replyTo) {
-                        content += `<div class="msg-reply-quote" style="border-left:3px solid #0066cc;padding:0.2rem 0.5rem;margin-bottom:0.3rem;background:rgba(0,102,204,0.05);border-radius:0 6px 6px 0;font-size:0.75rem;color:var(--text-muted,#888);cursor:pointer;" onclick="document.querySelector('[data-msg-id=\\'${msg.replyTo.messageId}\\']')?.scrollIntoView({behavior:'smooth',block:'center'})">
+                        content += `<div class="msg-reply-quote" style="border-left:3px solid #0066cc;padding:0.2rem 0.5rem;margin-bottom:0.3rem;background:rgba(0,102,204,0.05);border-radius:0 6px 6px 0;font-size:0.75rem;color:var(--text-muted,#6B5744);cursor:pointer;" onclick="document.querySelector('[data-msg-id=\\'${msg.replyTo.messageId}\\']')?.scrollIntoView({behavior:'smooth',block:'center'})">
                             <div style="font-weight:600;color:#0066cc;font-size:0.7rem;">답장</div>
                             ${(msg.replyTo.text || '미디어').substring(0, 60)}</div>`;
                     }
                     // Forwarded label
                     if (msg.forwarded) {
-                        content += `<div style="font-size:0.7rem;color:var(--text-muted,#888);margin-bottom:0.2rem;font-style:italic;">↗️ 전달된 메시지</div>`;
+                        content += `<div style="font-size:0.7rem;color:var(--text-muted,#6B5744);margin-bottom:0.2rem;font-style:italic;">↗️ 전달된 메시지</div>`;
                     }
                     // Media types
                     const msgType = msg.type || 'text';
@@ -747,13 +747,13 @@ async function openChat(chatId, otherId) {
                     if (msgType === 'file') {
                         const sizeStr = msg.fileSize ? ` (${(msg.fileSize/1024).toFixed(0)} KB)` : '';
                         content += `<a href="${msg.mediaUrl}" target="_blank" download="${msg.fileName||'file'}" style="display:flex;align-items:center;gap:0.4rem;padding:0.4rem 0.6rem;background:rgba(0,0,0,0.05);border-radius:8px;text-decoration:none;color:inherit;margin-bottom:0.3rem;">
-                            <span style="font-size:1.2rem;">📄</span><div><div style="font-size:0.8rem;font-weight:600;">${msg.fileName||'파일'}</div><div style="font-size:0.7rem;color:var(--text-muted,#888);">${sizeStr}</div></div></a>`;
+                            <span style="font-size:1.2rem;">📄</span><div><div style="font-size:0.8rem;font-weight:600;">${msg.fileName||'파일'}</div><div style="font-size:0.7rem;color:var(--text-muted,#6B5744);">${sizeStr}</div></div></a>`;
                     }
                     if (msgType === 'voice') {
                         content += `<div class="voice-msg-player" style="display:flex;align-items:center;gap:0.5rem;padding:0.3rem;">
                             <button onclick="toggleVoicePlay(this,'${msg.mediaUrl}')" style="background:none;border:none;cursor:pointer;font-size:1.2rem;">▶️</button>
                             <div style="flex:1;height:4px;background:#ddd;border-radius:2px;"><div class="voice-progress" style="width:0%;height:100%;background:#0066cc;border-radius:2px;transition:width 0.1s;"></div></div>
-                            <span style="font-size:0.7rem;color:var(--text-muted,#888);">${msg.duration ? msg.duration + 's' : ''}</span>
+                            <span style="font-size:0.7rem;color:var(--text-muted,#6B5744);">${msg.duration ? msg.duration + 's' : ''}</span>
                         </div>`;
                     }
                     if (msgType === 'sticker') {
@@ -767,10 +767,10 @@ async function openChat(chatId, otherId) {
                             ${sc.imageUrl ? `<img src="${sc.imageUrl}" style="width:100%;height:100px;object-fit:cover;">` : ''}
                             <div style="padding:0.4rem 0.6rem;"><div style="font-size:0.8rem;font-weight:600;">${sc.name}</div>${sc.price ? `<div style="font-size:0.75rem;color:#e65100;">${sc.price}</div>` : ''}<div style="font-size:0.7rem;color:#0066cc;margin-top:0.2rem;">🛒 보기</div></div></div>`;
                     } else if (msgType === 'transfer') {
-                        content += `<div style="background:linear-gradient(135deg,#8B6914,#FFA000);color:var(--text,#f0f0f0);padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
+                        content += `<div style="background:linear-gradient(135deg,#8B6914,#FFA000);color:var(--text,#3D2B1F);padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
                     }
                     if (msg.tokenAmount && msg.type !== 'transfer') {
-                        content += `<div style="background:linear-gradient(135deg,#8B6914,#FFA000);color:var(--text,#f0f0f0);padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
+                        content += `<div style="background:linear-gradient(135deg,#8B6914,#FFA000);color:var(--text,#3D2B1F);padding:0.5rem 0.8rem;border-radius:8px;margin-bottom:0.3rem;font-weight:600;">💰 ${msg.tokenAmount} ${msg.tokenType}</div>`;
                     }
                     // Text (skip for sticker/gif)
                     const displayText = msg._decryptedText || msg.text;
@@ -1199,7 +1199,7 @@ async function forwardMessage(msgId) {
     }
     overlay.innerHTML = `<div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:400px;width:100%;max-height:60vh;overflow-y:auto;">
         <h3 style="margin-bottom:1rem;">↗️ 전달할 채팅방 선택</h3>
-        ${listHTML || '<p style="color:var(--text-muted,#888);text-align:center;">전달 가능한 채팅방이 없습니다</p>'}
+        ${listHTML || '<p style="color:var(--text-muted,#6B5744);text-align:center;">전달 가능한 채팅방이 없습니다</p>'}
         <button onclick="this.closest('[style*=position]').remove()" style="width:100%;margin-top:1rem;padding:0.5rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;cursor:pointer;background:var(--bg-card,#3D2B1F);">취소</button>
     </div>`;
     document.body.appendChild(overlay);
@@ -1287,7 +1287,7 @@ function showGifTab() {
     content.innerHTML = `
         <div style="display:flex;gap:0.3rem;margin-bottom:0.5rem;">
             <input type="text" id="gif-search-input" placeholder="GIF 검색..." style="flex:1;padding:0.5rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;font-size:0.85rem;" onkeypress="if(event.key==='Enter')searchGifs()">
-            <button onclick="searchGifs()" style="padding:0.5rem 0.8rem;border:none;border-radius:8px;background:#333;color:white;cursor:pointer;">검색</button>
+            <button onclick="searchGifs()" style="padding:0.5rem 0.8rem;border:none;border-radius:8px;background:#333;color:#FFF8F0;cursor:pointer;">검색</button>
         </div>
         <div id="gif-results" style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.3rem;"></div>
     `;
@@ -1299,7 +1299,7 @@ async function loadTrendingGifs() {
         const res = await fetch('https://api.giphy.com/v1/gifs/trending?api_key=dc6zaTOxFJmzC&limit=20&rating=g');
         const data = await res.json();
         renderGifs(data.data);
-    } catch (e) { document.getElementById('gif-results').innerHTML = '<p style="color:var(--text-muted,#888);text-align:center;grid-column:1/-1;">GIF 로드 실패</p>'; }
+    } catch (e) { document.getElementById('gif-results').innerHTML = '<p style="color:var(--text-muted,#6B5744);text-align:center;grid-column:1/-1;">GIF 로드 실패</p>'; }
 }
 
 async function searchGifs() {
@@ -1309,7 +1309,7 @@ async function searchGifs() {
         const res = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=dc6zaTOxFJmzC&q=${encodeURIComponent(q)}&limit=20&rating=g`);
         const data = await res.json();
         renderGifs(data.data);
-    } catch (e) { document.getElementById('gif-results').innerHTML = '<p style="color:var(--text-muted,#888);text-align:center;grid-column:1/-1;">검색 실패</p>'; }
+    } catch (e) { document.getElementById('gif-results').innerHTML = '<p style="color:var(--text-muted,#6B5744);text-align:center;grid-column:1/-1;">검색 실패</p>'; }
 }
 
 function renderGifs(gifs) {
@@ -1371,7 +1371,7 @@ async function shareServiceItem(type) {
             const img = d.imageUrl || d.imageData || d.thumbnailUrl || '';
             listHTML += `<div style="display:flex;align-items:center;gap:0.6rem;padding:0.6rem;border-bottom:1px solid var(--border,#E8E0D8);cursor:pointer;" onclick="sendShareCard('${type}','${doc.id}',${JSON.stringify(name)},${JSON.stringify(img)},${JSON.stringify(d.price||'')});this.closest('[style*=position]').remove();">
                 ${img ? `<img src="${img}" style="width:40px;height:40px;border-radius:6px;object-fit:cover;">` : '<div style="width:40px;height:40px;border-radius:6px;background:#eee;display:flex;align-items:center;justify-content:center;">📦</div>'}
-                <div style="flex:1;min-width:0;"><div style="font-size:0.85rem;font-weight:600;">${name}</div><div style="font-size:0.75rem;color:var(--text-muted,#888);">${price}</div></div>
+                <div style="flex:1;min-width:0;"><div style="font-size:0.85rem;font-weight:600;">${name}</div><div style="font-size:0.75rem;color:var(--text-muted,#6B5744);">${price}</div></div>
             </div>`;
         });
         overlay.innerHTML = `<div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:420px;width:100%;max-height:60vh;overflow-y:auto;">
@@ -1681,7 +1681,7 @@ async function loadSocialFeed() {
                 mediaHTML = `<div class="post-media-wrap" style="position:relative;cursor:pointer;" onclick="openShortsViewer('${doc.id}')">
                     <video src="${post.videoUrl}" style="width:100%;display:block;max-height:500px;object-fit:contain;${filterStyle}" muted playsinline preload="metadata" onmouseenter="this.play().catch(()=>{})" onmouseleave="this.pause();this.currentTime=0;"></video>
                     ${textOverlay ? `<div style="position:absolute;left:0;right:0;text-align:center;${posCSS};font-size:1.1rem;font-weight:700;color:${textColor};text-shadow:0 2px 4px rgba(0,0,0,0.8);pointer-events:none;">${textOverlay}</div>` : ''}
-                    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.4);border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;pointer-events:none;"><span style="color:white;font-size:1.5rem;margin-left:4px;">▶</span></div>
+                    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.4);border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;pointer-events:none;"><span style="color:#FFF8F0;font-size:1.5rem;margin-left:4px;">▶</span></div>
                 </div>`;
             } else if (post.imageUrl) {
                 mediaHTML = `<div class="post-media-wrap" style="position:relative;" onclick="handlePostDoubleTap('${doc.id}',this)"><img src="${post.imageUrl}" style="width:100%;display:block;" loading="lazy"></div>`;
@@ -1697,7 +1697,7 @@ async function loadSocialFeed() {
             if (post.serviceLink) {
                 const sl = post.serviceLink;
                 const cfg = SERVICE_LINK_CONFIG[sl.type] || {};
-                serviceLinkHTML = `<div style="padding:0 14px 4px;"><button onclick="navigateServiceLink('${sl.type}','${sl.id}')" style="width:100%;padding:0.5rem;border:none;border-radius:8px;background:${cfg.color || '#333'};color:white;font-weight:700;font-size:0.85rem;cursor:pointer;">${cfg.action || sl.action} — ${sl.title || ''}</button></div>`;
+                serviceLinkHTML = `<div style="padding:0 14px 4px;"><button onclick="navigateServiceLink('${sl.type}','${sl.id}')" style="width:100%;padding:0.5rem;border:none;border-radius:8px;background:${cfg.color || '#333'};color:#FFF8F0;font-weight:700;font-size:0.85rem;cursor:pointer;">${cfg.action || sl.action} — ${sl.title || ''}</button></div>`;
             }
 
             const postEl = document.createElement('div');
@@ -1709,9 +1709,9 @@ async function loadSocialFeed() {
                     <div onclick="showUserProfile('${post.userId}')" style="cursor:pointer;">${avatarHTML(userInfo.photoURL, userInfo.nickname, 36)}</div>
                     <div style="flex:1;min-width:0;">
                         <strong onclick="showUserProfile('${post.userId}')" style="cursor:pointer;font-size:0.9rem;">${userInfo.nickname}${typeof AI_SOCIAL !== 'undefined' && AI_SOCIAL.isBotUser(post.userId) ? AI_SOCIAL.getBotBadge(post.userId) : ''}</strong>
-                        ${post.location ? `<span style="font-size:0.75rem;color:var(--dark-muted,#888);display:block;">${post.location}</span>` : ''}
+                        ${post.location ? `<span style="font-size:0.75rem;color:var(--dark-muted,#6B5744);display:block;">${post.location}</span>` : ''}
                     </div>
-                    <button onclick="showPostMenu('${doc.id}',${isMyPost})" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--dark-muted,#888);padding:4px;">⋯</button>
+                    <button onclick="showPostMenu('${doc.id}',${isMyPost})" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--dark-muted,#6B5744);padding:4px;">⋯</button>
                 </div>
                 ${mediaHTML}
                 <div class="post-actions-bar" style="display:flex;align-items:center;gap:16px;padding:8px 14px;">
@@ -1722,10 +1722,10 @@ async function loadSocialFeed() {
                     <button onclick="toggleSavePost('${doc.id}')" style="background:none;border:none;cursor:pointer;font-size:1.2rem;padding:0;">🔖</button>
                 </div>
                 ${likeCount > 0 ? `<div style="padding:0 14px;font-weight:700;font-size:0.85rem;margin-bottom:4px;cursor:pointer;" onclick="showLikedUsers('${doc.id}')">${t('social.likes','좋아요')} ${likeCount}${t('social.count','개')}</div>` : ''}
-                ${captionText ? `<div style="padding:0 14px 4px;font-size:0.9rem;line-height:1.5;"><strong style="margin-right:4px;">${userInfo.nickname}</strong>${captionDisplay}${captionTruncated ? ' <span style="color:var(--dark-muted,#888);cursor:pointer;" onclick="this.parentElement.textContent=\'\'" >더 보기</span>' : ''}</div>` : ''}
+                ${captionText ? `<div style="padding:0 14px 4px;font-size:0.9rem;line-height:1.5;"><strong style="margin-right:4px;">${userInfo.nickname}</strong>${captionDisplay}${captionTruncated ? ' <span style="color:var(--dark-muted,#6B5744);cursor:pointer;" onclick="this.parentElement.textContent=\'\'" >더 보기</span>' : ''}</div>` : ''}
                 ${serviceLinkHTML}
-                ${commentCount > 0 ? `<div onclick="toggleComments('${doc.id}')" style="padding:0 14px;color:var(--dark-muted,#888);font-size:0.85rem;cursor:pointer;margin-bottom:4px;">댓글 ${commentCount}개 모두 보기</div>` : ''}
-                <div style="padding:0 14px 12px;font-size:0.7rem;color:var(--dark-muted,#888);text-transform:uppercase;">${timeAgo}</div>
+                ${commentCount > 0 ? `<div onclick="toggleComments('${doc.id}')" style="padding:0 14px;color:var(--dark-muted,#6B5744);font-size:0.85rem;cursor:pointer;margin-bottom:4px;">댓글 ${commentCount}개 모두 보기</div>` : ''}
+                <div style="padding:0 14px 12px;font-size:0.7rem;color:var(--dark-muted,#6B5744);text-transform:uppercase;">${timeAgo}</div>
                 <div id="comments-${doc.id}" style="display:none;border-top:1px solid var(--dark-border,#2a2a4a);padding:8px 14px;">
                     <div id="comment-list-${doc.id}"></div>
                     <div style="display:flex;gap:0.5rem;margin-top:6px;align-items:center;">
@@ -1839,9 +1839,9 @@ async function editPost(postId) {
         overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
         overlay.innerHTML = `<div class="modal-content" style="max-width:500px;width:90%;padding:1.5rem;">
             <h3 style="margin-bottom:1rem;">✏️ 게시물 수정</h3>
-            <textarea id="edit-post-text" style="width:100%;min-height:120px;padding:0.8rem;border:1px solid var(--border,#333);border-radius:10px;font-size:0.95rem;resize:vertical;background:var(--card-bg,#3D2B1F);color:var(--text,#FFF8F0);box-sizing:border-box;">${data.text || ''}</textarea>
+            <textarea id="edit-post-text" style="width:100%;min-height:120px;padding:0.8rem;border:1px solid var(--border,#E8E0D8);border-radius:10px;font-size:0.95rem;resize:vertical;background:var(--card-bg,#3D2B1F);color:var(--text,#FFF8F0);box-sizing:border-box;">${data.text || ''}</textarea>
             <div style="display:flex;gap:0.5rem;justify-content:flex-end;margin-top:1rem;">
-                <button onclick="this.closest('.modal-overlay').remove();" style="padding:0.6rem 1.2rem;border:1px solid var(--border,#333);border-radius:8px;background:none;color:var(--text,#fff);cursor:pointer;">취소</button>
+                <button onclick="this.closest('.modal-overlay').remove();" style="padding:0.6rem 1.2rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;background:none;color:var(--text,#3D2B1F);cursor:pointer;">취소</button>
                 <button onclick="saveEditPost('${postId}');" style="padding:0.6rem 1.2rem;border:none;border-radius:8px;background:#D4AF37;color:#000;font-weight:600;cursor:pointer;">저장</button>
             </div>
         </div>`;
@@ -1903,7 +1903,7 @@ async function showServiceLinkModal() {
     overlay.innerHTML = `
     <div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:16px;max-width:480px;width:100%;max-height:80vh;overflow-y:auto;">
         <h3 style="margin-bottom:1rem;">🔗 서비스 연결</h3>
-        <p style="font-size:0.85rem;color:var(--text-muted,#888);margin-bottom:1rem;">게시물에 연결할 서비스를 선택하세요</p>
+        <p style="font-size:0.85rem;color:var(--text-muted,#6B5744);margin-bottom:1rem;">게시물에 연결할 서비스를 선택하세요</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1rem;">
             ${Object.entries(SERVICE_LINK_CONFIG).map(([type, cfg]) => `
                 <button onclick="selectServiceType('${type}')" style="padding:0.8rem;border:2px solid var(--border,#E8E0D8);border-radius:12px;cursor:pointer;background:var(--bg-card,#3D2B1F);font-size:0.85rem;font-weight:600;text-align:center;transition:all 0.2s;" onmouseover="this.style.borderColor='${cfg.color}';this.style.background='${cfg.color}11'" onmouseout="this.style.borderColor='#eee';this.style.background='white'">
@@ -1954,7 +1954,7 @@ async function searchServiceItems() {
         }
         results.innerHTML = '';
         if (snap.empty) {
-            results.innerHTML = '<p style="text-align:center;color:var(--text-muted,#888);font-size:0.85rem;">결과 없음</p>';
+            results.innerHTML = '<p style="text-align:center;color:var(--text-muted,#6B5744);font-size:0.85rem;">결과 없음</p>';
             return;
         }
         snap.forEach(doc => {
@@ -1964,7 +1964,7 @@ async function searchServiceItems() {
             el.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:0.6rem;border-bottom:1px solid var(--border,#E8E0D8);cursor:pointer;';
             el.onmouseover = () => el.style.background = '#f9f9f9';
             el.onmouseout = () => el.style.background = 'white';
-            el.innerHTML = `<span style="font-size:0.9rem;">${name}</span><button style="padding:0.3rem 0.6rem;border:none;border-radius:6px;background:${cfg.color};color:white;font-size:0.8rem;cursor:pointer;">선택</button>`;
+            el.innerHTML = `<span style="font-size:0.9rem;">${name}</span><button style="padding:0.3rem 0.6rem;border:none;border-radius:6px;background:${cfg.color};color:#FFF8F0;font-size:0.8rem;cursor:pointer;">선택</button>`;
             el.onclick = () => {
                 _pendingServiceLink = { type, id: doc.id, title: name, action: cfg.action.replace(/[^\w가-힣\s]/g, '').trim() };
                 document.getElementById('service-link-modal').remove();
@@ -2002,7 +2002,7 @@ function openVideoEditor() {
             <h4 style="margin:0 0 0.8rem;">✂️ 영상 편집</h4>
             <!-- Trim -->
             <div style="margin-bottom:0.8rem;">
-                <label style="font-size:0.8rem;color:var(--text-muted,#888);">트리밍 (구간 선택)</label>
+                <label style="font-size:0.8rem;color:var(--text-muted,#6B5744);">트리밍 (구간 선택)</label>
                 <div style="display:flex;gap:0.5rem;align-items:center;">
                     <span style="font-size:0.75rem;">시작</span>
                     <input type="range" id="trim-start" min="0" max="60" value="0" step="0.1" style="flex:1;" oninput="updateTrimPreview()">
@@ -2016,7 +2016,7 @@ function openVideoEditor() {
             </div>
             <!-- Filters -->
             <div style="margin-bottom:0.8rem;">
-                <label style="font-size:0.8rem;color:var(--text-muted,#888);">필터</label>
+                <label style="font-size:0.8rem;color:var(--text-muted,#6B5744);">필터</label>
                 <div style="display:flex;gap:0.5rem;margin-top:0.3rem;">
                     <button onclick="setVideoFilter('none')" class="vfilter-btn active" style="padding:0.3rem 0.6rem;border:2px solid #3D2B1F;border-radius:8px;font-size:0.75rem;cursor:pointer;background:var(--bg-card,#3D2B1F);">원본</button>
                     <button onclick="setVideoFilter('grayscale(100%)')" class="vfilter-btn" style="padding:0.3rem 0.6rem;border:2px solid #ddd;border-radius:8px;font-size:0.75rem;cursor:pointer;background:var(--bg-card,#3D2B1F);">흑백</button>
@@ -2026,7 +2026,7 @@ function openVideoEditor() {
             </div>
             <!-- Text overlay -->
             <div style="margin-bottom:0.8rem;">
-                <label style="font-size:0.8rem;color:var(--text-muted,#888);">텍스트 오버레이</label>
+                <label style="font-size:0.8rem;color:var(--text-muted,#6B5744);">텍스트 오버레이</label>
                 <input type="text" id="editor-text-input" placeholder="텍스트 입력" maxlength="50" style="width:100%;padding:0.5rem;border:1px solid var(--border,#E8E0D8);border-radius:8px;font-size:0.85rem;margin-top:0.3rem;box-sizing:border-box;" oninput="updateTextOverlay()">
                 <div style="display:flex;gap:0.5rem;margin-top:0.3rem;align-items:center;">
                     <select id="editor-text-pos" style="padding:0.3rem;border:1px solid var(--border,#E8E0D8);border-radius:6px;font-size:0.8rem;" onchange="updateTextOverlay()">
@@ -2283,7 +2283,7 @@ function renderShortsViewer() {
     let serviceLinkHTML = '';
     if (sl) {
         const cfg = SERVICE_LINK_CONFIG[sl.type] || {};
-        serviceLinkHTML = `<button onclick="event.stopPropagation();navigateServiceLink('${sl.type}','${sl.id}')" style="position:absolute;bottom:80px;left:50%;transform:translateX(-50%);padding:0.7rem 1.5rem;border:none;border-radius:24px;background:${cfg.color || '#333'};color:white;font-weight:700;font-size:0.95rem;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.3);z-index:10;white-space:nowrap;">${cfg.action || sl.action}</button>`;
+        serviceLinkHTML = `<button onclick="event.stopPropagation();navigateServiceLink('${sl.type}','${sl.id}')" style="position:absolute;bottom:80px;left:50%;transform:translateX(-50%);padding:0.7rem 1.5rem;border:none;border-radius:24px;background:${cfg.color || '#333'};color:#FFF8F0;font-weight:700;font-size:0.95rem;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.3);z-index:10;white-space:nowrap;">${cfg.action || sl.action}</button>`;
     }
 
     overlay.innerHTML = `
@@ -2293,25 +2293,25 @@ function renderShortsViewer() {
         ${textOverlay ? `<div style="position:absolute;left:0;right:0;text-align:center;${posStyle};font-size:1.4rem;font-weight:700;color:${textColor};text-shadow:0 2px 6px rgba(0,0,0,0.8);pointer-events:none;padding:0 1rem;">${textOverlay}</div>` : ''}
         
         <!-- Close -->
-        <button onclick="closeShortsViewer()" style="position:absolute;top:16px;right:16px;background:rgba(0,0,0,0.5);color:white;border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1.2rem;z-index:10;">✕</button>
+        <button onclick="closeShortsViewer()" style="position:absolute;top:16px;right:16px;background:rgba(0,0,0,0.5);color:#FFF8F0;border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1.2rem;z-index:10;">✕</button>
         
         <!-- Info overlay -->
-        <div style="position:absolute;bottom:20px;left:16px;right:80px;color:white;z-index:5;">
+        <div style="position:absolute;bottom:20px;left:16px;right:80px;color:#FFF8F0;z-index:5;">
             <strong style="font-size:0.95rem;">${post.nickname || '사용자'}</strong>
             <p style="font-size:0.85rem;margin:0.2rem 0;opacity:0.9;">${(post.data.text || '').substring(0, 100)}</p>
         </div>
 
         <!-- Side actions -->
         <div style="position:absolute;right:12px;bottom:100px;display:flex;flex-direction:column;gap:1rem;align-items:center;z-index:5;">
-            <button onclick="event.stopPropagation();toggleLike('${post.id}',${(post.data.likedBy||[]).includes(currentUser?.uid)})" style="background:none;border:none;cursor:pointer;color:white;text-align:center;">
+            <button onclick="event.stopPropagation();toggleLike('${post.id}',${(post.data.likedBy||[]).includes(currentUser?.uid)})" style="background:none;border:none;cursor:pointer;color:#FFF8F0;text-align:center;">
                 <div style="font-size:1.5rem;">${(post.data.likedBy||[]).includes(currentUser?.uid) ? '❤️' : '🤍'}</div>
                 <div style="font-size:0.75rem;">${post.data.likes || 0}</div>
             </button>
-            <button onclick="event.stopPropagation();closeShortsViewer();toggleComments('${post.id}')" style="background:none;border:none;cursor:pointer;color:white;text-align:center;">
+            <button onclick="event.stopPropagation();closeShortsViewer();toggleComments('${post.id}')" style="background:none;border:none;cursor:pointer;color:#FFF8F0;text-align:center;">
                 <div style="font-size:1.5rem;">💬</div>
                 <div style="font-size:0.75rem;">${post.data.commentCount || 0}</div>
             </button>
-            <button onclick="event.stopPropagation();sharePost('${post.id}')" style="background:none;border:none;cursor:pointer;color:white;text-align:center;">
+            <button onclick="event.stopPropagation();sharePost('${post.id}')" style="background:none;border:none;cursor:pointer;color:#FFF8F0;text-align:center;">
                 <div style="font-size:1.5rem;">📤</div>
                 <div style="font-size:0.75rem;">${post.data.shareCount || 0}</div>
             </button>
@@ -2320,8 +2320,8 @@ function renderShortsViewer() {
         ${serviceLinkHTML}
 
         <!-- Nav arrows -->
-        ${_shortsCurrentIndex > 0 ? `<button onclick="event.stopPropagation();navigateShorts(-1)" style="position:absolute;top:50%;left:8px;transform:translateY(-50%);background:rgba(255,255,255,0.2);border:none;border-radius:50%;width:40px;height:40px;cursor:pointer;color:white;font-size:1.2rem;z-index:10;">▲</button>` : ''}
-        ${_shortsCurrentIndex < _shortsVideoPosts.length - 1 ? `<button onclick="event.stopPropagation();navigateShorts(1)" style="position:absolute;top:50%;right:8px;transform:translateY(-50%);background:rgba(255,255,255,0.2);border:none;border-radius:50%;width:40px;height:40px;cursor:pointer;color:white;font-size:1.2rem;z-index:10;">▼</button>` : ''}
+        ${_shortsCurrentIndex > 0 ? `<button onclick="event.stopPropagation();navigateShorts(-1)" style="position:absolute;top:50%;left:8px;transform:translateY(-50%);background:rgba(255,255,255,0.2);border:none;border-radius:50%;width:40px;height:40px;cursor:pointer;color:#FFF8F0;font-size:1.2rem;z-index:10;">▲</button>` : ''}
+        ${_shortsCurrentIndex < _shortsVideoPosts.length - 1 ? `<button onclick="event.stopPropagation();navigateShorts(1)" style="position:absolute;top:50%;right:8px;transform:translateY(-50%);background:rgba(255,255,255,0.2);border:none;border-radius:50%;width:40px;height:40px;cursor:pointer;color:#FFF8F0;font-size:1.2rem;z-index:10;">▼</button>` : ''}
     </div>`;
 
     // Toggle mute on tap
@@ -2525,7 +2525,7 @@ async function openChannel(channelId) {
         <div style="display:flex;align-items:center;gap:0.5rem;">
             <div style="width:32px;height:32px;border-radius:50%;background:#e3f2fd;display:flex;align-items:center;justify-content:center;">📢</div>
             <div><strong>${ch.name}</strong><div style="font-size:0.7rem;color:var(--accent);">${ch.subscribers?.length || 0} 구독자</div></div>
-            ${!isSub ? `<button onclick="subscribeChannel('${channelId}')" style="margin-left:0.5rem;padding:0.3rem 0.6rem;border:none;border-radius:6px;background:#0066cc;color:white;font-size:0.75rem;cursor:pointer;">구독</button>` :
+            ${!isSub ? `<button onclick="subscribeChannel('${channelId}')" style="margin-left:0.5rem;padding:0.3rem 0.6rem;border:none;border-radius:6px;background:#0066cc;color:#FFF8F0;font-size:0.75rem;cursor:pointer;">구독</button>` :
                 `<button onclick="unsubscribeChannel('${channelId}')" style="margin-left:0.5rem;padding:0.3rem 0.6rem;border:1px solid var(--border,#E8E0D8);border-radius:6px;background:var(--bg-card,#3D2B1F);font-size:0.75rem;cursor:pointer;">구독취소</button>`}
         </div>`;
     document.getElementById('chat-header-actions').style.display = 'flex';
@@ -2765,7 +2765,7 @@ async function showFullProfile(uid) {
             if (post.imageUrl) {
                 html += `<div class="insta-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><img src="${post.imageUrl}" loading="lazy"></div>`;
             } else {
-                html += `<div class="insta-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><div style="width:100%;height:100%;background:linear-gradient(135deg,#8B6914,#6B5744);display:flex;align-items:center;justify-content:center;padding:0.5rem;"><span style="color:white;font-size:0.7rem;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;">${(post.text || '').substring(0, 60)}</span></div></div>`;
+                html += `<div class="insta-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><div style="width:100%;height:100%;background:linear-gradient(135deg,#8B6914,#6B5744);display:flex;align-items:center;justify-content:center;padding:0.5rem;"><span style="color:#FFF8F0;font-size:0.7rem;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;">${(post.text || '').substring(0, 60)}</span></div></div>`;
             }
         }
         html += '</div>';
@@ -2795,7 +2795,7 @@ async function switchProfileTab(tab, uid) {
                 if (post.imageUrl) {
                     grid.innerHTML += `<div class="insta-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><img src="${post.imageUrl}" loading="lazy"></div>`;
                 } else {
-                    grid.innerHTML += `<div class="insta-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><div style="width:100%;height:100%;background:linear-gradient(135deg,#8B6914,#6B5744);display:flex;align-items:center;justify-content:center;padding:0.5rem;"><span style="color:white;font-size:0.7rem;">${(post.text || '').substring(0, 60)}</span></div></div>`;
+                    grid.innerHTML += `<div class="insta-grid-item" onclick="scrollToPostOrOpen('${post.id}')"><div style="width:100%;height:100%;background:linear-gradient(135deg,#8B6914,#6B5744);display:flex;align-items:center;justify-content:center;padding:0.5rem;"><span style="color:#FFF8F0;font-size:0.7rem;">${(post.text || '').substring(0, 60)}</span></div></div>`;
                 }
             }
             if (posts.length === 0) grid.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--accent);">게시물이 없습니다</p>';
@@ -2805,7 +2805,7 @@ async function switchProfileTab(tab, uid) {
             grid.innerHTML = '';
             grid.className = 'insta-grid';
             for (const post of videos) {
-                grid.innerHTML += `<div class="insta-grid-item" onclick="openShortsViewer('${post.id}')"><video src="${post.videoUrl}" muted preload="metadata" style="width:100%;height:100%;object-fit:cover;"></video><span style="position:absolute;top:4px;right:4px;color:white;font-size:0.8rem;text-shadow:0 1px 3px rgba(0,0,0,0.8);">🎬</span></div>`;
+                grid.innerHTML += `<div class="insta-grid-item" onclick="openShortsViewer('${post.id}')"><video src="${post.videoUrl}" muted preload="metadata" style="width:100%;height:100%;object-fit:cover;"></video><span style="position:absolute;top:4px;right:4px;color:#FFF8F0;font-size:0.8rem;text-shadow:0 1px 3px rgba(0,0,0,0.8);">🎬</span></div>`;
             }
             if (videos.length === 0) grid.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--accent);">숏폼이 없습니다</p>';
         } else if (tab === 'saved') {
@@ -3048,12 +3048,12 @@ function showPostMenu(postId, isMyPost) {
     
     let menuItems = '';
     if (isMyPost) {
-        menuItems += `<button onclick="editPost('${postId}');closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:var(--dark-text,#f0f0f0);font-size:0.95rem;cursor:pointer;text-align:left;">✏️ 수정</button>`;
+        menuItems += `<button onclick="editPost('${postId}');closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:var(--dark-text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;">✏️ 수정</button>`;
         menuItems += `<button onclick="deletePost('${postId}');closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:#ff4444;font-size:0.95rem;font-weight:600;cursor:pointer;text-align:left;">🗑️ 삭제</button>`;
     }
-    menuItems += `<button onclick="copyShareURL('post','${postId}');closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:var(--dark-text,#f0f0f0);font-size:0.95rem;cursor:pointer;text-align:left;">🔗 링크 복사</button>`;
-    menuItems += `<button onclick="repostPost('${postId}');closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:var(--dark-text,#f0f0f0);font-size:0.95rem;cursor:pointer;text-align:left;">🔄 리포스트</button>`;
-    menuItems += `<button onclick="closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:var(--dark-muted,#888);font-size:0.95rem;cursor:pointer;text-align:left;">취소</button>`;
+    menuItems += `<button onclick="copyShareURL('post','${postId}');closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:var(--dark-text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;">🔗 링크 복사</button>`;
+    menuItems += `<button onclick="repostPost('${postId}');closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:var(--dark-text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;">🔄 리포스트</button>`;
+    menuItems += `<button onclick="closeBottomSheet();" style="width:100%;padding:14px;border:none;background:none;color:var(--dark-muted,#6B5744);font-size:0.95rem;cursor:pointer;text-align:left;">취소</button>`;
     
     sheet.innerHTML = `
         <div class="bottom-sheet-handle"></div>

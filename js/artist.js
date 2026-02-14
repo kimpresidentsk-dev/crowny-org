@@ -35,7 +35,7 @@
                     <div style="padding:0.8rem;">
                         <strong style="display:block;font-size:0.95rem;margin-bottom:0.3rem;">${d.name || '이름 없음'}</strong>
                         <p style="font-size:0.75rem;color:var(--accent);margin-bottom:0.5rem;">${d.genre || ''} ${d.country ? '· ' + d.country : ''}</p>
-                        <p style="font-size:0.7rem;color:var(--text-muted,#888);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${d.bio || ''}</p>
+                        <p style="font-size:0.7rem;color:var(--text-muted,#6B5744);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${d.bio || ''}</p>
                         ${d.supportCount ? `<p style="font-size:0.7rem;margin-top:0.4rem;">❤️ ${d.supportCount} 후원</p>` : ''}
                     </div>`;
                 list.appendChild(card);

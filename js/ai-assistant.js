@@ -299,7 +299,7 @@ delay: 첫 번째 0~500, 이후 +800~2000씩 증가 (자연스러운 타이밍)`
         container.innerHTML = `<div class="tutor-setup">
             <div class="tutor-setup-icon">🎓</div>
             <h3>나만의 AI 튜터 설정</h3>
-            <p style="color:var(--text-muted,#888);margin-bottom:1.5rem;">학습 목표와 스타일을 설정하면 맞춤형 레슨을 받을 수 있어요</p>
+            <p style="color:var(--text-muted,#6B5744);margin-bottom:1.5rem;">학습 목표와 스타일을 설정하면 맞춤형 레슨을 받을 수 있어요</p>
 
             <div class="tutor-section">
                 <h4>📚 학습 목표 (복수 선택 가능)</h4>

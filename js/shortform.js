@@ -34,7 +34,7 @@
         modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:99998;display:flex;align-items:center;justify-content:center;padding:1rem;';
         modal.onclick = e => { if (e.target === modal) modal.remove(); };
         modal.innerHTML = `
-        <div style="background:var(--card,#fff);padding:1.5rem;border-radius:16px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;color:var(--text,#222);">
+        <div style="background:var(--card,#F7F3ED);padding:1.5rem;border-radius:16px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;color:var(--text,#3D2B1F);">
             <h3 style="margin:0 0 1rem;"><i data-lucide="video" style="width:20px;height:20px;margin-right:8px;"></i>${t('shortform.upload_title','숏폼 영상 업로드')}</h3>
 
             <!-- file select -->
@@ -206,7 +206,7 @@
         if (!cfg) return;
         const q = document.getElementById('sf-svc-query').value.trim();
         const results = document.getElementById('sf-svc-results');
-        results.innerHTML = '<p style="text-align:center;font-size:0.8rem;color:var(--text-muted,#888);">로딩...</p>';
+        results.innerHTML = '<p style="text-align:center;font-size:0.8rem;color:var(--text-muted,#6B5744);">로딩...</p>';
         try {
             let query = db.collection(cfg.collection).limit(10);
             const snap = await query.get();
@@ -217,7 +217,7 @@
                 if (q && !name.toLowerCase().includes(q.toLowerCase())) return;
                 html += `<div onclick="SHORTFORM._pickService('${_selectedServiceType}','${doc.id}','${name.replace(/'/g,"\\'")}')" style="padding:0.5rem;border-bottom:1px solid var(--border,#eee);cursor:pointer;font-size:0.85rem;display:flex;justify-content:space-between;align-items:center;"><span>${name}</span><span style="color:${CTA_MAP[_selectedServiceType].color};font-size:0.75rem;">${CTA_MAP[_selectedServiceType].label}</span></div>`;
             });
-            results.innerHTML = html || '<p style="text-align:center;font-size:0.8rem;color:var(--text-muted,#888);">결과 없음</p>';
+            results.innerHTML = html || '<p style="text-align:center;font-size:0.8rem;color:var(--text-muted,#6B5744);">결과 없음</p>';
         } catch(e) { results.innerHTML = '<p style="color:red;font-size:0.8rem;">검색 실패</p>'; }
     }
 
@@ -378,7 +378,7 @@
             if (lastDoc) q = q.startAfter(lastDoc);
             const snap = await q.get();
             if (snap.empty && reelsData.length === 0) {
-                document.getElementById('reels-container').innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:80vh;color:var(--text-muted,#888);"><div style="font-size:3rem;margin-bottom:1rem;">🎬</div><p>${t('shortform.no_videos','아직 영상이 없습니다')}</p><button onclick="SHORTFORM.openUpload()" style="margin-top:1rem;padding:0.6rem 1.2rem;border:none;border-radius:8px;background:#3D2B1F;color:#FFF8F0;cursor:pointer;font-weight:600;">${t('shortform.first_upload','첫 영상 올리기')}</button></div>`;
+                document.getElementById('reels-container').innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:80vh;color:var(--text-muted,#6B5744);"><div style="font-size:3rem;margin-bottom:1rem;">🎬</div><p>${t('shortform.no_videos','아직 영상이 없습니다')}</p><button onclick="SHORTFORM.openUpload()" style="margin-top:1rem;padding:0.6rem 1.2rem;border:none;border-radius:8px;background:#3D2B1F;color:#FFF8F0;cursor:pointer;font-weight:600;">${t('shortform.first_upload','첫 영상 올리기')}</button></div>`;
                 loading = false; return;
             }
             const newItems = [];
@@ -480,7 +480,7 @@
         let ctaHTML = '';
         if (sl) {
             const cta = CTA_MAP[sl.type] || {};
-            ctaHTML = `<button onclick="SHORTFORM._navigateCTA('${sl.type}','${sl.id}')" style="position:absolute;bottom:90px;left:50%;transform:translateX(-50%);padding:0.7rem 1.5rem;border:none;border-radius:24px;background:${cta.color||'#333'};color:white;font-weight:700;font-size:0.95rem;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.3);z-index:10;white-space:nowrap;">${cta.label || '보기'}</button>`;
+            ctaHTML = `<button onclick="SHORTFORM._navigateCTA('${sl.type}','${sl.id}')" style="position:absolute;bottom:90px;left:50%;transform:translateX(-50%);padding:0.7rem 1.5rem;border:none;border-radius:24px;background:${cta.color||'#333'};color:#FFF8F0;font-weight:700;font-size:0.95rem;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.3);z-index:10;white-space:nowrap;">${cta.label || '보기'}</button>`;
         }
 
         const filterStyle = reel.filter ? `filter:${reel.filter};` : '';
@@ -496,13 +496,13 @@
             ${textHTML}
 
             <!-- Mute toggle -->
-            <button onclick="SHORTFORM._toggleMute()" id="reel-mute-btn" style="position:absolute;top:16px;left:16px;background:rgba(0,0,0,0.5);color:white;border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1rem;z-index:10;">${reelsMuted?'🔇':'🔊'}</button>
+            <button onclick="SHORTFORM._toggleMute()" id="reel-mute-btn" style="position:absolute;top:16px;left:16px;background:rgba(0,0,0,0.5);color:#FFF8F0;border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1rem;z-index:10;">${reelsMuted?'🔇':'🔊'}</button>
 
             <!-- Counter -->
-            <div style="position:absolute;top:16px;right:16px;background:rgba(0,0,0,0.5);color:white;border-radius:12px;padding:0.2rem 0.6rem;font-size:0.75rem;z-index:10;">${idx+1}/${reelsData.length}</div>
+            <div style="position:absolute;top:16px;right:16px;background:rgba(0,0,0,0.5);color:#FFF8F0;border-radius:12px;padding:0.2rem 0.6rem;font-size:0.75rem;z-index:10;">${idx+1}/${reelsData.length}</div>
 
             <!-- Author + caption -->
-            <div style="position:absolute;bottom:20px;left:16px;right:80px;color:white;z-index:5;">
+            <div style="position:absolute;bottom:20px;left:16px;right:80px;color:#FFF8F0;z-index:5;">
                 <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.3rem;">
                     ${reel.authorPhoto ? `<img src="${reel.authorPhoto}" loading="lazy" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">` : ''}
                     <strong style="font-size:0.95rem;">${reel.authorName}</strong>
@@ -513,15 +513,15 @@
 
             <!-- Side actions -->
             <div style="position:absolute;right:12px;bottom:100px;display:flex;flex-direction:column;gap:1.2rem;align-items:center;z-index:5;">
-                <button onclick="SHORTFORM._toggleLike('${reel.id}')" style="background:none;border:none;cursor:pointer;color:white;text-align:center;">
+                <button onclick="SHORTFORM._toggleLike('${reel.id}')" style="background:none;border:none;cursor:pointer;color:#FFF8F0;text-align:center;">
                     <div style="font-size:1.6rem;">${isLiked ? '❤️' : '🤍'}</div>
                     <div style="font-size:0.75rem;">${reel.likes || 0}</div>
                 </button>
-                <button onclick="SHORTFORM._openComments('${reel.id}')" style="background:none;border:none;cursor:pointer;color:white;text-align:center;">
+                <button onclick="SHORTFORM._openComments('${reel.id}')" style="background:none;border:none;cursor:pointer;color:#FFF8F0;text-align:center;">
                     <div style="font-size:1.6rem;">💬</div>
                     <div style="font-size:0.75rem;">${reel.commentCount || 0}</div>
                 </button>
-                <button onclick="SHORTFORM._shareReel('${reel.id}')" style="background:none;border:none;cursor:pointer;color:white;text-align:center;">
+                <button onclick="SHORTFORM._shareReel('${reel.id}')" style="background:none;border:none;cursor:pointer;color:#FFF8F0;text-align:center;">
                     <div style="font-size:1.6rem;">📤</div>
                 </button>
             </div>
@@ -529,8 +529,8 @@
             ${ctaHTML}
 
             <!-- Nav -->
-            ${idx > 0 ? `<button onclick="SHORTFORM._nav(-1)" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-100%) translateY(-2rem);background:rgba(255,255,255,0.15);border:none;border-radius:50%;width:44px;height:44px;cursor:pointer;color:white;font-size:1.2rem;z-index:10;">▲</button>` : ''}
-            ${idx < reelsData.length - 1 ? `<button onclick="SHORTFORM._nav(1)" style="position:absolute;top:50%;left:50%;transform:translate(-50%,0) translateY(2rem);background:rgba(255,255,255,0.15);border:none;border-radius:50%;width:44px;height:44px;cursor:pointer;color:white;font-size:1.2rem;z-index:10;">▼</button>` : ''}
+            ${idx > 0 ? `<button onclick="SHORTFORM._nav(-1)" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-100%) translateY(-2rem);background:rgba(255,255,255,0.15);border:none;border-radius:50%;width:44px;height:44px;cursor:pointer;color:#FFF8F0;font-size:1.2rem;z-index:10;">▲</button>` : ''}
+            ${idx < reelsData.length - 1 ? `<button onclick="SHORTFORM._nav(1)" style="position:absolute;top:50%;left:50%;transform:translate(-50%,0) translateY(2rem);background:rgba(255,255,255,0.15);border:none;border-radius:50%;width:44px;height:44px;cursor:pointer;color:#FFF8F0;font-size:1.2rem;z-index:10;">▼</button>` : ''}
         </div>`;
 
         // Trim handling
@@ -612,7 +612,7 @@
                 </div>
                 <div style="padding:8px 12px;border-top:1px solid var(--dark-border,#2a2a4a);display:flex;gap:8px;">
                     <input type="text" id="reel-comment-input" placeholder="${t('social.add_comment','댓글 달기...')}" style="flex:1;padding:8px 12px;border:1px solid var(--dark-border,#2a2a4a);border-radius:20px;font-size:0.9rem;outline:none;background:var(--dark-bg,#12122a);color:var(--text);">
-                    <button onclick="SHORTFORM._submitComment('${id}')" style="background:#0095f6;color:white;border:none;border-radius:20px;padding:8px 16px;font-weight:700;cursor:pointer;font-size:0.85rem;">${t('social.post','게시')}</button>
+                    <button onclick="SHORTFORM._submitComment('${id}')" style="background:#0095f6;color:#FFF8F0;border:none;border-radius:20px;padding:8px 16px;font-weight:700;cursor:pointer;font-size:0.85rem;">${t('social.post','게시')}</button>
                 </div>
             </div>`;
         overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });

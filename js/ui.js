@@ -180,11 +180,11 @@ function showConfirmModal(title, message) {
         const overlay = document.createElement('div');
         overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
         overlay.innerHTML = `
-            <div style="background:var(--card,#FFF8F0);padding:1.5rem;border-radius:12px;max-width:420px;width:100%;color:var(--text,#222);">
+            <div style="background:var(--card,#FFF8F0);padding:1.5rem;border-radius:12px;max-width:420px;width:100%;color:var(--text,#3D2B1F);">
                 <h3 style="margin-bottom:0.8rem;">${title}</h3>
                 <p style="color:var(--text-muted,#666);margin-bottom:1.2rem;white-space:pre-line;font-size:0.9rem;line-height:1.5;max-height:50vh;overflow-y:auto;">${message}</p>
                 <div style="display:flex;gap:0.5rem;">
-                    <button id="confirm-cancel" style="flex:1;padding:0.7rem;border:1px solid var(--border,#ddd);border-radius:8px;cursor:pointer;background:transparent;color:var(--text,#333);font-size:0.95rem;">${t('common.cancel', '취소')}</button>
+                    <button id="confirm-cancel" style="flex:1;padding:0.7rem;border:1px solid var(--border,#ddd);border-radius:8px;cursor:pointer;background:transparent;color:var(--text,#3D2B1F);font-size:0.95rem;">${t('common.cancel', '취소')}</button>
                     <button id="confirm-ok" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#3D2B1F;color:#FFF8F0;font-weight:700;font-size:0.95rem;">${t('common.confirm', '확인')}</button>
                 </div>
             </div>`;

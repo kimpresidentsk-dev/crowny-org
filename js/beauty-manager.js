@@ -41,24 +41,24 @@ const BEAUTY = (() => {
         container.innerHTML = `
             <!-- 요약 카드 -->
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:1.5rem;">
-                <div style="background:linear-gradient(135deg,#ff6b9d,#c44569);padding:1rem;border-radius:12px;color:white;text-align:center;">
+                <div style="background:linear-gradient(135deg,#ff6b9d,#c44569);padding:1rem;border-radius:12px;color:#FFF8F0;text-align:center;">
                     <div style="font-size:2rem;font-weight:800;">${photoCount}</div>
                     <div style="font-size:0.8rem;opacity:0.9;">📸 촬영 기록</div>
                 </div>
-                <div style="background:linear-gradient(135deg,#6c5ce7,#a29bfe);padding:1rem;border-radius:12px;color:white;text-align:center;">
+                <div style="background:linear-gradient(135deg,#6c5ce7,#a29bfe);padding:1rem;border-radius:12px;color:#FFF8F0;text-align:center;">
                     <div style="font-size:2rem;font-weight:800;">${latestAnalysis ? '📊' : '—'}</div>
                     <div style="font-size:0.8rem;opacity:0.9;">${latestAnalysis ? '최근 분석 있음' : '분석 대기'}</div>
                 </div>
             </div>
 
             <!-- 부위별 촬영 -->
-            <div style="background:var(--card-bg,white);border-radius:12px;padding:1.2rem;margin-bottom:1.2rem;">
+            <div style="background:var(--card-bg,#F7F3ED);border-radius:12px;padding:1.2rem;margin-bottom:1.2rem;">
                 <h3 style="margin:0 0 1rem 0;font-size:1rem;">📸 부위별 피부 촬영</h3>
                 <p style="font-size:0.8rem;color:var(--accent);margin-bottom:1rem;">각 부위를 가까이에서 촬영해주세요. 자연광에서 촬영하면 더 정확합니다.</p>
                 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;">
                     ${ZONES.map(z => `
                         <button onclick="BEAUTY.captureZone('${z.id}')" 
-                            style="padding:0.8rem 0.4rem;border:2px solid var(--border,#e0e0e0);border-radius:10px;background:var(--card-bg,white);cursor:pointer;text-align:center;transition:all 0.2s;">
+                            style="padding:0.8rem 0.4rem;border:2px solid var(--border,#e0e0e0);border-radius:10px;background:var(--card-bg,#F7F3ED);cursor:pointer;text-align:center;transition:all 0.2s;">
                             <div style="font-size:1.5rem;">${z.emoji}</div>
                             <div style="font-size:0.75rem;font-weight:600;margin-top:0.2rem;">${z.name}</div>
                         </button>
@@ -67,7 +67,7 @@ const BEAUTY = (() => {
             </div>
 
             <!-- 전체 얼굴 촬영 -->
-            <div style="background:var(--card-bg,white);border-radius:12px;padding:1.2rem;margin-bottom:1.2rem;">
+            <div style="background:var(--card-bg,#F7F3ED);border-radius:12px;padding:1.2rem;margin-bottom:1.2rem;">
                 <button onclick="BEAUTY.captureZone('full')" 
                     style="width:100%;padding:1rem;border:2px dashed var(--primary,#E91E63);border-radius:10px;background:transparent;cursor:pointer;font-size:0.9rem;font-weight:600;color:var(--primary,#E91E63);">
                     🤳 전체 얼굴 촬영
@@ -75,7 +75,7 @@ const BEAUTY = (() => {
             </div>
 
             <!-- 분석 요청 -->
-            <div style="background:var(--card-bg,white);border-radius:12px;padding:1.2rem;margin-bottom:1.2rem;">
+            <div style="background:var(--card-bg,#F7F3ED);border-radius:12px;padding:1.2rem;margin-bottom:1.2rem;">
                 <h3 style="margin:0 0 0.8rem 0;font-size:1rem;">🔬 피부 분석 받기</h3>
                 <div style="display:grid;gap:0.5rem;">
                     <button onclick="BEAUTY.requestExpertAnalysis()" 
@@ -83,14 +83,14 @@ const BEAUTY = (() => {
                         👩‍⚕️ 전문가에게 분석 받기
                     </button>
                     <button onclick="BEAUTY.requestAIAnalysis()" 
-                        style="width:100%;padding:0.8rem;border:none;border-radius:10px;background:linear-gradient(135deg,#E91E63,#FF6090);color:white;font-weight:700;cursor:pointer;font-size:0.85rem;">
+                        style="width:100%;padding:0.8rem;border:none;border-radius:10px;background:linear-gradient(135deg,#E91E63,#FF6090);color:#FFF8F0;font-weight:700;cursor:pointer;font-size:0.85rem;">
                         ✨ 크라우니걸 AI 분석
                     </button>
                 </div>
             </div>
 
             <!-- 최근 분석 결과 -->
-            <div id="beauty-latest-result" style="background:var(--card-bg,white);border-radius:12px;padding:1.2rem;margin-bottom:1.2rem;">
+            <div id="beauty-latest-result" style="background:var(--card-bg,#F7F3ED);border-radius:12px;padding:1.2rem;margin-bottom:1.2rem;">
                 <h3 style="margin:0 0 0.8rem 0;font-size:1rem;">📊 분석 결과</h3>
                 <div id="beauty-result-content">
                     ${latestAnalysis ? renderAnalysis(latestAnalysis) : '<p style="text-align:center;color:var(--accent);font-size:0.85rem;padding:1rem;">아직 분석 결과가 없습니다.<br>피부 사진을 촬영하고 분석을 요청해보세요!</p>'}
@@ -98,7 +98,7 @@ const BEAUTY = (() => {
             </div>
 
             <!-- 타임라인 -->
-            <div style="background:var(--card-bg,white);border-radius:12px;padding:1.2rem;margin-bottom:1.2rem;">
+            <div style="background:var(--card-bg,#F7F3ED);border-radius:12px;padding:1.2rem;margin-bottom:1.2rem;">
                 <h3 style="margin:0 0 0.8rem 0;font-size:1rem;">📈 피부 변화 타임라인</h3>
                 <div id="beauty-timeline">
                     <p style="text-align:center;color:var(--accent);font-size:0.85rem;padding:1rem;">촬영 기록이 쌓이면 변화를 추적할 수 있습니다.</p>
@@ -106,7 +106,7 @@ const BEAUTY = (() => {
             </div>
 
             <!-- 크라우니 뷰티 추천 -->
-            <div style="background:var(--card-bg,white);border-radius:12px;padding:1.2rem;margin-bottom:1.2rem;">
+            <div style="background:var(--card-bg,#F7F3ED);border-radius:12px;padding:1.2rem;margin-bottom:1.2rem;">
                 <h3 style="margin:0 0 0.8rem 0;font-size:1rem;">🎁 크라우니 뷰티 추천</h3>
                 <div style="display:grid;gap:0.5rem;">
                     <div onclick="showPage('mall')" style="display:flex;align-items:center;gap:0.8rem;padding:0.8rem;background:linear-gradient(135deg,#fce4ec,#fff);border-radius:10px;cursor:pointer;">
@@ -125,7 +125,7 @@ const BEAUTY = (() => {
             </div>
 
             <!-- 나의 촬영 기록 -->
-            <div style="background:var(--card-bg,white);border-radius:12px;padding:1.2rem;">
+            <div style="background:var(--card-bg,#F7F3ED);border-radius:12px;padding:1.2rem;">
                 <h3 style="margin:0 0 0.8rem 0;font-size:1rem;">🗂️ 나의 촬영 기록</h3>
                 <div id="beauty-photo-history" style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;">
                     <p style="grid-column:span 3;text-align:center;color:var(--accent);font-size:0.85rem;padding:1rem;">아직 촬영 기록이 없습니다.</p>
@@ -148,7 +148,7 @@ const BEAUTY = (() => {
         modal.id = 'beauty-capture-modal';
         modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);z-index:10001;display:flex;flex-direction:column;align-items:center;justify-content:center;';
         modal.innerHTML = `
-            <div style="color:white;text-align:center;margin-bottom:1rem;">
+            <div style="color:#FFF8F0;text-align:center;margin-bottom:1rem;">
                 <h3>${zone.emoji || '🤳'} ${zone.name}</h3>
                 <p style="font-size:0.85rem;opacity:0.8;">${zone.guide}</p>
             </div>
@@ -157,9 +157,9 @@ const BEAUTY = (() => {
             <div style="display:flex;gap:1rem;margin-top:1.5rem;">
                 <button onclick="BEAUTY.takePhoto()" style="width:70px;height:70px;border-radius:50%;border:4px solid white;background:var(--primary,#E91E63);cursor:pointer;font-size:1.5rem;">📸</button>
             </div>
-            <button onclick="BEAUTY.closeCapture()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:white;font-size:1.5rem;cursor:pointer;">✕</button>
+            <button onclick="BEAUTY.closeCapture()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:#FFF8F0;font-size:1.5rem;cursor:pointer;">✕</button>
             <div style="margin-top:1rem;">
-                <label style="color:white;font-size:0.85rem;cursor:pointer;padding:0.5rem 1rem;border:1px solid white;border-radius:8px;">
+                <label style="color:#FFF8F0;font-size:0.85rem;cursor:pointer;padding:0.5rem 1rem;border:1px solid white;border-radius:8px;">
                     📁 갤러리에서 선택
                     <input type="file" accept="image/*" onchange="BEAUTY.uploadFromGallery(event)" style="display:none;">
                 </label>
@@ -447,7 +447,7 @@ JSON만 출력하세요.`;
                 return `
                     <div style="position:relative;border-radius:8px;overflow:hidden;aspect-ratio:1;cursor:pointer;" onclick="BEAUTY.viewPhoto('${d.photoURL}','${zone.name}','${date}')">
                         <img src="${d.photoURL}" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
-                        <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.7));padding:0.3rem;color:white;font-size:0.6rem;">
+                        <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.7));padding:0.3rem;color:#FFF8F0;font-size:0.6rem;">
                             ${zone.emoji} ${zone.name}<br>${date}
                         </div>
                     </div>`;
@@ -504,7 +504,7 @@ JSON만 출력하세요.`;
         modal.onclick = () => modal.remove();
         modal.innerHTML = `
             <img src="${url}" style="max-width:90%;max-height:75vh;border-radius:12px;object-fit:contain;">
-            <p style="color:white;margin-top:1rem;font-size:0.9rem;">${zone} · ${date}</p>
+            <p style="color:#FFF8F0;margin-top:1rem;font-size:0.9rem;">${zone} · ${date}</p>
         `;
         document.body.appendChild(modal);
     }
@@ -535,7 +535,7 @@ JSON만 출력하세요.`;
                         </div>
                         <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
                             <button onclick="BEAUTY.adminAnalyze('${doc.id}','${d.userId}')" 
-                                style="flex:1;padding:0.5rem;border:none;border-radius:6px;background:#4CAF50;color:white;cursor:pointer;font-size:0.8rem;">
+                                style="flex:1;padding:0.5rem;border:none;border-radius:6px;background:#4CAF50;color:#FFF8F0;cursor:pointer;font-size:0.8rem;">
                                 📊 분석 입력
                             </button>
                         </div>
@@ -554,7 +554,7 @@ JSON만 출력하세요.`;
         modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
 
         modal.innerHTML = `
-            <div style="background:white;border-radius:16px;max-width:500px;width:100%;max-height:85vh;overflow-y:auto;padding:1.5rem;">
+            <div style="background:#FFF8F0;border-radius:16px;max-width:500px;width:100%;max-height:85vh;overflow-y:auto;padding:1.5rem;">
                 <h3>📊 피부 분석 입력</h3>
                 <div style="display:grid;gap:0.6rem;margin-top:1rem;">
                     <select id="admin-skin-type" style="padding:0.5rem;border:1px solid #ddd;border-radius:6px;">
@@ -571,7 +571,7 @@ JSON만 출력하세요.`;
                     <textarea id="admin-advice" placeholder="관리 조언" rows="2" style="padding:0.5rem;border:1px solid #ddd;border-radius:6px;"></textarea>
                     <input type="text" id="admin-recommended" placeholder="추천 제품/서비스" style="padding:0.5rem;border:1px solid #ddd;border-radius:6px;">
                     <button onclick="BEAUTY.submitAdminAnalysis('${requestId}','${userId}')" 
-                        style="padding:0.8rem;border:none;border-radius:8px;background:#4CAF50;color:white;font-weight:700;cursor:pointer;">
+                        style="padding:0.8rem;border:none;border-radius:8px;background:#4CAF50;color:#FFF8F0;font-weight:700;cursor:pointer;">
                         ✅ 분석 결과 저장
                     </button>
                 </div>

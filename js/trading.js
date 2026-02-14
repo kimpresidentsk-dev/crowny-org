@@ -1810,7 +1810,7 @@ function updateOpenPositions() {
         // SL/TP 인라인 수정 UI
         const ts = trade.trailingStop;
         const trailBadge = (ts && ts.enabled) 
-            ? `<span style="display:inline-block; background:${ts.activated ? '#ff9800' : '#666'}; color:white; font-size:0.6rem; padding:1px 4px; border-radius:3px; margin-left:4px;">${ts.activated ? '🔄 TRAIL' : '⏳ 대기'}</span>` 
+            ? `<span style="display:inline-block; background:${ts.activated ? '#ff9800' : '#666'}; color:#FFF8F0; font-size:0.6rem; padding:1px 4px; border-radius:3px; margin-left:4px;">${ts.activated ? '🔄 TRAIL' : '⏳ 대기'}</span>` 
             : '';
         
         let slTPHTML = `
@@ -1834,7 +1834,7 @@ function updateOpenPositions() {
         
         // 분할 청산 버튼 (2계약 이상)
         const partialCloseBtn = trade.contracts > 1 
-            ? `<button onclick="partialClosePosition(${actualIndex})" style="background:#886600; color:white; border:none; padding:0.3rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.65rem;">📊 분할</button>`
+            ? `<button onclick="partialClosePosition(${actualIndex})" style="background:#886600; color:#FFF8F0; border:none; padding:0.3rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.65rem;">📊 분할</button>`
             : '';
         
         div.innerHTML = `
@@ -1862,12 +1862,12 @@ function updateOpenPositions() {
                     </div>
                 </div>
                 <div style="display:flex; flex-direction:column; gap:0.3rem;">
-                    <button onclick="closePosition(${actualIndex})" style="background:#cc0000; color:white; border:none; padding:0.5rem 0.8rem; border-radius:4px; cursor:pointer; font-size:0.85rem; font-weight:bold;">
+                    <button onclick="closePosition(${actualIndex})" style="background:#cc0000; color:#FFF8F0; border:none; padding:0.5rem 0.8rem; border-radius:4px; cursor:pointer; font-size:0.85rem; font-weight:bold;">
                         ✕ CLOSE
                     </button>
                     ${partialCloseBtn}
                     ${(ts && ts.enabled) ? `
-                        <button onclick="toggleTrailingForTrade(${actualIndex})" style="background:${ts.activated ? '#ff9800' : '#666'}; color:white; border:none; padding:0.3rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.6rem;">
+                        <button onclick="toggleTrailingForTrade(${actualIndex})" style="background:${ts.activated ? '#ff9800' : '#666'}; color:#FFF8F0; border:none; padding:0.3rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.6rem;">
                             ${ts.activated ? '🔄 ON' : '⏸ OFF'}
                         </button>
                     ` : `

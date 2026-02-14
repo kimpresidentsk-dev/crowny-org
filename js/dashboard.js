@@ -247,12 +247,12 @@ async function editShortcuts() {
         </label>`;
     }).join('');
 
-    modal.innerHTML = `<div style="background:white;border-radius:12px;max-width:400px;width:100%;max-height:80vh;overflow-y:auto;padding:1.2rem;">
+    modal.innerHTML = `<div style="background:#FFF8F0;border-radius:12px;max-width:400px;width:100%;max-height:80vh;overflow-y:auto;padding:1.2rem;">
         <h3 style="margin-bottom:0.8rem;">⚡ ${t('dashboard.edit_shortcuts','바로가기 편집')}</h3>
         <p style="font-size:0.8rem;color:#888;margin-bottom:1rem;">${t('dashboard.shortcut_hint','원하는 메뉴를 선택하세요 (최대 8개)')}</p>
         <div id="shortcut-checklist">${items}</div>
         <div style="display:flex;gap:0.5rem;margin-top:1rem;">
-            <button onclick="saveShortcutEdit()" style="flex:1;background:#0066cc;color:white;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;font-weight:700;">${t('common.save','저장')}</button>
+            <button onclick="saveShortcutEdit()" style="flex:1;background:#0066cc;color:#FFF8F0;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;font-weight:700;">${t('common.save','저장')}</button>
             <button onclick="document.getElementById('shortcut-edit-modal').remove()" style="flex:1;background:#eee;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;">${t('common.cancel','취소')}</button>
         </div>
         <div style="margin-top:0.8rem;padding-top:0.8rem;border-top:1px solid #eee;">

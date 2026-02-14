@@ -100,7 +100,7 @@ ${text}`;
             const result = await translateText(text, getUserLang());
             if (result) {
                 originalHTML = container.innerHTML;
-                container.innerHTML = `<p style="white-space:pre-wrap;">${result}</p><p style="font-size:0.65rem;color:var(--text-muted,#888);margin-top:0.3rem;">🌐 ${LANG_NAMES[getUserLang()] || getUserLang()} 번역</p>`;
+                container.innerHTML = `<p style="white-space:pre-wrap;">${result}</p><p style="font-size:0.65rem;color:var(--text-muted,#6B5744);margin-top:0.3rem;">🌐 ${LANG_NAMES[getUserLang()] || getUserLang()} 번역</p>`;
                 btn.innerHTML = '↩️';
                 translated = true;
             } else {

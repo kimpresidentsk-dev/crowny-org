@@ -18,7 +18,7 @@ async function loadExploreTab() {
         html += `<div style="margin-bottom:1rem;">
             <div style="display:flex;gap:0.5rem;">
                 <input type="text" id="explore-search-input" placeholder="🔍 사용자, 해시태그, 게시물 검색..." value="${_exploreSearchQuery}" style="flex:1;padding:0.7rem 1rem;border:1px solid var(--border);border-radius:12px;font-size:0.9rem;outline:none;" onkeypress="if(event.key==='Enter')runExploreSearch()">
-                <button onclick="runExploreSearch()" style="padding:0.7rem 1rem;border:none;border-radius:12px;background:#3D2B1F;color:white;cursor:pointer;font-weight:600;">검색</button>
+                <button onclick="runExploreSearch()" style="padding:0.7rem 1rem;border:none;border-radius:12px;background:#3D2B1F;color:#FFF8F0;cursor:pointer;font-weight:600;">검색</button>
             </div>
         </div>`;
 
@@ -134,13 +134,13 @@ async function loadRecommendedUsers() {
             <div style="display:flex;gap:0.8rem;overflow-x:auto;padding-bottom:0.5rem;">
                 ${top.map(u => {
                     const nickname = u.data.nickname || u.data.email?.split('@')[0] || '사용자';
-                    return `<div style="min-width:120px;text-align:center;padding:0.8rem;border:1px solid var(--border);border-radius:12px;background:white;">
+                    return `<div style="min-width:120px;text-align:center;padding:0.8rem;border:1px solid var(--border);border-radius:12px;background:#FFF8F0;">
                         <div onclick="showUserProfile('${u.uid}')" style="cursor:pointer;">
                             ${avatarHTML(u.data.photoURL, nickname, 48)}
                         </div>
                         <div style="font-size:0.8rem;font-weight:600;margin-top:0.3rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${nickname}</div>
                         <div style="font-size:0.7rem;color:var(--accent);">팔로워 ${u.followers}</div>
-                        <button onclick="followUser('${u.uid}');this.textContent='팔로잉 ✓';this.disabled=true;" style="margin-top:0.4rem;padding:0.3rem 0.6rem;border:none;border-radius:6px;background:#0066cc;color:white;font-size:0.75rem;cursor:pointer;font-weight:600;">팔로우</button>
+                        <button onclick="followUser('${u.uid}');this.textContent='팔로잉 ✓';this.disabled=true;" style="margin-top:0.4rem;padding:0.3rem 0.6rem;border:none;border-radius:6px;background:#0066cc;color:#FFF8F0;font-size:0.75rem;cursor:pointer;font-weight:600;">팔로우</button>
                     </div>`;
                 }).join('')}
             </div>`;
@@ -182,19 +182,19 @@ async function loadExploreGrid() {
         for (const post of posts.slice(0, 30)) {
             let thumb = '';
             if (post.videoUrl) {
-                thumb = `<div style="position:relative;"><video src="${post.videoUrl}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;" muted preload="metadata"></video><span style="position:absolute;top:6px;right:6px;color:white;font-size:0.8rem;text-shadow:0 1px 3px rgba(0,0,0,0.8);">🎬</span></div>`;
+                thumb = `<div style="position:relative;"><video src="${post.videoUrl}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;" muted preload="metadata"></video><span style="position:absolute;top:6px;right:6px;color:#FFF8F0;font-size:0.8rem;text-shadow:0 1px 3px rgba(0,0,0,0.8);">🎬</span></div>`;
             } else if (post.imageUrl) {
                 thumb = `<img src="${post.imageUrl}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;" loading="lazy">`;
             } else {
                 // Text only
-                thumb = `<div style="width:100%;aspect-ratio:1;background:linear-gradient(135deg,#8B6914,#6B5744);display:flex;align-items:center;justify-content:center;padding:0.5rem;"><span style="color:white;font-size:0.7rem;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;">${(post.text || '').substring(0, 80)}</span></div>`;
+                thumb = `<div style="width:100%;aspect-ratio:1;background:linear-gradient(135deg,#8B6914,#6B5744);display:flex;align-items:center;justify-content:center;padding:0.5rem;"><span style="color:#FFF8F0;font-size:0.7rem;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;">${(post.text || '').substring(0, 80)}</span></div>`;
             }
 
             gridHTML += `<div onclick="scrollToPostOrOpen('${post.id}')" style="cursor:pointer;position:relative;overflow:hidden;">
                 ${thumb}
                 <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.6));padding:4px 6px;display:flex;gap:0.4rem;align-items:center;">
-                    <span style="color:white;font-size:0.65rem;">❤️${post.likes || 0}</span>
-                    <span style="color:white;font-size:0.65rem;">💬${post.commentCount || 0}</span>
+                    <span style="color:#FFF8F0;font-size:0.65rem;">❤️${post.likes || 0}</span>
+                    <span style="color:#FFF8F0;font-size:0.65rem;">💬${post.commentCount || 0}</span>
                 </div>
             </div>`;
         }
@@ -252,7 +252,7 @@ async function runExploreSearch() {
             const hashPosts = await db.collection('posts').where('hashtags', 'array-contains', tag).limit(5).get();
             if (!hashPosts.empty) {
                 html += `<div style="font-weight:700;font-size:0.85rem;margin:0.6rem 0 0.4rem;">🏷 #${tag} (${hashPosts.size}개 게시물)</div>`;
-                html += `<button onclick="filterByHashtag('${tag}');showExploreTab(false)" style="padding:0.4rem 0.8rem;border:none;border-radius:8px;background:#0066cc;color:white;font-size:0.8rem;cursor:pointer;">게시물 보기</button>`;
+                html += `<button onclick="filterByHashtag('${tag}');showExploreTab(false)" style="padding:0.4rem 0.8rem;border:none;border-radius:8px;background:#0066cc;color:#FFF8F0;font-size:0.8rem;cursor:pointer;">게시물 보기</button>`;
             }
         }
 

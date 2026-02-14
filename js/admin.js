@@ -274,7 +274,7 @@ async function showAdminEditModal(userId, userData) {
     const overlay = document.createElement('div');
     overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;overflow-y:auto;';
     overlay.innerHTML = `
-        <div style="background:white;padding:1.5rem;border-radius:16px;max-width:540px;width:100%;max-height:90vh;overflow-y:auto;">
+        <div style="background:#FFF8F0;padding:1.5rem;border-radius:16px;max-width:540px;width:100%;max-height:90vh;overflow-y:auto;">
             <h3 style="margin-bottom:0.3rem;">${t('admin.settings','🔑 관리자 설정')}</h3>
             <p style="font-size:0.85rem;color:#666;margin-bottom:1rem;">${userData.nickname || t('admin.unnamed','이름없음')} · ${userData.email}</p>
             
@@ -316,8 +316,8 @@ async function showAdminEditModal(userId, userData) {
             </div>
             
             <div style="display:flex;gap:0.5rem;">
-                <button id="edit-admin-save" style="flex:1;padding:0.7rem;background:#9C27B0;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:700;">${t('common.save','저장')}</button>
-                <button id="edit-admin-cancel" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">${t('common.cancel','취소')}</button>
+                <button id="edit-admin-save" style="flex:1;padding:0.7rem;background:#9C27B0;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:700;">${t('common.save','저장')}</button>
+                <button id="edit-admin-cancel" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;">${t('common.cancel','취소')}</button>
             </div>
         </div>`;
     
@@ -1027,7 +1027,7 @@ async function adminLookupOffchain() {
         }
         
         resultEl.innerHTML = `
-            <div style="background:white; padding:0.8rem; border-radius:6px; border:1px solid var(--border);">
+            <div style="background:#FFF8F0; padding:0.8rem; border-radius:6px; border:1px solid var(--border);">
                 <strong>${nick}</strong> <span style="color:var(--accent); font-size:0.8rem;">(${email})</span>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.3rem; margin-top:0.5rem; font-size:0.85rem;">
                     ${balHTML}
@@ -1185,7 +1185,7 @@ async function loadTokenList() {
         html += `
             <div style="display:flex; justify-content:space-between; align-items:center; padding:0.4rem 0.6rem; background:var(--bg); border-radius:4px; border-left:3px solid ${info.color};">
                 <span style="font-size:0.82rem;">${info.icon} <strong>${info.name}</strong> ${info.fullName} ${badge}</span>
-                ${!info.isDefault && isSuperAdmin() ? `<button onclick="deleteCustomToken('${key}')" style="background:#ff4444; color:white; border:none; padding:2px 6px; border-radius:3px; cursor:pointer; font-size:0.65rem;">삭제</button>` : ''}
+                ${!info.isDefault && isSuperAdmin() ? `<button onclick="deleteCustomToken('${key}')" style="background:#ff4444; color:#FFF8F0; border:none; padding:2px 6px; border-radius:3px; cursor:pointer; font-size:0.65rem;">삭제</button>` : ''}
             </div>`;
     }
     html += '</div>';
@@ -1579,7 +1579,7 @@ async function loadAdminUserList() {
                         }).join('')}
                     </tbody>
                 </table>
-                <button onclick="saveAdminQuotas()" style="margin-top:0.5rem; background:#FF6D00; color:white; border:none; padding:0.4rem 1rem; border-radius:4px; cursor:pointer; font-size:0.8rem;">💾 쿼터 저장</button>
+                <button onclick="saveAdminQuotas()" style="margin-top:0.5rem; background:#FF6D00; color:#FFF8F0; border:none; padding:0.4rem 1rem; border-radius:4px; cursor:pointer; font-size:0.8rem;">💾 쿼터 저장</button>
             </div>`;
         }
         
@@ -1604,7 +1604,7 @@ async function loadAdminUserList() {
                         ${appointOptions}
                     </select>
                 </div>
-                <button onclick="setUserAdminLevel(document.getElementById('admin-level-email').value, parseInt(document.getElementById('admin-level-select').value))" style="background:#9C27B0; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">설정</button>
+                <button onclick="setUserAdminLevel(document.getElementById('admin-level-email').value, parseInt(document.getElementById('admin-level-select').value))" style="background:#9C27B0; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">설정</button>
             </div>
         </div>`;
         
@@ -1659,7 +1659,7 @@ async function loadAdminUserList() {
                             <span style="font-size:0.72rem; padding:2px 6px; background:${info.color}22; color:${info.color}; border-radius:3px;">
                                 ${info.icon} Lv${level}
                             </span>
-                            ${canManage ? `<button onclick="showAdminEditModal('${u.id}', window._adminUserCache['${u.id}'])" style="background:#9C27B0;color:white;border:none;padding:2px 6px;border-radius:3px;cursor:pointer;font-size:0.65rem;">편집</button>` : ''}
+                            ${canManage ? `<button onclick="showAdminEditModal('${u.id}', window._adminUserCache['${u.id}'])" style="background:#9C27B0;color:#FFF8F0;border:none;padding:2px 6px;border-radius:3px;cursor:pointer;font-size:0.65rem;">편집</button>` : ''}
                         </div>
                     </div>
                 </div>
@@ -1949,7 +1949,7 @@ async function adminLoadDeletedWallets() {
                             <div style="font-size:0.72rem;color:#666;font-family:monospace;">${w.walletAddress || '--'}</div>
                             <div style="font-size:0.68rem;color:#c62828;">삭제: ${deletedAt}</div>
                         </div>
-                        ${hasLevel(4) ? `<button onclick="adminRestoreWallet('${userDoc.id}','${wDoc.id}')" style="background:#4CAF50;color:white;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;font-size:0.7rem;">♻️ 복구</button>` : ''}
+                        ${hasLevel(4) ? `<button onclick="adminRestoreWallet('${userDoc.id}','${wDoc.id}')" style="background:#4CAF50;color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;font-size:0.7rem;">♻️ 복구</button>` : ''}
                     </div>
                 </div>`;
             }
@@ -2046,7 +2046,7 @@ async function loadAdminWallet() {
                     <strong style="font-size:1.2rem;">${maticFormatted}</strong>
                 </div>
             </div>
-            <button onclick="loadAdminWallet()" style="background:var(--accent); color:white; border:none; padding:0.4rem 0.8rem; border-radius:4px; cursor:pointer; font-size:0.8rem;">🔄 새로고침</button>
+            <button onclick="loadAdminWallet()" style="background:var(--accent); color:#FFF8F0; border:none; padding:0.4rem 0.8rem; border-radius:4px; cursor:pointer; font-size:0.8rem;">🔄 새로고침</button>
         `;
         
         // 전역에 저장
@@ -2056,7 +2056,7 @@ async function loadAdminWallet() {
     } catch (error) {
         console.error('Admin wallet load error:', error);
         container.innerHTML = `<p style="color:red;">잔액 조회 실패: ${error.message}</p>
-            <button onclick="loadAdminWallet()" style="background:var(--accent); color:white; border:none; padding:0.4rem 0.8rem; border-radius:4px; cursor:pointer; font-size:0.8rem; margin-top:0.5rem;">🔄 다시 시도</button>`;
+            <button onclick="loadAdminWallet()" style="background:var(--accent); color:#FFF8F0; border:none; padding:0.4rem 0.8rem; border-radius:4px; cursor:pointer; font-size:0.8rem; margin-top:0.5rem;">🔄 다시 시도</button>`;
     }
 }
 
@@ -2284,45 +2284,45 @@ async function loadAdminParticipants() {
                                 <div style="display:flex; gap:0.3rem; flex-wrap:wrap;">
                                     ${openTrades.length > 0 ? `
                                         <button onclick="adminForceCloseAll('${p.userId}', '${participantId}', '${challengeId}')" 
-                                            style="background:#cc0000; color:white; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
+                                            style="background:#cc0000; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
                                             💥 강제 청산
                                         </button>
                                     ` : ''}
                                     ${!isSuspended ? `
                                         <button onclick="adminSuspendTrading('${participantId}', '${challengeId}')" 
-                                            style="background:#ff9800; color:white; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
+                                            style="background:#ff9800; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
                                             ⛔ 거래 중단
                                         </button>
                                     ` : `
                                         <button onclick="adminResumeTrading('${participantId}', '${challengeId}')" 
-                                            style="background:#4caf50; color:white; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
+                                            style="background:#4caf50; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
                                             ✅ 중단 해제
                                         </button>
                                     `}
                                     ${isLocked ? `
                                         <button onclick="adminUnlockTrading('${participantId}', '${challengeId}')" 
-                                            style="background:#2196F3; color:white; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
+                                            style="background:#2196F3; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
                                             🔓 잠금 해제
                                         </button>
                                     ` : ''}
                                     <button onclick="adminAdjustDailyLimit('${participantId}', '${challengeId}')" 
-                                        style="background:#607D8B; color:white; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
+                                        style="background:#607D8B; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
                                         📊 일일한도
                                     </button>
                                     <button onclick="adminAdjustMaxDrawdown('${participantId}', '${challengeId}')" 
-                                        style="background:#455A64; color:white; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
+                                        style="background:#455A64; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
                                         💀 청산한도
                                     </button>
                                     <button onclick="adminAdjustBalance('${participantId}', '${challengeId}')" 
-                                        style="background:#795548; color:white; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
+                                        style="background:#795548; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
                                         💰 잔액 조정
                                     </button>
                                     <button onclick="adminAdjustCopyAccounts('${participantId}', '${challengeId}')" 
-                                        style="background:#FF6D00; color:white; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
+                                        style="background:#FF6D00; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
                                         📋 카피계정
                                     </button>
                                     <button onclick="adminAdjustTradingTier('${participantId}', '${challengeId}')" 
-                                        style="background:#9C27B0; color:white; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
+                                        style="background:#9C27B0; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
                                         📊 거래티어
                                     </button>
                                 </div>
@@ -2462,7 +2462,7 @@ async function loadPropTrading() {
             }
             
             const card = document.createElement('div');
-            card.style.cssText = 'background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem; border:2px solid var(--border);';
+            card.style.cssText = 'background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem; border:2px solid var(--border);';
             card.innerHTML = `
                 <h3 style="margin-bottom:0.3rem;">${ch.name}</h3>
                 <p style="color:var(--accent); margin-bottom:0.8rem; font-size:0.85rem;">${ch.description || ''}</p>
@@ -2491,7 +2491,7 @@ async function showCreateChallenge() {
     }
     
     const formHTML = `
-        <div id="create-challenge-form" style="background:white; padding:1.5rem; border-radius:12px; margin-top:1rem; border:2px solid var(--accent);">
+        <div id="create-challenge-form" style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-top:1rem; border:2px solid var(--accent);">
             <h3 style="margin-bottom:1rem;">🆕 CRTD 프랍 챌린지 생성</h3>
             
             <div style="display:grid; gap:0.8rem;">
@@ -3158,7 +3158,7 @@ async function loadSuperAdminWallets() {
     if (!container) return;
     
     container.style.display = 'block';
-    container.innerHTML = '<div style="background:white;padding:1.5rem;border-radius:12px;"><p style="color:var(--accent);">🔄 계좌 정보 로드 중...</p></div>';
+    container.innerHTML = '<div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;"><p style="color:var(--accent);">🔄 계좌 정보 로드 중...</p></div>';
     
     try {
         const uid = currentUser.uid;
@@ -3195,7 +3195,7 @@ async function loadSuperAdminWallets() {
             const exists = !!data;
             return `
                 <div style="background:${isActive ? `linear-gradient(135deg,${color}15,${color}08)` : 'white'};padding:1.2rem;border-radius:12px;border:2px solid ${isActive ? color : '#eee'};position:relative;">
-                    ${isActive ? `<span style="position:absolute;top:8px;right:8px;background:${color};color:white;padding:2px 8px;border-radius:10px;font-size:0.65rem;font-weight:700;">활성</span>` : ''}
+                    ${isActive ? `<span style="position:absolute;top:8px;right:8px;background:${color};color:#FFF8F0;padding:2px 8px;border-radius:10px;font-size:0.65rem;font-weight:700;">활성</span>` : ''}
                     <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.8rem;">
                         <span style="font-size:1.5rem;">${icon}</span>
                         <div>
@@ -3205,15 +3205,15 @@ async function loadSuperAdminWallets() {
                     </div>
                     <div style="margin-bottom:0.8rem;">${formatBal(data)}</div>
                     <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
-                        ${!exists ? `<button onclick="createSuperWallet('${type}')" style="background:${color};color:white;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;">➕ 생성</button>` : ''}
-                        ${exists && !isActive ? `<button onclick="switchActiveWallet('${type}')" style="background:${color};color:white;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;">🔄 활성화</button>` : ''}
-                        ${exists ? `<button onclick="showInternalTransfer('${type}')" style="background:#455a64;color:white;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.78rem;">↔️ 이체</button>` : ''}
+                        ${!exists ? `<button onclick="createSuperWallet('${type}')" style="background:${color};color:#FFF8F0;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;">➕ 생성</button>` : ''}
+                        ${exists && !isActive ? `<button onclick="switchActiveWallet('${type}')" style="background:${color};color:#FFF8F0;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;">🔄 활성화</button>` : ''}
+                        ${exists ? `<button onclick="showInternalTransfer('${type}')" style="background:#455a64;color:#FFF8F0;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.78rem;">↔️ 이체</button>` : ''}
                     </div>
                 </div>`;
         }
         
         container.innerHTML = `
-            <div style="background:white;padding:1.5rem;border-radius:12px;margin-bottom:1rem;">
+            <div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;margin-bottom:1rem;">
                 <h3 style="margin-bottom:0.3rem;">🏦 슈퍼관리자 계좌 관리</h3>
                 <p style="font-size:0.78rem;color:#666;margin-bottom:1.2rem;">오리지널 계좌(금고)와 운영 계좌를 분리 관리합니다. 오리지널 계좌 출금 시 2단계 확인이 필요합니다.</p>
                 
@@ -3224,7 +3224,7 @@ async function loadSuperAdminWallets() {
                 </div>
             </div>
             
-            <div style="background:white;padding:1.5rem;border-radius:12px;">
+            <div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;">
                 <h4 style="margin-bottom:0.8rem;">📜 내부 이체 로그</h4>
                 <div id="super-wallet-log" style="max-height:300px;overflow-y:auto;"><p style="color:#999;font-size:0.8rem;">로그 로딩 중...</p></div>
             </div>`;
@@ -3232,7 +3232,7 @@ async function loadSuperAdminWallets() {
         // Load transfer logs
         loadSuperWalletLog();
     } catch (e) {
-        container.innerHTML = `<div style="background:white;padding:1.5rem;border-radius:12px;"><p style="color:red;">로드 실패: ${e.message}</p></div>`;
+        container.innerHTML = `<div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;"><p style="color:red;">로드 실패: ${e.message}</p></div>`;
     }
 }
 
@@ -3277,7 +3277,7 @@ async function showInternalTransfer(fromType) {
     const overlay = document.createElement('div');
     overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
     overlay.innerHTML = `
-        <div style="background:white;padding:1.5rem;border-radius:16px;max-width:400px;width:100%;">
+        <div style="background:#FFF8F0;padding:1.5rem;border-radius:16px;max-width:400px;width:100%;">
             <h3 style="margin-bottom:0.5rem;">↔️ 내부 이체</h3>
             <p style="font-size:0.8rem;color:#666;margin-bottom:1rem;">보내는 계좌: <strong>${labels[fromType]}</strong></p>
             
@@ -3299,8 +3299,8 @@ async function showInternalTransfer(fromType) {
             ${fromType === 'original' ? '<p style="font-size:0.75rem;color:#FF6D00;margin-bottom:0.8rem;">⚠️ 오리지널 계좌 출금: 2단계 확인 필요</p>' : ''}
             
             <div style="display:flex;gap:0.5rem;">
-                <button id="transfer-submit" style="flex:1;padding:0.7rem;background:#1565C0;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:700;">💸 이체</button>
-                <button id="transfer-cancel" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">취소</button>
+                <button id="transfer-submit" style="flex:1;padding:0.7rem;background:#1565C0;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:700;">💸 이체</button>
+                <button id="transfer-cancel" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;">취소</button>
             </div>
         </div>`;
     
@@ -3611,7 +3611,7 @@ function renderDashboardStats(stats) {
         const colors = { mall: '#00BFA5', art: '#E91E63', books: '#FF9800', trading: '#FF6D00', social: '#2196F3' };
         sectionEl.innerHTML = Object.entries(sections).map(([key, sec]) => {
             const color = colors[key] || '#607D8B';
-            return `<div style="background:white; border:1px solid ${color}33; border-left:4px solid ${color}; padding:1rem; border-radius:10px;">
+            return `<div style="background:#FFF8F0; border:1px solid ${color}33; border-left:4px solid ${color}; padding:1rem; border-radius:10px;">
                 <div style="font-weight:700; margin-bottom:0.5rem;">${sec.icon} ${sec.label}</div>
                 ${(sec.items || []).map(item => `<div style="display:flex; justify-content:space-between; font-size:0.82rem; padding:0.2rem 0;">
                     <span style="color:#666;">${item.label}</span>
@@ -3693,8 +3693,8 @@ async function loadAdminPendingProducts() {
                     </div>
                 </div>
                 <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
-                    <button onclick="approveProduct('${d.id}')" style="flex:1;background:#4CAF50;color:white;border:none;padding:0.5rem;border-radius:6px;cursor:pointer;font-weight:600;">✅ 승인</button>
-                    <button onclick="rejectProduct('${d.id}')" style="flex:1;background:#f44336;color:white;border:none;padding:0.5rem;border-radius:6px;cursor:pointer;font-weight:600;">❌ 거부</button>
+                    <button onclick="approveProduct('${d.id}')" style="flex:1;background:#4CAF50;color:#FFF8F0;border:none;padding:0.5rem;border-radius:6px;cursor:pointer;font-weight:600;">✅ 승인</button>
+                    <button onclick="rejectProduct('${d.id}')" style="flex:1;background:#f44336;color:#FFF8F0;border:none;padding:0.5rem;border-radius:6px;cursor:pointer;font-weight:600;">❌ 거부</button>
                 </div>
             </div>`;
         });
@@ -3756,8 +3756,8 @@ async function loadAdminReports() {
                 <div style="font-size:0.8rem;color:#555;margin:0.3rem 0;">신고자: ${r.reporterEmail || r.reporterId?.slice(0,8)}</div>
                 ${r.detail ? `<div style="font-size:0.8rem;color:#555;">상세: ${r.detail}</div>` : ''}
                 <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
-                    <button onclick="handleReport('${d.id}','confirmed')" style="flex:1;background:#f44336;color:white;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-size:0.8rem;">🗑️ 삭제조치</button>
-                    <button onclick="handleReport('${d.id}','dismissed')" style="flex:1;background:#999;color:white;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-size:0.8rem;">무시</button>
+                    <button onclick="handleReport('${d.id}','confirmed')" style="flex:1;background:#f44336;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-size:0.8rem;">🗑️ 삭제조치</button>
+                    <button onclick="handleReport('${d.id}','dismissed')" style="flex:1;background:#999;color:#FFF8F0;border:none;padding:0.4rem;border-radius:6px;cursor:pointer;font-size:0.8rem;">무시</button>
                 </div>
             </div>`;
         });
@@ -3819,7 +3819,7 @@ async function loadRewardSettingsTab() {
             <span style="font-size:0.8rem;">${t('admin.rw_users','명')}</span>
             <input type="number" class="rw-tier-amt" value="${tier.amount}" min="0" step="0.1" style="width:80px;padding:0.4rem;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;" placeholder="CRTD">
             <span style="font-size:0.8rem;">CRTD</span>
-            <button onclick="this.parentElement.remove()" style="background:#f44336;color:white;border:none;border-radius:4px;padding:0.2rem 0.5rem;cursor:pointer;font-size:0.75rem;">✕</button>
+            <button onclick="this.parentElement.remove()" style="background:#f44336;color:#FFF8F0;border:none;border-radius:4px;padding:0.2rem 0.5rem;cursor:pointer;font-size:0.75rem;">✕</button>
         </div>
     `).join('');
 
@@ -3836,7 +3836,7 @@ async function loadRewardSettingsTab() {
         </table></div>`;
 
     container.innerHTML = `
-    <div style="background:white;padding:1.5rem;border-radius:12px;margin-bottom:1rem;">
+    <div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;margin-bottom:1rem;">
         <h3 style="margin-bottom:1rem;">🎁 ${t('admin.rw_title','리워드 설정')}</h3>
 
         <!-- 가입 리워드 -->
@@ -3891,7 +3891,7 @@ async function loadRewardSettingsTab() {
     </div>
 
     <!-- 지급 내역 -->
-    <div style="background:white;padding:1.5rem;border-radius:12px;">
+    <div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;">
         <h3 style="margin-bottom:1rem;">📋 ${t('admin.rw_logs','최근 리워드 지급 내역')}</h3>
         ${logsHTML}
     </div>`;
@@ -3908,7 +3908,7 @@ function addRewardTier() {
         <span style="font-size:0.8rem;">명</span>
         <input type="number" class="rw-tier-amt" value="" min="0" step="0.1" style="width:80px;padding:0.4rem;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;" placeholder="CRTD">
         <span style="font-size:0.8rem;">CRTD</span>
-        <button onclick="this.parentElement.remove()" style="background:#f44336;color:white;border:none;border-radius:4px;padding:0.2rem 0.5rem;cursor:pointer;font-size:0.75rem;">✕</button>
+        <button onclick="this.parentElement.remove()" style="background:#f44336;color:#FFF8F0;border:none;border-radius:4px;padding:0.2rem 0.5rem;cursor:pointer;font-size:0.75rem;">✕</button>
     `;
     container.appendChild(div);
 }

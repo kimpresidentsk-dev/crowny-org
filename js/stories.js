@@ -16,7 +16,7 @@ async function openStoryUpload() {
     <div style="background:var(--bg-card,#3D2B1F);padding:1.5rem;border-radius:20px;max-width:400px;width:100%;">
         <h3 style="margin-bottom:1rem;text-align:center;">📸 스토리 만들기</h3>
         <div id="story-preview-area" style="width:100%;aspect-ratio:9/16;max-height:50vh;background:#111;border-radius:12px;margin-bottom:1rem;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;">
-            <span style="color:var(--text-muted,#888);font-size:0.9rem;">사진 또는 영상을 선택하세요</span>
+            <span style="color:var(--text-muted,#6B5744);font-size:0.9rem;">사진 또는 영상을 선택하세요</span>
         </div>
         <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
             <label style="flex:1;text-align:center;padding:0.7rem;background:var(--bg);border-radius:10px;cursor:pointer;font-size:0.85rem;border:1px solid var(--border);">
@@ -31,7 +31,7 @@ async function openStoryUpload() {
         <input type="text" id="story-text-input" placeholder="텍스트 추가..." style="width:100%;padding:0.7rem;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;margin-bottom:0.8rem;box-sizing:border-box;">
         <div style="display:flex;gap:0.5rem;">
             <button onclick="document.getElementById('story-upload-modal')?.remove()" style="flex:1;padding:0.7rem;border:1px solid var(--border,#E8E0D8);border-radius:10px;background:var(--bg-card,#3D2B1F);cursor:pointer;">취소</button>
-            <button id="story-upload-btn" onclick="uploadStory()" style="flex:1;padding:0.7rem;border:none;border-radius:10px;background:#3D2B1F;color:white;font-weight:700;cursor:pointer;" disabled>스토리 올리기</button>
+            <button id="story-upload-btn" onclick="uploadStory()" style="flex:1;padding:0.7rem;border:none;border-radius:10px;background:#3D2B1F;color:#FFF8F0;font-weight:700;cursor:pointer;" disabled>스토리 올리기</button>
         </div>
     </div>`;
     document.body.appendChild(overlay);
@@ -59,7 +59,7 @@ function previewStoryMedia(input, type) {
             if (v.duration > 15) {
                 showToast('스토리 영상은 15초 이하만 가능합니다', 'warning');
                 _storyMediaFile = null;
-                area.innerHTML = '<span style="color:var(--text-muted,#888);">15초 이하 영상만 가능합니다</span>';
+                area.innerHTML = '<span style="color:var(--text-muted,#6B5744);">15초 이하 영상만 가능합니다</span>';
                 document.getElementById('story-upload-btn').disabled = true;
                 return;
             }
@@ -270,20 +270,20 @@ async function showStoryContent(userId, itemIdx) {
         ${progressHTML}
         <div style="display:flex;align-items:center;gap:0.6rem;padding:8px 12px;">
             ${avatarHTML(info.photoURL, info.nickname, 32)}
-            <span style="color:white;font-weight:600;font-size:0.9rem;flex:1;">${info.nickname}</span>
+            <span style="color:#FFF8F0;font-weight:600;font-size:0.9rem;flex:1;">${info.nickname}</span>
             <span style="color:rgba(255,255,255,0.6);font-size:0.75rem;">${timeAgo}</span>
-            ${isMe ? `<button onclick="showStoryViewers('${story.id}')" style="background:none;border:none;color:white;cursor:pointer;font-size:0.8rem;">👁 ${story.viewers?.length || 0}</button>` : ''}
-            <button onclick="closeStoryViewer()" style="background:none;border:none;color:white;cursor:pointer;font-size:1.5rem;padding:0 4px;">✕</button>
+            ${isMe ? `<button onclick="showStoryViewers('${story.id}')" style="background:none;border:none;color:#FFF8F0;cursor:pointer;font-size:0.8rem;">👁 ${story.viewers?.length || 0}</button>` : ''}
+            <button onclick="closeStoryViewer()" style="background:none;border:none;color:#FFF8F0;cursor:pointer;font-size:1.5rem;padding:0 4px;">✕</button>
         </div>
         <div style="flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;">
             ${mediaHTML}
-            ${story.text ? `<div style="position:absolute;bottom:80px;left:0;right:0;text-align:center;padding:0.8rem;font-size:1.1rem;font-weight:600;color:white;text-shadow:0 2px 8px rgba(0,0,0,0.8);">${story.text}</div>` : ''}
+            ${story.text ? `<div style="position:absolute;bottom:80px;left:0;right:0;text-align:center;padding:0.8rem;font-size:1.1rem;font-weight:600;color:#FFF8F0;text-shadow:0 2px 8px rgba(0,0,0,0.8);">${story.text}</div>` : ''}
             <div onclick="storyTapLeft()" style="position:absolute;left:0;top:0;width:30%;height:100%;cursor:pointer;"></div>
             <div onclick="storyTapRight()" style="position:absolute;right:0;top:0;width:70%;height:100%;cursor:pointer;"></div>
         </div>
         ${!isMe ? `<div style="display:flex;gap:0.5rem;padding:12px;align-items:center;">
-            <input type="text" id="story-reply-input" placeholder="답장 보내기..." style="flex:1;padding:0.6rem 1rem;border:1px solid rgba(255,255,255,0.3);border-radius:20px;background:transparent;color:white;font-size:0.9rem;outline:none;" onkeypress="if(event.key==='Enter')sendStoryReply('${userId}','${story.id}')">
-            <button onclick="sendStoryReply('${userId}','${story.id}')" style="background:none;border:none;color:white;cursor:pointer;font-size:1.3rem;">📤</button>
+            <input type="text" id="story-reply-input" placeholder="답장 보내기..." style="flex:1;padding:0.6rem 1rem;border:1px solid rgba(255,255,255,0.3);border-radius:20px;background:transparent;color:#FFF8F0;font-size:0.9rem;outline:none;" onkeypress="if(event.key==='Enter')sendStoryReply('${userId}','${story.id}')">
+            <button onclick="sendStoryReply('${userId}','${story.id}')" style="background:none;border:none;color:#FFF8F0;cursor:pointer;font-size:1.3rem;">📤</button>
         </div>` : '<div style="height:12px;"></div>'}`;
 
     document.body.appendChild(overlay);

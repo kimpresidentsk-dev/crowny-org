@@ -619,7 +619,7 @@ const E2ECrypto = (() => {
         overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
 
         overlay.innerHTML = `
-        <div style="background:white;padding:1.5rem;border-radius:16px;max-width:420px;width:100%;">
+        <div style="background:#FFF8F0;padding:1.5rem;border-radius:16px;max-width:420px;width:100%;">
             <h3 style="margin-bottom:1rem;">🔐 채팅 보안 설정</h3>
             ${isSecret ? '<div style="background:#fff3e0;padding:0.5rem;border-radius:8px;margin-bottom:1rem;font-size:0.8rem;">🔒 비밀 채팅 — E2E 암호화가 강제 적용됩니다</div>' : ''}
             
@@ -650,12 +650,12 @@ const E2ECrypto = (() => {
             <div style="padding:0.8rem 0;">
                 <div style="font-weight:600;font-size:0.9rem;margin-bottom:0.5rem;">🔑 키 관리</div>
                 <div style="display:flex;gap:0.5rem;">
-                    <button onclick="E2ECrypto.exportKeysToFile('${currentUser.uid}')" style="flex:1;padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;font-size:0.8rem;">📤 키 내보내기</button>
-                    <button onclick="E2ECrypto.importKeysFromFile('${currentUser.uid}')" style="flex:1;padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;font-size:0.8rem;">📥 키 가져오기</button>
+                    <button onclick="E2ECrypto.exportKeysToFile('${currentUser.uid}')" style="flex:1;padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;font-size:0.8rem;">📤 키 내보내기</button>
+                    <button onclick="E2ECrypto.importKeysFromFile('${currentUser.uid}')" style="flex:1;padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;font-size:0.8rem;">📥 키 가져오기</button>
                 </div>
             </div>
 
-            <button onclick="document.getElementById('chat-security-modal').remove()" style="width:100%;margin-top:0.5rem;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">닫기</button>
+            <button onclick="document.getElementById('chat-security-modal').remove()" style="width:100%;margin-top:0.5rem;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;">닫기</button>
         </div>`;
         document.body.appendChild(overlay);
     }
@@ -688,11 +688,11 @@ const E2ECrypto = (() => {
             </div>`;
         }
 
-        overlay.innerHTML = `<div style="background:white;padding:1.5rem;border-radius:16px;max-width:420px;width:100%;max-height:60vh;overflow-y:auto;">
+        overlay.innerHTML = `<div style="background:#FFF8F0;padding:1.5rem;border-radius:16px;max-width:420px;width:100%;max-height:60vh;overflow-y:auto;">
             <h3 style="margin-bottom:1rem;">🔒 비밀 채팅 시작</h3>
             <p style="font-size:0.8rem;color:#999;margin-bottom:1rem;">E2E 암호화 + 자동삭제(24시간) + 전달 불가</p>
             ${listHTML}
-            <button onclick="this.closest('[style*=position]').remove()" style="width:100%;margin-top:1rem;padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">취소</button>
+            <button onclick="this.closest('[style*=position]').remove()" style="width:100%;margin-top:1rem;padding:0.5rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;">취소</button>
         </div>`;
         document.body.appendChild(overlay);
     }

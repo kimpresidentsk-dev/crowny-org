@@ -176,7 +176,7 @@ async function searchFriends() {
     const query = document.getElementById('friend-search-input').value.trim().toLowerCase();
     const results = document.getElementById('friend-search-results');
     if (!query) return;
-    results.innerHTML = '<p style="text-align:center;color:var(--text-muted,#888);">검색 중...</p>';
+    results.innerHTML = '<p style="text-align:center;color:var(--text-muted,#6B5744);">검색 중...</p>';
     
     try {
         // Search by email
@@ -186,7 +186,7 @@ async function searchFriends() {
             users = await db.collection('users').orderBy('nickname').startAt(query).endAt(query + '\uf8ff').limit(10).get();
         }
         if (users.empty) {
-            results.innerHTML = `<p style="text-align:center;color:var(--text-muted,#888);">${t('friends.no_results', '검색 결과가 없습니다')}</p>`;
+            results.innerHTML = `<p style="text-align:center;color:var(--text-muted,#6B5744);">${t('friends.no_results', '검색 결과가 없습니다')}</p>`;
             return;
         }
         let html = '';
@@ -199,13 +199,13 @@ async function searchFriends() {
                 ${avatarHTML(info.photoURL, info.nickname, 40)}
                 <div style="flex:1;min-width:0;">
                     <div style="font-weight:600;font-size:0.9rem;">${info.nickname}</div>
-                    <div style="font-size:0.75rem;color:var(--text-muted,#888);">${data.statusMessage || ''}</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted,#6B5744);">${data.statusMessage || ''}</div>
                 </div>
                 ${isFriend ? `<span style="font-size:0.75rem;color:#4CAF50;">✅ 친구</span>` :
                 `<button onclick="sendFriendRequest('${doc.id}');this.textContent='요청됨';this.disabled=true;" class="btn-primary" style="padding:0.3rem 0.8rem;font-size:0.8rem;border-radius:6px;">친구 추가</button>`}
             </div>`;
         }
-        results.innerHTML = html || `<p style="text-align:center;color:var(--text-muted,#888);">${t('friends.no_results', '검색 결과가 없습니다')}</p>`;
+        results.innerHTML = html || `<p style="text-align:center;color:var(--text-muted,#6B5744);">${t('friends.no_results', '검색 결과가 없습니다')}</p>`;
     } catch (e) {
         results.innerHTML = `<p style="color:red;">검색 오류: ${e.message}</p>`;
     }
@@ -289,13 +289,13 @@ async function showUserProfile(uid) {
             <div style="text-align:center;margin-bottom:1rem;">
                 ${avatarHTML(info.photoURL, info.nickname, 80)}
                 <h3 style="margin-top:0.5rem;margin-bottom:0.2rem;">${info.nickname}</h3>
-                ${info.statusMessage ? `<p style="font-size:0.85rem;color:var(--text-muted,#888);">${info.statusMessage}</p>` : ''}
+                ${info.statusMessage ? `<p style="font-size:0.85rem;color:var(--text-muted,#6B5744);">${info.statusMessage}</p>` : ''}
             </div>
             <div style="display:flex;justify-content:space-around;text-align:center;margin-bottom:1rem;padding:0.8rem 0;border-top:1px solid #eee;border-bottom:1px solid var(--border,#E8E0D8);">
-                <div><div style="font-weight:700;font-size:1.1rem;">${postCount}</div><div style="font-size:0.75rem;color:var(--text-muted,#888);">게시물</div></div>
-                <div><div style="font-weight:700;font-size:1.1rem;">${friendCount}</div><div style="font-size:0.75rem;color:var(--text-muted,#888);">친구</div></div>
-                <div><div style="font-weight:700;font-size:1.1rem;">${followCounts.followers}</div><div style="font-size:0.75rem;color:var(--text-muted,#888);">팔로워</div></div>
-                <div><div style="font-weight:700;font-size:1.1rem;">${followCounts.following}</div><div style="font-size:0.75rem;color:var(--text-muted,#888);">팔로잉</div></div>
+                <div><div style="font-weight:700;font-size:1.1rem;">${postCount}</div><div style="font-size:0.75rem;color:var(--text-muted,#6B5744);">게시물</div></div>
+                <div><div style="font-weight:700;font-size:1.1rem;">${friendCount}</div><div style="font-size:0.75rem;color:var(--text-muted,#6B5744);">친구</div></div>
+                <div><div style="font-weight:700;font-size:1.1rem;">${followCounts.followers}</div><div style="font-size:0.75rem;color:var(--text-muted,#6B5744);">팔로워</div></div>
+                <div><div style="font-weight:700;font-size:1.1rem;">${followCounts.following}</div><div style="font-size:0.75rem;color:var(--text-muted,#6B5744);">팔로잉</div></div>
             </div>
             ${!isMe ? `
             <div style="display:flex;gap:0.5rem;">
@@ -354,7 +354,7 @@ function parseLinkPreviews(text) {
                 <img src="https://img.youtube.com/vi/${videoId}/mqdefault.jpg" style="width:100%;border-radius:8px 8px 0 0;" loading="lazy">
                 <div style="padding:0.5rem 0.8rem;display:flex;align-items:center;gap:0.5rem;">
                     <span style="font-size:1.2rem;">▶️</span>
-                    <span style="font-size:0.8rem;color:var(--text-muted,#888);">YouTube 동영상 · 클릭하여 재생</span>
+                    <span style="font-size:0.8rem;color:var(--text-muted,#6B5744);">YouTube 동영상 · 클릭하여 재생</span>
                 </div>
             </div>`;
             continue;
@@ -365,10 +365,10 @@ function parseLinkPreviews(text) {
             <a href="${escapedUrl}" target="_blank" rel="noopener" class="link-preview-card" style="text-decoration:none;display:flex;align-items:center;gap:0.8rem;padding:0.8rem;">
                 <span style="font-size:1.5rem;">📸</span>
                 <div style="flex:1;min-width:0;">
-                    <div style="font-size:0.85rem;font-weight:600;color:var(--text,#f0f0f0);">Instagram</div>
-                    <div style="font-size:0.75rem;color:var(--text-muted,#888);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapedUrl}</div>
+                    <div style="font-size:0.85rem;font-weight:600;color:var(--text,#3D2B1F);">Instagram</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted,#6B5744);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapedUrl}</div>
                 </div>
-                <span style="color:var(--text-muted,#888);">→</span>
+                <span style="color:var(--text-muted,#6B5744);">→</span>
             </a>`;
             continue;
         }
@@ -378,10 +378,10 @@ function parseLinkPreviews(text) {
             <a href="${escapedUrl}" target="_blank" rel="noopener" class="link-preview-card" style="text-decoration:none;display:flex;align-items:center;gap:0.8rem;padding:0.8rem;">
                 <span style="font-size:1.5rem;">🎵</span>
                 <div style="flex:1;min-width:0;">
-                    <div style="font-size:0.85rem;font-weight:600;color:var(--text,#f0f0f0);">TikTok</div>
-                    <div style="font-size:0.75rem;color:var(--text-muted,#888);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapedUrl}</div>
+                    <div style="font-size:0.85rem;font-weight:600;color:var(--text,#3D2B1F);">TikTok</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted,#6B5744);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapedUrl}</div>
                 </div>
-                <span style="color:var(--text-muted,#888);">→</span>
+                <span style="color:var(--text-muted,#6B5744);">→</span>
             </a>`;
             continue;
         }

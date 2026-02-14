@@ -118,8 +118,8 @@ function _renderBookCard(b) {
         ? `<img src="${b.coverImage || b.imageData}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">`
         : `<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;background:#f5f0e8;">${(BOOK_GENRES[b.genre] || '📚').charAt(0)}</div>`;
 
-    return `<div onclick="viewBookDetailV2('${b.id}')" style="min-width:130px;max-width:150px;background:white;border-radius:10px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.08);flex-shrink:0;position:relative;">
-        ${isSoldOut ? '<div style="position:absolute;top:8px;right:8px;background:red;color:white;font-size:0.6rem;padding:2px 6px;border-radius:4px;font-weight:700;z-index:1;">SOLD OUT</div>' : ''}
+    return `<div onclick="viewBookDetailV2('${b.id}')" style="min-width:130px;max-width:150px;background:#FFF8F0;border-radius:10px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.08);flex-shrink:0;position:relative;">
+        ${isSoldOut ? '<div style="position:absolute;top:8px;right:8px;background:red;color:#FFF8F0;font-size:0.6rem;padding:2px 6px;border-radius:4px;font-weight:700;z-index:1;">SOLD OUT</div>' : ''}
         ${b.edition === 'limited' ? '<div style="position:absolute;top:8px;left:8px;background:gold;color:#333;font-size:0.6rem;padding:2px 6px;border-radius:4px;font-weight:700;z-index:1;">한정판</div>' : ''}
         <div style="height:180px;overflow:hidden;">${coverBg}</div>
         <div style="padding:0.5rem;">
@@ -193,11 +193,11 @@ async function viewBookDetailV2(id) {
 
     const translations = b.availableTranslations || ['ko'];
 
-    modal.innerHTML = `<div style="background:white;border-radius:16px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;">
+    modal.innerHTML = `<div style="background:#FFF8F0;border-radius:16px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;">
         <div style="height:280px;background:#f5f0e8;display:flex;align-items:center;justify-content:center;position:relative;">
             ${b.coverImage || b.imageData ? `<img src="${b.coverImage || b.imageData}" loading="lazy" style="max-width:100%;max-height:100%;object-fit:contain;">` : `<span style="font-size:5rem;">${(BOOK_GENRES[b.genre] || '📚').charAt(0)}</span>`}
             ${b.edition === 'limited' ? `<div style="position:absolute;top:12px;left:12px;background:gold;color:#333;padding:4px 10px;border-radius:6px;font-weight:700;font-size:0.8rem;">🏆 한정판 ${sold}/${supply}</div>` : ''}
-            ${isSoldOut ? `<div style="position:absolute;top:12px;right:12px;background:red;color:white;padding:4px 10px;border-radius:6px;font-weight:700;font-size:0.8rem;">SOLD OUT</div>` : ''}
+            ${isSoldOut ? `<div style="position:absolute;top:12px;right:12px;background:red;color:#FFF8F0;padding:4px 10px;border-radius:6px;font-weight:700;font-size:0.8rem;">SOLD OUT</div>` : ''}
         </div>
         <div style="padding:1.5rem;">
             <h2 style="margin:0 0 0.3rem;">${b.title}</h2>
@@ -215,10 +215,10 @@ async function viewBookDetailV2(id) {
             </div>
             
             <div style="display:flex;gap:0.5rem;margin-top:1rem;">
-                ${userOwns || isOwner || price <= 0 ? `<button onclick="openBookReader('${id}');document.getElementById('book-detail-modal-v2')?.remove();" style="flex:1;background:#4CAF50;color:white;border:none;padding:0.8rem;border-radius:8px;cursor:pointer;font-weight:700;">📖 읽기</button>` : ''}
-                ${!userOwns && !isOwner && price > 0 && !isSoldOut ? `<button onclick="buyBookV2('${id}');document.getElementById('book-detail-modal-v2')?.remove();" style="flex:1;background:#0066cc;color:white;border:none;padding:0.8rem;border-radius:8px;cursor:pointer;font-weight:700;">🛒 구매 (${price} CRGC)</button>` : ''}
+                ${userOwns || isOwner || price <= 0 ? `<button onclick="openBookReader('${id}');document.getElementById('book-detail-modal-v2')?.remove();" style="flex:1;background:#4CAF50;color:#FFF8F0;border:none;padding:0.8rem;border-radius:8px;cursor:pointer;font-weight:700;">📖 읽기</button>` : ''}
+                ${!userOwns && !isOwner && price > 0 && !isSoldOut ? `<button onclick="buyBookV2('${id}');document.getElementById('book-detail-modal-v2')?.remove();" style="flex:1;background:#0066cc;color:#FFF8F0;border:none;padding:0.8rem;border-radius:8px;cursor:pointer;font-weight:700;">🛒 구매 (${price} CRGC)</button>` : ''}
                 ${isSoldOut && !userOwns ? '<button disabled style="flex:1;background:#ccc;color:#666;border:none;padding:0.8rem;border-radius:8px;font-weight:700;">매진</button>' : ''}
-                <button onclick="addToReadingList('${id}')" style="background:#ff9800;color:white;border:none;padding:0.8rem;border-radius:8px;cursor:pointer;font-weight:700;">📚</button>
+                <button onclick="addToReadingList('${id}')" style="background:#ff9800;color:#FFF8F0;border:none;padding:0.8rem;border-radius:8px;cursor:pointer;font-weight:700;">📚</button>
             </div>
             ${!userOwns && !isOwner && price > 0 ? `<button onclick="requestTranslation('${id}')" style="background:none;border:1px solid var(--border);padding:0.5rem;border-radius:8px;cursor:pointer;width:100%;margin-top:0.5rem;font-size:0.85rem;">🌍 번역 요청</button>` : ''}
             <button onclick="document.getElementById('book-detail-modal-v2')?.remove()" style="background:#eee;border:none;padding:0.6rem;border-radius:8px;cursor:pointer;width:100%;margin-top:0.5rem;">닫기</button>
@@ -356,7 +356,7 @@ function _renderBookCreator() {
 
     const modal = document.createElement('div');
     modal.id = 'book-creator-modal';
-    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:white;z-index:10001;overflow-y:auto;';
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:#FFF8F0;z-index:10001;overflow-y:auto;';
 
     const steps = ['기본 정보', '챕터/씬', '미리보기', '발행'];
     const stepBar = `<div style="display:flex;gap:0;border-bottom:2px solid #eee;">
@@ -430,8 +430,8 @@ function _renderCreatorStep1() {
         </div>` : ''}
         
         <div style="display:flex;justify-content:flex-end;gap:0.5rem;margin-top:1rem;">
-            <button onclick="_saveBookDraft()" style="padding:0.7rem 1.5rem;border:1px solid var(--border);background:white;border-radius:8px;cursor:pointer;">💾 임시저장</button>
-            <button onclick="_bookCreatorData.step=2;_renderBookCreator();" style="padding:0.7rem 1.5rem;background:#0066cc;color:white;border:none;border-radius:8px;cursor:pointer;">다음 →</button>
+            <button onclick="_saveBookDraft()" style="padding:0.7rem 1.5rem;border:1px solid var(--border);background:#FFF8F0;border-radius:8px;cursor:pointer;">💾 임시저장</button>
+            <button onclick="_bookCreatorData.step=2;_renderBookCreator();" style="padding:0.7rem 1.5rem;background:#0066cc;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;">다음 →</button>
         </div>
     </div>`;
 }
@@ -448,11 +448,11 @@ function _renderCreatorStep2() {
                     ${ci < d.chapters.length - 1 ? `<button onclick="_moveChapter(${ci},1)" style="background:none;border:none;cursor:pointer;">⬇️</button>` : ''}
                     <input type="text" value="${_esc(ch.title)}" onchange="_bookCreatorData.chapters[${ci}].title=this.value" style="font-weight:700;font-size:1rem;border:none;background:transparent;width:150px;">
                 </div>
-                ${d.chapters.length > 1 ? `<button onclick="_bookCreatorData.chapters.splice(${ci},1);_renderBookCreator();" style="background:#ff5252;color:white;border:none;padding:0.3rem 0.6rem;border-radius:6px;cursor:pointer;font-size:0.75rem;">삭제</button>` : ''}
+                ${d.chapters.length > 1 ? `<button onclick="_bookCreatorData.chapters.splice(${ci},1);_renderBookCreator();" style="background:#ff5252;color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:6px;cursor:pointer;font-size:0.75rem;">삭제</button>` : ''}
             </div>`;
 
         ch.scenes.forEach((sc, si) => {
-            html += `<div style="background:white;border-radius:8px;padding:0.8rem;margin-bottom:0.5rem;border:1px solid #e0e0e0;">
+            html += `<div style="background:#FFF8F0;border-radius:8px;padding:0.8rem;margin-bottom:0.5rem;border:1px solid #e0e0e0;">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem;">
                     <span style="font-size:0.8rem;font-weight:600;">씬 ${si + 1}</span>
                     ${ch.scenes.length > 1 ? `<button onclick="_bookCreatorData.chapters[${ci}].scenes.splice(${si},1);_renderBookCreator();" style="background:none;border:none;cursor:pointer;font-size:0.7rem;color:red;">✕</button>` : ''}
@@ -485,10 +485,10 @@ function _renderCreatorStep2() {
     html += `<button onclick="_addChapter()" style="width:100%;padding:0.7rem;border:2px dashed #ccc;background:none;border-radius:10px;cursor:pointer;font-size:0.9rem;color:#888;">+ 챕터 추가</button>`;
 
     html += `<div style="display:flex;justify-content:space-between;margin-top:1rem;">
-        <button onclick="_bookCreatorData.step=1;_renderBookCreator();" style="padding:0.7rem 1.5rem;border:1px solid var(--border);background:white;border-radius:8px;cursor:pointer;">← 이전</button>
+        <button onclick="_bookCreatorData.step=1;_renderBookCreator();" style="padding:0.7rem 1.5rem;border:1px solid var(--border);background:#FFF8F0;border-radius:8px;cursor:pointer;">← 이전</button>
         <div style="display:flex;gap:0.5rem;">
-            <button onclick="_saveBookDraft()" style="padding:0.7rem 1.5rem;border:1px solid var(--border);background:white;border-radius:8px;cursor:pointer;">💾 임시저장</button>
-            <button onclick="_bookCreatorData.step=3;_renderBookCreator();" style="padding:0.7rem 1.5rem;background:#0066cc;color:white;border:none;border-radius:8px;cursor:pointer;">미리보기 →</button>
+            <button onclick="_saveBookDraft()" style="padding:0.7rem 1.5rem;border:1px solid var(--border);background:#FFF8F0;border-radius:8px;cursor:pointer;">💾 임시저장</button>
+            <button onclick="_bookCreatorData.step=3;_renderBookCreator();" style="padding:0.7rem 1.5rem;background:#0066cc;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;">미리보기 →</button>
         </div>
     </div></div>`;
     return html;
@@ -503,13 +503,13 @@ function _renderCreatorStep3() {
             <div id="book-preview-effects" style="position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;overflow:hidden;"></div>
         </div>
         <div style="display:flex;gap:0.5rem;margin-top:0.5rem;justify-content:center;">
-            <button onclick="_previewScene(-1)" style="padding:0.5rem 1rem;border:1px solid var(--border);background:white;border-radius:6px;cursor:pointer;">← 이전 씬</button>
+            <button onclick="_previewScene(-1)" style="padding:0.5rem 1rem;border:1px solid var(--border);background:#FFF8F0;border-radius:6px;cursor:pointer;">← 이전 씬</button>
             <span id="preview-scene-info" style="padding:0.5rem;font-size:0.85rem;color:var(--accent);"></span>
-            <button onclick="_previewScene(1)" style="padding:0.5rem 1rem;border:1px solid var(--border);background:white;border-radius:6px;cursor:pointer;">다음 씬 →</button>
+            <button onclick="_previewScene(1)" style="padding:0.5rem 1rem;border:1px solid var(--border);background:#FFF8F0;border-radius:6px;cursor:pointer;">다음 씬 →</button>
         </div>
         <div style="display:flex;justify-content:space-between;margin-top:1rem;">
-            <button onclick="_bookCreatorData.step=2;_renderBookCreator();" style="padding:0.7rem 1.5rem;border:1px solid var(--border);background:white;border-radius:8px;cursor:pointer;">← 이전</button>
-            <button onclick="_bookCreatorData.step=4;_renderBookCreator();" style="padding:0.7rem 1.5rem;background:#0066cc;color:white;border:none;border-radius:8px;cursor:pointer;">발행 설정 →</button>
+            <button onclick="_bookCreatorData.step=2;_renderBookCreator();" style="padding:0.7rem 1.5rem;border:1px solid var(--border);background:#FFF8F0;border-radius:8px;cursor:pointer;">← 이전</button>
+            <button onclick="_bookCreatorData.step=4;_renderBookCreator();" style="padding:0.7rem 1.5rem;background:#0066cc;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;">발행 설정 →</button>
         </div>
     </div>`;
 }
@@ -532,10 +532,10 @@ function _renderCreatorStep4() {
         <p style="font-size:0.75rem;color:var(--accent);">0 = 무료</p></div>
         
         <div style="display:flex;justify-content:space-between;margin-top:1rem;">
-            <button onclick="_bookCreatorData.step=3;_renderBookCreator();" style="padding:0.7rem 1.5rem;border:1px solid var(--border);background:white;border-radius:8px;cursor:pointer;">← 이전</button>
+            <button onclick="_bookCreatorData.step=3;_renderBookCreator();" style="padding:0.7rem 1.5rem;border:1px solid var(--border);background:#FFF8F0;border-radius:8px;cursor:pointer;">← 이전</button>
             <div style="display:flex;gap:0.5rem;">
-                <button onclick="_saveBookDraft()" style="padding:0.7rem 1.5rem;border:1px solid var(--border);background:white;border-radius:8px;cursor:pointer;">💾 임시저장</button>
-                <button onclick="_publishBook()" style="padding:0.7rem 1.5rem;background:#4CAF50;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:700;">📚 발행하기</button>
+                <button onclick="_saveBookDraft()" style="padding:0.7rem 1.5rem;border:1px solid var(--border);background:#FFF8F0;border-radius:8px;cursor:pointer;">💾 임시저장</button>
+                <button onclick="_publishBook()" style="padding:0.7rem 1.5rem;background:#4CAF50;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:700;">📚 발행하기</button>
             </div>
         </div>
     </div>`;
@@ -765,20 +765,20 @@ function _renderBookReader() {
 
     modal.innerHTML = `
         <div style="background:rgba(0,0,0,0.3);padding:0.5rem 1rem;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
-            <button onclick="_closeReader()" style="background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;">✕</button>
+            <button onclick="_closeReader()" style="background:none;border:none;color:#FFF8F0;font-size:1.2rem;cursor:pointer;">✕</button>
             <span style="color:#aaa;font-size:0.8rem;">${s.book.title}</span>
-            <button onclick="_toggleReaderSettings()" style="background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;">⚙️</button>
+            <button onclick="_toggleReaderSettings()" style="background:none;border:none;color:#FFF8F0;font-size:1.2rem;cursor:pointer;">⚙️</button>
         </div>
         <div style="height:2px;background:#333;flex-shrink:0;"><div style="height:100%;background:#4CAF50;width:${progress}%;transition:width 0.3s;"></div></div>
         
         <div id="reader-settings-panel" style="display:none;background:rgba(0,0,0,0.5);padding:0.8rem 1rem;flex-shrink:0;">
             <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
-                <button onclick="_adjustFontSize(-0.1)" style="background:#333;color:white;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">A-</button>
-                <button onclick="_adjustFontSize(0.1)" style="background:#333;color:white;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">A+</button>
-                <button onclick="_toggleEffects()" id="btn-effects-toggle" style="background:${s.effectsEnabled ? '#4CAF50' : '#555'};color:white;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">✨</button>
-                <button onclick="_toggleSound()" id="btn-sound-toggle" style="background:${s.soundEnabled ? '#4CAF50' : '#555'};color:white;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">🔊</button>
-                ${s.book.featureCodes?.ttsEnabled ? `<button onclick="_toggleTTS()" id="btn-tts-toggle" style="background:${s.ttsActive ? '#ff9800' : '#555'};color:white;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">🗣️ TTS</button>
-                <select onchange="_bookReaderState.ttsRate=parseFloat(this.value)" style="background:#333;color:white;border:none;padding:0.3rem;border-radius:4px;">
+                <button onclick="_adjustFontSize(-0.1)" style="background:#333;color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">A-</button>
+                <button onclick="_adjustFontSize(0.1)" style="background:#333;color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">A+</button>
+                <button onclick="_toggleEffects()" id="btn-effects-toggle" style="background:${s.effectsEnabled ? '#4CAF50' : '#555'};color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">✨</button>
+                <button onclick="_toggleSound()" id="btn-sound-toggle" style="background:${s.soundEnabled ? '#4CAF50' : '#555'};color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">🔊</button>
+                ${s.book.featureCodes?.ttsEnabled ? `<button onclick="_toggleTTS()" id="btn-tts-toggle" style="background:${s.ttsActive ? '#ff9800' : '#555'};color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;">🗣️ TTS</button>
+                <select onchange="_bookReaderState.ttsRate=parseFloat(this.value)" style="background:#333;color:#FFF8F0;border:none;padding:0.3rem;border-radius:4px;">
                     <option value="0.7">0.7x</option><option value="1" selected>1x</option><option value="1.3">1.3x</option><option value="1.5">1.5x</option><option value="2">2x</option>
                 </select>` : ''}
             </div>
@@ -891,7 +891,7 @@ function _showTreasureModal(reward) {
     const m = document.createElement('div');
     m.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10010;display:flex;align-items:center;justify-content:center;';
     m.onclick = () => m.remove();
-    m.innerHTML = `<div style="background:white;border-radius:20px;padding:2rem;text-align:center;max-width:300px;animation:bounceIn 0.5s;">
+    m.innerHTML = `<div style="background:#FFF8F0;border-radius:20px;padding:2rem;text-align:center;max-width:300px;animation:bounceIn 0.5s;">
         <div style="font-size:4rem;">🎉</div>
         <h2 style="margin:0.5rem 0;">보물 발견!</h2>
         <p style="color:#0066cc;font-size:1.5rem;font-weight:700;">${reward} CRGC 획득!</p>
@@ -1070,7 +1070,7 @@ function _applyEffect(container, effect) {
         if (effect === 'snow') {
             el.className = 'snowflake';
             el.textContent = ['❄', '❅', '❆', '•'][Math.floor(Math.random() * 4)];
-            el.style.cssText = `position:absolute;color:white;font-size:${size}em;left:${left}%;top:-5%;opacity:${0.5 + Math.random() * 0.5};pointer-events:none;animation:snowfall ${duration}s linear ${delay}s infinite;`;
+            el.style.cssText = `position:absolute;color:#FFF8F0;font-size:${size}em;left:${left}%;top:-5%;opacity:${0.5 + Math.random() * 0.5};pointer-events:none;animation:snowfall ${duration}s linear ${delay}s infinite;`;
         } else if (effect === 'rain') {
             el.style.cssText = `position:absolute;width:1px;height:${10 + Math.random() * 20}px;background:rgba(174,194,224,${0.3 + Math.random() * 0.4});left:${left}%;top:-5%;pointer-events:none;animation:rainfall ${0.5 + Math.random() * 0.5}s linear ${delay * 0.2}s infinite;`;
         } else if (effect === 'cherry_blossom') {
@@ -1080,7 +1080,7 @@ function _applyEffect(container, effect) {
             el.style.cssText = `position:absolute;width:${3 + Math.random() * 4}px;height:${3 + Math.random() * 4}px;background:rgba(255,255,100,0.8);border-radius:50%;left:${left}%;top:${Math.random() * 100}%;pointer-events:none;box-shadow:0 0 6px rgba(255,255,100,0.6);animation:fireflyGlow ${2 + Math.random() * 3}s ease-in-out ${delay}s infinite alternate;`;
         } else if (effect === 'stars') {
             el.textContent = ['✦', '★', '·', '⋆'][Math.floor(Math.random() * 4)];
-            el.style.cssText = `position:absolute;color:white;font-size:${size * 0.6}em;left:${left}%;top:${Math.random() * 100}%;pointer-events:none;animation:starTwinkle ${1.5 + Math.random() * 3}s ease-in-out ${delay}s infinite alternate;`;
+            el.style.cssText = `position:absolute;color:#FFF8F0;font-size:${size * 0.6}em;left:${left}%;top:${Math.random() * 100}%;pointer-events:none;animation:starTwinkle ${1.5 + Math.random() * 3}s ease-in-out ${delay}s infinite alternate;`;
         }
         container.appendChild(el);
     }
@@ -1125,17 +1125,17 @@ async function showMyLibrary() {
 
     const modal = document.createElement('div');
     modal.id = 'my-library-modal';
-    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:white;z-index:10001;overflow-y:auto;';
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:#FFF8F0;z-index:10001;overflow-y:auto;';
 
     modal.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;padding:1rem;border-bottom:1px solid #eee;">
         <h2 style="margin:0;font-size:1.1rem;">📚 내 서재</h2>
         <button onclick="document.getElementById('my-library-modal')?.remove()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">&times;</button>
     </div>
     <div style="display:flex;border-bottom:1px solid #eee;">
-        <button onclick="_showLibraryTab('purchased')" class="lib-tab active" style="flex:1;padding:0.8rem;border:none;background:white;cursor:pointer;font-weight:700;border-bottom:2px solid #0066cc;">📖 구매한 책</button>
-        <button onclick="_showLibraryTab('wishlist')" class="lib-tab" style="flex:1;padding:0.8rem;border:none;background:white;cursor:pointer;">💝 위시리스트</button>
-        <button onclick="_showLibraryTab('treasures')" class="lib-tab" style="flex:1;padding:0.8rem;border:none;background:white;cursor:pointer;">🎯 보물</button>
-        <button onclick="_showLibraryTab('translations')" class="lib-tab" style="flex:1;padding:0.8rem;border:none;background:white;cursor:pointer;">🌍 번역</button>
+        <button onclick="_showLibraryTab('purchased')" class="lib-tab active" style="flex:1;padding:0.8rem;border:none;background:#FFF8F0;cursor:pointer;font-weight:700;border-bottom:2px solid #0066cc;">📖 구매한 책</button>
+        <button onclick="_showLibraryTab('wishlist')" class="lib-tab" style="flex:1;padding:0.8rem;border:none;background:#FFF8F0;cursor:pointer;">💝 위시리스트</button>
+        <button onclick="_showLibraryTab('treasures')" class="lib-tab" style="flex:1;padding:0.8rem;border:none;background:#FFF8F0;cursor:pointer;">🎯 보물</button>
+        <button onclick="_showLibraryTab('translations')" class="lib-tab" style="flex:1;padding:0.8rem;border:none;background:#FFF8F0;cursor:pointer;">🌍 번역</button>
     </div>
     <div id="library-content" style="padding:1rem;">로딩...</div>`;
 
@@ -1229,7 +1229,7 @@ async function _loadLibraryTreasures() {
                 <span>🎯 ${t.bookId}</span><span style="color:#ff9800;font-weight:700;">+${t.reward} CRGC</span>
             </div>`;
         });
-        html = `<div style="background:#ff9800;color:white;padding:1rem;border-radius:10px;text-align:center;margin-bottom:1rem;"><h3 style="margin:0;">🏆 총 보물 보상: ${total} CRGC</h3></div>` + html;
+        html = `<div style="background:#ff9800;color:#FFF8F0;padding:1rem;border-radius:10px;text-align:center;margin-bottom:1rem;"><h3 style="margin:0;">🏆 총 보물 보상: ${total} CRGC</h3></div>` + html;
         c.innerHTML = html + '</div>';
     } catch (e) { c.innerHTML = `<p style="color:red;">${e.message}</p>`; }
 }
@@ -1279,10 +1279,10 @@ function _selectLanguage() {
 
         const m = document.createElement('div');
         m.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:10010;display:flex;align-items:center;justify-content:center;';
-        m.innerHTML = `<div style="background:white;border-radius:12px;padding:1.5rem;max-width:300px;width:90%;">
+        m.innerHTML = `<div style="background:#FFF8F0;border-radius:12px;padding:1.5rem;max-width:300px;width:90%;">
             <h3 style="margin:0 0 1rem;">🌍 번역 언어 선택</h3>
             <div style="display:grid;gap:0.5rem;">
-                ${langs.map(l => `<button onclick="this.closest('div').closest('div').closest('div')._resolve('${l.code}')" style="padding:0.7rem;border:1px solid var(--border);background:white;border-radius:8px;cursor:pointer;text-align:left;font-size:1rem;">${l.label}</button>`).join('')}
+                ${langs.map(l => `<button onclick="this.closest('div').closest('div').closest('div')._resolve('${l.code}')" style="padding:0.7rem;border:1px solid var(--border);background:#FFF8F0;border-radius:8px;cursor:pointer;text-align:left;font-size:1rem;">${l.label}</button>`).join('')}
             </div>
             <button onclick="this.closest('div').closest('div')._resolve(null)" style="width:100%;margin-top:0.5rem;padding:0.5rem;border:none;background:#eee;border-radius:8px;cursor:pointer;">취소</button>
         </div>`;

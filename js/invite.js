@@ -199,7 +199,7 @@
         modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
 
         modal.innerHTML = `
-        <div style="background:white;border-radius:16px;max-width:420px;width:100%;max-height:85vh;overflow-y:auto;padding:1.5rem;">
+        <div style="background:#FFF8F0;border-radius:16px;max-width:420px;width:100%;max-height:85vh;overflow-y:auto;padding:1.5rem;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
                 <h3 style="margin:0;">🎉 ${t('invite.title', '친구 초대')}</h3>
                 <button onclick="document.getElementById('invite-modal').remove()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;">✕</button>
@@ -289,7 +289,7 @@
         landing.id = 'invite-landing';
         landing.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:10001;display:flex;align-items:center;justify-content:center;padding:1rem;';
         landing.innerHTML = `
-        <div style="background:white;border-radius:16px;max-width:400px;width:100%;padding:2rem;text-align:center;">
+        <div style="background:#FFF8F0;border-radius:16px;max-width:400px;width:100%;padding:2rem;text-align:center;">
             <div style="font-size:3rem;margin-bottom:0.5rem;">🎉</div>
             <h2 style="margin:0 0 0.5rem 0;">${t('invite.landing_title', '크라우니에 초대되었습니다!')}</h2>
             ${inviterName ? `<p style="color:#888;margin-bottom:1rem;">${t('invite.invited_by', '소개자')}: <strong>${inviterName}</strong></p>` : ''}

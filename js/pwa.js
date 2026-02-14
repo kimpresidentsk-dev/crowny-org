@@ -20,7 +20,7 @@ async function registerServiceWorker() {
 function initOfflineBanner() {
   const banner = document.createElement('div');
   banner.id = 'offline-banner';
-  banner.style.cssText = 'display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:#ff9800;color:white;text-align:center;padding:6px 12px;font-size:0.82rem;font-weight:600;transition:transform 0.3s;';
+  banner.style.cssText = 'display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:#ff9800;color:#FFF8F0;text-align:center;padding:6px 12px;font-size:0.82rem;font-weight:600;transition:transform 0.3s;';
   banner.textContent = '📡 오프라인 모드 — 인터넷 연결을 확인하세요';
   document.body.prepend(banner);
 
@@ -152,7 +152,7 @@ function showInstallBanner() {
 
   const banner = document.createElement('div');
   banner.id = 'pwa-install-banner';
-  banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:99998;background:linear-gradient(135deg,#3D2B1F,#6B5744);color:white;padding:1rem 1.2rem;display:flex;align-items:center;gap:0.8rem;box-shadow:0 -4px 20px rgba(0,0,0,0.3);animation:slideUp 0.3s ease;';
+  banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:99998;background:linear-gradient(135deg,#3D2B1F,#6B5744);color:#FFF8F0;padding:1rem 1.2rem;display:flex;align-items:center;gap:0.8rem;box-shadow:0 -4px 20px rgba(0,0,0,0.3);animation:slideUp 0.3s ease;';
   banner.innerHTML = `
     <img src="/img/icons/icon-192x192.png" style="width:48px;height:48px;border-radius:12px;" alt="CROWNY">
     <div style="flex:1;">
@@ -161,7 +161,7 @@ function showInstallBanner() {
         ${isIOS ? '공유 버튼 → "홈 화면에 추가"를 탭하세요' : '홈 화면에 추가하고 더 빠르게 사용하세요'}
       </div>
     </div>
-    ${isIOS ? '' : '<button id="pwa-install-btn" style="background:white;color:#3D2B1F;border:none;padding:0.5rem 1rem;border-radius:8px;font-weight:700;font-size:0.85rem;cursor:pointer;white-space:nowrap;">설치</button>'}
+    ${isIOS ? '' : '<button id="pwa-install-btn" style="background:#FFF8F0;color:#3D2B1F;border:none;padding:0.5rem 1rem;border-radius:8px;font-weight:700;font-size:0.85rem;cursor:pointer;white-space:nowrap;">설치</button>'}
     <button onclick="dismissInstallBanner()" style="background:none;border:none;color:rgba(255,255,255,0.6);font-size:1.2rem;cursor:pointer;padding:0.3rem;">✕</button>
   `;
   document.body.appendChild(banner);

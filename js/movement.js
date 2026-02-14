@@ -89,7 +89,7 @@ const MOVEMENT = (() => {
 
         container.innerHTML = `
             <!-- 전체 진행률 -->
-            <div style="background:linear-gradient(135deg,#2d3436,#636e72);border-radius:16px;padding:1.5rem;color:white;margin-bottom:1.5rem;">
+            <div style="background:linear-gradient(135deg,#2d3436,#636e72);border-radius:16px;padding:1.5rem;color:#FFF8F0;margin-bottom:1.5rem;">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem;">
                     <div>
                         <div style="font-size:0.75rem;opacity:0.7;">500회 프로세스</div>
@@ -109,19 +109,19 @@ const MOVEMENT = (() => {
             </div>
 
             <!-- 현재 단계 -->
-            <div style="background:${currentStageObj.gradient};border-radius:16px;padding:1.5rem;color:white;margin-bottom:1.5rem;">
+            <div style="background:${currentStageObj.gradient};border-radius:16px;padding:1.5rem;color:#FFF8F0;margin-bottom:1.5rem;">
                 <div style="font-size:0.7rem;opacity:0.8;">현재 단계</div>
                 <h3 style="margin:0.3rem 0;">${currentStageObj.emoji} ${currentStageObj.name}</h3>
                 <p style="font-size:0.8rem;opacity:0.9;margin-bottom:1rem;">${currentStageObj.desc}</p>
                 <div style="background:rgba(255,255,255,0.2);border-radius:8px;height:8px;margin-bottom:0.5rem;">
-                    <div style="background:white;height:100%;width:${stagePercent}%;border-radius:8px;"></div>
+                    <div style="background:#FFF8F0;height:100%;width:${stagePercent}%;border-radius:8px;"></div>
                 </div>
                 <div style="font-size:0.75rem;opacity:0.8;">${userProgress.stageSession} / ${currentStageObj.sessions}회 완료</div>
             </div>
 
             <!-- 오늘의 운동 시작 -->
             <button onclick="MOVEMENT.startSession()" 
-                style="width:100%;padding:1.2rem;border:none;border-radius:12px;background:linear-gradient(135deg,#E91E63,#FF6090);color:white;font-weight:700;font-size:1.1rem;cursor:pointer;margin-bottom:1.5rem;box-shadow:0 4px 15px rgba(233,30,99,0.3);">
+                style="width:100%;padding:1.2rem;border:none;border-radius:12px;background:linear-gradient(135deg,#E91E63,#FF6090);color:#FFF8F0;font-weight:700;font-size:1.1rem;cursor:pointer;margin-bottom:1.5rem;box-shadow:0 4px 15px rgba(233,30,99,0.3);">
                 ▶️ 오늘의 무브먼트 시작
             </button>
 
@@ -131,7 +131,7 @@ const MOVEMENT = (() => {
                     const isActive = s.id === userProgress.stage;
                     const isDone = STAGES.indexOf(STAGES.find(st => st.id === userProgress.stage)) > i;
                     return `
-                    <div style="background:var(--card-bg,white);border-radius:12px;padding:1rem;border-left:4px solid ${s.color};opacity:${isActive || isDone ? 1 : 0.6};">
+                    <div style="background:var(--card-bg,#F7F3ED);border-radius:12px;padding:1rem;border-left:4px solid ${s.color};opacity:${isActive || isDone ? 1 : 0.6};">
                         <div style="display:flex;justify-content:space-between;align-items:center;">
                             <div>
                                 <div style="font-size:0.7rem;color:var(--accent);">STAGE ${i + 1} ${isDone ? '✅' : isActive ? '🔄' : '🔒'}</div>
@@ -146,7 +146,7 @@ const MOVEMENT = (() => {
             </div>
 
             <!-- 운동 기록 -->
-            <div style="background:var(--card-bg,white);border-radius:12px;padding:1.2rem;">
+            <div style="background:var(--card-bg,#F7F3ED);border-radius:12px;padding:1.2rem;">
                 <h3 style="margin:0 0 0.8rem 0;font-size:1rem;">📋 최근 기록</h3>
                 <div id="movement-history"><p style="text-align:center;color:var(--accent);font-size:0.85rem;">로딩 중...</p></div>
             </div>
@@ -163,7 +163,7 @@ const MOVEMENT = (() => {
 
         const container = document.getElementById('movement-content');
         container.innerHTML = `
-            <div style="background:${stage.gradient};border-radius:16px;padding:1.5rem;color:white;margin-bottom:1rem;">
+            <div style="background:${stage.gradient};border-radius:16px;padding:1.5rem;color:#FFF8F0;margin-bottom:1rem;">
                 <div style="font-size:0.7rem;opacity:0.8;">${stage.name} — ${userProgress.totalSessions + 1}번째 세션</div>
                 <h2 style="margin:0.5rem 0;">${exercise.name}</h2>
                 <p style="opacity:0.9;font-size:0.85rem;">${exercise.desc}</p>
@@ -171,23 +171,23 @@ const MOVEMENT = (() => {
             </div>
 
             <!-- 타이머 -->
-            <div style="text-align:center;background:var(--card-bg,white);border-radius:16px;padding:2rem;margin-bottom:1rem;">
+            <div style="text-align:center;background:var(--card-bg,#F7F3ED);border-radius:16px;padding:2rem;margin-bottom:1rem;">
                 <div id="movement-timer" style="font-size:3rem;font-weight:800;font-family:monospace;">00:00</div>
                 <p id="movement-status" style="font-size:0.9rem;color:var(--accent);margin-top:0.5rem;">준비되셨나요?</p>
                 <div style="display:flex;justify-content:center;gap:1rem;margin-top:1.5rem;">
                     <button id="movement-start-btn" onclick="MOVEMENT.toggleTimer()" 
-                        style="padding:0.8rem 2rem;border:none;border-radius:10px;background:linear-gradient(135deg,#00B894,#55EFC4);color:white;font-weight:700;cursor:pointer;font-size:1rem;">
+                        style="padding:0.8rem 2rem;border:none;border-radius:10px;background:linear-gradient(135deg,#00B894,#55EFC4);color:#FFF8F0;font-weight:700;cursor:pointer;font-size:1rem;">
                         ▶️ 시작
                     </button>
                     <button onclick="MOVEMENT.completeSession()" 
-                        style="padding:0.8rem 2rem;border:none;border-radius:10px;background:linear-gradient(135deg,#E91E63,#FF6090);color:white;font-weight:700;cursor:pointer;font-size:1rem;">
+                        style="padding:0.8rem 2rem;border:none;border-radius:10px;background:linear-gradient(135deg,#E91E63,#FF6090);color:#FFF8F0;font-weight:700;cursor:pointer;font-size:1rem;">
                         ✅ 완료
                     </button>
                 </div>
             </div>
 
             <!-- 운동 목록 -->
-            <div style="background:var(--card-bg,white);border-radius:12px;padding:1rem;">
+            <div style="background:var(--card-bg,#F7F3ED);border-radius:12px;padding:1rem;">
                 <h4 style="margin:0 0 0.5rem 0;font-size:0.9rem;">📋 ${stage.name} 운동 목록</h4>
                 ${stage.exercises.map((ex, i) => `
                     <div style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0;border-bottom:1px solid #f0f0f0;${i === exerciseIndex ? 'background:#fff3e0;margin:0 -0.5rem;padding:0.5rem;border-radius:6px;' : ''}">

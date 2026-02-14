@@ -364,18 +364,18 @@
             <h2 style="display:flex; align-items:center; gap:0.5rem;" data-i18n-html="wallet.title">💰 MY WALLET <span id="wallet-sync-badge" style="font-size:0.65rem; background:#e8f5e9; color:#2e7d32; padding:0.15rem 0.5rem; border-radius:10px; display:none;" data-i18n="wallet.synced">● 동기화됨</span></h2>
             
             <!-- Wallet Selector -->
-            <div style="background:white; padding:1.2rem; border-radius:12px; margin-bottom:1rem; box-shadow:0 2px 8px rgba(61,43,31,0.06);">
+            <div style="background:#FFF8F0; padding:1.2rem; border-radius:12px; margin-bottom:1rem; box-shadow:0 2px 8px rgba(61,43,31,0.06);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
                     <strong style="font-size:0.95rem;" data-i18n="wallet.my_wallets">📂 내 지갑</strong>
                     <button onclick="showAddWalletModal()" style="background:#3D2B1F; color:#FFF8F0; border:none; padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight:600;" data-i18n="wallet.add_wallet">➕ 지갑 추가</button>
                 </div>
-                <select id="wallet-selector" onchange="switchWallet()" style="width:100%; padding:0.8rem; border-radius:8px; border:1px solid #e0e0e0; font-size:0.9rem; background:white; cursor:pointer;">
+                <select id="wallet-selector" onchange="switchWallet()" style="width:100%; padding:0.8rem; border-radius:8px; border:1px solid #e0e0e0; font-size:0.9rem; background:#FFF8F0; cursor:pointer;">
                 </select>
             </div>
             
             <div class="wallet-info">
                 <!-- 지갑 주소 카드 -->
-                <div style="background:white; padding:1.2rem; border-radius:12px; margin-bottom:1rem; box-shadow:0 2px 8px rgba(61,43,31,0.06);">
+                <div style="background:#FFF8F0; padding:1.2rem; border-radius:12px; margin-bottom:1rem; box-shadow:0 2px 8px rgba(61,43,31,0.06);">
                     <div style="display:flex; justify-content:space-between; align-items:start;">
                         <div style="flex:1;">
                             <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
@@ -557,7 +557,7 @@
             </div>
             
             <!-- 소개자(레퍼럴) 시스템 -->
-            <div style="background:white; padding:1.5rem; border-radius:12px; margin-top:1rem;">
+            <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-top:1rem;">
                 <h3 style="margin-bottom:1rem;" data-i18n="wallet.referral_title">⭐ 소개자 프로그램</h3>
                 <p id="referral-reward-desc" style="font-size:0.85rem; color:var(--accent); margin-bottom:1rem;">
                     친구를 초대하면 가입 시 보상이 지급됩니다!
@@ -578,31 +578,31 @@
                     </div>
                     <!-- 7개 토큰별 누적 보상 -->
                     <div style="margin-top:0.8rem; display:grid; grid-template-columns:repeat(auto-fill, minmax(85px, 1fr)); gap:0.4rem;">
-                        <div style="background:white; padding:0.4rem; border-radius:6px; text-align:center;">
+                        <div style="background:#FFF8F0; padding:0.4rem; border-radius:6px; text-align:center;">
                             <div style="font-size:0.65rem; color:var(--accent);">👑 CRNY</div>
                             <div id="referral-earn-crny" style="font-weight:700;font-size:0.9rem;">0</div>
                         </div>
-                        <div style="background:white; padding:0.4rem; border-radius:6px; text-align:center;">
+                        <div style="background:#FFF8F0; padding:0.4rem; border-radius:6px; text-align:center;">
                             <div style="font-size:0.65rem; color:var(--accent);">🌉 FNC</div>
                             <div id="referral-earn-fnc" style="font-weight:700;font-size:0.9rem;">0</div>
                         </div>
-                        <div style="background:white; padding:0.4rem; border-radius:6px; text-align:center;">
+                        <div style="background:#FFF8F0; padding:0.4rem; border-radius:6px; text-align:center;">
                             <div style="font-size:0.65rem; color:var(--accent);">🔒 CRFN</div>
                             <div id="referral-earn-crfn" style="font-weight:700;font-size:0.9rem;">0</div>
                         </div>
-                        <div style="background:white; padding:0.4rem; border-radius:6px; text-align:center;">
+                        <div style="background:#FFF8F0; padding:0.4rem; border-radius:6px; text-align:center;">
                             <div style="font-size:0.65rem; color:#FF6D00;">📈 CRTD</div>
                             <div id="referral-earn-crtd" style="font-weight:700;font-size:0.9rem;">0</div>
                         </div>
-                        <div style="background:white; padding:0.4rem; border-radius:6px; text-align:center;">
+                        <div style="background:#FFF8F0; padding:0.4rem; border-radius:6px; text-align:center;">
                             <div style="font-size:0.65rem; color:#E91E63;">🎭 CRAC</div>
                             <div id="referral-earn-crac" style="font-weight:700;font-size:0.9rem;">0</div>
                         </div>
-                        <div style="background:white; padding:0.4rem; border-radius:6px; text-align:center;">
+                        <div style="background:#FFF8F0; padding:0.4rem; border-radius:6px; text-align:center;">
                             <div style="font-size:0.65rem; color:#00BFA5;">🛒 CRGC</div>
                             <div id="referral-earn-crgc" style="font-weight:700;font-size:0.9rem;">0</div>
                         </div>
-                        <div style="background:white; padding:0.4rem; border-radius:6px; text-align:center;">
+                        <div style="background:#FFF8F0; padding:0.4rem; border-radius:6px; text-align:center;">
                             <div style="font-size:0.65rem; color:#2E7D32;">🌱 CREB</div>
                             <div id="referral-earn-creb" style="font-weight:700;font-size:0.9rem;">0</div>
                         </div>
@@ -834,7 +834,7 @@
             </div>
 
             <!-- ══ 📦 내 컬렉션 (상단) ══ -->
-            <div id="my-collection-section" style="background:white; padding:1.2rem; border-radius:12px; margin-bottom:1rem;">
+            <div id="my-collection-section" style="background:#FFF8F0; padding:1.2rem; border-radius:12px; margin-bottom:1rem;">
                 <h3 style="margin-bottom:.8rem; font-size:1rem;">📦 내 컬렉션</h3>
                 <div style="display:flex; gap:.4rem; margin-bottom:.8rem; flex-wrap:wrap; overflow-x:auto;">
                     <button onclick="loadMyCollection('my-artworks')" class="collection-tab-btn active" data-tab="my-artworks" style="padding:.4rem .8rem; border-radius:20px; border:1px solid var(--border); background:var(--text); color:#FFF8F0; cursor:pointer; font-size:.78rem; font-weight:600; white-space:nowrap;">🎨 내 작품</button>
@@ -923,11 +923,11 @@
                     <option value="popular" data-i18n="mall.sort.popular">인기순</option>
                     <option value="rating" data-i18n="mall.sort.rating">평점순</option>
                 </select>
-                <button onclick="toggleMallFilters()" style="padding:0.6rem 0.8rem; border:1px solid var(--border); border-radius:6px; background:white; cursor:pointer; font-size:0.85rem;">🔽 필터</button>
+                <button onclick="toggleMallFilters()" style="padding:0.6rem 0.8rem; border:1px solid var(--border); border-radius:6px; background:#FFF8F0; cursor:pointer; font-size:0.85rem;">🔽 필터</button>
             </div>
             
             <!-- 필터 패널 -->
-            <div id="mall-filter-panel" style="display:none; background:white; padding:1rem; border-radius:8px; margin-bottom:0.8rem; box-shadow:0 2px 8px rgba(61,43,31,0.08);">
+            <div id="mall-filter-panel" style="display:none; background:#FFF8F0; padding:1rem; border-radius:8px; margin-bottom:0.8rem; box-shadow:0 2px 8px rgba(61,43,31,0.08);">
                 <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:0.5rem; align-items:end;">
                     <div>
                         <label style="font-size:0.7rem; color:var(--accent);">카테고리</label>
@@ -976,7 +976,7 @@
 
             <div id="mall-products" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:0.8rem;"></div>
             
-            <div style="background:white; padding:1.5rem; border-radius:12px; margin-top:1.5rem;">
+            <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-top:1.5rem;">
                 <h3 style="margin-bottom:1rem;" data-i18n="mall.my_orders_title">📋 내 주문/판매</h3>
                 <div style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
                     <button onclick="loadMyOrders()" class="btn-primary" style="flex:1;" data-i18n="mall.my_orders">🛒 주문 내역</button>
@@ -1030,7 +1030,7 @@
                     <button onclick="showPage('mall')" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">← 쇼핑 계속</button>
                 </div>
                 <div id="cart-items" style="margin-bottom:1rem;"></div>
-                <div id="cart-summary" style="display:none; background:white; padding:1rem; border-radius:12px; box-shadow:0 2px 8px rgba(61,43,31,0.08);">
+                <div id="cart-summary" style="display:none; background:#FFF8F0; padding:1rem; border-radius:12px; box-shadow:0 2px 8px rgba(61,43,31,0.08);">
                     <div style="display:flex; justify-content:space-between; font-size:1.1rem; font-weight:700; margin-bottom:1rem;">
                         <span>총 결제 금액</span>
                         <span id="cart-total" style="color:#0066cc;">0 CRGC</span>
@@ -1091,7 +1091,7 @@
             
             <!-- 캠페인 상세 모달 -->
             <div id="campaign-detail-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(61,43,31,0.85); z-index:10000; display:none; align-items:center; justify-content:center; padding:1rem;">
-                <div id="campaign-detail-content" style="background:white; border-radius:12px; max-width:550px; width:100%; max-height:90vh; overflow-y:auto; padding:1.5rem;"></div>
+                <div id="campaign-detail-content" style="background:#FFF8F0; border-radius:12px; max-width:550px; width:100%; max-height:90vh; overflow-y:auto; padding:1.5rem;"></div>
             </div>
         </section>
 
@@ -1109,11 +1109,11 @@
             
             <!-- 카테고리 탭 -->
             <div id="creb-category-tabs" style="display:flex; gap:0.4rem; margin-bottom:1rem; overflow-x:auto; padding-bottom:0.3rem;">
-                <button onclick="filterCrebCategory('all')" class="creb-tab active" data-cat="all" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #666; background:white; cursor:pointer; white-space:nowrap; font-size:0.85rem;">🌍 전체</button>
-                <button onclick="filterCrebCategory('energy')" class="creb-tab" data-cat="energy" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #ff9800; background:white; cursor:pointer; white-space:nowrap; font-size:0.85rem; color:#ff9800;">⚡ 에너지</button>
-                <button onclick="filterCrebCategory('genetics')" class="creb-tab" data-cat="genetics" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #E91E63; background:white; cursor:pointer; white-space:nowrap; font-size:0.85rem; color:#E91E63;">🧬 유전공학</button>
-                <button onclick="filterCrebCategory('biotech')" class="creb-tab" data-cat="biotech" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #4CAF50; background:white; cursor:pointer; white-space:nowrap; font-size:0.85rem; color:#4CAF50;">🔬 생명공학</button>
-                <button onclick="filterCrebCategory('ai_robotics')" class="creb-tab" data-cat="ai_robotics" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #2196F3; background:white; cursor:pointer; white-space:nowrap; font-size:0.85rem; color:#2196F3;">🤖 AI·로보틱스</button>
+                <button onclick="filterCrebCategory('all')" class="creb-tab active" data-cat="all" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #666; background:#FFF8F0; cursor:pointer; white-space:nowrap; font-size:0.85rem;">🌍 전체</button>
+                <button onclick="filterCrebCategory('energy')" class="creb-tab" data-cat="energy" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #ff9800; background:#FFF8F0; cursor:pointer; white-space:nowrap; font-size:0.85rem; color:#ff9800;">⚡ 에너지</button>
+                <button onclick="filterCrebCategory('genetics')" class="creb-tab" data-cat="genetics" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #E91E63; background:#FFF8F0; cursor:pointer; white-space:nowrap; font-size:0.85rem; color:#E91E63;">🧬 유전공학</button>
+                <button onclick="filterCrebCategory('biotech')" class="creb-tab" data-cat="biotech" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #4CAF50; background:#FFF8F0; cursor:pointer; white-space:nowrap; font-size:0.85rem; color:#4CAF50;">🔬 생명공학</button>
+                <button onclick="filterCrebCategory('ai_robotics')" class="creb-tab" data-cat="ai_robotics" style="padding:0.5rem 1rem; border-radius:20px; border:2px solid #2196F3; background:#FFF8F0; cursor:pointer; white-space:nowrap; font-size:0.85rem; color:#2196F3;">🤖 AI·로보틱스</button>
             </div>
             
             <!-- 시뮬레이션 모드 배지 -->
@@ -1126,11 +1126,11 @@
             <div id="creb-impact-dashboard" style="background:linear-gradient(135deg,#f8f9fa,#e8f5e9); padding:1.2rem; border-radius:12px; margin-bottom:1rem; display:none;">
                 <h4 style="margin:0 0 0.8rem 0;">🌍 당신의 투자가 만든 변화</h4>
                 <div style="display:flex; gap:0.8rem; flex-wrap:wrap; margin-bottom:0.8rem;">
-                    <div style="flex:1; min-width:80px; background:white; padding:0.6rem; border-radius:8px; text-align:center;">
+                    <div style="flex:1; min-width:80px; background:#FFF8F0; padding:0.6rem; border-radius:8px; text-align:center;">
                         <div style="font-size:0.7rem; color:var(--accent);">총 투자</div>
                         <div id="impact-total-creb" style="font-weight:700;">0 CREB</div>
                     </div>
-                    <div style="flex:1; min-width:80px; background:white; padding:0.6rem; border-radius:8px; text-align:center;">
+                    <div style="flex:1; min-width:80px; background:#FFF8F0; padding:0.6rem; border-radius:8px; text-align:center;">
                         <div style="font-size:0.7rem; color:var(--accent);">참여 프로젝트</div>
                         <div id="impact-project-count" style="font-weight:700;">0개</div>
                     </div>
@@ -1141,7 +1141,7 @@
             </div>
             
             <!-- 수익 현황 -->
-            <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+            <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                 <h3 style="margin-bottom:1rem;" data-i18n="energy.my_investment"><i data-lucide="bar-chart-3" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> 내 투자 현황</h3>
                 <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">
                     <div style="flex:1; min-width:100px; background:#FFF8E1; padding:0.8rem; border-radius:8px; text-align:center;">
@@ -1160,7 +1160,7 @@
             </div>
             
             <!-- 프로젝트 -->
-            <div style="background:white; padding:1.5rem; border-radius:12px;">
+            <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px;">
                 <h3 style="margin-bottom:1rem;" data-i18n="energy.projects_title">🔬 CREB LABS 프로젝트</h3>
                 <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
                     <button onclick="loadEnergyProjects()" class="btn-primary" style="flex:1;" data-i18n="energy.refresh_projects">🔄 프로젝트 새로고침</button>
@@ -1238,15 +1238,15 @@
             <!-- 4개 서비스 탭 -->
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1fr; gap:0.3rem; margin-bottom:1rem;">
                 <button onclick="showCreditTab('exchange')" class="credit-tab active" id="tab-exchange" style="padding:0.6rem; border:2px solid var(--primary); background:var(--primary); color:#FFF8F0; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight:700;" data-i18n="credit.tab_exchange">💱 환전</button>
-                <button onclick="showCreditTab('pumasi')" class="credit-tab" id="tab-pumasi" style="padding:0.6rem; border:2px solid var(--border); background:white; border-radius:6px; cursor:pointer; font-size:0.8rem;" data-i18n="credit.tab_pumasi">🤝 품앗이</button>
-                <button onclick="showCreditTab('insurance')" class="credit-tab" id="tab-insurance" style="padding:0.6rem; border:2px solid var(--border); background:white; border-radius:6px; cursor:pointer; font-size:0.8rem;" data-i18n="credit.tab_insurance">🛡️ 보험</button>
-                <button onclick="showCreditTab('donate')" class="credit-tab" id="tab-donate" style="padding:0.6rem; border:2px solid var(--border); background:white; border-radius:6px; cursor:pointer; font-size:0.8rem;" data-i18n="credit.tab_donate">💝 기부</button>
-                <button onclick="showCreditTab('gye')" class="credit-tab" id="tab-gye" style="padding:0.6rem; border:2px solid var(--border); background:white; border-radius:6px; cursor:pointer; font-size:0.8rem;" data-i18n="credit.tab_gye">🔄 계</button>
+                <button onclick="showCreditTab('pumasi')" class="credit-tab" id="tab-pumasi" style="padding:0.6rem; border:2px solid var(--border); background:#FFF8F0; border-radius:6px; cursor:pointer; font-size:0.8rem;" data-i18n="credit.tab_pumasi">🤝 품앗이</button>
+                <button onclick="showCreditTab('insurance')" class="credit-tab" id="tab-insurance" style="padding:0.6rem; border:2px solid var(--border); background:#FFF8F0; border-radius:6px; cursor:pointer; font-size:0.8rem;" data-i18n="credit.tab_insurance">🛡️ 보험</button>
+                <button onclick="showCreditTab('donate')" class="credit-tab" id="tab-donate" style="padding:0.6rem; border:2px solid var(--border); background:#FFF8F0; border-radius:6px; cursor:pointer; font-size:0.8rem;" data-i18n="credit.tab_donate">💝 기부</button>
+                <button onclick="showCreditTab('gye')" class="credit-tab" id="tab-gye" style="padding:0.6rem; border:2px solid var(--border); background:#FFF8F0; border-radius:6px; cursor:pointer; font-size:0.8rem;" data-i18n="credit.tab_gye">🔄 계</button>
             </div>
             
             <!-- 환전 -->
             <div id="credit-exchange" class="credit-panel">
-                <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                     <h3 style="margin-bottom:0.5rem;" data-i18n="credit.exchange_title">💱 토큰 환전</h3>
                     <p style="font-size:0.85rem; color:var(--accent); margin-bottom:1rem;" data-i18n="credit.exchange_desc">수수료 없이 CRNY ↔ FNC ↔ CRFN 교환</p>
                     <div style="display:grid; gap:0.8rem;">
@@ -1276,7 +1276,7 @@
             
             <!-- 품앗이 -->
             <div id="credit-pumasi" class="credit-panel" style="display:none;">
-                <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                     <h3 style="margin-bottom:0.5rem;" data-i18n="credit.pumasi_title">🤝 품앗이 대출</h3>
                     <p style="font-size:0.85rem; color:var(--accent); margin-bottom:1rem;" data-i18n-html="credit.pumasi_desc">여러 사람의 토큰을 담보로 한 사람에게 무이자 대출<br>CROWNY.church 공동체 기반</p>
                     <div style="display:grid; gap:0.8rem;">
@@ -1296,7 +1296,7 @@
             
             <!-- 보험 -->
             <div id="credit-insurance" class="credit-panel" style="display:none;">
-                <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                     <h3 style="margin-bottom:0.5rem;" data-i18n="credit.insurance_title">🛡️ 공동체 보험</h3>
                     <p style="font-size:0.85rem; color:var(--accent); margin-bottom:1rem;" data-i18n-html="credit.insurance_desc">급한 자금 필요 시 사전 정한 금액을 선지급<br>공동체가 나누어 채우는 상호부조 보험</p>
                     <div style="display:grid; gap:0.8rem;">
@@ -1315,9 +1315,9 @@
                 </div>
                 <div id="insurance-list"></div>
                 <!-- 관리자 보험 승인 -->
-                <div id="insurance-admin-list" style="background:white; padding:1rem; border-radius:12px; margin-top:1rem;"></div>
+                <div id="insurance-admin-list" style="background:#FFF8F0; padding:1rem; border-radius:12px; margin-top:1rem;"></div>
                 <!-- 내 보험 신청 내역 -->
-                <div style="background:white; padding:1rem; border-radius:12px; margin-top:1rem;">
+                <div style="background:#FFF8F0; padding:1rem; border-radius:12px; margin-top:1rem;">
                     <h4 style="margin-bottom:0.5rem;">📋 내 보험 신청 내역</h4>
                     <div id="my-insurance-claims"></div>
                 </div>
@@ -1325,7 +1325,7 @@
             
             <!-- 기부 연동 -->
             <div id="credit-donate" class="credit-panel" style="display:none;">
-                <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                     <h3 style="margin-bottom:0.5rem;" data-i18n="credit.donate_title">💝 기부 활성화</h3>
                     <p style="font-size:0.85rem; color:var(--accent); margin-bottom:1rem;" data-i18n-html="credit.donate_desc">거래 건마다 1 CRTD 이상 자동 기부<br>사전 지정 대상 또는 오픈 기부 (시스템 우선순위 처리)</p>
                     <div style="display:grid; gap:0.8rem;">
@@ -1353,7 +1353,7 @@
             
             <!-- 계모임 -->
             <div id="credit-gye" class="credit-panel" style="display:none;">
-                <div style="background:white; padding:1.5rem; border-radius:12px;">
+                <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px;">
                     <h3 data-i18n="credit.gye_title">🔄 계모임 (Gye)</h3>
                     <p style="font-size:0.85rem; color:var(--accent); margin-bottom:1rem;" data-i18n="credit.gye_desc">무이자 순환 저축 · 매월 한 명씩 수령</p>
                     <div style="display:grid; gap:0.5rem; margin-bottom:1rem;">
@@ -1369,7 +1369,7 @@
             </div>
             
             <!-- 내 크레딧 현황 -->
-            <div style="background:white; padding:1.5rem; border-radius:12px; margin-top:1rem;">
+            <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-top:1rem;">
                 <h3 style="margin-bottom:1rem;" data-i18n="credit.score_title"><i data-lucide="bar-chart-3" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> 내 크레딧 현황</h3>
                 <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">
                     <div style="flex:1; min-width:100px; background:var(--bg); padding:0.8rem; border-radius:8px; text-align:center;">
@@ -1410,7 +1410,7 @@
             
             <!-- Trading Dashboard (참가 후 표시) -->
             <div id="trading-dashboard" style="display:none; margin-bottom:2rem;">
-                <div style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
+                <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                     <h3 data-i18n="trading.my_account">💼 내 트레이딩 계좌</h3>
                     <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; margin-top:1rem;">
                         <div style="text-align:center;">
@@ -1579,7 +1579,7 @@
                 </div>
                 
                 <!-- Trading Controls -->
-                <div id="trading-order-panel" style="background:white; padding:1.5rem; border-radius:12px; max-width:400px; margin-left:auto;">
+                <div id="trading-order-panel" style="background:#FFF8F0; padding:1.5rem; border-radius:12px; max-width:400px; margin-left:auto;">
                     <h4 style="margin-bottom:0.5rem;">💹 나스닥100 선물 거래</h4>
                     
                     <!-- ★ 거래 권한 배지 -->
@@ -1690,13 +1690,13 @@
                 </div>
                 
                 <!-- Open Positions -->
-                <div style="background:white; padding:1.5rem; border-radius:12px; margin-top:1rem;">
+                <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-top:1rem;">
                     <h4 style="margin-bottom:1rem;" data-i18n="trading.open_positions"><i data-lucide="bar-chart-3" style="width:16px;height:16px;display:inline;vertical-align:text-bottom;color:#8B6914;stroke-width:2;"></i> 오픈 포지션</h4>
                     <div id="open-positions"></div>
                 </div>
                 
                 <!-- Trade History -->
-                <div style="background:white; padding:1.5rem; border-radius:12px; margin-top:1rem;">
+                <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-top:1rem;">
                     <h4 style="margin-bottom:1rem;" data-i18n="trading.trade_history">📋 거래 내역</h4>
                     <div id="trade-history"></div>
                 </div>
@@ -2084,7 +2084,7 @@
     
     <!-- 로딩 오버레이 -->
     <div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(61,43,31,0.5); z-index:99998; align-items:center; justify-content:center;">
-        <div style="background:white; padding:2rem; border-radius:12px; text-align:center;">
+        <div style="background:#FFF8F0; padding:2rem; border-radius:12px; text-align:center;">
             <div style="width:40px; height:40px; border:4px solid #ddd; border-top:4px solid #0066cc; border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 1rem;"></div>
             <p id="loading-text" style="color:#333;" data-i18n="common.processing">처리 중...</p>
         </div>
@@ -2092,11 +2092,11 @@
     
     <!-- 범용 확인 모달 -->
     <div id="confirm-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(61,43,31,0.6); z-index:99997; align-items:center; justify-content:center; padding:1rem;">
-        <div style="background:white; padding:1.5rem; border-radius:12px; max-width:400px; width:100%;">
+        <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; max-width:400px; width:100%;">
             <h3 id="confirm-title" style="margin-bottom:0.8rem;"></h3>
             <p id="confirm-message" style="color:#666; margin-bottom:1.2rem; white-space:pre-line;"></p>
             <div style="display:flex; gap:0.5rem;">
-                <button id="confirm-cancel" onclick="closeConfirmModal(false)" style="flex:1; padding:0.7rem; border:1px solid #ddd; border-radius:8px; cursor:pointer; background:white;" data-i18n="common.cancel">취소</button>
+                <button id="confirm-cancel" onclick="closeConfirmModal(false)" style="flex:1; padding:0.7rem; border:1px solid #ddd; border-radius:8px; cursor:pointer; background:#FFF8F0;" data-i18n="common.cancel">취소</button>
                 <button id="confirm-ok" onclick="closeConfirmModal(true)" style="flex:1; padding:0.7rem; border:none; border-radius:8px; cursor:pointer; background:#0066cc; color:#FFF8F0; font-weight:700;" data-i18n="common.confirm">확인</button>
             </div>
         </div>
@@ -2122,7 +2122,7 @@
         .toggle-switch { position:relative; display:inline-block; width:44px; height:24px; }
         .toggle-switch input { opacity:0; width:0; height:0; }
         .toggle-slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#ccc; border-radius:24px; transition:0.3s; }
-        .toggle-slider::before { content:''; position:absolute; height:18px; width:18px; left:3px; bottom:3px; background:white; border-radius:50%; transition:0.3s; }
+        .toggle-slider::before { content:''; position:absolute; height:18px; width:18px; left:3px; bottom:3px; background:#FFF8F0; border-radius:50%; transition:0.3s; }
         .toggle-switch input:checked + .toggle-slider { background:#4CAF50; }
         .toggle-switch input:checked + .toggle-slider::before { transform:translateX(20px); }
         .toggle-switch input:disabled + .toggle-slider { opacity:0.5; cursor:not-allowed; }
@@ -2305,10 +2305,10 @@
         sheet.innerHTML = `
             <div class="bottom-sheet-handle"></div>
             <div style="padding:12px 0;">
-                <div style="padding:12px 16px;font-weight:700;font-size:1rem;color:var(--text,#fff);">➕ 새로 만들기</div>
-                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('social');setTimeout(()=>{const t=document.getElementById('post-text');if(t){t.focus();t.scrollIntoView({behavior:'smooth',block:'center'})}},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:var(--text,#fff);font-size:0.95rem;cursor:pointer;text-align:left;">📸 소셜 게시물</button>
-                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('reels');setTimeout(()=>{if(typeof SHORTFORM!=='undefined'&&SHORTFORM.openUpload)SHORTFORM.openUpload()},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:var(--text,#fff);font-size:0.95rem;cursor:pointer;text-align:left;">🎬 숏폼 영상</button>
-                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('social');setTimeout(()=>{if(typeof openStoryUpload==='function')openStoryUpload()},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:var(--text,#fff);font-size:0.95rem;cursor:pointer;text-align:left;">📖 스토리</button>
+                <div style="padding:12px 16px;font-weight:700;font-size:1rem;color:var(--text,#3D2B1F);">➕ 새로 만들기</div>
+                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('social');setTimeout(()=>{const t=document.getElementById('post-text');if(t){t.focus();t.scrollIntoView({behavior:'smooth',block:'center'})}},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:var(--text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;">📸 소셜 게시물</button>
+                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('reels');setTimeout(()=>{if(typeof SHORTFORM!=='undefined'&&SHORTFORM.openUpload)SHORTFORM.openUpload()},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:var(--text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;">🎬 숏폼 영상</button>
+                <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();showPage('social');setTimeout(()=>{if(typeof openStoryUpload==='function')openStoryUpload()},300);" style="width:100%;padding:14px 16px;border:none;background:none;color:var(--text,#3D2B1F);font-size:0.95rem;cursor:pointer;text-align:left;">📖 스토리</button>
                 <button onclick="this.closest('.bottom-sheet').previousElementSibling.remove();this.closest('.bottom-sheet').remove();" style="width:100%;padding:14px 16px;border:none;background:none;color:#888;font-size:0.95rem;cursor:pointer;text-align:left;">취소</button>
             </div>`;
         document.body.appendChild(overlay);

@@ -169,10 +169,10 @@ function initNotifBell() {
     bellContainer.innerHTML = `
         <button id="notif-bell-btn" onclick="toggleNotifPanel()" style="background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:0.5rem 0.8rem; cursor:pointer; font-size:1rem; width:100%; display:flex; align-items:center; gap:0.5rem; position:relative;">
             🔔 <span style="font-size:0.85rem; flex:1; text-align:left;">알림</span>
-            <span id="notif-badge" style="display:none; background:#ff4444; color:white; font-size:0.65rem; font-weight:700; padding:0.1rem 0.4rem; border-radius:10px; min-width:16px; text-align:center;">0</span>
+            <span id="notif-badge" style="display:none; background:#ff4444; color:#FFF8F0; font-size:0.65rem; font-weight:700; padding:0.1rem 0.4rem; border-radius:10px; min-width:16px; text-align:center;">0</span>
         </button>
         <div id="notif-panel" style="display:none; position:fixed; left:60px; top:auto; z-index:99999; margin-top:0.3rem; background:var(--bg-card, white); border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.3); border:1px solid var(--border); max-height:70vh; overflow-y:auto; width:320px;">
-            <div id="notif-panel-header" style="padding:0.8rem 1rem; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; background:white; border-radius:12px 12px 0 0;">
+            <div id="notif-panel-header" style="padding:0.8rem 1rem; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; background:#FFF8F0; border-radius:12px 12px 0 0;">
                 <strong style="font-size:0.9rem;">🔔 알림</strong>
                 <div style="display:flex; gap:0.5rem;">
                     <button onclick="markAllRead()" style="background:none; border:none; color:#0066cc; font-size:0.75rem; cursor:pointer; font-weight:600;">모두 읽음</button>
@@ -324,7 +324,7 @@ function openNotifSettings() {
     ];
 
     overlay.innerHTML = `
-    <div style="background:white;padding:1.5rem;border-radius:16px;max-width:400px;width:100%;">
+    <div style="background:#FFF8F0;padding:1.5rem;border-radius:16px;max-width:400px;width:100%;">
         <h3 style="margin-bottom:1rem;">📢 알림 설정</h3>
         <div style="display:grid; gap:0.6rem;">
             ${items.map(i => `
@@ -338,8 +338,8 @@ function openNotifSettings() {
             `).join('')}
         </div>
         <div style="display:flex;gap:0.5rem;margin-top:1rem;">
-            <button onclick="document.getElementById('notif-settings-modal').remove()" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:white;">취소</button>
-            <button onclick="saveNotificationSettings();document.getElementById('notif-settings-modal').remove()" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#3D2B1F;color:white;font-weight:700;">저장</button>
+            <button onclick="document.getElementById('notif-settings-modal').remove()" style="flex:1;padding:0.7rem;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#FFF8F0;">취소</button>
+            <button onclick="saveNotificationSettings();document.getElementById('notif-settings-modal').remove()" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#3D2B1F;color:#FFF8F0;font-weight:700;">저장</button>
         </div>
     </div>`;
     document.body.appendChild(overlay);
