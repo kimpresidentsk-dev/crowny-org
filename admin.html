@@ -49,19 +49,23 @@
         .admin-sidebar .nav-link.active { background:rgba(139,105,20,0.15); color:var(--accent); border-left:3px solid var(--accent); }
         .admin-main { margin-left:220px; padding:1.5rem; flex:1; background:var(--bg); min-height:100vh; }
         @media(max-width:768px) {
-            .admin-sidebar { width:100%; height:auto; position:relative; padding:0.5rem 0; }
-            .admin-sidebar .logo { padding:0.5rem 1rem; }
-            .admin-sidebar #admin-sidebar-nav { display:none; }
+            .admin-sidebar { position:fixed; left:-260px; width:250px; height:100vh; z-index:1000; transition:left 0.3s ease; box-shadow:none; }
+            .admin-sidebar.open { left:0; box-shadow:4px 0 20px rgba(61,43,31,0.3); }
             .admin-main { margin-left:0; padding:0.8rem; }
             .admin-layout { flex-direction:column; }
             #admin-tab-bar { flex-wrap:wrap; }
             #admin-tab-bar button { font-size:0.7rem !important; padding:0.4rem 0.6rem !important; }
+            #admin-sidebar-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(61,43,31,0.4); z-index:999; }
+            #admin-sidebar-overlay.active { display:block; }
+            #admin-sidebar-toggle { display:flex !important; }
         }
     </style>
 </head>
 <body>
     <div class="admin-layout">
-        <aside class="admin-sidebar">
+        <div id="admin-sidebar-overlay" onclick="toggleAdminSidebar()"></div>
+        <button id="admin-sidebar-toggle" onclick="toggleAdminSidebar()" style="display:none; position:fixed; top:10px; left:10px; z-index:998; width:40px; height:40px; border-radius:8px; border:1px solid #E8E0D8; background:#FFF8F0; color:#3D2B1F; align-items:center; justify-content:center; cursor:pointer; font-size:1.2rem; box-shadow:0 2px 8px rgba(61,43,31,0.15);">☰</button>
+        <aside class="admin-sidebar" id="admin-sidebar">
             <div class="logo">
                 <h1><i data-lucide="lock" style="width:20px;height:20px;display:inline;vertical-align:text-bottom;color:#C9A84C;"></i> CROWNY</h1>
                 <p>ADMIN PANEL</p>
@@ -833,6 +837,13 @@
         
         initAdminPage();
         if (typeof lucide !== 'undefined') lucide.createIcons();
+    
+    window.toggleAdminSidebar = function() {
+        const sidebar = document.getElementById('admin-sidebar');
+        const overlay = document.getElementById('admin-sidebar-overlay');
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('active');
+    };
     });
     
     // Lucide Icons 초기화
