@@ -117,9 +117,9 @@ service cloud.firestore {
       allow update: if request.auth.uid == resource.data.creatorId;
     }
 
-    // orders - 관련자만
+    // orders - 관련자 또는 관리자
     match /orders/{orderId} {
-      allow read: if request.auth.uid == resource.data.buyerId || request.auth.uid == resource.data.sellerId;
+      allow read: if request.auth.uid == resource.data.buyerId || request.auth.uid == resource.data.sellerId || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.adminLevel >= 3;
       allow create: if request.auth != null;
       allow update: if request.auth.uid == resource.data.sellerId;
     }
