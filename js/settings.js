@@ -74,17 +74,17 @@ async function loadSettings() {
                 <label class="settings-toggle">
                     <span>${getText('settings.msg_notif', '새 메시지 알림')}</span>
                     <input type="checkbox" id="notif-messages" ${notifSettings.messages !== false ? 'checked' : ''} onchange="saveNotifSettings()">
-                    <span class="toggle-slider"></span>
+                    
                 </label>
                 <label class="settings-toggle">
                     <span>${getText('settings.social_notif', '소셜 알림')}</span>
                     <input type="checkbox" id="notif-social" ${notifSettings.social !== false ? 'checked' : ''} onchange="saveNotifSettings()">
-                    <span class="toggle-slider"></span>
+                    
                 </label>
                 <label class="settings-toggle">
                     <span>${getText('settings.trading_notif', '거래 알림')}</span>
                     <input type="checkbox" id="notif-trading" ${notifSettings.trading !== false ? 'checked' : ''} onchange="saveNotifSettings()">
-                    <span class="toggle-slider"></span>
+                    
                 </label>
             </div>
             
@@ -142,7 +142,7 @@ async function loadSettings() {
                 <label class="settings-toggle">
                     <span>${getText('settings.dark_mode', '다크 모드')}</span>
                     <input type="checkbox" id="theme-toggle" ${currentTheme === 'dark' ? 'checked' : ''} onchange="toggleTheme()">
-                    <span class="toggle-slider"></span>
+                    
                 </label>
             </div>
             
