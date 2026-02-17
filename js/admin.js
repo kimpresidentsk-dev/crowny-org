@@ -3066,7 +3066,7 @@ async function loadCouponList() {
                 <td style="text-align:center;">
                     <div style="display:flex; flex-direction:column; gap:3px; align-items:center;">
                         <button onclick="toggleCoupon('${doc.id}', ${!c.enabled})" style="padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem; background:${c.enabled ? '#ffcdd2' : '#c8e6c9'}; color:${c.enabled ? '#c62828' : '#2e7d32'}; width:100%;">${c.enabled ? '비활성화' : '활성화'}</button>
-                        <button onclick="viewCouponLog('${doc.id}','${c.code}')" style="padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem; background:#F7F3ED; color:#5B7B8C; width:100%;">📜 로그</button>
+                        <button onclick="viewCouponLog('${doc.id}','${c.code}')" style="padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem; background:#F7F3ED; color:#5B7B8C; width:100%;"><i data-lucide="scroll-text" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> 로그</button>
                         <button onclick="deleteCoupon('${doc.id}','${c.code}')" style="padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem; background:#F7F3ED; color:#c62828; width:100%;"><i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 삭제</button>
                     </div>
                 </td>
@@ -3124,7 +3124,7 @@ async function viewCouponLog(couponId, code) {
         if (snap.empty) {
             // fallback: coupons/{id}/usage 서브컬렉션
             const snap2 = await db.collection('coupons').doc(couponId).collection('usage').orderBy('usedAt', 'desc').limit(100).get();
-            if (snap2.empty) { listEl.innerHTML = `<p style="color:#6B5744;">📜 "${code}" 사용 내역이 없습니다.</p>`; return; }
+            if (snap2.empty) { listEl.innerHTML = `<p style="color:#6B5744;"><i data-lucide="scroll-text" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> "${code}" 사용 내역이 없습니다.</p>`; return; }
             renderCouponLog(snap2, listEl, code);
             return;
         }
@@ -3133,7 +3133,7 @@ async function viewCouponLog(couponId, code) {
         // index 없을 수 있으므로 orderBy 없이 재시도
         try {
             const snap = await db.collection('coupon_logs').where('couponId', '==', couponId).limit(100).get();
-            if (snap.empty) { listEl.innerHTML = `<p style="color:#6B5744;">📜 "${code}" 사용 내역이 없습니다.</p>`; return; }
+            if (snap.empty) { listEl.innerHTML = `<p style="color:#6B5744;"><i data-lucide="scroll-text" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> "${code}" 사용 내역이 없습니다.</p>`; return; }
             renderCouponLog(snap, listEl, code);
         } catch (e2) {
             listEl.innerHTML = `<p style="color:red;">로그 조회 실패: ${e2.message}</p>`;
@@ -3142,7 +3142,7 @@ async function viewCouponLog(couponId, code) {
 }
 
 function renderCouponLog(snap, listEl, code) {
-    let html = `<p style="font-weight:700; margin-bottom:0.5rem;">📜 "${code}" 사용 로그 (${snap.size}건)</p>`;
+    let html = `<p style="font-weight:700; margin-bottom:0.5rem;"><i data-lucide="scroll-text" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> "${code}" 사용 로그 (${snap.size}건)</p>`;
     html += '<table style="width:100%; border-collapse:collapse; font-size:0.75rem;"><tr style="background:#F7F3ED;"><th style="padding:0.4rem;">일시</th><th>사용자</th><th>수량</th></tr>';
     snap.forEach(doc => {
         const d = doc.data();
@@ -3220,7 +3220,7 @@ async function loadSuperAdminWallets() {
                     <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
                         ${!exists ? `<button onclick="createSuperWallet('${type}')" style="background:#8B6914;color:#FFF8F0;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;">➕ 생성</button>` : ''}
                         ${exists && !isActive ? `<button onclick="switchActiveWallet('${type}')" style="background:#8B6914;color:#FFF8F0;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 활성화</button>` : ''}
-                        ${exists ? `<button onclick="showInternalTransfer('${type}')" style="background:#455a64;color:#FFF8F0;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.78rem;">↔️ 이체</button>` : ''}
+                        ${exists ? `<button onclick="showInternalTransfer('${type}')" style="background:#455a64;color:#FFF8F0;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.78rem;"><i data-lucide="arrow-left-right" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 이체</button>` : ''}
                     </div>
                 </div>`;
         }
@@ -3232,13 +3232,13 @@ async function loadSuperAdminWallets() {
                 
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;">
                     ${walletCard('original', '오리지널 계좌', '<i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', '#8B6914', wallets.original)}
-                    ${walletCard('operating', '운영 계좌', '⚡', '#8B6914', wallets.operating)}
+                    ${walletCard('operating', '운영 계좌', '<i data-lucide="zap" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', '#8B6914', wallets.operating)}
                     ${walletCard('default', '기본 지갑', '<i data-lucide="briefcase" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', '#8B6914', wallets.default)}
                 </div>
             </div>
             
             <div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;">
-                <h4 style="margin-bottom:0.8rem;">📜 내부 이체 로그</h4>
+                <h4 style="margin-bottom:0.8rem;"><i data-lucide="scroll-text" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> 내부 이체 로그</h4>
                 <div id="super-wallet-log" style="max-height:300px;overflow-y:auto;"><p style="color:#6B5744;font-size:0.8rem;">로그 로딩 중...</p></div>
             </div>`;
         
@@ -3285,13 +3285,13 @@ async function showInternalTransfer(fromType) {
     if (!isSuperAdmin()) return;
     
     const targets = ['original', 'operating', 'default'].filter(t => t !== fromType);
-    const labels = { original: '<i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 오리지널', operating: '⚡ 운영', default: '<i data-lucide="briefcase" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 기본' };
+    const labels = { original: '<i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 오리지널', operating: '<i data-lucide="zap" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 운영', default: '<i data-lucide="briefcase" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 기본' };
     
     const overlay = document.createElement('div');
     overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;';
     overlay.innerHTML = `
         <div style="background:#FFF8F0;padding:1.5rem;border-radius:16px;max-width:400px;width:100%;">
-            <h3 style="margin-bottom:0.5rem;">↔️ 내부 이체</h3>
+            <h3 style="margin-bottom:0.5rem;"><i data-lucide="arrow-left-right" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 내부 이체</h3>
             <p style="font-size:0.8rem;color:#6B5744;margin-bottom:1rem;">보내는 계좌: <strong>${labels[fromType]}</strong></p>
             
             <div style="margin-bottom:0.8rem;">
@@ -3312,7 +3312,7 @@ async function showInternalTransfer(fromType) {
             ${fromType === 'original' ? '<p style="font-size:0.75rem;color:#C4841D;margin-bottom:0.8rem;"><i data-lucide="alert-triangle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 오리지널 계좌 출금: 2단계 확인 필요</p>' : ''}
             
             <div style="display:flex;gap:0.5rem;">
-                <button id="transfer-submit" style="flex:1;padding:0.7rem;background:#8B6914;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:700;">💸 이체</button>
+                <button id="transfer-submit" style="flex:1;padding:0.7rem;background:#8B6914;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:700;"><i data-lucide="send" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 이체</button>
                 <button id="transfer-cancel" style="flex:1;padding:0.7rem;border:1px solid #E8E0D8;border-radius:8px;cursor:pointer;background:#FFF8F0;">취소</button>
             </div>
         </div>`;
@@ -3393,7 +3393,7 @@ async function loadSuperWalletLog() {
         
         if (logs.empty) { container.innerHTML = '<p style="font-size:0.8rem;color:#6B5744;">이체 내역 없음</p>'; return; }
         
-        const labels = { original: '<i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 오리지널', operating: '⚡ 운영', default: '<i data-lucide="briefcase" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 기본' };
+        const labels = { original: '<i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 오리지널', operating: '<i data-lucide="zap" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 운영', default: '<i data-lucide="briefcase" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 기본' };
         let html = '';
         logs.forEach(doc => {
             const d = doc.data();
