@@ -308,7 +308,7 @@ function renderPushNotifToggle() {
       <label class="settings-toggle">
         <span>브라우저 알림</span>
         <input type="checkbox" id="push-notif-toggle" ${isGranted ? 'checked' : ''} onchange="togglePushPermission(this.checked)">
-        <span class="toggle-slider"></span>
+
       </label>
       <p style="font-size:0.75rem;color:var(--accent);margin-top:0.3rem;">
         ${perm === 'denied' ? '⚠️ 브라우저 설정에서 알림이 차단되었습니다' : perm === 'unsupported' ? '이 브라우저는 알림을 지원하지 않습니다' : ''}
