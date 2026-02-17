@@ -98,14 +98,14 @@
                             <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">🔍 유저 오프체인 잔액 조회</h4>
                             <div style="display:flex; gap:0.5rem; align-items:end;">
                                 <input type="email" id="admin-off-lookup-email" placeholder="user@email.com" style="flex:1; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
-                                <button onclick="adminLookupOffchain()" style="background:#1565c0; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer; white-space:nowrap;">조회</button>
+                                <button onclick="adminLookupOffchain()" style="background:#5B7B8C; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer; white-space:nowrap;">조회</button>
                             </div>
                             <div id="admin-off-lookup-result" style="margin-top:0.5rem; font-size:0.85rem;"></div>
                         </div>
                         
                         <!-- 포인트 발행 (민팅) — 수퍼관리자 전용 -->
-                        <div id="admin-mint-section" style="background:#e8f5e9; padding:1rem; border-radius:8px; margin-bottom:1rem;">
-                            <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">📈 포인트 발행 (민팅)</h4>
+                        <div id="admin-mint-section" style="background:#F7F3ED; padding:1rem; border-radius:8px; margin-bottom:1rem;">
+                            <h4 style="font-size:0.85rem; margin-bottom:0.5rem;"><i data-lucide="trending-up" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> 포인트 발행 (민팅)</h4>
                             <div style="display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:0.5rem; align-items:end;">
                                 <div>
                                     <label style="font-size:0.7rem;">이메일</label>
@@ -114,7 +114,7 @@
                                 <div>
                                     <label style="font-size:0.7rem;">토큰</label>
                                     <select id="admin-off-mint-token" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
-                                        <option value="crtd">📈 CRTD</option>
+                                        <option value="crtd"><i data-lucide="trending-up" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> CRTD</option>
                                         <option value="crac">🎭 CRAC</option>
                                         <option value="crgc">🛒 CRGC</option>
                                         <option value="creb">🌱 CREB</option>
@@ -124,7 +124,7 @@
                                     <label style="font-size:0.7rem;">수량</label>
                                     <input type="number" id="admin-off-mint-amount" value="100" min="1" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
                                 </div>
-                                <button onclick="adminMintOffchain()" style="background:#2e7d32; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">발행</button>
+                                <button onclick="adminMintOffchain()" style="background:#6B8F3C; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">발행</button>
                             </div>
                             <div>
                                 <label style="font-size:0.7rem;">사유</label>
@@ -133,7 +133,7 @@
                         </div>
                         
                         <!-- 포인트 차감 (소각) — 수퍼관리자 전용 -->
-                        <div id="admin-burn-section" style="background:#fce4ec; padding:1rem; border-radius:8px; margin-bottom:1rem;">
+                        <div id="admin-burn-section" style="background:#F7F3ED; padding:1rem; border-radius:8px; margin-bottom:1rem;">
                             <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">📉 포인트 차감 (소각)</h4>
                             <div style="display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:0.5rem; align-items:end;">
                                 <div>
@@ -143,7 +143,7 @@
                                 <div>
                                     <label style="font-size:0.7rem;">토큰</label>
                                     <select id="admin-off-burn-token" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
-                                        <option value="crtd">📈 CRTD</option>
+                                        <option value="crtd"><i data-lucide="trending-up" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> CRTD</option>
                                         <option value="crac">🎭 CRAC</option>
                                         <option value="crgc">🛒 CRGC</option>
                                         <option value="creb">🌱 CREB</option>
@@ -153,7 +153,7 @@
                                     <label style="font-size:0.7rem;">수량</label>
                                     <input type="number" id="admin-off-burn-amount" value="100" min="1" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
                                 </div>
-                                <button onclick="adminBurnOffchain()" style="background:#c62828; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">차감</button>
+                                <button onclick="adminBurnOffchain()" style="background:#B54534; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">차감</button>
                             </div>
                             <div>
                                 <label style="font-size:0.7rem;">사유</label>
@@ -162,8 +162,8 @@
                         </div>
 
                         <!-- ★ 토큰 관리 (수퍼관리자 전용) -->
-                        <div id="admin-token-mgmt-section" style="background:linear-gradient(135deg,#fff8e1,#fff3e0); padding:1rem; border-radius:8px; margin-bottom:1rem; border:1px solid #ffcc80;">
-                            <h4 style="font-size:0.85rem; margin-bottom:0.6rem;">🪙 오프체인 토큰 관리</h4>
+                        <div id="admin-token-mgmt-section" style="background:linear-gradient(135deg,#fff8e1,#F7F3ED); padding:1rem; border-radius:8px; margin-bottom:1rem; border:1px solid #ffcc80;">
+                            <h4 style="font-size:0.85rem; margin-bottom:0.6rem;"><i data-lucide="circle-dollar-sign" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> 오프체인 토큰 관리</h4>
                             
                             <!-- 등록된 토큰 목록 -->
                             <div id="admin-token-list" style="margin-bottom:0.8rem;"></div>
@@ -188,13 +188,13 @@
                                 <div style="display:grid; grid-template-columns:auto 1fr auto; gap:0.4rem; margin-top:0.4rem; align-items:end;">
                                     <div>
                                         <label style="font-size:0.68rem;">아이콘</label>
-                                        <input type="text" id="new-token-icon" value="🪙" maxlength="2" style="width:40px; padding:0.4rem; border:1px solid var(--border); border-radius:4px; text-align:center; font-size:1.1rem;">
+                                        <input type="text" id="new-token-icon" value="<i data-lucide="circle-dollar-sign" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i>" maxlength="2" style="width:40px; padding:0.4rem; border:1px solid var(--border); border-radius:4px; text-align:center; font-size:1.1rem;">
                                     </div>
                                     <div>
                                         <label style="font-size:0.68rem;">색상</label>
                                         <input type="color" id="new-token-color" value="#C4841D" style="width:100%; height:32px; border:1px solid var(--border); border-radius:4px; cursor:pointer;">
                                     </div>
-                                    <button onclick="createCustomToken()" style="background:#E65100; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer; font-weight:600; font-size:0.82rem;">🪙 생성</button>
+                                    <button onclick="createCustomToken()" style="background:#E65100; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer; font-weight:600; font-size:0.82rem;"><i data-lucide="circle-dollar-sign" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> 생성</button>
                                 </div>
                             </details>
                         </div>
@@ -206,7 +206,7 @@
                                 <div>
                                     <label style="font-size:0.7rem;">토큰</label>
                                     <select id="admin-dist-token" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
-                                        <option value="crtd">📈 CRTD</option>
+                                        <option value="crtd"><i data-lucide="trending-up" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> CRTD</option>
                                     </select>
                                 </div>
                                 <div>
@@ -232,28 +232,28 @@
                         <!-- 최근 오프체인 거래 내역 -->
                         <div style="background:var(--bg); padding:1rem; border-radius:8px;">
                             <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">📜 최근 오프체인 거래 내역</h4>
-                            <button onclick="adminLoadOffchainTxLog()" style="background:#455a64; color:#FFF8F0; border:none; padding:0.4rem 0.8rem; border-radius:4px; cursor:pointer; font-size:0.8rem; margin-bottom:0.5rem;">🔄 새로고침</button>
+                            <button onclick="adminLoadOffchainTxLog()" style="background:#455a64; color:#FFF8F0; border:none; padding:0.4rem 0.8rem; border-radius:4px; cursor:pointer; font-size:0.8rem; margin-bottom:0.5rem;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline;vertical-align:text-bottom;"></i> 새로고침</button>
                             <div id="admin-off-tx-log" style="max-height:300px; overflow-y:auto;"></div>
                         </div>
                     </div>
                 </div>
 
                 <!-- ═══════════════════════════════════════════ -->
-                <!-- TAB 2: 💰 온체인 지갑 (레벨 4+)           -->
+                <!-- TAB 2: <i data-lucide="coins" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> 온체인 지갑 (레벨 4+)           -->
                 <!-- ═══════════════════════════════════════════ -->
                 <div id="admin-tab-wallet" class="admin-tab-content" style="display:none;">
                     <!-- 삭제된 지갑 조회 -->
                     <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
                             <h3 style="margin:0;">🗑️ 삭제된 지갑</h3>
-                            <button onclick="adminLoadDeletedWallets()" style="background:#c62828;color:#FFF8F0;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.8rem;">🔍 조회</button>
+                            <button onclick="adminLoadDeletedWallets()" style="background:#B54534;color:#FFF8F0;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.8rem;">🔍 조회</button>
                         </div>
-                        <div id="admin-deleted-wallets"><p style="font-size:0.85rem;color:#999;">조회 버튼을 눌러주세요</p></div>
+                        <div id="admin-deleted-wallets"><p style="font-size:0.85rem;color:#6B5744;">조회 버튼을 눌러주세요</p></div>
                     </div>
                     <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
-                        <h3 style="margin-bottom:1rem;">💰 온체인 지갑 관리</h3>
+                        <h3 style="margin-bottom:1rem;"><i data-lucide="coins" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> 온체인 지갑 관리</h3>
                         <div id="admin-wallet-info" style="margin-bottom:1rem;">
-                            <button onclick="loadAdminWallet()" class="btn-primary" style="margin-bottom:0.5rem;">🔄 지갑 새로고침</button>
+                            <button onclick="loadAdminWallet()" class="btn-primary" style="margin-bottom:0.5rem;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline;vertical-align:text-bottom;"></i> 지갑 새로고침</button>
                         </div>
                         <div style="background:var(--bg); padding:1rem; border-radius:8px; margin-bottom:1rem;">
                             <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">📤 토큰 보내기 (온체인 Polygon)</h4>
@@ -282,24 +282,24 @@
                 </div>
 
                 <!-- ═══════════════════════════════════════════ -->
-                <!-- TAB 3: 📊 챌린지 관리 (레벨 3+)           -->
+                <!-- TAB 3: <i data-lucide="bar-chart-3" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> 챌린지 관리 (레벨 3+)           -->
                 <!-- ═══════════════════════════════════════════ -->
                 <div id="admin-tab-challenge" class="admin-tab-content" style="display:none;">
                     <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
-                        <h3 style="margin-bottom:1rem;">📊 챌린지 참가자 관리</h3>
-                        <button onclick="loadAdminParticipants()" class="btn-primary" style="margin-bottom:1rem;">🔄 참가자 목록 새로고침</button>
+                        <h3 style="margin-bottom:1rem;"><i data-lucide="bar-chart-3" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> 챌린지 참가자 관리</h3>
+                        <button onclick="loadAdminParticipants()" class="btn-primary" style="margin-bottom:1rem;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline;vertical-align:text-bottom;"></i> 참가자 목록 새로고침</button>
                         <div id="admin-participants-list"></div>
                     </div>
                 </div>
 
                 <!-- ═══════════════════════════════════════════ -->
-                <!-- TAB 4: 👥 회원 관리 (레벨 6)              -->
+                <!-- TAB 4: <i data-lucide="users" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> 회원 관리 (레벨 6)              -->
                 <!-- ═══════════════════════════════════════════ -->
                 <div id="admin-tab-users" class="admin-tab-content" style="display:none;">
                     <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
-                        <h3 style="margin-bottom:1rem;">👥 관리자 계층 관리</h3>
+                        <h3 style="margin-bottom:1rem;"><i data-lucide="users" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> 관리자 계층 관리</h3>
                         <!-- 권한 매트릭스 -->
-                        <div style="background:#f3e5f5; padding:1rem; border-radius:8px; margin-bottom:1rem;">
+                        <div style="background:#F7F3ED; padding:1rem; border-radius:8px; margin-bottom:1rem;">
                             <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">📋 계층 권한표</h4>
                             <div style="font-size:0.75rem; line-height:1.8;">
                                 <div>👑 <strong>Lv6 수퍼</strong>: 토큰 발행/차감 + 쿼터 설정 + Lv5 임명</div>
@@ -310,7 +310,7 @@
                                 <div>💬 <strong>Lv1 CS</strong>: 읽기 전용</div>
                             </div>
                         </div>
-                        <button onclick="loadAdminUserList()" class="btn-primary" style="margin-bottom:0.5rem;">🔄 관리자 현황</button>
+                        <button onclick="loadAdminUserList()" class="btn-primary" style="margin-bottom:0.5rem;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline;vertical-align:text-bottom;"></i> 관리자 현황</button>
                         <div id="admin-user-list"></div>
                     </div>
                 </div>
@@ -321,8 +321,8 @@
                 <div id="admin-tab-giving" class="admin-tab-content" style="display:none;">
                     <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                         <h3 style="margin-bottom:1rem;">🎁 기부풀 관리 (CRGC)</h3>
-                        <button onclick="adminLoadGivingPool()" class="btn-primary" style="margin-bottom:1rem;">🔄 기부풀 현황</button>
-                        <div id="admin-giving-pool-info" style="background:#e8f5e9; padding:1rem; border-radius:8px; margin-bottom:1rem;"></div>
+                        <button onclick="adminLoadGivingPool()" class="btn-primary" style="margin-bottom:1rem;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline;vertical-align:text-bottom;"></i> 기부풀 현황</button>
+                        <div id="admin-giving-pool-info" style="background:#F7F3ED; padding:1rem; border-radius:8px; margin-bottom:1rem;"></div>
                         <div>
                             <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">🎯 기부풀 분배</h4>
                             <div style="display:flex; gap:0.5rem; align-items:end;">
@@ -353,7 +353,7 @@
                         <p style="font-size:0.85rem; color:var(--accent); margin-bottom:1rem;">회원가입 시 소개자에게 지급되는 오프체인 토큰 수치를 설정합니다.</p>
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin-bottom:1rem;">
                             <div>
-                                <label style="font-size:0.8rem; font-weight:600;">📈 CRTD</label>
+                                <label style="font-size:0.8rem; font-weight:600;"><i data-lucide="trending-up" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> CRTD</label>
                                 <input type="number" id="referral-cfg-crtd" value="30" min="0" max="10000" style="width:100%; padding:0.5rem; border:1px solid #ddd; border-radius:6px;">
                             </div>
                             <div>
@@ -385,22 +385,22 @@
                         </p>
                         
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin-bottom:1.5rem;">
-                            <div style="background:linear-gradient(135deg,#fff3e0,#ffe0b2); padding:1rem; border-radius:10px; border:1px solid #ffcc80;">
+                            <div style="background:linear-gradient(135deg,#F7F3ED,#ffe0b2); padding:1rem; border-radius:10px; border:1px solid #ffcc80;">
                                 <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
-                                    <span style="font-size:1.2rem;">📈</span>
+                                    <span style="font-size:1.2rem;"><i data-lucide="trending-up" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i></span>
                                     <strong style="font-size:0.9rem;">CRTD</strong>
-                                    <span style="font-size:0.7rem; color:#e65100;">트레이딩</span>
+                                    <span style="font-size:0.7rem; color:#C4841D;">트레이딩</span>
                                 </div>
                                 <div style="display:flex; gap:0.4rem; align-items:center;">
                                     <input type="number" id="rate-crtd" value="100" min="1" max="10000" style="flex:1; padding:0.6rem; border:1px solid #ffcc80; border-radius:6px; font-size:1rem; font-weight:700; box-sizing:border-box;">
                                     <span style="font-size:0.75rem; color:#666;">pt/CRNY</span>
                                 </div>
                             </div>
-                            <div style="background:linear-gradient(135deg,#fce4ec,#f8bbd0); padding:1rem; border-radius:10px; border:1px solid #f48fb1;">
+                            <div style="background:linear-gradient(135deg,#F7F3ED,#f8bbd0); padding:1rem; border-radius:10px; border:1px solid #f48fb1;">
                                 <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
                                     <span style="font-size:1.2rem;">🎭</span>
                                     <strong style="font-size:0.9rem;">CRAC</strong>
-                                    <span style="font-size:0.7rem; color:#c2185b;">엔터테인먼트</span>
+                                    <span style="font-size:0.7rem; color:#B54534;">엔터테인먼트</span>
                                 </div>
                                 <div style="display:flex; gap:0.4rem; align-items:center;">
                                     <input type="number" id="rate-crac" value="100" min="1" max="10000" style="flex:1; padding:0.6rem; border:1px solid #f48fb1; border-radius:6px; font-size:1rem; font-weight:700; box-sizing:border-box;">
@@ -418,11 +418,11 @@
                                     <span style="font-size:0.75rem; color:#666;">pt/CRNY</span>
                                 </div>
                             </div>
-                            <div style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9); padding:1rem; border-radius:10px; border:1px solid #81c784;">
+                            <div style="background:linear-gradient(135deg,#F7F3ED,#6B8F3C); padding:1rem; border-radius:10px; border:1px solid #81c784;">
                                 <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
                                     <span style="font-size:1.2rem;">🌱</span>
                                     <strong style="font-size:0.9rem;">CREB</strong>
-                                    <span style="font-size:0.7rem; color:#2e7d32;">에코·바이오</span>
+                                    <span style="font-size:0.7rem; color:#6B8F3C;">에코·바이오</span>
                                 </div>
                                 <div style="display:flex; gap:0.4rem; align-items:center;">
                                     <input type="number" id="rate-creb" value="100" min="1" max="10000" style="flex:1; padding:0.6rem; border:1px solid #81c784; border-radius:6px; font-size:1rem; font-weight:700; box-sizing:border-box;">
@@ -451,54 +451,54 @@
                 <div id="admin-tab-log" class="admin-tab-content" style="display:none;">
                     <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                         <h3 style="margin-bottom:1rem;">📋 관리자 활동 로그</h3>
-                        <button onclick="loadAdminLog()" class="btn-primary" style="margin-bottom:1rem;">🔄 로그 새로고침</button>
+                        <button onclick="loadAdminLog()" class="btn-primary" style="margin-bottom:1rem;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline;vertical-align:text-bottom;"></i> 로그 새로고침</button>
                         <div id="admin-log-list"></div>
                     </div>
                 </div>
 
                 <!-- ═══════════════════════════════════════════ -->
-                <!-- TAB: 📈 대시보드 통계 (레벨 3+)           -->
+                <!-- TAB: <i data-lucide="trending-up" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> 대시보드 통계 (레벨 3+)           -->
                 <!-- ═══════════════════════════════════════════ -->
                 <div id="admin-tab-dashboard" class="admin-tab-content" style="display:none;">
                     <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-                            <h3 style="margin:0;">📈 대시보드 통계</h3>
+                            <h3 style="margin:0;"><i data-lucide="trending-up" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> 대시보드 통계</h3>
                             <div style="display:flex; gap:0.5rem; align-items:center;">
-                                <span id="dashboard-cache-info" style="font-size:0.7rem; color:#999;"></span>
-                                <button onclick="loadAdminDashboardStats(true)" style="background:#1565c0; color:#FFF8F0; border:none; padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; font-size:0.8rem;">🔄 새로고침</button>
+                                <span id="dashboard-cache-info" style="font-size:0.7rem; color:#6B5744;"></span>
+                                <button onclick="loadAdminDashboardStats(true)" style="background:#3D2B1F; color:#FFF8F0; border:none; padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; font-size:0.8rem;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline;vertical-align:text-bottom;"></i> 새로고침</button>
                             </div>
                         </div>
 
                         <!-- 사용자 통계 -->
                         <div style="margin-bottom:1.5rem;">
-                            <h4 style="font-size:0.9rem; margin-bottom:0.6rem;">👥 사용자 통계</h4>
+                            <h4 style="font-size:0.9rem; margin-bottom:0.6rem;"><i data-lucide="users" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> 사용자 통계</h4>
                             <div id="dash-user-stats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:0.6rem;">
                                 <div style="background:#F7F3ED; padding:1rem; border-radius:10px; text-align:center;">
-                                    <div style="font-size:0.75rem; color:#1565c0;">총 사용자</div>
-                                    <div id="dash-total-users" style="font-size:1.8rem; font-weight:800; color:#0d47a1;">-</div>
+                                    <div style="font-size:0.75rem; color:#5B7B8C;">총 사용자</div>
+                                    <div id="dash-total-users" style="font-size:1.8rem; font-weight:800; color:#3D2B1F;">-</div>
                                 </div>
-                                <div style="background:#e8f5e9; padding:1rem; border-radius:10px; text-align:center;">
-                                    <div style="font-size:0.75rem; color:#2e7d32;">오늘 가입</div>
-                                    <div id="dash-today-users" style="font-size:1.8rem; font-weight:800; color:#1b5e20;">-</div>
+                                <div style="background:#F7F3ED; padding:1rem; border-radius:10px; text-align:center;">
+                                    <div style="font-size:0.75rem; color:#6B8F3C;">오늘 가입</div>
+                                    <div id="dash-today-users" style="font-size:1.8rem; font-weight:800; color:#6B8F3C;">-</div>
                                 </div>
-                                <div style="background:#fff3e0; padding:1rem; border-radius:10px; text-align:center;">
-                                    <div style="font-size:0.75rem; color:#e65100;">이번 주 가입</div>
-                                    <div id="dash-week-users" style="font-size:1.8rem; font-weight:800; color:#bf360c;">-</div>
+                                <div style="background:#F7F3ED; padding:1rem; border-radius:10px; text-align:center;">
+                                    <div style="font-size:0.75rem; color:#C4841D;">이번 주 가입</div>
+                                    <div id="dash-week-users" style="font-size:1.8rem; font-weight:800; color:#C4841D;">-</div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- 거래 통계 -->
                         <div style="margin-bottom:1.5rem;">
-                            <h4 style="font-size:0.9rem; margin-bottom:0.6rem;">💰 거래 통계</h4>
+                            <h4 style="font-size:0.9rem; margin-bottom:0.6rem;"><i data-lucide="coins" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> 거래 통계</h4>
                             <div id="dash-tx-stats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:0.6rem;">
-                                <div style="background:#f3e5f5; padding:1rem; border-radius:10px; text-align:center;">
-                                    <div style="font-size:0.75rem; color:#7b1fa2;">총 거래</div>
-                                    <div id="dash-total-tx" style="font-size:1.8rem; font-weight:800; color:#4a148c;">-</div>
+                                <div style="background:#F7F3ED; padding:1rem; border-radius:10px; text-align:center;">
+                                    <div style="font-size:0.75rem; color:#6B5744;">총 거래</div>
+                                    <div id="dash-total-tx" style="font-size:1.8rem; font-weight:800; color:#3D2B1F;">-</div>
                                 </div>
-                                <div style="background:#fce4ec; padding:1rem; border-radius:10px; text-align:center;">
-                                    <div style="font-size:0.75rem; color:#c2185b;">오늘 거래</div>
-                                    <div id="dash-today-tx" style="font-size:1.8rem; font-weight:800; color:#880e4f;">-</div>
+                                <div style="background:#F7F3ED; padding:1rem; border-radius:10px; text-align:center;">
+                                    <div style="font-size:0.75rem; color:#B54534;">오늘 거래</div>
+                                    <div id="dash-today-tx" style="font-size:1.8rem; font-weight:800; color:#B54534;">-</div>
                                 </div>
                             </div>
                             <div id="dash-tx-by-token" style="margin-top:0.6rem; display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); gap:0.4rem;"></div>
@@ -506,20 +506,20 @@
 
                         <!-- 섹션별 통계 -->
                         <div style="margin-bottom:1.5rem;">
-                            <h4 style="font-size:0.9rem; margin-bottom:0.6rem;">📊 섹션별 통계</h4>
+                            <h4 style="font-size:0.9rem; margin-bottom:0.6rem;"><i data-lucide="bar-chart-3" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> 섹션별 통계</h4>
                             <div id="dash-section-stats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0.8rem;"></div>
                         </div>
 
                         <!-- 차트: 최근 7일 가입자 -->
                         <div style="margin-bottom:1.5rem;">
-                            <h4 style="font-size:0.9rem; margin-bottom:0.6rem;">📅 최근 7일 가입자</h4>
-                            <div id="dash-chart-signups" style="display:flex; align-items:flex-end; gap:4px; height:150px; padding:0.5rem; background:#f9f9f9; border-radius:10px;"></div>
+                            <h4 style="font-size:0.9rem; margin-bottom:0.6rem;"><i data-lucide="calendar" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> 최근 7일 가입자</h4>
+                            <div id="dash-chart-signups" style="display:flex; align-items:flex-end; gap:4px; height:150px; padding:0.5rem; background:#F7F3ED; border-radius:10px;"></div>
                         </div>
 
                         <!-- 차트: 토큰별 거래량 -->
                         <div>
-                            <h4 style="font-size:0.9rem; margin-bottom:0.6rem;">🪙 토큰별 거래량</h4>
-                            <div id="dash-chart-tokens" style="display:flex; align-items:flex-end; gap:8px; height:150px; padding:0.5rem; background:#f9f9f9; border-radius:10px;"></div>
+                            <h4 style="font-size:0.9rem; margin-bottom:0.6rem;"><i data-lucide="circle-dollar-sign" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> 토큰별 거래량</h4>
+                            <div id="dash-chart-tokens" style="display:flex; align-items:flex-end; gap:8px; height:150px; padding:0.5rem; background:#F7F3ED; border-radius:10px;"></div>
                         </div>
                     </div>
                 </div>
@@ -569,13 +569,13 @@
                     </div>
                     <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                         <h3 style="margin-bottom:1rem;">📋 쿠폰 목록</h3>
-                        <button onclick="loadCouponList()" class="btn-primary" style="margin-bottom:1rem;">🔄 새로고침</button>
+                        <button onclick="loadCouponList()" class="btn-primary" style="margin-bottom:1rem;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline;vertical-align:text-bottom;"></i> 새로고침</button>
                         <div id="coupon-list"></div>
                     </div>
                     <div id="coupon-log-section" style="display:none; background:#FFF8F0; padding:1.5rem; border-radius:12px;">
                         <h3 style="margin-bottom:1rem;">📜 쿠폰 사용 로그</h3>
                         <div id="coupon-log-list"></div>
-                        <button onclick="closeCouponLog()" class="btn-primary" style="margin-top:0.5rem; background:#999;">닫기</button>
+                        <button onclick="closeCouponLog()" class="btn-primary" style="margin-top:0.5rem; background:#6B5744;">닫기</button>
                     </div>
                 </div>
 
@@ -623,7 +623,7 @@
                     <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-top:1rem;">
                         <h3 style="margin-bottom:1rem;">✨ 뷰티매니저 — 분석 요청</h3>
                         <p style="font-size:0.85rem; color:#666; margin-bottom:1rem;">사용자들의 피부 분석 요청 목록입니다. 사진을 확인하고 분석 결과를 입력하세요.</p>
-                        <button onclick="BEAUTY.loadAdminRequests()" style="padding:0.5rem 1rem;border:none;border-radius:6px;background:#B54534;color:#FFF8F0;cursor:pointer;margin-bottom:0.5rem;">🔄 요청 목록 새로고침</button>
+                        <button onclick="BEAUTY.loadAdminRequests()" style="padding:0.5rem 1rem;border:none;border-radius:6px;background:#B54534;color:#FFF8F0;cursor:pointer;margin-bottom:0.5rem;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline;vertical-align:text-bottom;"></i> 요청 목록 새로고침</button>
                         <div id="beauty-admin-requests"><p style="color:#888;font-size:0.85rem;">목록을 로드하려면 위 버튼을 클릭하세요.</p></div>
                     </div>
                 </div>
@@ -635,7 +635,7 @@
                         <p style="color:#666; font-size:0.85rem; margin-bottom:1rem;">일반 유저에게 보이는 메뉴를 관리합니다. 수퍼관리자는 항상 모든 메뉴를 볼 수 있습니다.</p>
                         
                         <!-- Seed Data Button -->
-                        <div style="background:#fff3e0;border:1px solid #ffcc02;border-radius:8px;padding:1rem;margin-bottom:1rem;">
+                        <div style="background:#F7F3ED;border:1px solid #ffcc02;border-radius:8px;padding:1rem;margin-bottom:1rem;">
                             <p style="font-size:0.85rem;margin-bottom:0.5rem;"><strong>🌱 초기 데이터 시드</strong></p>
                             <p style="font-size:0.75rem;color:#666;margin-bottom:0.8rem;">아티스트, 사업체, 캠페인, AI 봇 프로필 등 초기 데이터를 생성합니다. 이미 있는 데이터는 건드리지 않습니다.</p>
                             <button onclick="seedAll().then(r=>document.getElementById('seed-result').textContent=r)" style="padding:0.6rem 1.2rem;background:#C4841D;color:#FFF8F0;border:none;border-radius:8px;cursor:pointer;font-weight:600;">🌱 시드 데이터 실행</button>
@@ -646,11 +646,11 @@
                         (function(){
                             const features = [
                                 { key: 'home', label: '🏠 홈/투데이', stable: true },
-                                { key: 'wallet', label: '💰 지갑', stable: true },
+                                { key: 'wallet', label: '<i data-lucide="coins" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> 지갑', stable: true },
                                 { key: 'social', label: '📸 소셜', stable: true },
                                 { key: 'messenger', label: '💬 메신저', stable: true },
                                 { key: 'settings', label: '⚙️ 설정', stable: true },
-                                { key: 'trading', label: '📈 트레이딩 게임' },
+                                { key: 'trading', label: '<i data-lucide="trending-up" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> 트레이딩 게임' },
                                 { key: 'ai_assistant', label: '👑 크라우니 패널' },
                                 { key: 'beauty', label: '✨ 뷰티 매니저' },
                                 { key: 'brain', label: '🧠 브레인' },
