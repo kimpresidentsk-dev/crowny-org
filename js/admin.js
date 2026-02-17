@@ -3908,6 +3908,8 @@ async function loadRewardSettingsTab() {
         <h3 style="margin-bottom:1rem;"><i data-lucide="clipboard-list" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${t('admin.rw_logs','최근 리워드 지급 내역')}</h3>
         ${logsHTML}
     </div>`;
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 function addRewardTier() {
