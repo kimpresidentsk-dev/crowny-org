@@ -904,7 +904,7 @@ const ADMIN_TAB_CONFIG = [
     { id: 'users',     icon: '<i data-lucide="users" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: t('admin.tab.users','관리자'),    minLevel: 3 },
     { id: 'giving',    icon: '<i data-lucide="gift" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: t('admin.tab.giving','기부풀'),    minLevel: 3 },
     { id: 'referral',  icon: '<i data-lucide="star" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: t('admin.tab.referral','소개자'),    minLevel: 6 },
-    { id: 'rate',      icon: '⚖️', label: t('admin.tab.rate','비율'),      minLevel: 6 },
+    { id: 'rate',      icon: '<i data-lucide="scale" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: t('admin.tab.rate','비율'),      minLevel: 6 },
     { id: 'log',       icon: '<i data-lucide="clipboard-list" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: t('admin.tab.log','로그'),      minLevel: 3 },
     { id: 'coupon',    icon: '<i data-lucide="ticket" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: t('admin.tab.coupon','쿠폰'),      minLevel: 3 },
     { id: 'products',  icon: '<i data-lucide="package" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', label: t('admin.tab.products','상품승인'),  minLevel: 2 },
@@ -2936,7 +2936,7 @@ async function requestRateChange() {
     if (changes.length === 0) { showToast('변경된 비율이 없습니다', 'info'); return; }
     
     const changeText = changes.map(c => `${c.token.toUpperCase()}: ${c.oldRate} → ${c.newRate}`).join('\n');
-    const confirmed = await showConfirmModal('⚖️ 비율 변경 확인', `다음 비율이 변경됩니다:\n\n${changeText}\n\n사유: ${reason}\n\n모든 브릿지 거래에 즉시 적용됩니다.`);
+    const confirmed = await showConfirmModal('비율 변경 확인', `다음 비율이 변경됩니다:\n\n${changeText}\n\n사유: ${reason}\n\n모든 브릿지 거래에 즉시 적용됩니다.`);
     if (!confirmed) return;
     
     // 2차 확인
@@ -3162,7 +3162,7 @@ function closeCouponLog() {
 }
 
 // ═══════════════════════════════════════════════════════
-// 🏦 슈퍼관리자 계좌 관리 (오리지널 + 운영)
+// 슈퍼관리자 계좌 관리 (오리지널 + 운영)
 // ═══════════════════════════════════════════════════════
 
 async function loadSuperAdminWallets() {
@@ -3412,7 +3412,7 @@ async function loadSuperWalletLog() {
 }
 
 // ═══════════════════════════════════════════════════════
-// 📈 대시보드 통계 (admin-tab-dashboard)
+// 대시보드 통계 (admin-tab-dashboard)
 // ═══════════════════════════════════════════════════════
 
 let _dashboardCache = null;
