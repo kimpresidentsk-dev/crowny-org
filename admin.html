@@ -59,7 +59,7 @@
     <div class="admin-layout">
         <aside class="admin-sidebar">
             <div class="logo">
-                <h1>🔐 CROWNY</h1>
+                <h1><i data-lucide="lock" style="width:20px;height:20px;display:inline;vertical-align:text-bottom;color:#C9A84C;"></i> CROWNY</h1>
                 <p>ADMIN PANEL</p>
             </div>
             <a href="index.html" class="nav-link">← 메인으로</a>
@@ -81,21 +81,21 @@
                 <div id="admin-level-badge" style="text-align:center; padding:0.8rem; background:#3D2B1F; color:#FFF8F0; border-radius:8px; margin-bottom:1rem; font-size:0.9rem;"></div>
                 
                 <!-- ★ 관리자 탭 메뉴 -->
-                <div id="admin-tab-bar" style="display:flex; gap:4px; overflow-x:auto; padding:4px; background:#f0f0f0; border-radius:10px; margin-bottom:1rem;">
+                <div id="admin-tab-bar" style="display:flex; gap:4px; overflow-x:auto; padding:4px; background:#F7F3ED; border-radius:10px; margin-bottom:1rem;">
                     <!-- JS에서 권한별 탭 동적 생성 -->
                 </div>
 
                 <!-- ═══════════════════════════════════════════ -->
-                <!-- TAB 1: 🔥 오프체인 포인트 관리 (레벨 2+)   -->
+                <!-- TAB 1: <i data-lucide="flame" style="width:16px;height:16px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> 오프체인 포인트 관리 (레벨 2+)   -->
                 <!-- ═══════════════════════════════════════════ -->
                 <div id="admin-tab-offchain" class="admin-tab-content" style="display:none;">
                     <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
-                        <h3 style="margin-bottom:1rem;">🔥 오프체인 포인트 관리</h3>
+                        <h3 style="margin-bottom:1rem;"><i data-lucide="flame" style="width:16px;height:16px;display:inline;vertical-align:text-bottom;color:#8B6914;"></i> 오프체인 포인트 관리</h3>
                         <p style="font-size:0.75rem; color:var(--accent); margin-bottom:1rem;">Firebase DB · Zero-Gas · 100 pt = 1 CRNY</p>
                         
                         <!-- 유저 잔액 조회 -->
                         <div style="background:#F7F3ED; padding:1rem; border-radius:8px; margin-bottom:1rem;">
-                            <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">🔍 유저 오프체인 잔액 조회</h4>
+                            <h4 style="font-size:0.85rem; margin-bottom:0.5rem;"><i data-lucide="search" style="width:14px;height:14px;display:inline;vertical-align:text-bottom;"></i> 유저 오프체인 잔액 조회</h4>
                             <div style="display:flex; gap:0.5rem; align-items:end;">
                                 <input type="email" id="admin-off-lookup-email" placeholder="user@email.com" style="flex:1; padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
                                 <button onclick="adminLookupOffchain()" style="background:#5B7B8C; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer; white-space:nowrap;">조회</button>
@@ -246,7 +246,7 @@
                     <div style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-bottom:1rem;">
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
                             <h3 style="margin:0;">🗑️ 삭제된 지갑</h3>
-                            <button onclick="adminLoadDeletedWallets()" style="background:#B54534;color:#FFF8F0;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.8rem;">🔍 조회</button>
+                            <button onclick="adminLoadDeletedWallets()" style="background:#B54534;color:#FFF8F0;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.8rem;"><i data-lucide="search" style="width:14px;height:14px;display:inline;vertical-align:text-bottom;"></i> 조회</button>
                         </div>
                         <div id="admin-deleted-wallets"><p style="font-size:0.85rem;color:#6B5744;">조회 버튼을 눌러주세요</p></div>
                     </div>
@@ -806,7 +806,7 @@
         if (typeof loadExchangeRate === 'function') await loadExchangeRate();
         
         if (currentUserLevel < 1) {
-            document.getElementById('admin-loading').innerHTML = '<h2>⛔ 권한 없음</h2><p>관리자 권한이 필요합니다.</p><a href="index.html">← 메인으로</a>';
+            document.getElementById('admin-loading').innerHTML = '<h2><i data-lucide="shield-x" style="width:18px;height:18px;display:inline;vertical-align:text-bottom;color:#B54534;"></i> 권한 없음</h2><p>관리자 권한이 필요합니다.</p><a href="index.html">← 메인으로</a>';
             return;
         }
         document.getElementById('admin-loading').style.display = 'none';
@@ -821,13 +821,14 @@
                 const a = document.createElement('a');
                 a.className = 'nav-link';
                 a.href = '#';
-                a.textContent = t.icon + ' ' + t.label;
+                a.innerHTML = t.icon + ' ' + t.label;
                 a.onclick = (e) => { e.preventDefault(); switchAdminTab(t.id); nav.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active')); a.classList.add('active'); };
                 nav.appendChild(a);
             });
         }
         
         initAdminPage();
+        if (typeof lucide !== 'undefined') lucide.createIcons();
     });
     
     // Lucide Icons 초기화
