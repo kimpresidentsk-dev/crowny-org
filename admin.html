@@ -49,9 +49,13 @@
         .admin-sidebar .nav-link.active { background:rgba(139,105,20,0.15); color:var(--accent); border-left:3px solid var(--accent); }
         .admin-main { margin-left:220px; padding:1.5rem; flex:1; background:var(--bg); min-height:100vh; }
         @media(max-width:768px) {
-            .admin-sidebar { display:none; }
+            .admin-sidebar { width:100%; height:auto; position:relative; padding:0.5rem 0; }
+            .admin-sidebar .logo { padding:0.5rem 1rem; }
+            .admin-sidebar #admin-sidebar-nav { display:none; }
             .admin-main { margin-left:0; padding:0.8rem; }
             .admin-layout { flex-direction:column; }
+            #admin-tab-bar { flex-wrap:wrap; }
+            #admin-tab-bar button { font-size:0.7rem !important; padding:0.4rem 0.6rem !important; }
         }
     </style>
 </head>
