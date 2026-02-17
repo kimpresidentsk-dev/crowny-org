@@ -3244,6 +3244,7 @@ async function loadSuperAdminWallets() {
         
         // Load transfer logs
         loadSuperWalletLog();
+        if (typeof lucide !== 'undefined') lucide.createIcons();
     } catch (e) {
         container.innerHTML = `<div style="background:#FFF8F0;padding:1.5rem;border-radius:12px;"><p style="color:red;">로드 실패: ${e.message}</p></div>`;
     }
@@ -3318,6 +3319,7 @@ async function showInternalTransfer(fromType) {
         </div>`;
     
     document.body.appendChild(overlay);
+    if (typeof lucide !== 'undefined') lucide.createIcons();
     overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
     overlay.querySelector('#transfer-cancel').onclick = () => overlay.remove();
     overlay.querySelector('#transfer-submit').onclick = async () => {
