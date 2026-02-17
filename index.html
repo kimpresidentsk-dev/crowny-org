@@ -180,7 +180,7 @@
                 }
                 
                 // 간단한 읽기 테스트 (빈 쿼리)
-                await window.db.collection('_health').limit(1).get();
+                await window.db.collection('users').limit(1).get();
                 console.log('[Firebase] 연결 테스트 성공 ✅');
                 return true;
             } catch (error) {
