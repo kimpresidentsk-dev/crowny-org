@@ -287,7 +287,7 @@ async function showAdminEditModal(userId, userData) {
     overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:99997;display:flex;align-items:center;justify-content:center;padding:1rem;overflow-y:auto;';
     overlay.innerHTML = `
         <div style="background:#FFF8F0;padding:1.5rem;border-radius:16px;max-width:540px;width:100%;max-height:90vh;overflow-y:auto;">
-            <h3 style="margin-bottom:0.3rem;">${t('admin.settings','🔑 관리자 설정')}</h3>
+            <h3 style="margin-bottom:0.3rem;">${t('admin.settings','<i data-lucide="settings" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> 관리자 설정')}</h3>
             <p style="font-size:0.85rem;color:#6B5744;margin-bottom:1rem;">${userData.nickname || t('admin.unnamed','이름없음')} · ${userData.email}</p>
             
             <div style="margin-bottom:1rem;">
@@ -1605,7 +1605,7 @@ async function loadAdminUserList() {
         
         const appointHTML = `
         <div style="background:var(--bg); padding:1rem; border-radius:8px; margin-bottom:1rem;">
-            <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">🔑 관리자 임명 (최대 Lv${maxAppointLevel}까지)</h4>
+            <h4 style="font-size:0.85rem; margin-bottom:0.5rem;"><i data-lucide="user-check" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> 관리자 임명 (최대 Lv${maxAppointLevel}까지)</h4>
             <div style="display:grid; grid-template-columns:1fr auto auto; gap:0.5rem; align-items:end;">
                 <div>
                     <label style="font-size:0.7rem;">이메일</label>
@@ -2038,7 +2038,7 @@ async function loadAdminWallet() {
         
         container.innerHTML = `
             <div style="font-size:0.8rem; color:var(--accent); margin-bottom:0.5rem;">
-                🔗 <span style="font-family:monospace;">${adminAddress.slice(0,6)}...${adminAddress.slice(-4)}</span>
+                <i data-lucide="link" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> <span style="font-family:monospace;">${adminAddress.slice(0,6)}...${adminAddress.slice(-4)}</span>
                 <span style="margin-left:0.5rem; color:#8e24aa;">Polygon</span>
             </div>
             <div style="display:flex; gap:0.8rem; flex-wrap:wrap; margin-bottom:0.5rem;">
@@ -2149,7 +2149,7 @@ async function adminSendToken() {
         
         const tokenSymbol = tokenKey.toUpperCase();
         if (!window.confirm(
-            `🔗 온체인 토큰 전송\n\n` +
+            `온체인 토큰 전송\n\n` +
             `보내는 사람: ${fromAddress.slice(0,6)}...${fromAddress.slice(-4)}\n` +
             `받는 사람: ${email}\n` +
             `  (${toAddress.slice(0,6)}...${toAddress.slice(-4)})\n` +
@@ -2505,7 +2505,7 @@ async function showCreateChallenge() {
     
     const formHTML = `
         <div id="create-challenge-form" style="background:#FFF8F0; padding:1.5rem; border-radius:12px; margin-top:1rem; border:2px solid var(--accent);">
-            <h3 style="margin-bottom:1rem;">🆕 CRTD 프랍 챌린지 생성</h3>
+            <h3 style="margin-bottom:1rem;"><i data-lucide="plus-circle" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> CRTD 프랍 챌린지 생성</h3>
             
             <div style="display:grid; gap:0.8rem;">
                 <div>
@@ -3842,7 +3842,7 @@ async function loadRewardSettingsTab() {
             <tr style="background:#F7F3ED;"><th style="padding:0.4rem;text-align:left;">UID</th><th>유형</th><th>금액</th><th>날짜</th></tr>
             ${logs.map(l => `<tr style="border-bottom:1px solid #E8E0D8;">
                 <td style="padding:0.4rem;font-family:monospace;font-size:0.7rem;">${(l.uid||'').slice(0,12)}…</td>
-                <td style="text-align:center;">${l.type === 'signup' ? '🆕 가입' : '<i data-lucide="handshake" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 초대'}</td>
+                <td style="text-align:center;">${l.type === 'signup' ? '<i data-lucide="user-plus" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 가입' : '<i data-lucide="handshake" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 초대'}</td>
                 <td style="text-align:center;font-weight:600;">${l.amount} CRTD</td>
                 <td style="text-align:center;font-size:0.7rem;">${l.createdAt?.toDate ? l.createdAt.toDate().toLocaleDateString() : '—'}</td>
             </tr>`).join('')}
@@ -3855,7 +3855,7 @@ async function loadRewardSettingsTab() {
         <!-- 가입 리워드 -->
         <div style="margin-bottom:1.5rem;">
             <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
-                <label style="font-weight:700;">🆕 ${t('admin.rw_signup','가입 리워드')}</label>
+                <label style="font-weight:700;"><i data-lucide="user-plus" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> ${t('admin.rw_signup','가입 리워드')}</label>
                 <label class="toggle-switch" style="margin-left:auto;">
                     <input type="checkbox" id="rw-signup-enabled" ${rs.signupEnabled ? 'checked' : ''}>
                     <span class="toggle-slider"></span>
@@ -3889,13 +3889,13 @@ async function loadRewardSettingsTab() {
 
         <!-- 소셜 공유 키 -->
         <div style="margin-bottom:1.5rem;">
-            <h4 style="margin-bottom:0.5rem;">🔑 ${t('admin.rw_social_keys','소셜 공유 설정')}</h4>
+            <h4 style="margin-bottom:0.5rem;"><i data-lucide="key" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> ${t('admin.rw_social_keys','소셜 공유 설정')}</h4>
             <div style="margin-bottom:0.5rem;">
-                <label style="font-size:0.8rem;">💛 ${t('admin.rw_kakao_key','카카오 앱 키 (JavaScript)')}</label>
+                <label style="font-size:0.8rem;"><i data-lucide="message-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${t('admin.rw_kakao_key','카카오 앱 키 (JavaScript)')}</label>
                 <input type="text" id="rw-kakao-key" value="${is.kakaoAppKey || ''}" placeholder="카카오 JavaScript 앱 키" style="width:100%;padding:0.4rem;border:1px solid #E8E0D8;border-radius:6px;font-size:0.85rem;">
             </div>
             <div>
-                <label style="font-size:0.8rem;">📘 ${t('admin.rw_fb_id','페이스북 앱 ID')}</label>
+                <label style="font-size:0.8rem;"><i data-lucide="globe" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${t('admin.rw_fb_id','페이스북 앱 ID')}</label>
                 <input type="text" id="rw-fb-id" value="${is.facebookAppId || ''}" placeholder="Facebook App ID" style="width:100%;padding:0.4rem;border:1px solid #E8E0D8;border-radius:6px;font-size:0.85rem;">
             </div>
         </div>
