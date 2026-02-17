@@ -939,7 +939,7 @@ function initAdminPage() {
     
     availableTabs.forEach((tab, idx) => {
         const btn = document.createElement('button');
-        btn.textContent = `${tab.icon} ${tab.label}`;
+        btn.innerHTML = `${tab.icon} ${tab.label}`;
         btn.style.cssText = 'padding:0.5rem 0.8rem; border:none; border-radius:8px; cursor:pointer; font-size:0.8rem; font-weight:600; white-space:nowrap; background:transparent; color:#6B5744; transition:all 0.2s;';
         btn.onclick = () => switchAdminTab(tab.id);
         btn.id = `admin-tab-btn-${tab.id}`;
@@ -950,6 +950,7 @@ function initAdminPage() {
     if (availableTabs.length > 0) {
         switchAdminTab(availableTabs[0].id);
     }
+    if (window.lucide) lucide.createIcons();
     
     // ★ 발행/차감/토큰관리/배포 섹션: 수퍼관리자만 표시
     const mintSection = document.getElementById('admin-mint-section');
