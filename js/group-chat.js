@@ -208,7 +208,7 @@ async function openGroupChat(chatId) {
                     ${!isMine ? avatarHTML(senderInfo.photoURL, senderInfo.nickname, 28) : ''}
                     <div style="max-width:70%;">
                         ${!isMine ? `<div style="font-size:0.7rem;color:var(--accent);margin-bottom:0.15rem;">${senderInfo.nickname}</div>` : ''}
-                        <div style="background:${isMine ? 'var(--text)' : '#F7F3ED'};color:${isMine ? 'white' : 'var(--text)'};padding:0.6rem 0.8rem;border-radius:${isMine ? '12px 12px 0 12px' : '12px 12px 12px 0'};word-break:break-word;font-size:0.9rem;line-height:1.4;">${content}</div>
+                        <div style="background:${isMine ? 'var(--text)' : '#F7F3ED'};color:${isMine ? '#FFF8F0' : 'var(--text)'};padding:0.6rem 0.8rem;border-radius:${isMine ? '12px 12px 0 12px' : '12px 12px 12px 0'};word-break:break-word;font-size:0.9rem;line-height:1.4;">${content}</div>
                     </div>`;
                 messagesDiv.appendChild(msgEl);
             }

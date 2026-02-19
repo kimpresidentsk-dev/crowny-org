@@ -27,7 +27,7 @@ async function loadExploreTab() {
             ${['all','photo','video','service'].map(f => {
                 const labels = { all:'전체', photo:'<i data-lucide="camera"></i> 사진', video:'<i data-lucide="video"></i> 영상', service:'<i data-lucide="link"></i> 서비스' };
                 const active = _exploreFilter === f;
-                return `<button onclick="setExploreFilter('${f}')" style="padding:0.4rem 0.8rem;border:1px solid ${active ? '#3D2B1F' : 'var(--border)'};border-radius:20px;background:${active ? '#3D2B1F' : 'white'};color:${active ? 'white' : 'var(--text)'};font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap;">${labels[f]}</button>`;
+                return `<button onclick="setExploreFilter('${f}')" style="padding:0.4rem 0.8rem;border:1px solid ${active ? '#3D2B1F' : 'var(--border)'};border-radius:20px;background:${active ? '#3D2B1F' : '#FFF8F0'};color:${active ? '#FFF8F0' : 'var(--text)'};font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap;">${labels[f]}</button>`;
             }).join('')}
         </div>`;
 

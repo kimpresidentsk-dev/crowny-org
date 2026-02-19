@@ -805,9 +805,9 @@ function _renderBookReader() {
         </div>
         
         <div style="background:rgba(0,0,0,0.3);padding:0.8rem 1rem;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
-            <button onclick="_navigateScene(-1)" style="background:${s.currentScene > 0 ? '#333' : '#222'};color:${s.currentScene > 0 ? 'white' : '#6B5744'};border:none;padding:0.5rem 1.5rem;border-radius:8px;cursor:pointer;" ${s.currentScene <= 0 ? 'disabled' : ''}>← 이전</button>
+            <button onclick="_navigateScene(-1)" style="background:${s.currentScene > 0 ? '#3D2B1F' : '#6B5744'};color:${s.currentScene > 0 ? '#FFF8F0' : '#6B5744'};border:none;padding:0.5rem 1.5rem;border-radius:8px;cursor:pointer;" ${s.currentScene <= 0 ? 'disabled' : ''}>← 이전</button>
             <span style="color:#6B5744;font-size:0.8rem;">${s.currentScene + 1} / ${s.allScenes.length}</span>
-            <button onclick="_navigateScene(1)" style="background:${s.currentScene < s.allScenes.length - 1 ? '#3D2B1F' : '#222'};color:${s.currentScene < s.allScenes.length - 1 ? 'white' : '#6B5744'};border:none;padding:0.5rem 1.5rem;border-radius:8px;cursor:pointer;" ${s.currentScene >= s.allScenes.length - 1 ? 'disabled' : ''}>다음 →</button>
+            <button onclick="_navigateScene(1)" style="background:${s.currentScene < s.allScenes.length - 1 ? '#3D2B1F' : '#6B5744'};color:${s.currentScene < s.allScenes.length - 1 ? '#FFF8F0' : '#6B5744'};border:none;padding:0.5rem 1.5rem;border-radius:8px;cursor:pointer;" ${s.currentScene >= s.allScenes.length - 1 ? 'disabled' : ''}>다음 →</button>
         </div>
     `;
     document.body.appendChild(modal);
