@@ -2092,29 +2092,38 @@
 
     <!-- Business Registration Modal -->
     <div class="register-modal-overlay" id="modal-business">
-        <div class="register-modal-content">
+        <div class="register-modal-content" style="max-width:500px;">
             <button class="modal-close-btn" onclick="closeRegisterModal('business')">&times;</button>
             <h3 style="margin-bottom:1rem;" data-i18n="modal.business_register"><i data-lucide="store"></i> 사업체 등록</h3>
-            <div style="display:grid; gap:0.8rem;">
-                <input type="text" id="biz-name" placeholder="사업체명" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                <textarea id="biz-desc" placeholder="사업 소개" rows="2" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px; resize:vertical;"></textarea>
+            <div style="display:grid; gap:0.8rem; max-height:70vh; overflow-y:auto;">
+                <input type="text" id="biz-name" placeholder="회사명 *" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                <textarea id="biz-desc" placeholder="회사 상세 설명 (500자 이내) *" rows="4" 
+                    style="padding:0.7rem; border:1px solid var(--border); border-radius:6px; resize:vertical;"></textarea>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
                     <select id="biz-category" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
-                        <option value="retail"><i data-lucide="store"></i> 소매</option>
-                        <option value="food">요식업</option>
-                        <option value="service"><i data-lucide="wrench"></i> 서비스</option>
-                        <option value="tech">디지털 테크</option>
-                        <option value="education">교육</option>
-                        <option value="health">포닥터 헬스/뷰티</option>
-                        <option value="logistics"><i data-lucide="truck"></i> 물류</option>
-                        <option value="entertainment">엔터</option>
-                        <option value="other"><i data-lucide="building-2"></i> 기타</option>
+                        <option value="">카테고리 선택 *</option>
+                        <option value="교육">교육</option>
+                        <option value="기술">기술/IT</option>
+                        <option value="제조">제조업</option>
+                        <option value="서비스">서비스업</option>
+                        <option value="소매">소매</option>
+                        <option value="요식업">요식업</option>
+                        <option value="헬스케어">헬스케어</option>
+                        <option value="물류">물류</option>
+                        <option value="엔터테인먼트">엔터테인먼트</option>
+                        <option value="기타">기타</option>
                     </select>
-                    <input type="text" id="biz-country" placeholder="국가/지역" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                    <input type="text" id="biz-country" placeholder="국가/지역 *" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                 </div>
                 <input type="text" id="biz-website" placeholder="웹사이트 (선택)" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                <input type="email" id="biz-contact-email" placeholder="연락처 이메일 *" style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
+                <input type="number" id="biz-investment-goal" placeholder="투자 목표 (CRTD)" min="0" 
+                    style="padding:0.7rem; border:1px solid var(--border); border-radius:6px;">
                 <input type="file" id="biz-image" accept="image/*" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
-                <button onclick="registerBusiness(); closeRegisterModal('business');" class="btn-primary" data-i18n="modal.business_register"><i data-lucide="building-2"></i> 사업체 등록</button>
+                <p style="font-size:0.75rem; color:var(--accent); margin:0;">* 필수 항목</p>
+                <button onclick="registerBusiness(); closeRegisterModal('business');" class="btn-primary" data-i18n="modal.business_register">
+                    <i data-lucide="building-2"></i> 사업체 등록
+                </button>
             </div>
         </div>
     </div>
@@ -2174,6 +2183,26 @@
                 <input type="file" id="book-pdf" accept=".pdf" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px;">
                 <p style="font-size:0.75rem; color:var(--accent);"><i data-lucide="paperclip"></i> PDF 파일 업로드 (전자책 본문)</p>
                 <button onclick="registerBook(); closeRegisterModal('books');" class="btn-primary" data-i18n="modal.book_register"><i data-lucide="book-open"></i> 책 등록</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Business Detail Modal -->
+    <div class="register-modal-overlay" id="business-detail-modal" style="display:none;">
+        <div class="register-modal-content" style="max-width:600px; max-height:80vh; overflow-y:auto;">
+            <button class="modal-close-btn" onclick="document.getElementById('business-detail-modal').style.display='none'">&times;</button>
+            <div id="business-detail-content">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Business Q&A Modal -->
+    <div class="register-modal-overlay" id="business-qa-modal" style="display:none;">
+        <div class="register-modal-content" style="max-width:700px; max-height:80vh;">
+            <button class="modal-close-btn" onclick="document.getElementById('business-qa-modal').style.display='none'">&times;</button>
+            <div id="business-qa-content">
+                <!-- Content will be populated by JavaScript -->
             </div>
         </div>
     </div>
