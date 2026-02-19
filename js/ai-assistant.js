@@ -4,7 +4,7 @@ const AI_ASSISTANT = (() => {
     const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
     const MAX_HISTORY = 50;
 
-    let apiKey = 'AIzaSyAhkJlLDE_V2Iso8PZaGIWPqs_ht0ZuZeA'; // 기본 키 (DB에서 오버라이드 가능)
+    let apiKey = ''; // 기본 키 (DB에서 오버라이드 가능)
     let enabled = true;
     let isLoading = false;
     let currentCharId = null;
@@ -426,7 +426,7 @@ delay: 첫 번째 0~500, 이후 +800~2000씩 증가 (자연스러운 타이밍)`
             if (res.status === 429) return '⏳ 요청이 너무 많습니다. 잠시 후 다시 시도해주세요.';
             if (res.status === 403 || res.status === 400) {
                 // DB 키가 잘못됐을 수 있으니 기본 키로 재시도
-                const DEFAULT_KEY = 'AIzaSyAhkJlLDE_V2Iso8PZaGIWPqs_ht0ZuZeA';
+                const DEFAULT_KEY = '';
                 if (apiKey !== DEFAULT_KEY && retryCount < 1) {
                     console.warn('🔑 API 키 오류 → 기본 키로 재시도');
                     apiKey = DEFAULT_KEY;
