@@ -81,9 +81,9 @@ const ADMIN_LEVELS = {
     6: { name: t('admin.level.super','수퍼관리자'), icon: '<i data-lucide="crown" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', color: '#8B6914' },
     5: { name: t('admin.level.country','국가관리자'), icon: '<i data-lucide="globe" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', color: '#8B6914' },
     4: { name: t('admin.level.business','사업관리자'), icon: '<i data-lucide="briefcase" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', color: '#5B7B8C' },
-    3: { name: t('admin.level.service','서비스관리자'), icon: '<i data-lucide="wrench" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', color: '#FF9800' },
+    3: { name: t('admin.level.service','서비스관리자'), icon: '<i data-lucide="wrench" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', color: '#C4841D' },
     2: { name: t('admin.level.ops','운영관리자'), icon: '<i data-lucide="file-text" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', color: '#6B8F3C' },
-    1: { name: t('admin.level.cs','CS관리자'), icon: '<i data-lucide="message-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', color: '#607D8B' },
+    1: { name: t('admin.level.cs','CS관리자'), icon: '<i data-lucide="message-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', color: '#6B5744' },
     0: { name: t('admin.level.member','정회원'), icon: '<i data-lucide="star" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', color: '#795548' },
     '-1': { name: t('admin.level.basic','일반회원'), icon: '<i data-lucide="user" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>', color: '#9E9E9E' }
 };
@@ -1353,7 +1353,7 @@ async function adminBatchDistribute() {
         <div style="padding:0.6rem; border-radius:6px; ${fail > 0 ? 'background:#F7F3ED; border:1px solid #ffcc80;' : 'background:#F7F3ED; border:1px solid #a5d6a7;'}">
             <strong><i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${success}명 성공</strong>${fail > 0 ? ` / <i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${fail}명 실패` : ''}
             <div style="font-size:0.78rem; margin-top:0.3rem;">총 발행: ${(amount * success).toLocaleString()} ${ti.name}</div>
-            ${failList.length > 0 ? `<div style="font-size:0.72rem; color:#c62828; margin-top:0.3rem;">실패: ${failList.join(', ')}</div>` : ''}
+            ${failList.length > 0 ? `<div style="font-size:0.72rem; color:#B54534; margin-top:0.3rem;">실패: ${failList.join(', ')}</div>` : ''}
         </div>`;
     
     document.getElementById('admin-dist-emails').value = '';
@@ -1406,7 +1406,7 @@ async function adminLoadOffchainTxLog() {
             'swap_offchain': '<i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>환전'
         };
         const typeColors = {
-            'admin_mint': '#2e7d32', 'admin_burn': '#c62828',
+            'admin_mint': '#6B8F3C', 'admin_burn': '#B54534',
             'earn': '#5B7B8C', 'spend': '#ff6f00',
             'transfer': '#455a64', 'swap_offchain': '#6a1b9a'
         };
@@ -1647,14 +1647,14 @@ async function loadAdminUserList() {
             const serviceArr = normalizeToArray(u.adminService);
             const countryBadge = countryArr.map(c => `<span style="font-size:0.6rem;background:#F7F3ED;color:#5B7B8C;padding:1px 4px;border-radius:3px;">${c}</span>`).join('');
             const businessBadge = businessArr.map(b => `<span style="font-size:0.6rem;background:#F7F3ED;color:#C4841D;padding:1px 4px;border-radius:3px;">${b}</span>`).join('');
-            const serviceBadge = serviceArr.map(s => `<span style="font-size:0.6rem;background:#f3e5f5;color:#7b1fa2;padding:1px 4px;border-radius:3px;">${s}</span>`).join('');
+            const serviceBadge = serviceArr.map(s => `<span style="font-size:0.6rem;background:#F7F3ED;color:#6B5744;padding:1px 4px;border-radius:3px;">${s}</span>`).join('');
             
             let periodText = '';
             if (u.adminEndDate) {
                 const end = u.adminEndDate.toDate ? u.adminEndDate.toDate() : new Date(u.adminEndDate);
                 const isExpired = end < new Date();
                 periodText = isExpired 
-                    ? `<span style="font-size:0.6rem;color:#c62828;font-weight:700;"><i data-lucide="clock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 만료됨</span>`
+                    ? `<span style="font-size:0.6rem;color:#B54534;font-weight:700;"><i data-lucide="clock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 만료됨</span>`
                     : `<span style="font-size:0.6rem;color:#6B5744;">~${end.toLocaleDateString('ko-KR')}</span>`;
             }
             
@@ -1954,13 +1954,13 @@ async function adminLoadDeletedWallets() {
                 const w = wDoc.data();
                 count++;
                 const deletedAt = w.deletedAt?.toDate ? w.deletedAt.toDate().toLocaleString('ko-KR') : (w.deletedAt ? new Date(w.deletedAt).toLocaleString('ko-KR') : '--');
-                html += `<div style="padding:0.6rem;background:#fff5f5;border-radius:6px;margin-bottom:0.4rem;border-left:3px solid #c62828;">
+                html += `<div style="padding:0.6rem;background:#FFF8F0;border-radius:6px;margin-bottom:0.4rem;border-left:3px solid #B54534;">
                     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.3rem;">
                         <div>
                             <strong style="font-size:0.85rem;">${w.name || '지갑'}</strong>
                             <span style="font-size:0.7rem;color:#6B5744;margin-left:0.3rem;">${userData.email || userDoc.id}</span>
                             <div style="font-size:0.72rem;color:#6B5744;font-family:monospace;">${w.walletAddress || '--'}</div>
-                            <div style="font-size:0.68rem;color:#c62828;">삭제: ${deletedAt}</div>
+                            <div style="font-size:0.68rem;color:#B54534;">삭제: ${deletedAt}</div>
                         </div>
                         ${hasLevel(4) ? `<button onclick="adminRestoreWallet('${userDoc.id}','${wDoc.id}')" style="background:#6B8F3C;color:#FFF8F0;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;font-size:0.7rem;"><i data-lucide="rotate-ccw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 복구</button>` : ''}
                     </div>
@@ -2051,10 +2051,10 @@ async function loadAdminWallet() {
                     <strong style="font-size:1.2rem;">${balances.fnc.toLocaleString(undefined, {maximumFractionDigits:2})}</strong>
                 </div>
                 <div style="background:#F7F3ED; padding:0.6rem 1rem; border-radius:6px; text-align:center; min-width:80px;">
-                    <div style="font-size:0.7rem; color:#2e7d32;">CRFN</div>
+                    <div style="font-size:0.7rem; color:#6B8F3C;">CRFN</div>
                     <strong style="font-size:1.2rem;">${balances.crfn.toLocaleString(undefined, {maximumFractionDigits:2})}</strong>
                 </div>
-                <div style="background:#f3e5f5; padding:0.6rem 1rem; border-radius:6px; text-align:center; min-width:80px;">
+                <div style="background:#F7F3ED; padding:0.6rem 1rem; border-radius:6px; text-align:center; min-width:80px;">
                     <div style="font-size:0.7rem; color:#6a1b9a;">POL (가스)</div>
                     <strong style="font-size:1.2rem;">${maticFormatted}</strong>
                 </div>
@@ -2319,7 +2319,7 @@ async function loadAdminParticipants() {
                                         </button>
                                     ` : ''}
                                     <button onclick="adminAdjustDailyLimit('${participantId}', '${challengeId}')" 
-                                        style="background:#607D8B; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
+                                        style="background:#6B5744; color:#FFF8F0; border:none; padding:0.4rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">
                                         <i data-lucide="bar-chart-3" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 일일한도
                                     </button>
                                     <button onclick="adminAdjustMaxDrawdown('${participantId}', '${challengeId}')" 
@@ -3051,7 +3051,7 @@ async function loadCouponList() {
             const c = doc.data();
             const expiry = c.expiresAt ? c.expiresAt.toDate().toLocaleDateString('ko-KR') : '무제한';
             const usageText = c.maxUses > 0 ? `${c.usedCount}/${c.maxUses}` : `${c.usedCount}/∞`;
-            const statusColor = c.enabled ? '#2e7d32' : '#c62828';
+            const statusColor = c.enabled ? '#6B8F3C' : '#B54534';
             const statusText = c.enabled ? '활성' : '비활성';
             const couponName = c.name || c.code;
             html += `<tr style="border-bottom:1px solid #E8E0D8;">
@@ -3065,9 +3065,9 @@ async function loadCouponList() {
                 <td style="text-align:center; color:${statusColor}; font-weight:600;">${statusText}</td>
                 <td style="text-align:center;">
                     <div style="display:flex; flex-direction:column; gap:3px; align-items:center;">
-                        <button onclick="toggleCoupon('${doc.id}', ${!c.enabled})" style="padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem; background:${c.enabled ? '#ffcdd2' : '#c8e6c9'}; color:${c.enabled ? '#c62828' : '#2e7d32'}; width:100%;">${c.enabled ? '비활성화' : '활성화'}</button>
+                        <button onclick="toggleCoupon('${doc.id}', ${!c.enabled})" style="padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem; background:${c.enabled ? '#F7F3ED' : '#F7F3ED'}; color:${c.enabled ? '#B54534' : '#6B8F3C'}; width:100%;">${c.enabled ? '비활성화' : '활성화'}</button>
                         <button onclick="viewCouponLog('${doc.id}','${c.code}')" style="padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem; background:#F7F3ED; color:#5B7B8C; width:100%;"><i data-lucide="scroll-text" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> 로그</button>
-                        <button onclick="deleteCoupon('${doc.id}','${c.code}')" style="padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem; background:#F7F3ED; color:#c62828; width:100%;"><i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 삭제</button>
+                        <button onclick="deleteCoupon('${doc.id}','${c.code}')" style="padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; font-size:0.7rem; background:#F7F3ED; color:#B54534; width:100%;"><i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 삭제</button>
                     </div>
                 </td>
             </tr>`;
@@ -3623,9 +3623,9 @@ function renderDashboardStats(stats) {
     const sections = stats.sections || {};
     const sectionEl = el('dash-section-stats');
     if (sectionEl) {
-        const colors = { mall: '#6B8F3C', art: '#B54534', books: '#FF9800', trading: '#C4841D', social: '#5B7B8C' };
+        const colors = { mall: '#6B8F3C', art: '#B54534', books: '#C4841D', trading: '#C4841D', social: '#5B7B8C' };
         sectionEl.innerHTML = Object.entries(sections).map(([key, sec]) => {
-            const color = colors[key] || '#607D8B';
+            const color = colors[key] || '#6B5744';
             return `<div style="background:#FFF8F0; border:1px solid ${color}33; border-left:4px solid ${color}; padding:1rem; border-radius:10px;">
                 <div style="font-weight:700; margin-bottom:0.5rem;">${sec.icon} ${sec.label}</div>
                 ${(sec.items || []).map(item => `<div style="display:flex; justify-content:space-between; font-size:0.82rem; padding:0.2rem 0;">
@@ -3664,7 +3664,7 @@ function renderDashboardStats(stats) {
             const tokenColors = { CRTD: '#C4841D', CRAC: '#B54534', CRGC: '#6B8F3C', CREB: '#2E7D32' };
             chartTokenEl.innerHTML = entries.map(([tk, vol]) => {
                 const pct = Math.max((vol / maxVol) * 100, 2);
-                const color = tokenColors[tk] || '#607D8B';
+                const color = tokenColors[tk] || '#6B5744';
                 return `<div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
                     <span style="font-size:0.68rem; font-weight:700; color:${color};">${vol.toLocaleString()}</span>
                     <div style="width:100%; background:linear-gradient(180deg,${color}cc,${color}); border-radius:4px 4px 0 0; height:${pct}%; min-height:4px; transition:height 0.3s;"></div>
