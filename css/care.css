@@ -73,25 +73,58 @@
 
 /* SOS Button */
 .care-sos-btn {
-    background: linear-gradient(135deg, #8B6914, #6B5744);
+    background: linear-gradient(135deg, #B54534, #8B2C1B);
     color: #FFF8F0;
     border: none;
     border-radius: 50%;
     width: 140px;
     height: 140px;
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: 900;
     cursor: pointer;
-    box-shadow: 0 4px 20px rgba(139,105,20,0.4);
+    box-shadow: 0 4px 20px rgba(181,69,52,0.4);
     transition: transform 0.15s, box-shadow 0.15s;
     animation: care-sos-pulse 2s infinite;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1;
+    padding: 10px;
+    box-sizing: border-box;
 }
 .care-sos-btn:active {
     transform: scale(0.9);
 }
 @keyframes care-sos-pulse {
-    0%, 100% { box-shadow: 0 4px 20px rgba(139,105,20,0.4); }
-    50% { box-shadow: 0 4px 40px rgba(139,105,20,0.7); }
+    0%, 100% { box-shadow: 0 4px 20px rgba(181,69,52,0.4); }
+    50% { box-shadow: 0 4px 40px rgba(181,69,52,0.7); }
+}
+
+/* 모바일 반응형 */
+@media (max-width: 480px) {
+    .care-sos-btn {
+        width: 120px;
+        height: 120px;
+        font-size: 1.5rem;
+        padding: 8px;
+    }
+    .care-sos-btn span {
+        font-size: 0.8rem !important;
+        margin-top: 0.2rem !important;
+    }
+    .sos-emergency-btn {
+        font-size: 1.3rem;
+        padding: 1rem 0.8rem;
+        min-height: 80px;
+    }
+    .sos-emergency-btn span {
+        font-size: 0.8rem;
+    }
+    .sos-emergency-btns {
+        gap: 0.8rem;
+    }
 }
 
 /* Quick Replies */
@@ -434,11 +467,11 @@
     margin-top: 0.2rem;
 }
 .sos-119 {
-    background: linear-gradient(135deg, #8B6914, #6B5744);
+    background: linear-gradient(135deg, #B54534, #8B2C1B);
     color: #FFF8F0;
 }
 .sos-112 {
-    background: linear-gradient(135deg, #3D2B1F, #6B5744);
+    background: linear-gradient(135deg, #B54534, #8B2C1B);
     color: #FFF8F0;
 }
 .sos-ec-card {
