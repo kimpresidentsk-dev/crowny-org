@@ -503,7 +503,7 @@ const mentors = {
 let mentorResults = {};
 let mentorPreviousSignals = {};
 let mentorUpdateInterval = null;
-let activeMentorId = null;
+let activeMentorId = 'crowny-girl';
 
 function initMentorPanel() {
     // Initialize learning system

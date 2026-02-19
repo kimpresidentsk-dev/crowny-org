@@ -754,9 +754,9 @@ async function initTradingViewChart() {
         window.volumeSeries = volumeSeries;
         
         const candleSeries = chart.addCandlestickSeries({
-            upColor: '#3D2B1F', downColor: '#B54534',
-            wickUpColor: '#6B5744', wickDownColor: '#6B5744',
-            borderUpColor: '#3D2B1F', borderDownColor: '#B54534',
+            upColor: '#1E88E5', downColor: '#B54534',
+            wickUpColor: '#1E88E5', wickDownColor: '#B54534',
+            borderUpColor: '#1E88E5', borderDownColor: '#B54534',
         });
         
         window.liveChart = chart;
