@@ -9,22 +9,22 @@ async function reloadTradingSystem() {
     const statusEl = document.getElementById('trading-reload-status');
     const btn = document.getElementById('trading-reload-btn');
     if (btn) btn.disabled = true;
-    if (statusEl) statusEl.textContent = '<i data-lucide="hourglass" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 초기화 중...';
+    if (statusEl) statusEl.innerHTML = '<i data-lucide="hourglass" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 초기화 중...';
     
     try {
         // 1) 참가 데이터 재로드
         myParticipation = null;
-        if (statusEl) statusEl.textContent = '<i data-lucide="hourglass" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 참가 데이터 로드...';
+        if (statusEl) statusEl.innerHTML = '<i data-lucide="hourglass" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 참가 데이터 로드...';
         await loadTradingDashboard();
         
         // 2) 가격 피드 재시작
-        if (statusEl) statusEl.textContent = '<i data-lucide="hourglass" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 가격 피드 연결...';
+        if (statusEl) statusEl.innerHTML = '<i data-lucide="hourglass" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 가격 피드 연결...';
         if (typeof connectPriceWebSocket === 'function') {
             connectPriceWebSocket();
         }
         
         // 3) 차트 재초기화
-        if (statusEl) statusEl.textContent = '<i data-lucide="hourglass" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 차트 초기화...';
+        if (statusEl) statusEl.innerHTML = '<i data-lucide="hourglass" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 차트 초기화...';
         try {
             if (typeof initTradingViewChart === 'function') {
                 initTradingViewChart();
@@ -36,7 +36,7 @@ async function reloadTradingSystem() {
         
         // 가격 수신 대기 (최대 5초)
         if (myParticipation && currentPrice < 1000) {
-            if (statusEl) statusEl.textContent = '<i data-lucide="hourglass" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 가격 수신 대기...';
+            if (statusEl) statusEl.innerHTML = '<i data-lucide="hourglass" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 가격 수신 대기...';
             await new Promise(r => {
                 let waited = 0;
                 const iv = setInterval(() => {
@@ -53,7 +53,7 @@ async function reloadTradingSystem() {
         if (statusEl) statusEl.style.color = ok ? '#6B8F3C' : '#ff6600';
     } catch (e) {
         console.error('<i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> reloadTradingSystem:', e);
-        if (statusEl) statusEl.textContent = '<i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 오류: ' + e.message;
+        if (statusEl) statusEl.innerHTML = '<i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 오류: ' + e.message;
         if (statusEl) statusEl.style.color = '#ff3333';
     }
     
@@ -1307,14 +1307,14 @@ function updateLivePnL() {
     if (crtdEstEl) {
         if (realTimePnL >= cfg.profitThreshold) {
             const excess = realTimePnL - cfg.profitThreshold;
-            crtdEstEl.textContent = `<i data-lucide="gem" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>+${Math.floor(excess)} CRTD 변환구간`;
+            crtdEstEl.innerHTML = `<i data-lucide="gem" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>+${Math.floor(excess)} CRTD 변환구간`;
             crtdEstEl.style.color = '#6B8F3C';
         } else if (realTimePnL < 0) {
             const left = cfg.liquidation + realTimePnL;
-            crtdEstEl.textContent = `<i data-lucide="shield" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> -$${cfg.liquidation}까지 $${left.toFixed(0)} 남음`;
+            crtdEstEl.innerHTML = `<i data-lucide="shield" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> -$${cfg.liquidation}까지 $${left.toFixed(0)} 남음`; if(typeof lucide!=='undefined') lucide.createIcons();
             crtdEstEl.style.color = left < cfg.liquidation * 0.3 ? '#B54534' : '#ffaa00';
         } else {
-            crtdEstEl.textContent = `<i data-lucide="trending-up" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> +$${cfg.profitThreshold}까지 $${(cfg.profitThreshold - realTimePnL).toFixed(0)}`;
+            crtdEstEl.innerHTML = `<i data-lucide="trending-up" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> +$${cfg.profitThreshold}까지 $${(cfg.profitThreshold - realTimePnL).toFixed(0)}`;
             crtdEstEl.style.color = '#4488ff';
         }
     }
