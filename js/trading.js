@@ -509,7 +509,7 @@ function updateTradingUI() {
     
     document.getElementById('trading-balance').textContent = `$${equity.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
     document.getElementById('trading-profit').textContent = `${profit >= 0 ? '+' : ''}${profit}%`;
-    document.getElementById('trading-profit').style.color = profit >= 0 ? '#3D2B1F' : '#cc0000';
+    document.getElementById('trading-profit').style.color = profit >= 0 ? '#3D2B1F' : '#B54534';
     document.getElementById('trading-positions').textContent = openTrades.length;
 }
 
@@ -753,9 +753,9 @@ async function initTradingViewChart() {
         window.volumeSeries = volumeSeries;
         
         const candleSeries = chart.addCandlestickSeries({
-            upColor: '#3D2B1F', downColor: '#cc0000',
+            upColor: '#3D2B1F', downColor: '#B54534',
             wickUpColor: '#6B5744', wickDownColor: '#6B5744',
-            borderUpColor: '#3D2B1F', borderDownColor: '#cc0000',
+            borderUpColor: '#3D2B1F', borderDownColor: '#B54534',
         });
         
         window.liveChart = chart;
@@ -1079,7 +1079,7 @@ function updateLiveCandleChart() {
         const volData = candles.map(c => ({
             time: c.time,
             value: c._volume || c._tickCount || 1,
-            color: c.close >= c.open ? '#3D2B1F33' : '#cc000033',
+            color: c.close >= c.open ? '#3D2B1F33' : '#B5453433',
         }));
         if (window.volumeSeries) window.volumeSeries.setData(volData);
         
@@ -1804,10 +1804,10 @@ function updateOpenPositions() {
         const effContracts = trade.effectiveContracts || (trade.contracts * (trade.copyAccounts || 1));
         const pnl = priceDiff * trade.multiplier * effContracts;
         const tradeFee = trade.fee || (RISK_CONFIG.tradeFeeRoundTrip * effContracts);
-        const pnlColor = pnl >= 0 ? '#3D2B1F' : '#cc0000';
+        const pnlColor = pnl >= 0 ? '#3D2B1F' : '#B54534';
         
         const div = document.createElement('div');
-        div.style.cssText = 'padding:1rem; background:var(--bg); border-radius:6px; margin-bottom:0.5rem; border-left:4px solid ' + (trade.side === 'BUY' ? '#3D2B1F' : '#cc0000');
+        div.style.cssText = 'padding:1rem; background:var(--bg); border-radius:6px; margin-bottom:0.5rem; border-left:4px solid ' + (trade.side === 'BUY' ? '#3D2B1F' : '#B54534');
         
         // SL/TP 인라인 수정 UI
         const ts = trade.trailingStop;
@@ -1843,7 +1843,7 @@ function updateOpenPositions() {
             <div style="display:flex; justify-content:space-between; align-items:start;">
                 <div style="flex:1;">
                     <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.3rem;">
-                        <strong style="color:${trade.side === 'BUY' ? '#3D2B1F' : '#cc0000'}">${trade.side}</strong> 
+                        <strong style="color:${trade.side === 'BUY' ? '#3D2B1F' : '#B54534'}">${trade.side}</strong> 
                         <span>${trade.contract} × ${trade.contracts}${(trade.copyAccounts || 1) > 1 ? ` <span style="color:#C4841D; font-size:0.75rem;">×${trade.copyAccounts}계정=${effContracts}계약</span>` : ''}</span>
                         <span style="font-size:0.75rem; color:var(--accent);">${trade.orderType}</span>
                     </div>
@@ -1864,7 +1864,7 @@ function updateOpenPositions() {
                     </div>
                 </div>
                 <div style="display:flex; flex-direction:column; gap:0.3rem;">
-                    <button onclick="closePosition(${actualIndex})" style="background:#cc0000; color:#FFF8F0; border:none; padding:0.5rem 0.8rem; border-radius:4px; cursor:pointer; font-size:0.85rem; font-weight:bold;">
+                    <button onclick="closePosition(${actualIndex})" style="background:#B54534; color:#FFF8F0; border:none; padding:0.5rem 0.8rem; border-radius:4px; cursor:pointer; font-size:0.85rem; font-weight:bold;">
                         <i data-lucide="x" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> CLOSE
                     </button>
                     ${partialCloseBtn}
@@ -2093,8 +2093,8 @@ async function loadTradeHistory() {
         const div = document.createElement('div');
         div.style.cssText = 'padding:0.8rem; background:var(--bg); border-radius:6px; margin-bottom:0.5rem;';
         
-        const sideColor = trade.side === 'BUY' ? '#3D2B1F' : '#cc0000';
-        const pnlColor = trade.pnl >= 0 ? '#3D2B1F' : '#cc0000';
+        const sideColor = trade.side === 'BUY' ? '#3D2B1F' : '#B54534';
+        const pnlColor = trade.pnl >= 0 ? '#3D2B1F' : '#B54534';
         
         div.innerHTML = `
             <div style="display:flex; justify-content:space-between;">
@@ -2262,7 +2262,7 @@ function updatePositionCountBar() {
         if (trade.side === 'BUY') buyCount++; else sellCount++;
     }
     
-    const pnlColor = totalPnL >= 0 ? '#3D2B1F' : '#cc0000';
+    const pnlColor = totalPnL >= 0 ? '#3D2B1F' : '#B54534';
     text.innerHTML = `<i data-lucide="circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${openTrades.length}개 포지션 (B:${buyCount} S:${sellCount}) | <strong style="color:${pnlColor}">${totalPnL >= 0 ? '+' : ''}$${totalPnL.toFixed(2)}</strong>`;
 }
 
@@ -2744,7 +2744,7 @@ function drawPositionLinesLW() {
     openTrades.forEach((trade) => {
         const entryLine = window.candleSeries.createPriceLine({
             price: trade.entryPrice,
-            color: trade.side === 'BUY' ? '#3D2B1F' : '#cc0000',
+            color: trade.side === 'BUY' ? '#3D2B1F' : '#B54534',
             lineWidth: 2,
             lineStyle: LightweightCharts.LineStyle.Solid,
             axisLabelVisible: true,
@@ -3006,7 +3006,7 @@ function drawPositionLinesLW() {
         openTrades.forEach(t => {
             const entryLine = window.candleSeries.createPriceLine({
                 price: t.entryPrice,
-                color: t.side === 'BUY' ? '#3D2B1F' : '#cc0000',
+                color: t.side === 'BUY' ? '#3D2B1F' : '#B54534',
                 lineWidth: 2, lineStyle: LightweightCharts.LineStyle.Solid,
                 axisLabelVisible: true,
                 title: `${t.side} ${t.contract} ${t.contracts}`,

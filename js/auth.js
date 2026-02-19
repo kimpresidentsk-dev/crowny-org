@@ -44,14 +44,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const el = document.getElementById('password-strength');
             if (!el) return;
             if (pw.length === 0) { el.textContent = ''; return; }
-            if (pw.length < 6) { el.textContent = t('auth.min_6chars', '⚠️ 최소 6자 이상'); el.style.color = '#cc0000'; return; }
+            if (pw.length < 6) { el.textContent = t('auth.min_6chars', '⚠️ 최소 6자 이상'); el.style.color = '#B54534'; return; }
             let score = 0;
             if (pw.length >= 8) score++;
             if (/[A-Z]/.test(pw)) score++;
             if (/[0-9]/.test(pw)) score++;
             if (/[^A-Za-z0-9]/.test(pw)) score++;
             const labels = [t('auth.pw_weak','약함 🔴'), t('auth.pw_normal','보통 🟡'), t('auth.pw_good','좋음 🟢'), t('auth.pw_strong','강함 💪')];
-            const colors = ['#cc0000', '#C4841D', '#6B8F3C', '#3D2B1F'];
+            const colors = ['#B54534', '#C4841D', '#6B8F3C', '#3D2B1F'];
             el.textContent = labels[Math.min(score, 3)];
             el.style.color = colors[Math.min(score, 3)];
         });

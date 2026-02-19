@@ -596,7 +596,7 @@ function _renderArtCard(art) {
         const endMs = art.auctionEnd?.seconds ? art.auctionEnd.seconds * 1000 : art.auctionEnd;
         const ended = endMs && new Date(endMs) < new Date();
         priceLabel = ended
-            ? '<span style="color:#cc0000">경매 종료</span>'
+            ? '<span style="color:#B54534">경매 종료</span>'
             : `<span style="color:#C4841D">🔨 ${art.currentBid || art.startPrice} CRAC</span>`;
     } else {
         priceLabel = '<span style="color:var(--accent)">전시 중</span>';
@@ -651,7 +651,7 @@ async function viewArtwork(artId) {
                         <span style="color:var(--accent)">${pct}% 판매됨</span>
                     </div>
                     <div style="background:#e0e0e0;border-radius:4px;height:6px;overflow:hidden">
-                        <div style="background:${isSoldOut ? '#cc0000' : '#6B8F3C'};height:100%;width:${pct}%;border-radius:4px;transition:width .3s"></div>
+                        <div style="background:${isSoldOut ? '#B54534' : '#6B8F3C'};height:100%;width:${pct}%;border-radius:4px;transition:width .3s"></div>
                     </div>
                 </div>`;
         }
@@ -726,7 +726,7 @@ async function viewArtwork(artId) {
             if (!art.isNFT) {
                 actionHtml += `<button onclick="mintExistingArtwork('${artId}')" style="background:linear-gradient(135deg,#8B6914,#6B5744);color:#E8D5C4;border:none;padding:.6rem 1.2rem;border-radius:6px;cursor:pointer;font-size:.85rem;flex:1">🔗 NFT 민팅</button>`;
             }
-            actionHtml += `<button onclick="deleteArtwork('${artId}')" style="background:#cc0000;color:#E8D5C4;border:none;padding:.6rem 1.2rem;border-radius:6px;cursor:pointer;font-size:.85rem">삭제</button></div>`;
+            actionHtml += `<button onclick="deleteArtwork('${artId}')" style="background:#B54534;color:#E8D5C4;border:none;padding:.6rem 1.2rem;border-radius:6px;cursor:pointer;font-size:.85rem">삭제</button></div>`;
         }
 
         // Modal

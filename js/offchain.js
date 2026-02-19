@@ -440,7 +440,7 @@ async function redeemCoupon() {
         hideLoading();
         const tokenInfo = getTokenInfo(coupon.tokenKey);
         resultEl.innerHTML = '✅ <strong>' + coupon.amount.toLocaleString() + ' ' + tokenInfo.name + '</strong> ' + t('offchain.coupon_earned', '적립 완료!');
-        resultEl.style.color = '#2e7d32';
+        resultEl.style.color = '#6B8F3C';
         codeInput.value = '';
         showToast('🎟️ ' + coupon.amount.toLocaleString() + ' ' + tokenInfo.name + ' ' + t('offchain.coupon_redeemed', '쿠폰 적립!'), 'success');
     } catch (e) {

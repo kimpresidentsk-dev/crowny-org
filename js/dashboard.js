@@ -223,7 +223,7 @@ async function loadDashboard() {
             <div style="background:#FFF8F0;padding:1.2rem;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);border:1px solid #E8E0D8;">
                 <h4 style="margin-bottom:0.8rem;font-size:0.95rem;color:#3D2B1F;"><i data-lucide="bar-chart-3" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> 트레이딩 포지션</h4>
                 <p style="color:#3D2B1F;margin:0.5rem 0;">잔고: <strong style="color:#3D2B1F;">$${(pos.balance || 0).toLocaleString()}</strong></p>
-                <p style="color:#3D2B1F;margin:0.5rem 0;">수익: <strong style="color:${(pos.totalPnl || 0) >= 0 ? '#2e7d32' : '#c62828'}">$${(pos.totalPnl || 0).toFixed(2)}</strong></p>
+                <p style="color:#3D2B1F;margin:0.5rem 0;">수익: <strong style="color:${(pos.totalPnl || 0) >= 0 ? '#6B8F3C' : '#B54534'}">$${(pos.totalPnl || 0).toFixed(2)}</strong></p>
                 <button onclick="showPage('prop-trading')" style="padding:0.5rem 1rem;border:1px solid #E8E0D8;border-radius:8px;background:#F7F3ED;cursor:pointer;font-size:0.85rem;transition:background 0.15s;color:#3D2B1F;margin-top:0.5rem;">→ 트레이딩으로</button>
             </div>`;
     } else {

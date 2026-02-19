@@ -1,7 +1,7 @@
 // ===== marketplace.js - 쇼핑몰, 모금, 에너지, 비즈니스, 아티스트, 출판, P2P크레딧 =====
 
 const ORDER_STATUS_LABELS = { paid:t('mall.status_paid','<i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 결제완료'), shipping:t('mall.status_shipping','<i data-lucide="truck" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 배송중'), delivered:t('mall.status_delivered','<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 배송완료'), cancelled:t('mall.status_cancelled','<i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 취소') };
-const ORDER_STATUS_COLORS = { paid:'#C4841D', shipping:'#5B7B8C', delivered:'#6B8F3C', cancelled:'#cc0000' };
+const ORDER_STATUS_COLORS = { paid:'#C4841D', shipping:'#5B7B8C', delivered:'#6B8F3C', cancelled:'#B54534' };
 const BRAND_SLOGANS = {
     present: '아름다움을 선물하다', doctor: '건강한 삶의 시작', medical: '신뢰할 수 있는 의료',
     avls: '감각을 깨우다', solution: '안전을 디자인하다', architect: '공간을 창조하다',
@@ -171,7 +171,7 @@ async function renderProductDetail(id) {
                     </div>`;
                 revSnap.forEach(r => {
                     const rv = r.data();
-                    const verifiedBadge = rv.verified ? '<span style="background:#F7F3ED;color:#2e7d32;font-size:0.7rem;padding:0.1rem 0.4rem;border-radius:4px;margin-left:0.3rem;"><i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 구매인증</span>' : '';
+                    const verifiedBadge = rv.verified ? '<span style="background:#F7F3ED;color:#6B8F3C;font-size:0.7rem;padding:0.1rem 0.4rem;border-radius:4px;margin-left:0.3rem;"><i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 구매인증</span>' : '';
                     const dateStr = rv.createdAt?.toDate ? rv.createdAt.toDate().toLocaleDateString('ko-KR') : '';
                     reviewsHtml += `<div style="background:var(--bg); padding:0.8rem; border-radius:8px; margin-bottom:0.5rem;">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -183,7 +183,7 @@ async function renderProductDetail(id) {
                         ${rv.imageData ? `<img src="${rv.imageData}" style="width:100px;height:100px;object-fit:cover;border-radius:8px;margin-top:0.4rem;cursor:pointer;" onclick="window.open(this.src)">` : ''}
                         <div style="margin-top:0.4rem;display:flex;gap:0.4rem;">
                             <button onclick="helpfulReview('${r.id}')" style="background:none;border:1px solid #E8E0D8;border-radius:12px;padding:0.2rem 0.6rem;cursor:pointer;font-size:0.75rem;color:var(--accent);"><i data-lucide="thumbs-up" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 도움이 돼요 ${rv.helpful||0}</button>
-                            ${currentUser && rv.buyerId !== currentUser.uid ? `<button onclick="event.stopPropagation();reportReview('${r.id}')" style="background:none;border:1px solid #E8E0D8;border-radius:12px;padding:0.2rem 0.6rem;cursor:pointer;font-size:0.7rem;color:#cc0000;"><i data-lucide="alert-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></button>` : ''}
+                            ${currentUser && rv.buyerId !== currentUser.uid ? `<button onclick="event.stopPropagation();reportReview('${r.id}')" style="background:none;border:1px solid #E8E0D8;border-radius:12px;padding:0.2rem 0.6rem;cursor:pointer;font-size:0.7rem;color:#B54534;"><i data-lucide="alert-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></button>` : ''}
                         </div>
                     </div>`;
                 });
@@ -252,9 +252,9 @@ async function renderProductDetail(id) {
                     <button onclick="buyProduct('${id}', this)" style="flex:2; background:#3D2B1F; color:#FFF8F0; border:none; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700; font-size:1rem;"><i data-lucide="shopping-cart" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 바로 구매</button>
                     <button onclick="addToCart('${id}')" style="flex:1; background:#FFF8F0; color:#3D2B1F; border:2px solid #3D2B1F; padding:0.8rem; border-radius:8px; cursor:pointer; font-weight:700;">담기</button>
                 </div>` : ''}
-                ${remaining <= 0 ? '<p style="color:#cc0000; font-weight:700; text-align:center; font-size:1.1rem; margin:1rem 0;">품절</p>' : ''}
+                ${remaining <= 0 ? '<p style="color:#B54534; font-weight:700; text-align:center; font-size:1.1rem; margin:1rem 0;">품절</p>' : ''}
                 ${reviewBtnHtml}
-                ${!isOwner && currentUser ? `<button onclick="reportProduct('${id}')" style="background:none; color:#cc0000; border:1px solid #cc0000; padding:0.5rem; border-radius:8px; cursor:pointer; width:100%; margin-top:0.5rem; font-size:0.85rem;"><i data-lucide="alert-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 신고</button>` : ''}
+                ${!isOwner && currentUser ? `<button onclick="reportProduct('${id}')" style="background:none; color:#B54534; border:1px solid #B54534; padding:0.5rem; border-radius:8px; cursor:pointer; width:100%; margin-top:0.5rem; font-size:0.85rem;"><i data-lucide="alert-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 신고</button>` : ''}
             </div>
             ${reviewsHtml}`;
     } catch(e) { c.innerHTML = `<p style="color:red; text-align:center;">${e.message}</p>`; }
@@ -463,7 +463,7 @@ async function loadMyProducts() {
                     <div style="display:flex; gap:0.3rem;">
                         <button onclick="editProduct('${d.id}')" style="background:#5B7B8C; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${t('mall.edit_btn','<i data-lucide="edit" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 수정')}</button>
                         <button onclick="toggleProduct('${d.id}','${x.status}')" style="background:${x.status==='active'?'#6B5744':'#6B8F3C'}; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${x.status==='active'?t('mall.deactivate','<i data-lucide="pause" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 비활성'):t('mall.activate','▶ 활성')}</button>
-                        <button onclick="deleteProduct('${d.id}')" style="background:#cc0000; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;"><i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></button>
+                        <button onclick="deleteProduct('${d.id}')" style="background:#B54534; color:#FFF8F0; border:none; padding:0.2rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;"><i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></button>
                     </div>
                 </div>
             </div>`;
@@ -635,7 +635,7 @@ async function loadCampaigns() {
                     <div style="padding:1rem;">
                         <h4 style="margin-bottom:0.3rem;">${x.title}</h4>
                         <p style="font-size:0.85rem; color:var(--accent); margin-bottom:0.5rem;">${x.creatorNickname || x.creatorEmail} · ${x.backerCount || x.backers || 0}명 참여</p>
-                        <p style="font-size:0.75rem; color:#2e7d32; margin-bottom:0.5rem;"><i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 수수료 ${x.platformFee||2.5}% · 수령 ${100-(x.platformFee||2.5)}%</p>
+                        <p style="font-size:0.75rem; color:#6B8F3C; margin-bottom:0.5rem;"><i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 수수료 ${x.platformFee||2.5}% · 수령 ${100-(x.platformFee||2.5)}%</p>
                         <div style="background:#e0e0e0; height:8px; border-radius:4px; margin-bottom:0.5rem;">
                             <div style="background:#6B8F3C; height:100%; border-radius:4px; width:${pct}%;"></div>
                         </div>
@@ -771,7 +771,7 @@ async function loadEnergyProjects() {
                 </div>
                 <div style="margin-bottom:0.3rem;">${renderInvestBadge(x)}</div>
                 <p style="font-size:0.85rem; color:var(--accent); margin:0.3rem 0;">${x.location || ''} ${x.capacity ? '· ' + x.capacity + 'kW' : ''} ${rate > 0 ? '· 예상 수익률 ' + rate + '%' : ''}</p>
-                ${rate > 0 ? `<div style="font-size:0.8rem; color:#2e7d32; margin-top:0.3rem;"><i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 100 CREB 투자 시 → 월 ${exMonthly} CREB (연 ${rate}%)</div>` : ''}
+                ${rate > 0 ? `<div style="font-size:0.8rem; color:#6B8F3C; margin-top:0.3rem;"><i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 100 CREB 투자 시 → 월 ${exMonthly} CREB (연 ${rate}%)</div>` : ''}
                 ${itype === 'donation' ? `<div style="font-size:0.8rem; color:#6B8F3C; margin-top:0.3rem;"><i data-lucide="gift" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 순수 기부 · 수익 없이 미래를 위한 투자</div>` : ''}
                 ${itype === 'hybrid' ? `<div style="font-size:0.8rem; color:#5B7B8C; margin-top:0.3rem;"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 수익 50% + 재투자 50%</div>` : ''}
                 <div style="font-size:0.75rem; color:var(--accent);">👥 투자자 ${xInvestors}명</div>
@@ -1287,7 +1287,7 @@ async function loadCreditScoreBreakdown() {
             </div>`;
         // 메인 점수도 업데이트
         const scoreEl = document.getElementById('credit-score');
-        if (scoreEl) { scoreEl.textContent = totalScore; scoreEl.style.color = totalScore >= 700 ? '#6B8F3C' : totalScore >= 500 ? '#C4841D' : '#cc0000'; }
+        if (scoreEl) { scoreEl.textContent = totalScore; scoreEl.style.color = totalScore >= 700 ? '#6B8F3C' : totalScore >= 500 ? '#C4841D' : '#B54534'; }
     } catch (e) { c.innerHTML = `<p style="color:red;">${e.message}</p>`; }
 }
 
@@ -1701,7 +1701,7 @@ async function loadCreditInfo() {
         const score = Math.min(850, 300 + crtdHeld * 10 + (data.referralCount || 0) * 20);
         
         const scoreEl = document.getElementById('credit-score');
-        if (scoreEl) { scoreEl.textContent = score; scoreEl.style.color = score >= 700 ? '#6B8F3C' : score >= 500 ? '#C4841D' : '#cc0000'; }
+        if (scoreEl) { scoreEl.textContent = score; scoreEl.style.color = score >= 700 ? '#6B8F3C' : score >= 500 ? '#C4841D' : '#B54534'; }
         
         const loans = await db.collection('pumasi_requests').where('requesterId','==',currentUser.uid).where('status','==','active').get();
         const loansEl = document.getElementById('active-loans');
@@ -2083,7 +2083,7 @@ async function showCampaignDetail(id) {
                     <span style="font-weight:700;">${camp.raised} / ${camp.goal} ${camp.token}</span>
                     <span>${pct}% · ${camp.backerCount || camp.backers || 0}명</span>
                 </div>
-                <div style="font-size:0.8rem; color:#2e7d32; margin-top:0.5rem;"><i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 수수료 ${fee}% · 창작자 수령 ${(100 - fee).toFixed(1)}%</div>
+                <div style="font-size:0.8rem; color:#6B8F3C; margin-top:0.5rem;"><i data-lucide="coins" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 수수료 ${fee}% · 창작자 수령 ${(100 - fee).toFixed(1)}%</div>
             </div>
             <button onclick="donateCampaign('${id}')" style="background:#6B8F3C; color:#FFF8F0; border:none; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-weight:700; margin-bottom:0.8rem;"><i data-lucide="gift" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 기부하기</button>
             ${isCreator && camp.status === 'active' ? `<button onclick="closeCampaign('${id}')" style="background:#e53935; color:#FFF8F0; border:none; padding:0.7rem; border-radius:8px; cursor:pointer; width:100%; font-weight:700; margin-bottom:1rem;">🔒 캠페인 종료 및 수령</button>` : ''}
@@ -2164,7 +2164,7 @@ async function loadCart() {
                         <button onclick="updateCartQty('${d.id}', -1)" style="width:26px; height:26px; border:1px solid #E8E0D8; border-radius:4px; background:#FFF8F0; cursor:pointer; font-size:0.9rem;">−</button>
                         <span style="font-weight:600; min-width:20px; text-align:center;">${item.qty || 1}</span>
                         <button onclick="updateCartQty('${d.id}', 1)" style="width:26px; height:26px; border:1px solid #E8E0D8; border-radius:4px; background:#FFF8F0; cursor:pointer; font-size:0.9rem;">+</button>
-                        <button onclick="removeFromCart('${d.id}')" style="background:none; border:none; cursor:pointer; color:#cc0000; font-size:0.85rem; margin-left:auto;"><i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></button>
+                        <button onclick="removeFromCart('${d.id}')" style="background:none; border:none; cursor:pointer; color:#B54534; font-size:0.85rem; margin-left:auto;"><i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></button>
                     </div>
                 </div>
             </div>`;
@@ -2404,7 +2404,7 @@ async function renderStorePage(sellerId) {
                         </div>
                     </div>
                 </div>
-                ${isOwner ? `<button onclick="showStoreSettingsModal()" style="margin-top:0.8rem; background:#C4841D; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600;">⚙️ 스토어 설정</button>` : (currentUser ? `<button onclick="reportSeller('${sellerId}')" style="margin-top:0.8rem; background:none; color:#cc0000; border:1px solid #cc0000; padding:0.4rem 0.8rem; border-radius:8px; cursor:pointer; font-size:0.8rem;"><i data-lucide="alert-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${t('mall.report_seller','판매자 신고')}</button>` : '')}
+                ${isOwner ? `<button onclick="showStoreSettingsModal()" style="margin-top:0.8rem; background:#C4841D; color:#FFF8F0; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600;">⚙️ 스토어 설정</button>` : (currentUser ? `<button onclick="reportSeller('${sellerId}')" style="margin-top:0.8rem; background:none; color:#B54534; border:1px solid #B54534; padding:0.4rem 0.8rem; border-radius:8px; cursor:pointer; font-size:0.8rem;"><i data-lucide="alert-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${t('mall.report_seller','판매자 신고')}</button>` : '')}
             </div>
             <h3 style="margin-bottom:0.8rem;"><i data-lucide="package" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 상품 목록</h3>
             <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:0.8rem;">
@@ -2497,7 +2497,7 @@ async function loadMyShopDashboard() {
                     <div style="display:flex; gap:0.3rem;">
                         <button onclick="editProductModal('${d.id}')" style="background:#5B7B8C; color:#FFF8F0; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;"><i data-lucide="edit" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 수정</button>
                         <button onclick="toggleProduct('${d.id}','${p.status}')" style="background:${p.status==='active'?'#6B5744':'#6B8F3C'}; color:#FFF8F0; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;">${p.status==='active'?'<i data-lucide="pause" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i>':'▶'}</button>
-                        <button onclick="deleteProduct('${d.id}')" style="background:#cc0000; color:#FFF8F0; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;"><i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></button>
+                        <button onclick="deleteProduct('${d.id}')" style="background:#B54534; color:#FFF8F0; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer; font-size:0.75rem;"><i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></button>
                     </div>
                 </div>
             </div>`;
@@ -3125,7 +3125,7 @@ async function reportProduct(productId) {
                 <textarea id="report-detail" rows="3" placeholder="상세 내용 (선택)" style="width:100%;padding:0.7rem;border:1px solid var(--border);border-radius:6px;resize:vertical;box-sizing:border-box;"></textarea>
                 <div style="display:flex;gap:0.5rem;">
                     <button onclick="this.closest('div[style*=fixed]').remove()" style="flex:1;padding:0.7rem;border:1px solid #E8E0D8;border-radius:8px;cursor:pointer;background:#FFF8F0;">취소</button>
-                    <button id="report-submit-btn" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#cc0000;color:#FFF8F0;font-weight:700;">신고</button>
+                    <button id="report-submit-btn" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#B54534;color:#FFF8F0;font-weight:700;">신고</button>
                 </div>
             </div>
         </div>`;
@@ -3174,7 +3174,7 @@ function _showReportModal(targetType, targetId, title) {
                 <textarea id="report-detail-gen" rows="3" placeholder="${t('mall.report_detail_placeholder','상세 내용 (선택)')}" style="width:100%;padding:0.7rem;border:1px solid var(--border);border-radius:6px;resize:vertical;box-sizing:border-box;"></textarea>
                 <div style="display:flex;gap:0.5rem;">
                     <button onclick="this.closest('div[style*=fixed]').remove()" style="flex:1;padding:0.7rem;border:1px solid #E8E0D8;border-radius:8px;cursor:pointer;background:#FFF8F0;">${t('common.cancel','취소')}</button>
-                    <button id="report-submit-gen" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#cc0000;color:#FFF8F0;font-weight:700;">${t('mall.report_submit','신고')}</button>
+                    <button id="report-submit-gen" style="flex:1;padding:0.7rem;border:none;border-radius:8px;cursor:pointer;background:#B54534;color:#FFF8F0;font-weight:700;">${t('mall.report_submit','신고')}</button>
                 </div>
             </div>
         </div>`;
