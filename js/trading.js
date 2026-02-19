@@ -47,14 +47,15 @@ async function reloadTradingSystem() {
         }
         
         const ok = !!myParticipation && currentPrice > 1000;
-        if (statusEl) statusEl.textContent = ok 
+        if (statusEl) statusEl.innerHTML = ok 
             ? `<i data-lucide="check-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 완료! ${myParticipation?.participantId?.slice(0,8)}… $${currentPrice.toFixed(2)}`
             : `<i data-lucide="alert-triangle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> ${!myParticipation ? '참가 데이터 없음 — 챌린지 참가 필요' : '가격 수신 대기 중 (곧 연결)'}`;
-        if (statusEl) statusEl.style.color = ok ? '#6B8F3C' : '#ff6600';
+        if (statusEl) statusEl.style.color = ok ? '#6B8F3C' : '#C4841D';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
     } catch (e) {
         console.error('<i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> reloadTradingSystem:', e);
         if (statusEl) statusEl.innerHTML = '<i data-lucide="x-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> 오류: ' + e.message;
-        if (statusEl) statusEl.style.color = '#ff3333';
+        if (statusEl) statusEl.style.color = '#B54534';
     }
     
     if (btn) btn.disabled = false;
