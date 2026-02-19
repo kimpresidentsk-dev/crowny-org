@@ -19,11 +19,13 @@
     letter-spacing: 1px;
     margin: 0;
     text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    color: #FFF8F0;
 }
 .section-banner p {
     margin-top: 0.5rem;
     opacity: 1.0;
     font-size: 0.85rem;
+    color: #E8D5C4;
 }
 .section-banner::after {
     content: '';
