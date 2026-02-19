@@ -722,7 +722,7 @@ async function initTradingViewChart() {
             width: container.clientWidth,
             height: chartHeight,
             layout: { background: { color: '#FFF8F0' }, textColor: '#3D2B1F', fontFamily: "'Consolas','Monaco',monospace", fontSize: 11 },
-            grid: { vertLines: { color: '#1a1a2a', style: 1 }, horzLines: { color: '#1a1a2a', style: 1 } },
+            grid: { vertLines: { color: '#E8E0D8', style: 1 }, horzLines: { color: '#E8E0D8', style: 1 } },
             crosshair: {
                 mode: LightweightCharts.CrosshairMode.Normal,
                 vertLine: { color: '#FFF8F044', width: 1, style: 2, labelBackgroundColor: '#3D2B1F' },
